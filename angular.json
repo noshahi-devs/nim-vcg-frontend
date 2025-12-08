@@ -1,0 +1,134 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "wowdash": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/wowdash",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+           "styles": [
+              "src/styles.css",
+              "public/assets/css/remixicon.css",
+              "public/assets/css/lib/bootstrap.min.css",
+              "public/assets/css/lib/apexcharts.css",
+              "public/assets/css/lib/dataTables.min.css",
+              "public/assets/css/lib/editor-katex.min.css",
+              "public/assets/css/lib/editor.atom-one-dark.min.css",
+              "node_modules/quill/dist/quill.snow.css",
+              "public/assets/css/lib/flatpickr.min.css",
+              "public/assets/css/lib/full-calendar.css",
+              "public/assets/css/lib/jquery-jvectormap-2.0.5.css",
+              "public/assets/css/lib/magnific-popup.css",
+              "public/assets/css/lib/slick.css",
+              "public/assets/css/lib/prism.css",
+              "public/assets/css/lib/file-upload.css",
+              "public/assets/css/lib/audioplayer.css",
+              "public/assets/css/style.css"
+            ],
+
+            "scripts": [
+              "/node_modules/jquery/dist/jquery.min.js",
+              "public/assets/js/lib/bootstrap.bundle.min.js",
+              "public/assets/js/lib/dataTables.min.js",
+              "public/assets/js/lib/iconify-icon.min.js",
+              "public/assets/js/lib/jquery-ui.min.js",
+              "public/assets/js/lib/jquery-jvectormap-2.0.5.min.js",
+              "public/assets/js/lib/jquery-jvectormap-world-mill-en.js",
+              "public/assets/js/lib/magnifc-popup.min.js",
+              "public/assets/js/lib/slick.min.js",
+              "public/assets/js/lib/prism.js",
+              "public/assets/js/lib/file-upload.js",
+              "public/assets/js/lib/audioplayer.js",
+              "public/assets/js/app.js",
+              "public/assets/js/full-calendar.js",
+              "public/assets/js/flatpickr.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+             
+              "budgets": [
+  {
+    "type": "initial",
+    "maximumWarning": "5mb",
+    "maximumError": "7mb"
+  },
+  {
+    "type": "anyComponentStyle",
+    "maximumWarning": "10kb",
+    "maximumError": "20kb"
+  }
+],
+
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "wowdash:build:production"
+            },
+            "development": {
+              "buildTarget": "wowdash:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "tsconfig.spec.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}

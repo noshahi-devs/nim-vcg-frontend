@@ -1,0 +1,81 @@
+<div class="dashboard-main-body">
+
+  <app-breadcrumb [title]="'Components / Radio'" [main-title]="'Radio'"></app-breadcrumb>
+
+  
+
+    <div class="row gy-4">
+        <div class="col-md-6">
+            <div class="card h-100 p-0">
+                <div class="card-header border-bottom bg-base py-16 px-24">
+                  <h6 class="text-lg fw-semibold mb-0">Basic Upload</h6>
+                </div>
+                <div class="card-body p-24">
+                    <label for="basic-upload" class="border border-primary-600 fw-medium text-primary-600 px-16 py-12 radius-12 d-inline-flex align-items-center gap-2 bg-hover-primary-50">
+                        <iconify-icon icon="solar:upload-linear" class="text-xl"></iconify-icon>
+                        Click to upload
+                    </label>
+                    <input type="file" class="form-control w-auto mt-24 form-control-lg" id="basic-upload">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 p-0">
+                <div class="card-header border-bottom bg-base py-16 px-24">
+                  <h6 class="text-lg fw-semibold mb-0">Image Upload</h6>
+                </div>
+                <div class="card-body p-24">
+                    <div class="upload-image-wrapper d-flex align-items-center gap-3">
+                      <div class="uploaded-img d-none position-relative h-120-px w-120-px border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50">
+                        <button type="button" class="uploaded-img__remove position-absolute top-0 end-0 z-1 text-2xxl line-height-1 me-8 mt-8 d-flex">
+                          <iconify-icon icon="radix-icons:cross-2" class="text-xl text-danger-600"></iconify-icon>
+                        </button>
+                        <img id="uploaded-img__preview" class="w-100 h-100 object-fit-cover" src="assets/images/user.png" alt="image">
+                      </div>
+    
+                      <label class="upload-file h-120-px w-120-px border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1" for="upload-file">
+                        <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                        <span class="fw-semibold text-secondary-light">Upload</span>
+                        <input id="upload-file" type="file" hidden>
+                      </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 p-0">
+                <div class="card-header border-bottom bg-base py-16 px-24">
+                  <h6 class="text-lg fw-semibold mb-0">Upload With image preview</h6>
+                </div>
+                <div class="card-body p-24">
+
+                  <div class="upload-image-wrapper d-flex align-items-center gap-3 flex-wrap">
+                    <div class="uploaded-imgs-container d-flex gap-3 flex-wrap"></div>
+                  
+                    <label class="upload-file-multiple h-120-px w-120-px border input-form-light radius-8 overflow-hidden border-dashed bg-neutral-50 bg-hover-neutral-200 d-flex align-items-center flex-column justify-content-center gap-1" for="upload-file-multiple">
+                      <iconify-icon icon="solar:camera-outline" class="text-xl text-secondary-light"></iconify-icon>
+                      <span class="fw-semibold text-secondary-light">Upload</span>
+                      <input id="upload-file-multiple" type="file" hidden multiple>
+                    </label>
+                  </div>
+                  
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100 p-0">
+              <div class="card-header border-bottom bg-base py-16 px-24">
+                <h6 class="text-lg fw-semibold mb-0">Upload With image preview</h6>
+              </div>
+                <div class="card-body p-24">
+                    <label for="file-upload-name" class="mb-16 border border-neutral-600 fw-medium text-secondary-light px-16 py-12 radius-12 d-inline-flex align-items-center gap-2 bg-hover-neutral-200">
+                      <iconify-icon icon="solar:upload-linear" class="text-xl"></iconify-icon>
+                      Click to upload
+                      <input type="file" class="form-control w-auto mt-24 form-control-lg" id="file-upload-name" multiple hidden>
+                  </label>
+                  <ul id="uploaded-img-names" class=""></ul>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>

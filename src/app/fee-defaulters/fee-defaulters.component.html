@@ -1,0 +1,37 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="d-flex gap-2 align-items-center mb-3">
+        <label class="mb-0">Min Balance</label>
+        <input type="number" class="form-control w-auto" [(ngModel)]="minBalance" />
+        <button class="btn btn-outline-primary" (click)="loadDefaulters()">Refresh</button>
+        <button class="btn btn-outline-secondary" (click)="exportCSV()">Export CSV</button>
+      </div>
+
+      <div *ngIf="defaulters.length; else noDef">
+        <table class="table">
+          <thead><tr><th>#</th><th>Invoice</th><th>Student</th><th>Class</th><th>Month</th><th>Balance</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let d of defaulters; let i=index">
+              <td>{{i+1}}</td>
+              <td>{{d.invoiceNo}}</td>
+              <td>{{d.studentName}}</td>
+              <td>{{d.className}} - {{d.section}}</td>
+              <td>{{d.month}}</td>
+              <td>{{d.balance | number}}</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary" (click)="sendReminder(d)">Send Reminder</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #noDef>
+        <div class="text-secondary">No defaulters found.</div>
+      </ng-template>
+    </div>
+  </div>
+</div>

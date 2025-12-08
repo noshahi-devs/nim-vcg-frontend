@@ -1,0 +1,166 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <!-- Summary Card -->
+  <div class="row gy-4 mb-24">
+    <div class="col-12">
+      <div class="card shadow-none border bg-gradient-start-4 h-100">
+        <div class="card-body p-20">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+              <p class="fw-medium text-primary-light mb-1">Total Expenses</p>
+              <h4 class="mb-0 text-danger-main">{{ formatCurrency(totalExpenses) }}</h4>
+            </div>
+            <div class="w-64-px h-64-px bg-danger-main rounded-circle d-flex justify-content-center align-items-center">
+              <iconify-icon icon="mdi:cash-minus" class="text-white text-xxxl"></iconify-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Actions -->
+  <div class="card h-100 p-0 radius-12">
+    <div class="card-header border-bottom bg-base py-16 px-24">
+      <div class="row gy-3">
+        <div class="col-md-3">
+          <select class="form-select" [(ngModel)]="filterType" (change)="applyFilters()">
+            <option value="">All Types</option>
+            <option *ngFor="let type of expenseTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" [(ngModel)]="filterCampus" (change)="applyFilters()">
+            <option value="">All Campuses</option>
+            <option *ngFor="let campus of campuses" [value]="campus">{{ campus }}</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <input type="date" class="form-control" [(ngModel)]="filterDateFrom" (change)="applyFilters()" placeholder="From Date">
+        </div>
+        <div class="col-md-2">
+          <input type="date" class="form-control" [(ngModel)]="filterDateTo" (change)="applyFilters()" placeholder="To Date">
+        </div>
+        <div class="col-md-2">
+          <button type="button" (click)="openAddModal()" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
+            <iconify-icon icon="solar:add-circle-bold" class="icon text-xl"></iconify-icon>
+            Add Expense
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body p-24">
+      <div class="d-flex align-items-center justify-content-between mb-16">
+        <h6 class="text-lg fw-semibold mb-0">Expense Records</h6>
+        <button type="button" (click)="exportData()" class="btn btn-outline-danger text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
+          <iconify-icon icon="solar:export-linear" class="icon text-xl"></iconify-icon>
+          Export PDF
+        </button>
+      </div>
+
+      <div class="table-responsive scroll-sm">
+        <table class="table bordered-table sm-table mb-0">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th class="text-end">Amount</th>
+              <th>Payment Method</th>
+              <th>Approved By</th>
+              <th>Campus</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let expense of filteredList">
+              <td>{{ expense.date }}</td>
+              <td><span [ngClass]="getTypeBadgeClass(expense.expenseType)">{{ expense.expenseType }}</span></td>
+              <td>{{ expense.description }}</td>
+              <td class="text-end fw-bold text-danger-main">{{ formatCurrency(expense.amount) }}</td>
+              <td>{{ expense.paymentMethod }}</td>
+              <td>{{ expense.approvedBy }}</td>
+              <td>{{ expense.campus }}</td>
+               <td class="text-center">
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                  <button type="button" (click)="openEditModal(expense)" 
+                          class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" 
+                          title="Edit">
+                    <iconify-icon icon="lucide:edit" class="icon text-xl"></iconify-icon>
+                  </button>
+                  <button type="button" (click)="deleteExpense(expense)" 
+                          class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" 
+                          title="Delete">
+                    <iconify-icon icon="fluent:delete-24-regular" class="icon text-xl"></iconify-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="filteredList.length === 0">
+              <td colspan="8" class="text-center py-24 text-secondary-light">No expense records found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Expense Modal -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">{{ isEditMode ? 'Edit Expense' : 'Add Expense' }}</h6>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="row gy-3">
+            <div class="col-6">
+              <label>Date</label>
+              <input type="date" class="form-control" [(ngModel)]="currentExpense.date" name="date" />
+            </div>
+            <div class="col-6">
+              <label>Type</label>
+              <select class="form-select" [(ngModel)]="currentExpense.expenseType" name="expenseType">
+                <option *ngFor="let type of expenseTypes" [value]="type">{{ type }}</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label>Description</label>
+              <input type="text" class="form-control" [(ngModel)]="currentExpense.description" name="description" />
+            </div>
+            <div class="col-6">
+              <label>Amount</label>
+              <input type="number" class="form-control" [(ngModel)]="currentExpense.amount" name="amount" />
+            </div>
+            <div class="col-6">
+              <label>Payment Method</label>
+              <select class="form-select" [(ngModel)]="currentExpense.paymentMethod" name="paymentMethod">
+                <option *ngFor="let method of paymentMethods" [value]="method">{{ method }}</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label>Campus</label>
+              <select class="form-select" [(ngModel)]="currentExpense.campus" name="campus">
+                <option *ngFor="let campus of campuses" [value]="campus">{{ campus }}</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label>Approved By</label>
+              <input type="text" class="form-control" [(ngModel)]="currentExpense.approvedBy" name="approvedBy" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveExpense()">{{ isEditMode ? 'Update' : 'Save' }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade" [class.show]="showModal" *ngIf="showModal"></div>

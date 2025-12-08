@@ -1,0 +1,356 @@
+ <div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <!-- Student Attendance -->
+    <!-- Filters Card -->
+    <div class="card radius-12 mb-4">
+      <div class="card-header bg-base py-16 px-24 border-bottom">
+        <h6 class="fw-semibold mb-0">Filters</h6>
+      </div>
+      <div class="card-body p-24">
+        <div class="row g-3">
+          
+          <!-- Class -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Class <span class="text-danger">*</span></label>
+            <select class="form-select radius-8" [(ngModel)]="selectedClass">
+              <option value="">Select Class</option>
+              <option *ngFor="let class of classes" [value]="class">Class {{ class }}</option>
+            </select>
+          </div>
+
+          <!-- Section -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Section <span class="text-danger">*</span></label>
+            <select class="form-select radius-8" [(ngModel)]="selectedSection">
+              <option value="">Select Section</option>
+              <option *ngFor="let section of sections" [value]="section">Section {{ section }}</option>
+            </select>
+          </div>
+
+          <!-- Date -->
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control radius-8" [(ngModel)]="selectedDate" />
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <button 
+            type="button" 
+            class="btn btn-primary px-4 py-2 radius-8"
+            (click)="loadStudents()">
+            <iconify-icon icon="mdi:account-group" class="me-2"></iconify-icon>
+            Load Students
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Students Table -->
+    <div class="card radius-12" *ngIf="studentsLoaded">
+      <!-- Toolbar with Show, Search, Filter -->
+      <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+        <div class="d-flex align-items-center flex-wrap gap-3">
+          <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
+          <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="itemsPerPage">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+
+          <!-- Search -->
+          <form class="navbar-search">
+            <input
+              type="text"
+              class="bg-base h-40-px w-auto"
+              name="search"
+              [(ngModel)]="searchQuery"
+              placeholder="Search Student"
+            />
+            <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+          </form>
+        </div>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="card-header bg-base py-16 px-24 border-bottom">
+        <div class="row g-3">
+          <div class="col-md-2">
+            <div class="text-center">
+              <h6 class="fw-bold mb-1 text-primary-600">{{ attendanceStats.total }}</h6>
+              <small class="text-secondary-light">Total</small>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="text-center">
+              <h6 class="fw-bold mb-1 text-success-600">{{ attendanceStats.present }}</h6>
+              <small class="text-secondary-light">Present</small>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="text-center">
+              <h6 class="fw-bold mb-1 text-danger-600">{{ attendanceStats.absent }}</h6>
+              <small class="text-secondary-light">Absent</small>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="text-center">
+              <h6 class="fw-bold mb-1 text-warning-600">{{ attendanceStats.leave }}</h6>
+              <small class="text-secondary-light">Leave</small>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="text-center">
+              <h6 class="fw-bold mb-1 text-info-600">{{ attendanceStats.late }}</h6>
+              <small class="text-secondary-light">Late</small>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="text-center">
+              <h6 class="fw-bold mb-1 text-secondary-600">{{ attendanceStats.unmarked }}</h6>
+              <small class="text-secondary-light">Unmarked</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body p-24">
+        <!-- Action Buttons Above Table -->
+        <div class="d-flex flex-wrap gap-3 mb-4">
+          <button 
+            type="button" 
+            class="btn btn-success px-4 py-2 radius-8"
+            (click)="markAllPresent()">
+            <iconify-icon icon="mdi:check-all" class="me-2"></iconify-icon>
+            Mark All Present
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-danger px-4 py-2 radius-8"
+            (click)="markAllAbsent()">
+            <iconify-icon icon="mdi:close-circle" class="me-2"></iconify-icon>
+            Mark All Absent
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-primary px-4 py-2 radius-8"
+            (click)="saveAttendance()">
+            <iconify-icon icon="mdi:content-save" class="me-2"></iconify-icon>
+            Save Attendance
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-info px-4 py-2 radius-8"
+            (click)="openHistoryModal()">
+            <iconify-icon icon="mdi:history" class="me-2"></iconify-icon>
+            View History
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table bordered-table mb-0">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>Student Name</th>
+                <th>Roll No</th>
+                <th>Attendance Status</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let student of paginatedStudents">
+                <td>{{ student.serialNo }}</td>
+                <td>
+                  <span class="fw-semibold">{{ student.name }}</span>
+                </td>
+                <td>
+                  <span class="badge bg-neutral-200 text-neutral-900 px-2 py-1">{{ student.rollNo }}</span>
+                </td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <div class="form-check">
+                      <input 
+                        class="form-check-input" 
+                        type="radio" 
+                        [name]="'status_' + student.id" 
+                        [id]="'present_' + student.id"
+                        value="Present"
+                        [(ngModel)]="student.status">
+                      <label class="form-check-label text-success-600" [for]="'present_' + student.id">
+                        P
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input 
+                        class="form-check-input" 
+                        type="radio" 
+                        [name]="'status_' + student.id" 
+                        [id]="'absent_' + student.id"
+                        value="Absent"
+                        [(ngModel)]="student.status">
+                      <label class="form-check-label text-danger-600" [for]="'absent_' + student.id">
+                        A
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input 
+                        class="form-check-input" 
+                        type="radio" 
+                        [name]="'status_' + student.id" 
+                        [id]="'leave_' + student.id"
+                        value="Leave"
+                        [(ngModel)]="student.status">
+                      <label class="form-check-label text-warning-600" [for]="'leave_' + student.id">
+                        L
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input 
+                        class="form-check-input" 
+                        type="radio" 
+                        [name]="'status_' + student.id" 
+                        [id]="'late_' + student.id"
+                        value="Late"
+                        [(ngModel)]="student.status">
+                      <label class="form-check-label text-info-600" [for]="'late_' + student.id">
+                        Lt
+                      </label>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <input 
+                    type="text" 
+                    class="form-control form-control-sm" 
+                    [(ngModel)]="student.remarks"
+                    placeholder="Add remarks" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3">
+          <span class="text-secondary-light text-sm">Showing {{ paginationStart }} to {{ paginationEnd }} of {{ filteredStudents.length }} entries</span>
+          <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
+            <li class="page-item">
+              <a 
+                class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+                [class.disabled]="currentPage === 1"
+                (click)="changePage(currentPage - 1)"
+                href="javascript:void(0)">
+                <iconify-icon icon="ep:d-arrow-left" class=""></iconify-icon>
+              </a>
+            </li>
+            <li class="page-item" *ngFor="let page of totalPagesArray">
+              <a 
+                class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+                [class.bg-primary-600]="currentPage === page"
+                [class.text-white]="currentPage === page"
+                [class.bg-neutral-200]="currentPage !== page"
+                [class.text-secondary-light]="currentPage !== page"
+                (click)="changePage(page)"
+                href="javascript:void(0)">
+                {{ page }}
+              </a>
+            </li>
+            <li class="page-item">
+              <a 
+                class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+                [class.disabled]="currentPage === totalPages"
+                (click)="changePage(currentPage + 1)"
+                href="javascript:void(0)">
+                <iconify-icon icon="ep:d-arrow-right" class=""></iconify-icon>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="card radius-12" *ngIf="!studentsLoaded">
+      <div class="card-body p-5 text-center">
+        <iconify-icon icon="mdi:account-search" style="font-size: 64px;" class="text-secondary-light mb-3"></iconify-icon>
+        <h5 class="mb-2">No Students Loaded</h5>
+        <p class="text-secondary-light">Please select filters and click "Load Students" to begin marking attendance.</p>
+      </div>
+    </div>
+
+  <!-- History Modal -->
+  <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content radius-12">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-semibold" id="historyModalLabel">
+            <iconify-icon icon="mdi:history" class="me-2"></iconify-icon>
+            Attendance History
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Date Range Filters -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Start Date</label>
+              <input type="date" class="form-control radius-8" [(ngModel)]="historyStartDate" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">End Date</label>
+              <input type="date" class="form-control radius-8" [(ngModel)]="historyEndDate" />
+            </div>
+          </div>
+
+          <!-- History Table -->
+          <div class="table-responsive">
+            <table class="table bordered-table mb-0">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th class="text-center">Present</th>
+                  <th class="text-center">Absent</th>
+                  <th class="text-center">Leave</th>
+                  <th class="text-center">Late</th>
+                  <th class="text-center">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let record of filteredHistory">
+                  <td>
+                    <span class="fw-semibold">{{ record.date }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-success-50 text-success-600 px-2 py-1">{{ record.present }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-danger-50 text-danger-600 px-2 py-1">{{ record.absent }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-warning-50 text-warning-600 px-2 py-1">{{ record.leave }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-info-50 text-info-600 px-2 py-1">{{ record.late }}</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="fw-semibold">{{ record.total }}</span>
+                  </td>
+                </tr>
+                <tr *ngIf="filteredHistory.length === 0">
+                  <td colspan="6" class="text-center py-4 text-secondary-light">
+                    No attendance records found
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

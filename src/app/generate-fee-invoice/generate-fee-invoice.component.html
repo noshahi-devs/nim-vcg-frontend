@@ -1,0 +1,115 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="card radius-12 mb-3">
+    <div class="card-body p-24">
+      <!-- Filters -->
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label>Class</label>
+          <select class="form-select" [(ngModel)]="selectedClass" (change)="loadFeeStructure()">
+            <option value="">Select Class</option>
+            <option *ngFor="let c of classes" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <label>Section</label>
+          <select class="form-select" [(ngModel)]="selectedSection">
+            <option value="">All</option>
+            <option *ngFor="let s of sections" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Search Student</label>
+          <input
+            class="form-control"
+            [(ngModel)]="searchQuery"
+            (input)="searchStudents()"
+            placeholder="Enter name or ID"
+          />
+        </div>
+
+        <div class="col-md-3">
+          <label>Month</label>
+          <input type="month" class="form-control" [(ngModel)]="month" />
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row mt-3">
+        <!-- Fee Structure -->
+        <div class="col-md-6">
+          <div *ngIf="feeStructure; else noStruct">
+            <h6>Fee Structure for {{ feeStructure.className }}</h6>
+            <p><strong>Base Fee:</strong> {{ feeStructure.baseFee | number }}</p>
+            <div *ngFor="let fund of feeStructure.otherFunds">
+              <small>{{ fund.name }}: {{ fund.amount | number }}</small><br />
+            </div>
+
+            <h6 class="mt-3">Extra Charges (Optional)</h6>
+            <div *ngFor="let e of extraCharges; let i = index" class="d-flex gap-2 mb-2">
+              <input class="form-control" [(ngModel)]="e.name" placeholder="Charge Name" />
+              <input class="form-control" type="number" [(ngModel)]="e.amount" placeholder="Amount" />
+              <button class="btn btn-outline-danger btn-sm" (click)="removeExtraCharge(i)">✕</button>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" (click)="addExtraCharge()">+ Add Extra Charge</button>
+          </div>
+
+          <ng-template #noStruct>
+            <div class="text-secondary">Select a class to load fee structure.</div>
+          </ng-template>
+        </div>
+
+        <!-- Students List -->
+        <div class="col-md-6">
+          <h6>Students</h6>
+          <div *ngIf="students.length; else noStudents">
+            <table class="table table-striped table-sm">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Class</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let s of students">
+                  <td>
+                   <input
+                       type="checkbox"
+                       (change)="toggleStudentSelection(s)"
+                       [checked]="isStudentSelected(s)"/>
+
+                  </td>
+                  <td>{{ s.name }}</td>
+                  <td>{{ s.className }} - {{ s.section }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" (click)="generateInvoices(s)">
+                      Generate Single
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <button
+              class="btn btn-success mt-2"
+              (click)="generateInvoices()"
+              [disabled]="!selectedStudents.length"
+            >
+              Generate for Selected ({{ selectedStudents.length }})
+            </button>
+          </div>
+
+          <ng-template #noStudents>
+            <div class="text-secondary mt-2">No students found. Adjust filters above.</div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

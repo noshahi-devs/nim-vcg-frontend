@@ -1,0 +1,195 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <!-- Stats Cards -->
+  <div class="row row-cols-xxxl-4 row-cols-lg-2 row-cols-sm-2 row-cols-1 gy-4 mb-24" *ngIf="dashboardData">
+    <div class="col">
+      <div class="card shadow-none border bg-gradient-start-4 h-100">
+        <div class="card-body p-20">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+              <p class="fw-medium text-primary-light mb-1">Total Income</p>
+              <h6 class="mb-0">{{ formatCurrency(dashboardData.totalIncome) }}</h6>
+            </div>
+            <div class="w-50-px h-50-px bg-success-main rounded-circle d-flex justify-content-center align-items-center">
+              <iconify-icon icon="mdi:cash-plus" class="text-white text-2xl mb-0"></iconify-icon>
+            </div>
+          </div>
+          <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
+            <span class="d-inline-flex align-items-center gap-1 text-success-main">
+              <iconify-icon icon="bxs:up-arrow" class="text-xs"></iconify-icon>
+              Revenue
+            </span>
+            All income sources
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card shadow-none border bg-gradient-start-5 h-100">
+        <div class="card-body p-20">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+              <p class="fw-medium text-primary-light mb-1">Total Expenses</p>
+              <h6 class="mb-0">{{ formatCurrency(dashboardData.totalExpenses) }}</h6>
+            </div>
+            <div class="w-50-px h-50-px bg-red rounded-circle d-flex justify-content-center align-items-center">
+              <iconify-icon icon="mdi:cash-minus" class="text-white text-2xl mb-0"></iconify-icon>
+            </div>
+          </div>
+          <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
+            <span class="d-inline-flex align-items-center gap-1 text-danger-main">
+              <iconify-icon icon="bxs:up-arrow" class="text-xs"></iconify-icon>
+              Outgoing
+            </span>
+            All expense categories
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card shadow-none border h-100" [ngClass]="dashboardData.profitLoss >= 0 ? 'bg-gradient-start-1' : 'bg-gradient-start-5'">
+        <div class="card-body p-20">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+              <p class="fw-medium text-primary-light mb-1">Profit / Loss</p>
+              <h6 class="mb-0" [ngClass]="dashboardData.profitLoss >= 0 ? 'text-success-main' : 'text-danger-main'">
+                {{ formatCurrency(dashboardData.profitLoss) }}
+              </h6>
+            </div>
+            <div class="w-50-px h-50-px rounded-circle d-flex justify-content-center align-items-center"
+                 [ngClass]="dashboardData.profitLoss >= 0 ? 'bg-success-main' : 'bg-red'">
+              <iconify-icon [icon]="dashboardData.profitLoss >= 0 ? 'mdi:trending-up' : 'mdi:trending-down'" 
+                            class="text-white text-2xl mb-0"></iconify-icon>
+            </div>
+          </div>
+          <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
+            <span class="d-inline-flex align-items-center gap-1" 
+                  [ngClass]="dashboardData.profitLoss >= 0 ? 'text-success-main' : 'text-danger-main'">
+              {{ dashboardData.profitLoss >= 0 ? 'Profit' : 'Loss' }}
+            </span>
+            Net financial status
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card shadow-none border bg-gradient-start-3 h-100">
+        <div class="card-body p-20">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+              <p class="fw-medium text-primary-light mb-1">Cash / Bank Balance</p>
+              <h6 class="mb-0">{{ formatCurrency(dashboardData.cashBankBalance) }}</h6>
+            </div>
+            <div class="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
+              <iconify-icon icon="mdi:bank" class="text-white text-2xl mb-0"></iconify-icon>
+            </div>
+          </div>
+          <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
+            <span class="d-inline-flex align-items-center gap-1 text-info-main">
+              Available
+            </span>
+            Current balance
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="row gy-4 mb-24" *ngIf="dashboardData">
+    <div class="col-12">
+      <div class="card h-100 p-0 radius-12">
+        <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+          <h6 class="text-lg fw-semibold mb-0">Monthly Income vs Expenses</h6>
+          <div class="d-flex align-items-center gap-2">
+            <button type="button" (click)="loadDashboardData()" class="btn btn-outline-primary text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
+              <iconify-icon icon="solar:refresh-linear" class="icon text-xl"></iconify-icon>
+              Refresh
+            </button>
+            <button type="button" (click)="exportData()" class="btn btn-outline-success text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
+              <iconify-icon icon="solar:export-linear" class="icon text-xl"></iconify-icon>
+              Export
+            </button>
+          </div>
+        </div>
+        <div class="card-body p-24">
+          <apx-chart
+            [series]="chartOptions.series"
+            [chart]="chartOptions.chart"
+            [plotOptions]="chartOptions.plotOptions"
+            [dataLabels]="chartOptions.dataLabels"
+            [stroke]="chartOptions.stroke"
+            [xaxis]="chartOptions.xaxis"
+            [yaxis]="chartOptions.yaxis"
+            [fill]="chartOptions.fill"
+            [colors]="chartOptions.colors"
+            [legend]="chartOptions.legend"
+            [grid]="chartOptions.grid"
+          ></apx-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions Table -->
+  <div class="card h-100 p-0 radius-12" *ngIf="dashboardData">
+    <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+      <h6 class="text-lg fw-semibold mb-0">Recent Transactions</h6>
+      <a routerLink="/accounts-ledger" class="btn btn-primary text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
+        <iconify-icon icon="solar:list-bold" class="icon text-xl"></iconify-icon>
+        View All
+      </a>
+    </div>
+
+    <div class="card-body p-24">
+      <div class="table-responsive scroll-sm">
+        <table class="table bordered-table sm-table mb-0">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Transaction ID</th>
+              <th scope="col">Type</th>
+              <th scope="col">Description</th>
+              <th scope="col" class="text-end">Amount</th>
+              <th scope="col" class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transaction of dashboardData.recentTransactions">
+              <td>{{ transaction.date }}</td>
+              <td><span class="fw-medium">{{ transaction.transactionId }}</span></td>
+              <td>
+                <span [ngClass]="getStatusClass(transaction.type)">{{ transaction.type }}</span>
+              </td>
+              <td>{{ transaction.description }}</td>
+              <td class="text-end fw-bold" [ngClass]="transaction.type === 'Income' ? 'text-success-main' : 'text-danger-main'">
+                {{ formatCurrency(transaction.type === 'Income' ? transaction.credit : transaction.debit) }}
+              </td>
+              <td class="text-center">
+                <button type="button" (click)="viewTransaction(transaction)" 
+                        class="bg-info-focus text-info-600 bg-hover-info-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" 
+                        title="View Details">
+                  <iconify-icon icon="solar:eye-linear" class="icon text-xl"></iconify-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="dashboardData.recentTransactions.length === 0">
+              <td colspan="6" class="text-center py-24 text-secondary-light">No transactions found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="!dashboardData" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>

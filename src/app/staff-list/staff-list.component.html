@@ -1,0 +1,119 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="card h-100 p-0 radius-12">
+    <!-- Toolbar -->
+    <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+      <div class="d-flex align-items-center flex-wrap gap-3">
+        <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
+        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
+          <option>10</option>
+          <option>25</option>
+          <option>50</option>
+        </select>
+        <form class="navbar-search">
+          <input
+            type="text"
+            class="bg-base h-40-px w-auto"
+            name="search"
+            [(ngModel)]="searchTerm"
+            placeholder="Search"
+          />
+          <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+        </form>
+      </div>
+
+      <a
+        routerLink="/staff-add"
+        class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2"
+      >
+        <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+        Add New Staff
+      </a>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body p-24">
+      <div class="row gy-4">
+        <div
+          class="col-xxl-2 col-lg-3 col-md-4 col-sm-6 user-grid-card"
+          *ngFor="let staff of filteredStaffList"
+        >
+          <div class="position-relative border radius-16 overflow-hidden">
+            <!-- Dropdown -->
+            <div
+              class="dropdown position-absolute top-0 end-0 me-8 mt-8"
+              style="z-index: 10;"
+            >
+              <button
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                class="bg-white w-28-px h-28-px radius-6 border d-flex justify-content-center align-items-center shadow-sm"
+              >
+                <iconify-icon icon="entypo:dots-three-vertical" class="icon text-lg"></iconify-icon>
+              </button>
+              <ul class="dropdown-menu p-12 border bg-base shadow">
+                <li>
+                  <a
+                    class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900 d-flex align-items-center gap-10"
+                    [routerLink]="['/staff-view-profile', staff.staffId]"
+                  >
+                    <iconify-icon icon="mdi:eye-outline" class="icon"></iconify-icon>
+                    View
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900 d-flex align-items-center gap-10"
+                    [routerLink]="['/staff-edit-profile', staff.staffId]"
+                  >
+                    <iconify-icon icon="mdi:pencil-outline" class="icon"></iconify-icon>
+                    Edit
+                  </a>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    (click)="deleteStaff(staff.staffId)"
+                    class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-danger-100 text-hover-danger-600 d-flex align-items-center gap-10"
+                  >
+                    <iconify-icon icon="mdi:delete-outline" class="icon"></iconify-icon>
+                    Delete
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Staff Info -->
+            <div class="p-16 text-center">
+            <img 
+            [src]="staff.profile || defaultImage" alt=""
+                   class="border border-width-2-px w-70-px h-70-px rounded-circle object-fit-cover mb-12">
+
+              <h6 class="text-sm mb-4 fw-semibold text-neutral-900 line-clamp-1">
+                {{ staff.staffName }}
+              </h6>
+              <span class="text-secondary-light text-xs d-block mb-8">
+                {{ staff.department?.departmentName || staff.designation }}
+              </span>
+
+              <a
+                [routerLink]="['/staff-view-profile', staff.staffId]"
+                class="bg-primary-50 text-primary-600 bg-hover-primary-600 hover-text-white text-xs btn-sm px-12 py-6 radius-6 d-flex align-items-center justify-content-center fw-medium gap-1 w-100"
+              >
+                View Details
+                <iconify-icon icon="solar:alt-arrow-right-linear" class="icon text-lg line-height-1"></iconify-icon>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="loading" class="text-center text-muted mt-3">
+        <div class="spinner-border text-primary"></div>
+        <p>Loading staff...</p>
+      </div>
+    </div>
+  </div>
+</div>

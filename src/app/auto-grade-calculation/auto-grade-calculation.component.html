@@ -1,0 +1,262 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <!-- Info Card -->
+  <div class="card radius-12 mb-24 bg-info-50">
+    <div class="card-body p-24">
+      <div class="d-flex align-items-start gap-3">
+        <iconify-icon icon="mdi:information-outline" class="text-info-600 text-2xl"></iconify-icon>
+        <div>
+          <h6 class="text-md fw-semibold mb-2">About Grade Scale Management</h6>
+          <p class="text-sm text-secondary-light mb-0">
+            Define custom grading scales that will be automatically applied when entering marks. 
+            The system will calculate grades based on percentage ranges you define here.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="card radius-12 mb-24">
+    <div class="card-body p-24">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <button type="button" (click)="openAddDialog()" 
+                  class="btn btn-primary-600 radius-8 px-20 py-11 d-flex align-items-center gap-2">
+            <iconify-icon icon="ic:baseline-plus" class="text-xl"></iconify-icon>
+            Add Grade Scale
+          </button>
+          
+          <button type="button" (click)="refreshData()" 
+                  class="btn btn-outline-primary-600 radius-8 px-20 py-11 d-flex align-items-center gap-2">
+            <iconify-icon icon="mdi:refresh" class="text-xl"></iconify-icon>
+            Refresh
+          </button>
+        </div>
+
+        <div class="navbar-search">
+          <input type="text" 
+                 class="bg-base h-40-px" 
+                 [(ngModel)]="searchTerm" 
+                 (input)="searchGradeScales()" 
+                 placeholder="Search Grade..." />
+          <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Card -->
+  <div class="card h-100 p-0 radius-12">
+    <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
+      <h6 class="text-lg fw-semibold mb-0">Grade Scales</h6>
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-md fw-medium text-secondary-light">Show</span>
+        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" 
+                [(ngModel)]="rowsPerPage" 
+                (change)="currentPage = 1; updatePagination()">
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+          <option [value]="50">50</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card-body p-24">
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div *ngIf="!loading" class="table-responsive scroll-sm">
+        <table class="table bordered-table sm-table mb-0">
+          <thead>
+            <tr>
+              <th scope="col">S.L</th>
+              <th scope="col">Grade</th>
+              <th scope="col">Percentage Range</th>
+              <th scope="col">Grade Point</th>
+              <th scope="col">Remarks</th>
+              <th scope="col" class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let gradeScale of paginatedGradeScales; let i = index">
+              <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
+              <td>
+                <span class="px-12 py-4 radius-4 fw-medium text-sm"
+                      [ngClass]="getGradeBadgeClass(gradeScale.grade)">
+                  {{ gradeScale.grade }}
+                </span>
+              </td>
+              <td>
+                <span class="fw-semibold">{{ gradeScale.minPercentage }}% - {{ gradeScale.maxPercentage }}%</span>
+              </td>
+              <td>
+                <span class="badge bg-neutral-200 text-neutral-600 px-12 py-4 radius-4 fw-medium text-sm">
+                  {{ gradeScale.gradePoint }}
+                </span>
+              </td>
+              <td>{{ gradeScale.remarks || '-' }}</td>
+              <td class="text-center">
+                <div class="d-flex align-items-center gap-10 justify-content-center">
+                  <button type="button" (click)="openViewDialog(gradeScale)"
+                          class="bg-info-focus text-info-600 bg-hover-info-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                    <iconify-icon icon="iconamoon:eye-light" class="icon text-xl"></iconify-icon>
+                  </button>
+                  <button type="button" (click)="openEditDialog(gradeScale)"
+                          class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                  </button>
+                  <button type="button" (click)="deleteGradeScale(gradeScale)"
+                          class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                    <iconify-icon icon="mingcute:delete-2-line" class="menu-icon"></iconify-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="paginatedGradeScales.length === 0">
+              <td colspan="6" class="text-center py-4">
+                <p class="text-secondary-light mb-0">No grade scales found</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="!loading && filteredGradeScales.length > 0" class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
+        <span class="text-secondary-light text-sm">
+          Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to 
+          {{ Math.min(currentPage * rowsPerPage, filteredGradeScales.length) }} of 
+          {{ filteredGradeScales.length }} entries
+        </span>
+        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
+          <li class="page-item">
+            <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+               [class.disabled]="currentPage === 1"
+               (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-left" class=""></iconify-icon>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let p = index">
+            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+               [class.bg-primary-600]="currentPage === p + 1"
+               [class.text-white]="currentPage === p + 1"
+               [class.bg-neutral-300]="currentPage !== p + 1"
+               [class.text-secondary-light]="currentPage !== p + 1"
+               (click)="changePage(p + 1)" href="javascript:void(0)">
+              {{ p + 1 }}
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link bg-neutral-300 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+               [class.disabled]="currentPage === totalPages"
+               (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-right" class=""></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Dialog -->
+<div *ngIf="showAddEditDialog" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ isEditMode ? 'Edit Grade Scale' : 'Add New Grade Scale' }}</h5>
+        <button type="button" class="btn-close" (click)="closeDialog()"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="row gy-3">
+            <div class="col-md-6">
+              <label class="form-label">Grade <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" [(ngModel)]="gradeScaleForm.grade" name="grade" 
+                     placeholder="e.g., A+, A, B" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Grade Point</label>
+              <input type="number" class="form-control" [(ngModel)]="gradeScaleForm.gradePoint" name="gradePoint" 
+                     placeholder="e.g., 4.0" step="0.1" min="0" max="5" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Min Percentage <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" [(ngModel)]="gradeScaleForm.minPercentage" name="minPercentage" 
+                     placeholder="e.g., 90" min="0" max="100" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Max Percentage <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" [(ngModel)]="gradeScaleForm.maxPercentage" name="maxPercentage" 
+                     placeholder="e.g., 100" min="0" max="100" required />
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Remarks</label>
+              <input type="text" class="form-control" [(ngModel)]="gradeScaleForm.remarks" name="remarks" 
+                     placeholder="e.g., Outstanding, Excellent" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDialog()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveGradeScale()">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Dialog -->
+<div *ngIf="showViewDialog && selectedGradeScale" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Grade Scale Details</h5>
+        <button type="button" class="btn-close" (click)="closeDialog()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row gy-3">
+          <div class="col-md-6">
+            <p class="mb-1 text-secondary-light">Grade</p>
+            <h6 class="mb-0">
+              <span class="px-12 py-4 radius-4 fw-medium text-sm"
+                    [ngClass]="getGradeBadgeClass(selectedGradeScale.grade)">
+                {{ selectedGradeScale.grade }}
+              </span>
+            </h6>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1 text-secondary-light">Grade Point</p>
+            <h6 class="mb-0">{{ selectedGradeScale.gradePoint }}</h6>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1 text-secondary-light">Min Percentage</p>
+            <h6 class="mb-0">{{ selectedGradeScale.minPercentage }}%</h6>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1 text-secondary-light">Max Percentage</p>
+            <h6 class="mb-0">{{ selectedGradeScale.maxPercentage }}%</h6>
+          </div>
+          <div class="col-12">
+            <p class="mb-1 text-secondary-light">Remarks</p>
+            <p class="mb-0">{{ selectedGradeScale.remarks || 'No remarks' }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDialog()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

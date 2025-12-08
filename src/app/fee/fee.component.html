@@ -1,0 +1,122 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="card radius-12 mb-24">
+    <div class="card-body p-24">
+      <!-- 🔍 Filters -->
+      <div class="row g-3 align-items-end mb-3">
+        <div class="col-md-3">
+          <label class="form-label">Class</label>
+          <select class="form-select" [(ngModel)]="selectedClass" (change)="filterStudents()">
+            <option value="">Select Class</option>
+            <option *ngFor="let c of classes" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Section</label>
+          <select class="form-select" [(ngModel)]="selectedSection" (change)="filterStudents()">
+            <option value="">Select Section</option>
+            <option *ngFor="let s of sections" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Search Student</label>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by name"
+            [(ngModel)]="searchTerm"
+            (input)="filterStudents()"
+          />
+        </div>
+      </div>
+
+      <!-- 🧍 Student List -->
+      <div class="table-responsive mb-4" *ngIf="filteredStudents.length">
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Class</th>
+              <th>Section</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of filteredStudents">
+              <td>{{ student.name }}</td>
+              <td>{{ student.class }}</td>
+              <td>{{ student.section }}</td>
+              <td>
+                <button class="btn btn-primary btn-sm" (click)="selectStudent(student)">
+                  Select
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 💰 Fee Form -->
+      <div *ngIf="selectedStudent" class="mt-4">
+        <h5 class="mb-3">
+          Fee Entry for: <strong>{{ selectedStudent.name }}</strong> ({{ selectedStudent.class }}
+          - {{ selectedStudent.section }})
+        </h5>
+
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">Month</label>
+            <input type="month" class="form-control" [(ngModel)]="feeMonth" />
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Payment Type</label>
+            <select class="form-select" [(ngModel)]="paymentType">
+              <option value="Full">Full</option>
+              <option value="Installment">Installment</option>
+              <option value="Half">Half</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Total Fee (with funds)</label>
+            <input
+              type="number"
+              class="form-control"
+              [value]="
+                selectedFeeStructure
+                  ? selectedFeeStructure.totalFee + selectedFeeStructure.funds
+                  : 0
+              "
+              readonly
+            />
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Paid Amount</label>
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="paidAmount"
+              (input)="updateRemaining()"
+              min="0"
+            />
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Remaining Fee</label>
+            <input type="number" class="form-control" [value]="remainingFee" readonly />
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <button class="btn btn-success me-2" (click)="saveFee()">Submit Fee</button>
+          <button class="btn btn-secondary" (click)="resetForm()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

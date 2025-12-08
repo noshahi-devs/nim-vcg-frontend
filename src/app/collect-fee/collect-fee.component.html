@@ -1,0 +1,66 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+          <label>Search (name, invoice no)</label>
+          <input class="form-control" [(ngModel)]="search" placeholder="search" />
+        </div>
+
+        <div class="col-md-8 text-end">
+          <button class="btn btn-outline-secondary" (click)="loadInvoices()">Reload Invoices</button>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-7">
+          <h6>Pending / All Invoices</h6>
+          <table class="table table-sm">
+            <thead><tr><th>#</th><th>Invoice</th><th>Student</th><th>Month</th><th>Total</th><th>Balance</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let inv of invoices">
+                <td>{{inv.id}}</td>
+                <td>{{inv.invoiceNo}}</td>
+                <td>{{inv.studentName}}</td>
+                <td>{{inv.month}}</td>
+                <td>{{inv.totalFee | number}}</td>
+                <td>{{inv.balance | number}}</td>
+                <td><button class="btn btn-sm btn-primary" (click)="selectInvoice(inv)">Collect</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-md-5">
+          <h6>Collect Payment</h6>
+          <div *ngIf="selectedInvoice; else noSel">
+            <p><strong>{{selectedInvoice.invoiceNo}}</strong> — {{selectedInvoice.studentName}}</p>
+            <p>Total: {{selectedInvoice.totalFee | number}}</p>
+            <p>Paid: {{selectedInvoice.paidAmount | number}}</p>
+            <p>Balance: {{selectedInvoice.balance | number}}</p>
+
+            <label>Payment Amount</label>
+            <input type="number" class="form-control mb-2" [(ngModel)]="paymentAmount" />
+
+            <label>Method</label>
+            <select class="form-select mb-2" [(ngModel)]="paymentMethod">
+              <option>Cash</option>
+              <option>Bank</option>
+              <option>Online</option>
+            </select>
+
+            <div class="d-flex gap-2">
+              <button class="btn btn-success" (click)="collectPayment()">Collect Fee & Print Slip</button>
+              <button class="btn btn-secondary" (click)="selectedInvoice = undefined">Cancel</button>
+            </div>
+          </div>
+          <ng-template #noSel>
+            <div class="text-secondary">Select an invoice from the left to collect payment.</div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

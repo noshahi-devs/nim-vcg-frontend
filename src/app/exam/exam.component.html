@@ -1,0 +1,54 @@
+<!-- ADD BUTTON -->
+<button class="btn-add" (click)="openPopup()">+ Add Exam Type</button>
+
+<br /><br />
+
+<!-- POPUP -->
+<div class="popup-overlay" *ngIf="showPopup">
+  <div class="popup">
+    
+    <h3>Create Exam Type</h3>
+
+    <form [formGroup]="form" (ngSubmit)="SaveExamType()">
+
+      <label>Exam Type Name:</label>
+      <input 
+        type="text" 
+        formControlName="examTypeName" 
+        placeholder="Enter exam type"
+        class="popup-input"
+      />
+
+      <!-- VALIDATION FIXED -->
+      <span class="text-danger small" *ngIf="examTypeNameField?.invalid && examTypeNameField?.touched">
+        Exam type name is required
+      </span>
+
+      <br />
+
+      <button type="submit" class="btn-save" [disabled]="form.invalid">Save</button>
+      <button type="button" class="btn-cancel" (click)="closePopup()">Cancel</button>
+
+    </form>
+  </div>
+</div>
+
+<!-- TABLE -->
+<table class="exam-table" *ngIf="examTypes.length > 0">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Exam Type Name</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let item of examTypes">
+      <td>{{ item.examTypeId }}</td>
+      <td>{{ item.examTypeName }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- If no data -->
+<p *ngIf="examTypes.length === 0">No exam types found.</p>

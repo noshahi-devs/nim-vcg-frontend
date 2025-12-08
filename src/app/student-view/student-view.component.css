@@ -1,0 +1,338 @@
+/* Profile Header Styling */
+.profile-header-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-header-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+  background-size: cover;
+  opacity: 0.3;
+}
+
+.profile-image-wrapper img {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-image-wrapper:hover img {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Icon Box Styling */
+.icon-box {
+  transition: all 0.3s ease;
+}
+
+.icon-box:hover {
+  transform: translateY(-2px);
+}
+
+/* Info List Styling */
+.info-list .info-item {
+  transition: background-color 0.2s ease;
+}
+
+.info-list .info-item:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  padding-left: 8px;
+}
+
+.info-list .info-item:last-child {
+  border-bottom: none !important;
+}
+
+/* Info Grid Field Styling */
+.info-grid .info-item {
+  transition: background-color 0.2s ease;
+  min-height: 70px;
+}
+
+.info-grid .info-item:hover {
+  background-color: rgba(102, 126, 234, 0.03);
+}
+
+.info-grid .field-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+}
+
+.info-grid .field-value {
+  font-size: 0.95rem;
+  color: #212529;
+  word-break: break-word;
+}
+
+/* Card Hover Effects */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Button Styling */
+.btn {
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Badge Styling */
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive Adjustments */
+
+/* Mobile Devices (Portrait) - 320px to 575px */
+@media (max-width: 575px) {
+  .profile-header-bg {
+    height: 120px !important;
+  }
+  
+  .profile-image-wrapper {
+    margin-bottom: -35px !important;
+  }
+  
+  .profile-image-wrapper img {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  
+  .profile-image-wrapper .badge {
+    padding: 4px 8px !important;
+    font-size: 9px !important;
+  }
+  
+  .card-body {
+    padding: 1rem !important;
+    padding-top: 45px !important;
+  }
+  
+  .ms-4 {
+    margin-left: 0.75rem !important;
+  }
+  
+  .ms-4 h3 {
+    font-size: 1.25rem !important;
+  }
+  
+  .ms-4 .badge {
+    font-size: 0.7rem !important;
+    padding: 4px 8px !important;
+  }
+  
+  .ms-4 .text-white-50 {
+    font-size: 0.7rem !important;
+  }
+  
+  /* Quick Info Boxes - Stack Vertically */
+  .icon-box {
+    padding: 0.5rem !important;
+  }
+  
+  .icon-box iconify-icon {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Info Grid - Full Width Fields */
+  .info-grid .col-md-6 {
+    width: 100% !important;
+  }
+  
+  .info-grid .border-end {
+    border-right: none !important;
+  }
+  
+  .info-grid .info-item {
+    padding: 0.75rem 1rem !important;
+    min-height: 60px;
+  }
+  
+  .info-grid .field-label {
+    font-size: 0.7rem !important;
+  }
+  
+  .info-grid .field-value {
+    font-size: 0.85rem !important;
+  }
+  
+  /* Buttons */
+  .btn {
+    padding: 0.5rem 1.5rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  /* Staff Information Title */
+  h5.fw-semibold {
+    font-size: 1rem !important;
+  }
+}
+
+/* Mobile Devices (Landscape) & Small Tablets - 576px to 767px */
+@media (min-width: 576px) and (max-width: 767px) {
+  .profile-header-bg {
+    height: 140px !important;
+  }
+  
+  .profile-image-wrapper {
+    margin-bottom: -40px !important;
+  }
+  
+  .profile-image-wrapper img {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  
+  .card-body {
+    padding-top: 50px !important;
+  }
+  
+  /* Info Grid - Full Width Fields */
+  .info-grid .col-md-6 {
+    width: 100% !important;
+  }
+  
+  .info-grid .border-end {
+    border-right: none !important;
+  }
+  
+  .info-grid .info-item {
+    min-height: 65px;
+  }
+}
+
+/* Tablets - 768px to 991px */
+@media (min-width: 768px) and (max-width: 991px) {
+  .profile-header-bg {
+    height: 160px !important;
+  }
+  
+  .profile-image-wrapper {
+    margin-bottom: -45px !important;
+  }
+  
+  .profile-image-wrapper img {
+    width: 120px !important;
+    height: 120px !important;
+  }
+  
+  .card-body {
+    padding-top: 55px !important;
+  }
+  
+  /* Info Grid - 2 Columns */
+  .info-grid .info-item {
+    min-height: 68px;
+  }
+  
+  .info-grid .field-value {
+    font-size: 0.9rem;
+  }
+}
+
+/* Large Tablets & Small Desktops - 992px to 1199px */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .profile-header-bg {
+    height: 170px !important;
+  }
+  
+  .container-fluid {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Extra Large Screens - 1200px and above */
+@media (min-width: 1200px) {
+  .container-fluid {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
+
+/* Smooth Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* Icon Styling */
+iconify-icon {
+  vertical-align: middle;
+  transition: transform 0.2s ease;
+}
+
+.info-item:hover iconify-icon {
+  transform: scale(1.1);
+}
+
+/* Text Truncate for Long Content */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Ensure proper spacing on all devices */
+.row.g-3 {
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+}
+
+.row.g-3 > * {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+/* Prevent horizontal scroll */
+body, html {
+  overflow-x: hidden;
+}
+
+.dashboard-main-body {
+  overflow-x: hidden;
+}

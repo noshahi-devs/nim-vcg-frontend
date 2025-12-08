@@ -1,0 +1,179 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="container-fluid py-4">
+    <!-- Profile Header Card -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden">
+      <div class="profile-header-bg position-relative" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 180px;">
+        <div class="position-absolute bottom-0 start-0 w-100 px-4 pb-3">
+          <div class="d-flex align-items-end">
+            <div class="profile-image-wrapper position-relative">
+              <img
+                [src]="studentData?.profile || 'assets/images/user-grid/user-grid-img1.png'"
+                [alt]="studentData?.name"
+                class="rounded-circle border border-4 border-white shadow-lg object-fit-cover my-8 mx-16"
+                width="140"
+                height="140"
+              />
+              <span 
+                class="position-absolute bottom-0 end-0 badge rounded-pill"
+                [ngClass]="{
+                  'bg-success': studentData?.status === 'active',
+                  'bg-danger': studentData?.status === 'inactive'
+                }"
+                style="padding: 8px 12px; font-size: 11px;">
+                {{ studentData?.status }}
+              </span>
+            </div>
+            <div class="ms-24 mb-2 text-white">
+              <h3 class="fw-bold mb-1">{{ studentData?.name }}</h3>
+              <div class="d-flex align-items-center gap-28">
+                <span class="badge bg-white bg-opacity-0 text-black px-8 py-2">
+                  <iconify-icon icon="solar:case-bold-duotone" class="me-1"></iconify-icon>
+                  Roll No: {{ studentData?.rollNo }}
+                </span>
+                <span class="text-white-50 small">
+                  <iconify-icon icon="solar:calendar-bold-duotone" class="me-1"></iconify-icon>
+                  Joined {{ studentData?.admissionDate }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="card-body" style="padding-top: 60px;">
+        <div class="row g-3 mb-24">
+          <div class="col-md-4">
+            <div class="d-flex align-items-center">
+              <div class="icon-box bg-primary bg-opacity-10 rounded-3 p-3 me-3">
+                <iconify-icon icon="solar:letter-bold-duotone" class="text-primary fs-4"></iconify-icon>
+              </div>
+              <div>
+                <p class="text-muted small mb-0">Guardian Name</p>
+                <p class="fw-semibold mb-2">{{ studentData?.guardianName }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex align-items-center">
+              <div class="icon-box bg-success bg-opacity-10 rounded-3 p-3 me-3">
+                <iconify-icon icon="solar:phone-bold-duotone" class="text-success fs-4"></iconify-icon>
+              </div>
+              <div>
+                <p class="text-muted small mb-0">Guardian Phone</p>
+                <p class="fw-semibold mb-0">{{ studentData?.guardianPhone }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex align-items-center">
+              <div class="icon-box bg-info bg-opacity-10 rounded-3 p-3 me-3">
+                <iconify-icon icon="solar:diploma-bold-duotone" class="text-info fs-4"></iconify-icon>
+              </div>
+              <div>
+                <p class="text-muted small mb-0">Previous School</p>
+                <p class="fw-semibold mb-0">{{ studentData?.previousSchool }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Information Grid -->
+        <div class="border-top pt-24">
+          <h5 class="fw-semibold mb-4 d-flex align-items-center">
+            <iconify-icon icon="solar:user-id-bold-duotone" class="me-2 text-primary fs-5"></iconify-icon>
+            Student Information
+          </h5>
+
+          <div class="info-grid">
+            <div class="row g-0">
+              <!-- Row 1 -->
+              <div class="col-md-6">
+                <div class="info-item py-3 px-4 border-bottom border-end">
+                  <div class="field-label text-muted small mb-1">Full Name</div>
+                  <div class="field-value fw-semibold text-dark">{{ studentData?.name }}</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-item py-3 px-4 border-bottom">
+                  <div class="field-label text-muted small mb-1">Roll Number</div>
+                  <div class="field-value fw-semibold text-dark">{{ studentData?.rollNo }}</div>
+                </div>
+              </div>
+
+              <!-- Row 2 -->
+              <div class="col-md-6">
+                <div class="info-item py-3 px-4 border-bottom border-end">
+                  <div class="field-label text-muted small mb-1">Class</div>
+                  <div class="field-value fw-semibold text-dark">{{ studentData?.class }}</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-item py-3 px-4 border-bottom">
+                  <div class="field-label text-muted small mb-1">Section</div>
+                  <div class="field-value fw-semibold text-dark">{{ studentData?.section }}</div>
+                </div>
+              </div>
+
+              <!-- Row 3 -->
+              <div class="col-md-6">
+                <div class="info-item py-3 px-4 border-bottom border-end">
+                  <div class="field-label text-muted small mb-1">Gender</div>
+                  <div class="field-value fw-semibold text-dark">{{ studentData?.gender }}</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-item py-3 px-4 border-bottom">
+                  <div class="field-label text-muted small mb-1">Date of Birth</div>
+                  <div class="field-value fw-semibold text-dark">{{ studentData?.dob }}</div>
+                </div>
+              </div>
+
+              <!-- Row 4 -->
+              <div class="col-md-6">
+                <div class="info-item py-3 px-4 border-bottom border-end">
+                  <div class="field-label text-muted small mb-1">Phone Number</div>
+                  <div class="field-value fw-semibold text-dark">{{ studentData?.phone }}</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-item py-3 px-4 border-bottom">
+                  <div class="field-label text-muted small mb-1">Address</div>
+                  <div class="field-value fw-semibold text-dark">{{ studentData?.address }}</div>
+                </div>
+              </div>
+
+              <!-- Row 5 -->
+              <div class="col-md-6">
+                <div class="info-item py-3 px-4 border-end">
+                  <div class="field-label text-muted small mb-1">Admission Date</div>
+                  <div class="field-value fw-semibold text-dark">{{ studentData?.admissionDate }}</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-item py-3 px-4">
+                  <div class="field-label text-muted small mb-1">Status</div>
+                  <div class="field-value fw-semibold text-dark text-capitalize">{{ studentData?.status }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-center gap-3 mt-3">
+      <button (click)="goBack()" class="btn btn-outline-secondary px-5 py-2 rounded-3">
+        <iconify-icon icon="solar:arrow-left-linear" class="me-2"></iconify-icon>
+        Back to List
+      </button>
+      <button (click)="editstudent(studentData?.id)" class="btn btn-primary px-5 py-2 rounded-3">
+        <iconify-icon icon="solar:pen-bold-duotone" class="me-2"></iconify-icon>
+        Edit Profile
+      </button>
+    </div>
+  </div>
+</div>

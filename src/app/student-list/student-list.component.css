@@ -1,0 +1,12 @@
+.user-grid-card .dropdown-menu {
+  position: absolute !important;
+  right: 0 !important;
+  top: 35px !important;
+  z-index: 9999 !important;
+}
+
+.user-grid-card .dropdown {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}

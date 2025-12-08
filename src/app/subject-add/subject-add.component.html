@@ -1,0 +1,100 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="row justify-content-center">
+    <div class="col-md-10 border-20">
+      <div class="card shadow-sm radius-12 mt-4">
+        <div class="card-header bg-base py-16 px-24 border-bottom text-center">
+          <h5 class="fw-semibold mb-0 text-primary-600">Add Subjects</h5>
+        </div>
+
+        <div class="card-body px-24 py-16">
+          <form #subjectForm="ngForm" (ngSubmit)="onSubmit(subjectForm)" novalidate>
+            
+            <!-- Select Class -->
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Select Class <span class="text-danger">*</span></label>
+             <!-- Replace localStorage select with API-based classes -->
+             <select
+  class="form-select radius-8"
+  name="selectedClassId"
+  [(ngModel)]="selectedClassId"
+  required
+  #classSelect="ngModel"
+  [ngClass]="{ 'is-invalid': classSelect.invalid && classSelect.touched }"
+>
+  <option value="" disabled selected>Select a Class</option>
+  <option *ngFor="let c of classes" [value]="c.standardId">{{ c.standardName }}</option>
+             </select>
+
+              <small *ngIf="classSelect.invalid && classSelect.touched" class="text-danger">
+                Please select a class
+              </small>
+            </div>
+
+            <!-- Dynamic Subject Fields -->
+            <div class="border border-neutral-200 radius-8 p-3 mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-semibold mb-0">Subjects</h6>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-success radius-8 d-flex align-items-center gap-2"
+                  (click)="addMoreSubject()">
+                  <iconify-icon icon="ic:baseline-plus" class="text-lg"></iconify-icon>
+                  Add More
+                </button>
+              </div>
+
+              <div *ngFor="let subject of subjects; let i = index" class="mb-3">
+                <div class="row align-items-end">
+                  <div class="col-md-5">
+                    <label class="form-label fw-semibold">Subject Name <span class="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      class="form-control radius-8"
+                      [(ngModel)]="subject.subjectName"
+                      [name]="'subjectName_' + i"
+                      placeholder="e.g., Mathematics"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-5">
+                    <label class="form-label fw-semibold">Subject Code <span class="text-danger">*</span></label>
+                    <input
+                      type="number"
+                      class="form-control radius-8"
+                      [(ngModel)]="subject.subjectCode"
+                      [name]="'marks_' + i"
+                      placeholder=" 400"
+                      min="1"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-2 py-16">
+                    <button
+                      type="button"
+                      class="btn btn-danger w-100 radius-8 d-flex align-items-center justify-content-center gap-2"
+                      (click)="removeSubject(i)"
+                      [disabled]="subjects.length === 1">
+                      <iconify-icon icon="ic:baseline-minus" class="text-lg"></iconify-icon>
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-center gap-3 mt-4">
+              <button
+                type="submit"
+                class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
+              >
+                Save Subjects
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

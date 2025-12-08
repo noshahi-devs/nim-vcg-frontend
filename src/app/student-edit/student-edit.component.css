@@ -1,0 +1,58 @@
+
+
+/* Mobile Devices (Portrait) - 320px to 575px */
+@media (max-width: 575px) {
+
+  /* Buttons */
+  .d-flex.gap-3 {
+    flex-direction: row !important;
+    gap: 0.75rem !important;
+  }
+  
+  .d-flex.gap-3 button {
+    width: 100%;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.875rem !important;
+  }
+  
+}
+/* Mobile Devices (Landscape) & Small Tablets - 576px to 767px */
+@media (min-width: 576px) and (max-width: 767px) {
+  /* Buttons */
+  .d-flex.gap-3 button {
+    padding: 0.75rem 2rem !important;
+  }
+}
+
+/* Prevent horizontal scroll */
+body,
+html {
+  overflow-x: hidden;
+}
+
+.dashboard-main-body {
+  overflow-x: hidden;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus styles for accessibility */
+.form-control:focus,
+.form-select:focus,
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 767px) {
+  .nav-link,
+  .btn,
+  .form-check-input {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

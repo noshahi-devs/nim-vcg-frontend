@@ -1,0 +1,166 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <!-- Stats Cards -->
+  <div class="row gy-4 mb-24">
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card p-3 shadow-sm radius-12 h-100">
+        <div class="card-body p-16">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-secondary-light fw-medium mb-4 d-block">Total Leaves</span>
+              <h4 class="fw-bold mb-0">{{ totalLeaves }}</h4>
+            </div>
+            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-primary-100">
+              <iconify-icon icon="solar:document-text-bold-duotone" class="text-primary-600 text-xxxl"></iconify-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card p-3 shadow-sm radius-12 h-100">
+        <div class="card-body p-16">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-secondary-light fw-medium mb-4 d-block">Pending</span>
+              <h4 class="fw-bold mb-0">{{ pendingLeaves }}</h4>
+            </div>
+            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-warning-100">
+              <iconify-icon icon="solar:clock-circle-bold-duotone" class="text-warning-600 text-xxxl"></iconify-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card p-3 shadow-sm radius-12 h-100">
+        <div class="card-body p-16">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-secondary-light fw-medium mb-4 d-block">Approved</span>
+              <h4 class="fw-bold mb-0">{{ approvedLeaves }}</h4>
+            </div>
+            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-success-100">
+              <iconify-icon icon="solar:check-circle-bold-duotone" class="text-success-600 text-xxxl"></iconify-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card p-3 shadow-sm radius-12 h-100">
+        <div class="card-body p-16">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <span class="text-secondary-light fw-medium mb-4 d-block">Rejected</span>
+              <h4 class="fw-bold mb-0">{{ rejectedLeaves }}</h4>
+            </div>
+            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-danger-100">
+              <iconify-icon icon="solar:close-circle-bold-duotone" class="text-danger-600 text-xxxl"></iconify-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Leave Applications Table -->
+  <div class="card h-100 p-0 radius-12">
+    <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+      <h6 class="text-lg fw-semibold mb-0">Recent Leave Applications</h6>
+      <div class="d-flex align-items-center gap-2">
+        <button type="button" (click)="refreshData()" class="btn btn-outline-primary text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
+          <iconify-icon icon="solar:refresh-linear" class="icon text-xl"></iconify-icon>
+          Refresh
+        </button>
+        <button type="button" (click)="exportData()" class="btn btn-outline-success text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
+          <iconify-icon icon="solar:export-linear" class="icon text-xl"></iconify-icon>
+          Export
+        </button>
+      </div>
+    </div>
+
+    <div class="card-body p-24">
+      <div class="table-responsive scroll-sm">
+        <table class="table bordered-table sm-table mb-0">
+          <thead>
+            <tr>
+              <th scope="col">S.L</th>
+              <th scope="col">Employee Name</th>
+              <th scope="col">Leave Type</th>
+              <th scope="col">From Date</th>
+              <th scope="col">To Date</th>
+              <th scope="col" class="text-center">Status</th>
+              <th scope="col" class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let leave of paginatedApplications; let i = index">
+              <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="w-40-px h-40-px rounded-circle d-flex justify-content-center align-items-center bg-primary-100 text-primary-600 fw-bold me-12">
+                    {{ leave.employeeName.charAt(0) }}
+                  </div>
+                  <span class="fw-medium">{{ leave.employeeName }}</span>
+                </div>
+              </td>
+              <td><span class="badge bg-primary-50 text-primary-600 px-12 py-4 radius-4 fw-medium text-sm">{{ leave.leaveType }}</span></td>
+              <td>{{ leave.fromDate }}</td>
+              <td>{{ leave.toDate }}</td>
+              <td class="text-center">
+                <span [ngClass]="getStatusClass(leave.status)">{{ leave.status }}</span>
+              </td>
+              <td class="text-center">
+                <button type="button" (click)="viewDetails(leave)" class="bg-info-focus text-info-600 bg-hover-info-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" title="View Details">
+                  <iconify-icon icon="solar:eye-linear" class="icon text-xl"></iconify-icon>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="paginatedApplications.length === 0">
+              <td colspan="7" class="text-center py-24 text-secondary-light">No leave applications found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24" *ngIf="filteredApplications.length > 0">
+        <span>Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to {{ Math.min(currentPage * rowsPerPage, filteredApplications.length) }} of {{ filteredApplications.length }} entries</span>
+        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
+          <li class="page-item">
+            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" 
+               [class.disabled]="currentPage === 1"
+               (click)="changePage(currentPage - 1)" 
+               href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
+            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+               [class.bg-primary-600]="currentPage === i + 1"
+               [class.text-white]="currentPage === i + 1"
+               [class.bg-neutral-200]="currentPage !== i + 1"
+               [class.text-secondary-light]="currentPage !== i + 1"
+               (click)="changePage(i + 1)"
+               href="javascript:void(0)">
+              {{ i + 1 }}
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+               [class.disabled]="currentPage === totalPages"
+               (click)="changePage(currentPage + 1)"
+               href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

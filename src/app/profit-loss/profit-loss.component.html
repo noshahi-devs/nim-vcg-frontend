@@ -1,0 +1,221 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <!-- Filters -->
+  <div class="card h-100 p-0 radius-12 mb-24">
+    <div class="card-header border-bottom bg-base py-16 px-24">
+      <div class="row gy-3 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label fw-semibold mb-2">Start Date *</label>
+          <input type="date" class="form-control" [(ngModel)]="startDate">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold mb-2">End Date *</label>
+          <input type="date" class="form-control" [(ngModel)]="endDate">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold mb-2">Campus</label>
+          <select class="form-select" [(ngModel)]="selectedCampus">
+            <option value="">All Campuses</option>
+            <option *ngFor="let campus of campuses" [value]="campus">{{ campus }}</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <button type="button" (click)="generateReport()" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
+            <iconify-icon icon="solar:document-text-bold" class="icon text-xl"></iconify-icon>
+            Generate Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="report">
+    <!-- Summary Cards -->
+    <div class="row row-cols-xxxl-3 row-cols-lg-3 row-cols-sm-2 row-cols-1 gy-4 mb-24">
+      <div class="col">
+        <div class="card shadow-none border bg-gradient-start-4 h-100">
+          <div class="card-body p-20">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <p class="fw-medium text-primary-light mb-1">Total Income</p>
+                <h4 class="mb-0 text-success-main">{{ formatCurrency(report.totalIncome) }}</h4>
+              </div>
+              <div class="w-50-px h-50-px bg-success-main rounded-circle d-flex justify-content-center align-items-center">
+                <iconify-icon icon="mdi:cash-plus" class="text-white text-2xl mb-0"></iconify-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card shadow-none border bg-gradient-start-5 h-100">
+          <div class="card-body p-20">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <p class="fw-medium text-primary-light mb-1">Total Expenses</p>
+                <h4 class="mb-0 text-danger-main">{{ formatCurrency(report.totalExpenses) }}</h4>
+              </div>
+              <div class="w-50-px h-50-px bg-red rounded-circle d-flex justify-content-center align-items-center">
+                <iconify-icon icon="mdi:cash-minus" class="text-white text-2xl mb-0"></iconify-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card shadow-none border h-100" [ngClass]="report.netProfit >= 0 ? 'bg-gradient-start-1' : 'bg-gradient-start-5'">
+          <div class="card-body p-20">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <p class="fw-medium text-primary-light mb-1">{{ getProfitLossLabel() }}</p>
+                <h4 class="mb-0" [ngClass]="getProfitLossClass()">{{ formatCurrency(Math.abs(report.netProfit)) }}</h4>
+              </div>
+              <div class="w-50-px h-50-px rounded-circle d-flex justify-content-center align-items-center"
+                   [ngClass]="report.netProfit >= 0 ? 'bg-success-main' : 'bg-red'">
+                <iconify-icon [icon]="report.netProfit >= 0 ? 'mdi:trending-up' : 'mdi:trending-down'" 
+                              class="text-white text-2xl mb-0"></iconify-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart and Tables -->
+    <div class="row gy-4 mb-24">
+      <!-- Pie Chart -->
+      <div class="col-lg-5">
+        <div class="card h-100 p-0 radius-12">
+          <div class="card-header border-bottom bg-base py-16 px-24">
+            <h6 class="text-lg fw-semibold mb-0">Income vs Expenses</h6>
+          </div>
+          <div class="card-body p-24">
+            <apx-chart
+              [series]="chartOptions.series"
+              [chart]="chartOptions.chart"
+              [labels]="chartOptions.labels"
+              [colors]="chartOptions.colors"
+              [legend]="chartOptions.legend"
+              [dataLabels]="chartOptions.dataLabels"
+              [responsive]="chartOptions.responsive"
+            ></apx-chart>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Breakdown -->
+      <div class="col-lg-7">
+        <div class="card h-100 p-0 radius-12">
+          <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
+            <h6 class="text-lg fw-semibold mb-0">Category Breakdown</h6>
+            <button type="button" (click)="exportReport()" class="btn btn-outline-success text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
+              <iconify-icon icon="solar:export-linear" class="icon text-xl"></iconify-icon>
+              Export PDF
+            </button>
+          </div>
+          <div class="card-body p-24">
+            <div class="row gy-4">
+              <!-- Income by Category -->
+              <div class="col-12">
+                <h6 class="text-md fw-semibold mb-3 text-success-main">Income by Category</h6>
+                <div class="table-responsive">
+                  <table class="table table-sm mb-0">
+                    <thead>
+                      <tr>
+                        <th>Category</th>
+                        <th class="text-end">Amount</th>
+                        <th class="text-end">%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of report.incomeByCategory">
+                        <td><span class="badge bg-success-focus text-success-600 px-8 py-4 radius-4 fw-medium text-xs">{{ item.category }}</span></td>
+                        <td class="text-end fw-semibold text-success-main">{{ formatCurrency(item.amount) }}</td>
+                        <td class="text-end">{{ ((item.amount / report.totalIncome) * 100).toFixed(1) }}%</td>
+                      </tr>
+                      <tr *ngIf="report.incomeByCategory.length === 0">
+                        <td colspan="3" class="text-center text-secondary-light">No income records</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Expense by Category -->
+              <div class="col-12">
+                <h6 class="text-md fw-semibold mb-3 text-danger-main">Expenses by Category</h6>
+                <div class="table-responsive">
+                  <table class="table table-sm mb-0">
+                    <thead>
+                      <tr>
+                        <th>Category</th>
+                        <th class="text-end">Amount</th>
+                        <th class="text-end">%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of report.expenseByCategory">
+                        <td><span class="badge bg-danger-focus text-danger-600 px-8 py-4 radius-4 fw-medium text-xs">{{ item.category }}</span></td>
+                        <td class="text-end fw-semibold text-danger-main">{{ formatCurrency(item.amount) }}</td>
+                        <td class="text-end">{{ ((item.amount / report.totalExpenses) * 100).toFixed(1) }}%</td>
+                      </tr>
+                      <tr *ngIf="report.expenseByCategory.length === 0">
+                        <td colspan="3" class="text-center text-secondary-light">No expense records</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Summary -->
+    <div class="card h-100 p-0 radius-12">
+      <div class="card-header border-bottom bg-base py-16 px-24">
+        <h6 class="text-lg fw-semibold mb-0">Report Summary</h6>
+      </div>
+      <div class="card-body p-24">
+        <div class="row gy-3">
+          <div class="col-md-6">
+            <p class="mb-1 text-secondary-light"><strong>Report Period:</strong></p>
+            <p class="mb-0">{{ startDate }} to {{ endDate }}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1 text-secondary-light"><strong>Campus:</strong></p>
+            <p class="mb-0">{{ selectedCampus || 'All Campuses' }}</p>
+          </div>
+          <div class="col-12">
+            <hr>
+          </div>
+          <div class="col-md-4">
+            <p class="mb-1 text-secondary-light"><strong>Total Income:</strong></p>
+            <p class="mb-0 fw-bold text-success-main">{{ formatCurrency(report.totalIncome) }}</p>
+          </div>
+          <div class="col-md-4">
+            <p class="mb-1 text-secondary-light"><strong>Total Expenses:</strong></p>
+            <p class="mb-0 fw-bold text-danger-main">{{ formatCurrency(report.totalExpenses) }}</p>
+          </div>
+          <div class="col-md-4">
+            <p class="mb-1 text-secondary-light"><strong>{{ getProfitLossLabel() }}:</strong></p>
+            <p class="mb-0 fw-bold" [ngClass]="getProfitLossClass()">{{ formatCurrency(Math.abs(report.netProfit)) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Report State -->
+  <div *ngIf="!report" class="card h-100 p-0 radius-12">
+    <div class="card-body p-24 text-center py-5">
+      <iconify-icon icon="solar:document-text-bold-duotone" class="text-primary-600" style="font-size: 64px;"></iconify-icon>
+      <h5 class="mt-3 mb-2">Generate Profit & Loss Report</h5>
+      <p class="text-secondary-light">Select date range and campus, then click "Generate Report" to view financial summary</p>
+    </div>
+  </div>
+</div>
