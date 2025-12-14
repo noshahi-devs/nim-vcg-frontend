@@ -15,12 +15,12 @@ import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-exam-schedule-standards-create',
-  templateUrl: './exam-schedule-standards-create.component.html',
-  styleUrls: ['./exam-schedule-standards-create.component.css'],
+  selector: 'app-exam-schedule-standards-list',
+  templateUrl: './exam-schedule-standards-list.component.html',
+  styleUrls: ['./exam-schedule-standards-list.component.css'],
     imports: [BreadcrumbComponent, CommonModule, FormsModule]
 })
-export class ExamScheduleStandardsCreateComponent implements OnInit {
+export class ExamScheduleStandardsListComponent implements OnInit {
 
   title = "Create Exam Schedule Standard";
 

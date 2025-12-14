@@ -4,4 +4,7 @@ export class ExamScheduleVm {
   examScheduleId !: number;
   examScheduleName !: string;
   examScheduleStandards !: ExamScheduleStandardForExamScheduleVm[];
+startDate: string|number|Date;
+endDate: string|number|Date;
+examYear: any;
 }
