@@ -48,7 +48,7 @@
                   </td>
                   <td>
                     <select class="form-control" [(ngModel)]="sub.examTypeId" name="examType{{i}}">
-                      <option value="null" disabled selected hidden>Select Exam Type</option>
+                      <option value="" disabled selected hidden>Select Exam Type</option>
                       <option *ngFor="let type of examTypeList" [value]="type.examTypeId">{{ type.examTypeName }}</option>
                     </select>
                   </td>
