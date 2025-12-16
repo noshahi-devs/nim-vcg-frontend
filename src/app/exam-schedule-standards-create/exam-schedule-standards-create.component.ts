@@ -83,7 +83,7 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
   onSubmit() {
     console.log(this.model);
     this.examScheduleStandardsService.SaveExamScheduleStandards(this.model).subscribe({
-      next: () => this.router.navigate(['/examScheduleStandard']),
+      next: () => this.router.navigate(['/exam-schedule-standards-list']),
       error: err => console.log(err)
     });
   }
