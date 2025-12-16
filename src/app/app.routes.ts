@@ -133,6 +133,7 @@ import { ExpenseManageComponent } from './expense-manage/expense-manage.componen
 import { BankCashComponent } from './bank-cash/bank-cash.component';
 import { AuthGuard } from './SecurityModels/auth.guard';
 import { ExamScheduleStandardsCreateComponent } from './exam-schedule-standards-create/exam-schedule-standards-create.component';
+import { ExamScheduleStandardsListComponent } from './exam-schedule-standards-list/exam-schedule-standards-list.component';
 export const routes: Routes = [
    { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
   {
@@ -265,6 +266,7 @@ export const routes: Routes = [
             { path: 'exam-result', component: ExamResultComponent},
             { path: 'exam-schedule', component: ExamScheduleComponent},
             { path: 'exam-schedule-standards-create', component: ExamScheduleStandardsCreateComponent},
+            { path: 'exam-schedule-standards-list', component: ExamScheduleStandardsListComponent},
             { path: 'marks-entry', component: MarksEntryComponent},
             { path: 'auto-grade-calculation', component: AutoGradeCalculationComponent},
             { path: 'exam-analytics', component: ExamAnalyticsComponent},

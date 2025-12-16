@@ -9,6 +9,9 @@ import { UpdateExamScheduleStandardVM } from '../Models/update-exam-schedule-sta
   providedIn: 'root'
 })
 export class ExamScheduleStandardService {
+  getAll() {
+    throw new Error('Method not implemented.');
+  }
 
   constructor(private http: HttpClient) { }
 
