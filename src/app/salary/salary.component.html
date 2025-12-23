@@ -1,308 +1,126 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- Salary Form Card -->
+  <!-- ADD SALARY -->
   <div class="card radius-12 mb-4">
-    <div class="card-header bg-base py-16 px-24 border-bottom">
-      <h6 class="fw-semibold mb-0">Add Salary Record</h6>
+    <div class="card-header">
+      <h6>Add Staff Salary</h6>
     </div>
-    <div class="card-body p-24">
-      <div class="row g-3">
-        <!-- Staff Search with Dropdown -->
-        <div class="col-md-6">
-          <label class="form-label fw-semibold">Search Staff <span class="text-danger">*</span></label>
-          <div class="position-relative">
-            <input
-              type="text"
-              class="form-control radius-8"
-              [(ngModel)]="searchQuery"
-              (input)="onSearchChange()"
-              (focus)="onSearchChange()"
-              placeholder="Search by name, ID, or role..."
-            />
-            <iconify-icon icon="mdi:magnify" class="position-absolute top-50 end-0 translate-middle-y me-3"></iconify-icon>
-            
-            <!-- Dropdown List -->
-            <div *ngIf="showDropdown" class="dropdown-menu show w-100 shadow-lg" style="max-height: 300px; overflow-y: auto;">
-              <a
-                *ngFor="let staff of filteredStaffList"
-                href="javascript:void(0)"
-                class="dropdown-item py-2 px-3"
-                (click)="selectStaff(staff)">
-                <div class="d-flex align-items-center gap-2">
-                  <div class="w-32-px h-32-px bg-primary-50 rounded-circle d-flex align-items-center justify-content-center">
-                    <iconify-icon icon="mdi:account" class="text-primary-600"></iconify-icon>
-                  </div>
-                  <div class="flex-grow-1">
-                    <div class="fw-semibold text-sm">{{ staff.name }}</div>
-                    <div class="text-xs text-secondary-light">{{ staff.staffId }} - {{ staff.role }}</div>
-                  </div>
-                  <div class="text-end">
-                    <div class="text-xs text-secondary-light">{{ staff.department }}</div>
-                  </div>
-                </div>
-              </a>
-              <div *ngIf="filteredStaffList.length === 0" class="dropdown-item text-center text-secondary-light py-3">
-                No staff found
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Staff ID -->
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">Staff ID</label>
-          <input
-            type="text"
-            class="form-control radius-8 bg-neutral-50"
-            [(ngModel)]="staffId"
-            readonly
-            placeholder="Auto-filled"
-          />
-        </div>
+    <div class="card-body row g-3">
 
-        <!-- Staff Role -->
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">Staff Role</label>
-          <input
-            type="text"
-            class="form-control radius-8 bg-neutral-50"
-            [(ngModel)]="staffRole"
-            readonly
-            placeholder="Auto-filled"
-          />
-        </div>
+      <!-- STAFF DROPDOWN -->
+      <div class="col-md-6">
+        <label>Staff Name *</label>
+        <select class="form-select"
+                [(ngModel)]="salary.staffName">
+          <option value="" disabled selected>Select Staff</option>
+          <option *ngFor="let staff of staffList"
+                  [value]="staff.staffName">
+            {{ staff.staffName }}
+          </option>
+        </select>
+      </div>
 
-        <!-- Staff Name -->
-        <div class="col-md-6">
-          <label class="form-label fw-semibold">Staff Name</label>
-          <input
-            type="text"
-            class="form-control radius-8 bg-neutral-50"
-            [(ngModel)]="staffName"
-            readonly
-            placeholder="Auto-filled"
-          />
-        </div>
+      <div class="col-md-3">
+        <label>Basic Salary *</label>
+        <input type="number" class="form-control"
+               [(ngModel)]="salary.basicSalary">
+      </div>
 
-        <!-- Salary Month -->
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">Salary Month <span class="text-danger">*</span></label>
-          <input
-            type="month"
-            class="form-control radius-8"
-            [(ngModel)]="salaryMonth"
-          />
-        </div>
+      <div class="col-md-3">
+        <label>Festival Bonus</label>
+        <input type="number" class="form-control"
+               [(ngModel)]="salary.festivalBonus">
+      </div>
 
-        <!-- Date -->
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
-          <input
-            type="date"
-            class="form-control radius-8"
-            [(ngModel)]="salaryDate"
-          />
-        </div>
+      <div class="col-md-3">
+        <label>Allowance</label>
+        <input type="number" class="form-control"
+               [(ngModel)]="salary.allowance">
+      </div>
 
-        <!-- Fixed Salary -->
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">Fixed Salary (PKR)</label>
-          <input
-            type="number"
-            class="form-control radius-8 bg-neutral-50"
-            [(ngModel)]="fixedSalary"
-            readonly
-            placeholder="Auto-filled"
-          />
-        </div>
+      <div class="col-md-3">
+        <label>Medical Allowance</label>
+        <input type="number" class="form-control"
+               [(ngModel)]="salary.medicalAllowance">
+      </div>
 
-        <!-- Bonus -->
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">Bonus (PKR)</label>
-          <input
-            type="number"
-            class="form-control radius-8"
-            [(ngModel)]="bonus"
-            placeholder="Enter bonus amount"
-            min="0"
-          />
-        </div>
+      <div class="col-md-3">
+        <label>Housing Allowance</label>
+        <input type="number" class="form-control"
+               [(ngModel)]="salary.housingAllowance">
+      </div>
 
-        <!-- Deduction -->
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">Deduction (PKR)</label>
-          <input
-            type="number"
-            class="form-control radius-8"
-            [(ngModel)]="deduction"
-            placeholder="Enter deduction amount"
-            min="0"
-          />
-        </div>
+      <div class="col-md-3">
+        <label>Transport Allowance</label>
+        <input type="number" class="form-control"
+               [(ngModel)]="salary.transportationAllowance">
+      </div>
 
-        <!-- Net Salary (Calculated) -->
-        <div class="col-md-3">
-          <label class="form-label fw-semibold">Net Salary (PKR)</label>
-          <input
-            type="text"
-            class="form-control radius-8 bg-success-50 fw-bold text-success-600"
-            [value]="netSalary | number"
-            readonly
-          />
-        </div>
+      <div class="col-md-3">
+        <label>Saving Fund</label>
+        <input type="number" class="form-control"
+               [(ngModel)]="salary.savingFund">
+      </div>
 
-        <!-- Buttons -->
-        <div class="col-md-12">
-          <div class="d-flex gap-2">
-            <button
-              type="button"
-              class="btn btn-primary px-4 py-2 radius-8"
-              (click)="saveSalary()">
-              <iconify-icon icon="mdi:content-save" class="me-2"></iconify-icon>
-              Save Salary
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-secondary px-4 py-2 radius-8"
-              (click)="resetForm()">
-              <iconify-icon icon="mdi:refresh" class="me-2"></iconify-icon>
-              Reset
-            </button>
-          </div>
-        </div>
+      <div class="col-md-3">
+        <label>Taxes</label>
+        <input type="number" class="form-control"
+               [(ngModel)]="salary.taxes">
+      </div>
+
+      <div class="col-md-3">
+        <label>Net Salary</label>
+        <input class="form-control fw-bold"
+               [value]="calculatedNetSalary"
+               readonly>
+      </div>
+
+      <div class="col-md-12">
+        <button class="btn btn-primary" (click)="saveSalary()">Save</button>
+        <button class="btn btn-secondary ms-2" (click)="resetForm()">Reset</button>
       </div>
     </div>
   </div>
 
-  <!-- Salary Records Table -->
+  <!-- SALARY LIST -->
   <div class="card radius-12">
-    <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-      <h6 class="fw-semibold mb-0">Salary Records</h6>
-      
-      <div class="d-flex align-items-center flex-wrap gap-3">
-        <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
-        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="itemsPerPage">
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
-        </select>
-
-        <!-- Search -->
-        <form class="navbar-search">
-          <input
-            type="text"
-            class="bg-base h-40-px w-auto"
-            name="search"
-            [(ngModel)]="searchRecordQuery"
-            placeholder="Search records..."
-          />
-          <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
-        </form>
-      </div>
+    <div class="card-header d-flex justify-content-between">
+      <h6>Salary Records</h6>
+      <input class="form-control w-25"
+             placeholder="Search..."
+             [(ngModel)]="searchQuery">
     </div>
 
-    <div class="card-body p-24">
-      <div class="table-responsive">
-        <table class="table bordered-table mb-0">
-          <thead>
-            <tr>
-              <th>S.No</th>
-              <th>Staff ID</th>
-              <th>Staff Name</th>
-              <th>Role</th>
-              <th>Month</th>
-              <th>Date</th>
-              <th>Fixed Salary</th>
-              <th>Bonus</th>
-              <th>Deduction</th>
-              <th>Net Salary</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let record of paginatedRecords; let i = index">
-              <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-              <td>
-                <span class="badge bg-neutral-200 text-neutral-900 px-2 py-1">{{ record.staffId }}</span>
-              </td>
-              <td>
-                <span class="fw-semibold">{{ record.staffName }}</span>
-              </td>
-              <td>{{ record.role }}</td>
-              <td>{{ record.month }}</td>
-              <td>{{ record.date }}</td>
-              <td>{{ record.fixedSalary | number }}</td>
-              <td>
-                <span class="text-success-600 fw-semibold">+{{ record.bonus | number }}</span>
-              </td>
-              <td>
-                <span class="text-danger-600 fw-semibold">-{{ record.deduction | number }}</span>
-              </td>
-              <td>
-                <span class="fw-bold text-primary-600">{{ record.netSalary | number }}</span>
-              </td>
-              <td>
-                <span class="badge bg-success-50 text-success-600 px-3 py-2 radius-8">
-                  {{ record.status }}
-                </span>
-              </td>
-              <td>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-danger radius-8"
-                  (click)="deleteSalaryRecord(record.id)"
-                  title="Delete">
-                  <iconify-icon icon="mdi:delete"></iconify-icon>
-                </button>
-              </td>
-            </tr>
-            <tr *ngIf="paginatedRecords.length === 0">
-              <td colspan="12" class="text-center py-4 text-secondary-light">
-                No salary records found
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Pagination -->
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3" *ngIf="filteredRecords.length > 0">
-        <span class="text-secondary-light text-sm">Showing {{ paginationStart }} to {{ paginationEnd }} of {{ filteredRecords.length }} entries</span>
-        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
-          <li class="page-item">
-            <a
-              class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.disabled]="currentPage === 1"
-              (click)="changePage(currentPage - 1)"
-              href="javascript:void(0)">
-              <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
-            </a>
-          </li>
-          <li class="page-item" *ngFor="let page of totalPagesArray">
-            <a
-              class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.bg-primary-600]="currentPage === page"
-              [class.text-white]="currentPage === page"
-              [class.bg-neutral-200]="currentPage !== page"
-              [class.text-secondary-light]="currentPage !== page"
-              (click)="changePage(page)"
-              href="javascript:void(0)">
-              {{ page }}
-            </a>
-          </li>
-          <li class="page-item">
-            <a
-              class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.disabled]="currentPage === totalPages"
-              (click)="changePage(currentPage + 1)"
-              href="javascript:void(0)">
-              <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
-            </a>
-          </li>
-        </ul>
-      </div>
+    <div class="card-body table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Staff</th>
+            <th>Basic</th>
+            <th>Bonus</th>
+            <th>Net</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of paginatedSalaries; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ s.staffName }}</td>
+            <td>{{ s.basicSalary }}</td>
+            <td>{{ s.festivalBonus }}</td>
+            <td class="fw-bold">{{ s.netSalary }}</td>
+            <td>
+              <button class="btn btn-danger btn-sm"
+                      (click)="deleteSalary(s.staffSalaryId)">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

@@ -2,30 +2,13 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
+import { StaffSalaryService } from '../services/staff-salary.service';
+import { StaffService } from '../services/staff.service';
 
-interface StaffMember {
-  id: number;
-  staffId: string;
-  name: string;
-  role: string;
-  department: string;
-  fixedSalary: number;
-}
-
-interface SalaryRecord {
-  id: number;
-  staffId: string;
-  staffName: string;
-  role: string;
-  month: string;
-  date: string;
-  fixedSalary: number;
-  bonus: number;
-  deduction: number;
-  netSalary: number;
-  status: string;
-}
+import { StaffSalary } from '../Models/staff-salary';
+import { Staff } from '../Models/staff';
 
 @Component({
   selector: 'app-salary',
@@ -36,201 +19,136 @@ interface SalaryRecord {
   styleUrl: './salary.component.css'
 })
 export class SalaryComponent implements OnInit {
+
   title = 'Salary Management';
 
-  // Staff Search
-  searchQuery: string = '';
-  staffList: StaffMember[] = [];
-  filteredStaffList: StaffMember[] = [];
-  showDropdown: boolean = false;
-  selectedStaff: StaffMember | null = null;
+  /** FORM MODEL */
+  salary: StaffSalary = new StaffSalary();
 
-  // Form Fields
-  staffId: string = '';
-  staffName: string = '';
-  staffRole: string = '';
-  salaryMonth: string = '';
-  salaryDate: string = '';
-  fixedSalary: number = 0;
-  bonus: number = 0;
-  deduction: number = 0;
+  /** TABLE DATA */
+  salaries: StaffSalary[] = [];
 
-  // Salary Records
-  salaryRecords: SalaryRecord[] = [];
-  
-  // Pagination
-  itemsPerPage: number = 10;
-  currentPage: number = 1;
-  searchRecordQuery: string = '';
+  /** STAFF DROPDOWN DATA */
+  staffList: Staff[] = [];
+
+  /** UI STATES */
+  searchQuery = '';
+  itemsPerPage = 10;
+  currentPage = 1;
+
+  constructor(
+    private staffSalaryService: StaffSalaryService,
+    private staffService: StaffService
+  ) {}
 
   ngOnInit(): void {
-    this.generateDummyStaff();
-    this.setCurrentMonthDate();
-    this.loadSalaryRecords();
+    this.loadSalaries();
+    this.loadStaff();
   }
 
-  generateDummyStaff(): void {
-    this.staffList = [
-      { id: 1, staffId: 'EMP-0001', name: 'Ali Hassan', role: 'Teacher', department: 'Teaching', fixedSalary: 50000 },
-      { id: 2, staffId: 'EMP-0002', name: 'Sara Ahmed', role: 'Principal', department: 'Administration', fixedSalary: 80000 },
-      { id: 3, staffId: 'EMP-0003', name: 'Usman Khan', role: 'IT Manager', department: 'IT', fixedSalary: 60000 },
-      { id: 4, staffId: 'EMP-0004', name: 'Ayesha Malik', role: 'Accountant', department: 'Accounts', fixedSalary: 45000 },
-      { id: 5, staffId: 'EMP-0005', name: 'Bilal Raza', role: 'Teacher', department: 'Teaching', fixedSalary: 48000 },
-      { id: 6, staffId: 'EMP-0006', name: 'Fatima Noor', role: 'Librarian', department: 'Library', fixedSalary: 35000 },
-      { id: 7, staffId: 'EMP-0007', name: 'Hamza Tariq', role: 'Driver', department: 'Transport', fixedSalary: 30000 },
-      { id: 8, staffId: 'EMP-0008', name: 'Zainab Riaz', role: 'Teacher', department: 'Teaching', fixedSalary: 52000 },
-      { id: 9, staffId: 'EMP-0009', name: 'Abdullah Iqbal', role: 'Vice Principal', department: 'Administration', fixedSalary: 70000 },
-      { id: 10, staffId: 'EMP-0010', name: 'Maryam Khalid', role: 'Teacher', department: 'Teaching', fixedSalary: 49000 }
-    ];
-  }
-
-  setCurrentMonthDate(): void {
-    const today = new Date();
-    this.salaryMonth = today.toISOString().substring(0, 7); // YYYY-MM
-    this.salaryDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
-  }
-
-  onSearchChange(): void {
-    if (this.searchQuery.trim() === '') {
-      this.filteredStaffList = [];
-      this.showDropdown = false;
-      return;
+  /* ================= LOAD STAFF ================= */
+ loadStaff(): void {
+  this.staffService.getAllStaffs().subscribe({
+    next: (res) => {
+      console.log('STAFF API RESPONSE:', res);
+      this.staffList = res;
+    },
+    error: (err) => {
+      console.error(err);
+      Swal.fire('Error', 'Failed to load staff list', 'error');
     }
+  });
+}
 
-    const query = this.searchQuery.toLowerCase();
-    this.filteredStaffList = this.staffList.filter(staff =>
-      staff.name.toLowerCase().includes(query) ||
-      staff.staffId.toLowerCase().includes(query) ||
-      staff.role.toLowerCase().includes(query)
+
+  /* ================= LOAD SALARIES ================= */
+  loadSalaries(): void {
+    this.staffSalaryService.getStaffSalaries().subscribe({
+      next: (res) => this.salaries = res,
+      error: () => Swal.fire('Error', 'Failed to load salaries', 'error')
+    });
+  }
+
+  /* ================= NET SALARY ================= */
+  get calculatedNetSalary(): number {
+    const basic = this.salary.basicSalary || 0;
+    const bonus = this.salary.festivalBonus || 0;
+    const allowance = this.salary.allowance || 0;
+    const medical = this.salary.medicalAllowance || 0;
+    const house = this.salary.housingAllowance || 0;
+    const transport = this.salary.transportationAllowance || 0;
+    const saving = this.salary.savingFund || 0;
+    const tax = this.salary.taxes || 0;
+
+    return (
+      basic +
+      bonus +
+      allowance +
+      medical +
+      house +
+      transport -
+      saving -
+      tax
     );
-    this.showDropdown = this.filteredStaffList.length > 0;
   }
 
-  selectStaff(staff: StaffMember): void {
-    this.selectedStaff = staff;
-    this.staffId = staff.staffId;
-    this.staffName = staff.name;
-    this.staffRole = staff.role;
-    this.fixedSalary = staff.fixedSalary;
-    this.searchQuery = staff.name;
-    this.showDropdown = false;
-  }
-
-  get netSalary(): number {
-    return this.fixedSalary + this.bonus - this.deduction;
-  }
-
+  /* ================= SAVE SALARY ================= */
   saveSalary(): void {
-    if (!this.staffId || !this.salaryMonth || !this.salaryDate) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Missing Information',
-        text: 'Please select a staff member and fill all required fields.',
-        confirmButtonColor: '#800020'
-      });
+
+    if (!this.salary.staffName || !this.salary.basicSalary) {
+      Swal.fire('Validation Error', 'Staff & Basic Salary required', 'warning');
       return;
     }
 
-    const newRecord: SalaryRecord = {
-      id: this.salaryRecords.length + 1,
-      staffId: this.staffId,
-      staffName: this.staffName,
-      role: this.staffRole,
-      month: this.salaryMonth,
-      date: this.salaryDate,
-      fixedSalary: this.fixedSalary,
-      bonus: this.bonus,
-      deduction: this.deduction,
-      netSalary: this.netSalary,
-      status: 'Paid'
-    };
+    this.salary.netSalary = this.calculatedNetSalary;
 
-    this.salaryRecords.unshift(newRecord);
+    this.staffSalaryService.addStaffSalary(this.salary).subscribe({
+      next: () => {
+        Swal.fire('Success', 'Salary saved successfully', 'success');
+        this.resetForm();
+        this.loadSalaries();
+      },
+      error: () => Swal.fire('Error', 'Failed to save salary', 'error')
+    });
+  }
 
+  /* ================= DELETE ================= */
+  deleteSalary(id: number): void {
     Swal.fire({
-      icon: 'success',
-      title: 'Salary Saved!',
-      text: `Salary for ${this.staffName} has been saved successfully.`,
-      timer: 2000,
-      showConfirmButton: false
-    });
-
-    this.resetForm();
-  }
-
-  resetForm(): void {
-    this.searchQuery = '';
-    this.selectedStaff = null;
-    this.staffId = '';
-    this.staffName = '';
-    this.staffRole = '';
-    this.fixedSalary = 0;
-    this.bonus = 0;
-    this.deduction = 0;
-    this.setCurrentMonthDate();
-  }
-
-  loadSalaryRecords(): void {
-    // Generate some dummy salary records
-    const months = ['2024-11', '2024-10', '2024-09'];
-    this.salaryRecords = [];
-    
-    this.staffList.slice(0, 5).forEach((staff, index) => {
-      months.forEach((month, mIndex) => {
-        this.salaryRecords.push({
-          id: this.salaryRecords.length + 1,
-          staffId: staff.staffId,
-          staffName: staff.name,
-          role: staff.role,
-          month: month,
-          date: `${month}-${25 - mIndex}`,
-          fixedSalary: staff.fixedSalary,
-          bonus: Math.floor(Math.random() * 5000),
-          deduction: Math.floor(Math.random() * 2000),
-          netSalary: 0,
-          status: 'Paid'
+      title: 'Delete salary?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes'
+    }).then(res => {
+      if (res.isConfirmed) {
+        this.staffSalaryService.deleteStaffSalary(id).subscribe(() => {
+          Swal.fire('Deleted', '', 'success');
+          this.loadSalaries();
         });
-      });
-    });
-
-    this.salaryRecords.forEach(record => {
-      record.netSalary = record.fixedSalary + record.bonus - record.deduction;
+      }
     });
   }
 
-  get filteredRecords(): SalaryRecord[] {
-    if (!this.searchRecordQuery) {
-      return this.salaryRecords;
-    }
-    const query = this.searchRecordQuery.toLowerCase();
-    return this.salaryRecords.filter(r =>
-      r.staffName.toLowerCase().includes(query) ||
-      r.staffId.toLowerCase().includes(query) ||
-      r.month.includes(query)
+  /* ================= RESET ================= */
+  resetForm(): void {
+    this.salary = new StaffSalary();
+  }
+
+  /* ================= FILTER + PAGINATION ================= */
+  get filteredSalaries(): StaffSalary[] {
+    if (!this.searchQuery) return this.salaries;
+    return this.salaries.filter(s =>
+      s.staffName?.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }
 
-  get paginatedRecords(): SalaryRecord[] {
+  get paginatedSalaries(): StaffSalary[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
-    const end = start + this.itemsPerPage;
-    return this.filteredRecords.slice(start, end);
+    return this.filteredSalaries.slice(start, start + this.itemsPerPage);
   }
 
   get totalPages(): number {
-    return Math.ceil(this.filteredRecords.length / this.itemsPerPage);
-  }
-
-  get totalPagesArray(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
-  }
-
-  get paginationStart(): number {
-    return this.filteredRecords.length === 0 ? 0 : (this.currentPage - 1) * this.itemsPerPage + 1;
-  }
-
-  get paginationEnd(): number {
-    const end = this.currentPage * this.itemsPerPage;
-    return end > this.filteredRecords.length ? this.filteredRecords.length : end;
+    return Math.ceil(this.filteredSalaries.length / this.itemsPerPage);
   }
 
   changePage(page: number): void {
@@ -238,374 +156,4 @@ export class SalaryComponent implements OnInit {
       this.currentPage = page;
     }
   }
-
-  deleteSalaryRecord(id: number): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to delete this salary record?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#800020',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.salaryRecords = this.salaryRecords.filter(r => r.id !== id);
-        Swal.fire({
-          icon: 'success',
-          title: 'Deleted!',
-          text: 'Salary record has been deleted.',
-          timer: 1500,
-          showConfirmButton: false
-        });
-      }
-    });
-  }
-
-  // Keep old chart code for compatibility
-  enrollmentChart;
-  areaChart;
-  dailyIconBarChart;
-  constructor() {
-    this.enrollmentChart = this.createChartTwo('#487FFF', "");
-    this.areaChart = this.createChart('#FF9F29');
-    this.dailyIconBarChart = {
-      series: [{
-          name: "Sales",
-          data: [{
-              x: 'Mon',
-              y: 20,
-          }, {
-              x: 'Tue',
-              y: 40,
-          }, {
-              x: 'Wed',
-              y: 20,
-          }, {
-              x: 'Thur',
-              y: 30,
-          }, {
-              x: 'Fri',
-              y: 40,
-          }, {
-              x: 'Sat',
-              y: 35,
-          }]
-      }],
-      chart: {
-          type: 'bar',
-          width: 164,
-          height: 80,
-          sparkline: {
-            enabled: true // Remove whitespace
-          },
-          toolbar: {
-              show: false
-          }
-      },
-      plotOptions: {
-          bar: {
-              borderRadius: 6,
-              horizontal: false,
-              columnWidth: 14,
-          }
-      },
-      dataLabels: {
-          enabled: false
-      },
-    states: {
-        hover: {
-        filter: {
-            type: 'none'
-            }
-        }
-    },
-      fill: {
-          type: 'gradient',
-          colors: ['#E3E6E9'], // Set the starting color (top color) here
-          gradient: {
-              shade: 'light', // Gradient shading type
-              type: 'vertical',  // Gradient direction (vertical)
-              shadeIntensity: 0.5, // Intensity of the gradient shading
-              gradientToColors: ['#E3E6E9'], // Bottom gradient color (with transparency)
-              inverseColors: false, // Do not invert colors
-              opacityFrom: 1, // Starting opacity
-              opacityTo: 1,  // Ending opacity
-              stops: [0, 100],
-          },
-      },
-      grid: {
-          show: false,
-          borderColor: '#D1D5DB',
-          strokeDashArray: 1, // Use a number for dashed style
-          position: 'back',
-      },
-      xaxis: {
-            labels: {
-                show: false // Hide y-axis labels
-            },
-            type: 'category',
-            categories: ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat']
-      },
-      yaxis: {
-          labels: {
-            show: false,
-              formatter: function (value) {
-                  return (value / 1000).toFixed(0) + 'k';
-              }
-          }
-      },
-      tooltip: {
-          y: {
-              formatter: function (value) {
-                  return value / 1000 + 'k';
-              }
-          }
-      }
-    };
-
-  }
-
-  createChartTwo(color1, color2) {
-    return {
-      series: [{
-        name: 'series2',
-        data: [20000, 45000, 30000, 50000, 32000, 40000, 30000, 42000, 28000, 34000, 38000, 26000]
-      }],
-      legend: {
-        show: false
-      },
-      chart: {
-        type: 'area',
-        width: '100%',
-        height: 240,
-        toolbar: {
-          show: false
-        },
-        padding: {
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0
-        }
-      },
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        curve: 'straight',
-        width: 3,
-        colors: [color1], // Use two colors for the lines
-        lineCap: 'round'
-      },
-      grid: {
-        show: true,
-        borderColor: '#D1D5DB',
-        strokeDashArray: 1,
-        position: 'back',
-        xaxis: {
-          lines: {
-            show: false
-          }
-        },
-        yaxis: {
-          lines: {
-            show: true
-          }
-        },
-        row: {
-          colors: undefined,
-          opacity: 0.5
-        },
-        column: {
-          colors: undefined,
-          opacity: 0.5
-        },
-        padding: {
-          top: -20,
-          right: 0,
-          bottom: 0,
-          left: 0
-        },
-      },
-      fill: {
-        type: 'gradient',
-        colors: [color1], // Use two colors for the gradient
-        // gradient: {
-        //     shade: 'light',
-        //     type: 'vertical',
-        //     shadeIntensity: 0.5,
-        //     gradientToColors: [`${color1}`, `${color2}00`], // Bottom gradient colors with transparency
-        //     inverseColors: false,
-        //     opacityFrom: .6,
-        //     opacityTo: 0.3,
-        //     stops: [0, 100],
-        // },
-        gradient: {
-          shade: 'light',
-          type: 'vertical',
-          shadeIntensity: 0.5,
-          gradientToColors: [undefined, `${color2}00`], // Apply transparency to both colors
-          inverseColors: false,
-          opacityFrom: [0.4, 0.4], // Starting opacity for both colors
-          opacityTo: [0.1, 0.1], // Ending opacity for both colors
-          stops: [0, 100],
-        },
-      },
-      markers: {
-        colors: [color1], // Use two colors for the markers
-        strokeWidth: 3,
-        size: 0,
-        hover: {
-          size: 10
-        }
-      },
-      xaxis: {
-        
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        tooltip: {
-          enabled: false
-        },
-        labels: {
-          formatter: function (value) {
-            return value;
-          },
-          style: {
-            fontSize: "12px"
-          }
-        }
-      },
-      yaxis: {
-        labels: {
-          // formatter: function (value) {
-          //     return "$" + value + "k";
-          // },
-          style: {
-            fontSize: "12px"
-          }
-        },
-      },
-      tooltip: {
-        x: {
-          format: 'dd/MM/yy HH:mm'
-        }
-      }
-    };
-  }
-
-   createChart( chartColor) {
-
-    let currentYear = new Date().getFullYear();
-
-    return {
-        series: [
-            {
-                name: 'series1',
-                data: [0, 10, 8, 25, 15, 26, 13, 35, 15, 39, 16, 46, 42],
-            },
-        ],
-        chart: {
-            type: 'area',
-            width: 164,
-            height: 72,
-
-            sparkline: {
-                enabled: true // Remove whitespace
-            },
-
-            toolbar: {
-                show: false
-            },
-            padding: {
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0
-            }
-        },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'smooth',
-            width: 2,
-            colors: [chartColor],
-            lineCap: 'round'
-        },
-        grid: {
-            show: true,
-            borderColor: 'transparent',
-            strokeDashArray: 0,
-            position: 'back',
-            xaxis: {
-                lines: {
-                    show: false
-                }
-            },   
-            yaxis: {
-                lines: {
-                    show: false
-                }
-            },  
-            row: {
-                colors: undefined,
-                opacity: 0.5
-            },  
-            column: {
-                colors: undefined,
-                opacity: 0.5
-            },  
-            padding: {
-                top: -3,
-                right: 0,
-                bottom: 0,
-                left: 0
-            },  
-        },
-        fill: {
-            type: 'gradient',
-            colors: [chartColor], // Set the starting color (top color) here
-            gradient: {
-                shade: 'light', // Gradient shading type
-                type: 'vertical',  // Gradient direction (vertical)
-                shadeIntensity: 0.5, // Intensity of the gradient shading
-                gradientToColors: [`${chartColor}00`], // Bottom gradient color (with transparency)
-                inverseColors: false, // Do not invert colors
-                opacityFrom: .8, // Starting opacity
-                opacityTo: 0.3,  // Ending opacity
-                stops: [0, 100],
-            },
-        },
-        // Customize the circle marker color on hover
-        markers: {
-            colors: [chartColor],
-            strokeWidth: 2,
-            size: 0,
-            hover: {
-            size: 8
-            }
-        },
-        xaxis: {
-            labels: {
-                show: false
-            },
-            categories: [`Jan ${currentYear}`, `Feb ${currentYear}`, `Mar ${currentYear}`, `Apr ${currentYear}`, `May ${currentYear}`, `Jun ${currentYear}`, `Jul ${currentYear}`, `Aug ${currentYear}`, `Sep ${currentYear}`, `Oct ${currentYear}`, `Nov ${currentYear}`, `Dec ${currentYear}`],
-            tooltip: {
-                enabled: false,
-            },
-        },
-        yaxis: {
-            labels: {
-                show: false
-            }
-        },
-        tooltip: {
-            x: {
-                format: 'dd/MM/yy HH:mm'
-            },
-        },
-    };
-    }
-
-
 }
