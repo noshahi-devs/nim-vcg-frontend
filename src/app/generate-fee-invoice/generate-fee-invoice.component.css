@@ -1,0 +1,206 @@
+/* General card and body padding */
+.dashboard-main-body {
+  padding: 24px;
+  font-family: Arial, sans-serif;
+}
+
+/* Card styling */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Card header */
+.card-header {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Table styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bordered-table th,
+.bordered-table td {
+  border: 1px solid #e0e0e0;
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.bordered-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  color: #fff;
+  border: none;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+}
+
+/* Form controls */
+input.form-control,
+select.form-control,
+.form-select {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: border 0.2s;
+}
+
+input.form-control:focus,
+select.form-control:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Pagination buttons */
+.p-24 .btn-light {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+}
+
+.p-24 .btn-light:hover {
+  background: #e9ecef;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+/* Modal box */
+.modal-box {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  width: 420px;
+  max-width: 95%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Modal title */
+.modal-box h5 {
+  margin-bottom: 16px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* Modal form fields */
+.modal-box form .mb-2,
+.modal-box form .mb-3 {
+  margin-bottom: 12px;
+}
+
+.modal-box form label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Buttons at modal bottom */
+.modal-box .text-end {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Disabled fields for View mode */
+.modal-box input[disabled],
+.modal-box select[disabled] {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+  color: #495057;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .form-control.w-25 {
+    width: 100% !important;
+  }
+
+  .modal-box {
+    width: 95%;
+    padding: 16px;
+  }
+}
