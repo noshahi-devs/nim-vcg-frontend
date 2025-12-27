@@ -141,7 +141,7 @@ throw new Error('Method not implemented.');
         const staffData: Staff = {
           staffId: 0,
           staffName: this.newStaff.staffName,
-          uniqueStaffAttendanceNumber: 1234, // Generate dynamically if needed
+          uniqueStaffAttendanceNumber: 1235, // Generate dynamically if needed
           gender: genderMap[this.newStaff.gender] ?? Gender.Male,
           dob: this.newStaff.dob,
           contactNumber1: this.newStaff.contactNumber1,

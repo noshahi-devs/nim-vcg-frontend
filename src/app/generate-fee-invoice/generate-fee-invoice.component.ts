@@ -1,122 +1,158 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
-import { FeeService, FeeStructure, Student } from '../services/fee.service';
+import { FeeService } from '../services/fee.service';
+import { FeeTypeService } from '../services/feetype.service';
+import { StandardService } from '../services/standard.service';
+import { Fee } from '../Models/fee';
+import { FeeType } from '../Models/feetype';
+import { Standard } from '../Models/standard';
 
 @Component({
   selector: 'app-generate-fee-invoice',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, BreadcrumbComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './generate-fee-invoice.component.html'
+  templateUrl: './generate-fee-invoice.component.html',
+  styleUrls: ['./generate-fee-invoice.component.css']
 })
 export class GenerateFeeInvoiceComponent implements OnInit {
+
   title = 'Generate Fee Invoice';
 
-  classes = ['Five', 'Six'];
-  sections = ['A', 'B', 'C'];
+  fees: Fee[] = [];
+  filteredFees: Fee[] = [];
+  paginatedFees: Fee[] = [];
 
-  selectedClass = '';
-  selectedSection = '';
-  searchQuery = '';
+  feeTypes: FeeType[] = [];
+  standards: Standard[] = [];
 
-  students: Student[] = [];
-  selectedStudents: Student[] = [];
+  searchTerm = '';
+  rowsPerPage = 10;
+  currentPage = 1;
+  totalPages = 1;
 
-  feeStructure?: FeeStructure;
-  month = new Date().toISOString().substring(0, 7);
-  extraCharges: { name: string; amount: number }[] = [];
+  showFeeDialog = false;
+  isEditMode = false;
 
-  constructor(private feeSvc: FeeService, private router: Router) {}
+  feeForm!: FormGroup;
 
-  ngOnInit(): void {}
+  showDeleteDialog = false;
+  feeToDelete!: Fee;
 
-  searchStudents() {
-    this.feeSvc.getStudentsFiltered(this.selectedClass, this.selectedSection, this.searchQuery)
-      .subscribe({
-        next: (r) => (this.students = r),
-        error: () => Swal.fire('Error', 'Failed to fetch students', 'error')
+  Math = Math;
+
+  constructor(
+    private feeService: FeeService,
+    private feeTypeService: FeeTypeService,
+    private standardService: StandardService
+  ) {}
+
+  ngOnInit(): void {
+    this.feeForm = new FormGroup({
+      feeId: new FormControl(0),
+      standardId: new FormControl('', Validators.required),
+      feeTypeId: new FormControl('', Validators.required),
+      amount: new FormControl('', Validators.required),
+      dueDate: new FormControl('', Validators.required)
+    });
+
+    this.loadDropdowns();
+    this.loadFees();
+  }
+
+  loadDropdowns() {
+    this.feeTypeService.getFeeTypes().subscribe(res => this.feeTypes = res);
+    this.standardService.getStandards().subscribe(res => this.standards = res);
+  }
+
+  loadFees() {
+    this.feeService.getAllFees().subscribe(res => {
+      this.fees = res;
+      this.applyFilters();
+    });
+  }
+
+  applyFilters() {
+    const term = this.searchTerm.toLowerCase();
+
+    this.filteredFees = this.fees.filter(f =>
+      (!this.feeForm.value.standardId || f.standardId == this.feeForm.value.standardId) &&
+      (!this.feeForm.value.feeTypeId || f.feeTypeId == this.feeForm.value.feeTypeId) &&
+      (!this.feeForm.value.minBalance || f.amount >= this.feeForm.value.minBalance) &&
+      (
+        !term ||
+        f.standard?.standardName?.toLowerCase().includes(term) ||
+        f.feeType?.typeName?.toLowerCase().includes(term)
+      )
+    );
+
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  updatePagination() {
+    this.totalPages = Math.ceil(this.filteredFees.length / this.rowsPerPage);
+    const start = (this.currentPage - 1) * this.rowsPerPage;
+    this.paginatedFees = this.filteredFees.slice(start, start + this.rowsPerPage);
+  }
+
+  changePage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updatePagination();
+  }
+
+  resetFilters() {
+    this.feeForm.reset();
+    this.searchTerm = '';
+    this.applyFilters();
+  }
+
+  /* ---------- FEE DIALOG ---------- */
+  openAddFee() {
+    this.isEditMode = false;
+    this.feeForm.reset();
+    this.feeForm.patchValue({ feeId: 0 });
+    this.showFeeDialog = true;
+  }
+
+  openEditFee(fee: Fee) {
+    this.isEditMode = true;
+    this.feeForm.patchValue(fee);
+    this.showFeeDialog = true;
+  }
+
+  saveFee() {
+    if (this.feeForm.invalid) return;
+    const feeData = this.feeForm.value as Fee;
+
+    if (this.isEditMode) {
+      this.feeService.updateFee(feeData).subscribe(() => {
+        alert('Fee updated successfully');
+        this.showFeeDialog = false;
+        this.loadFees();
       });
-  }
-
-  toggleStudentSelection(s: Student) {
-    const idx = this.selectedStudents.findIndex(x => x.id === s.id);
-    if (idx >= 0) this.selectedStudents.splice(idx, 1);
-    else this.selectedStudents.push(s);
-  }
-
-  /** ✅ FIXED: helper method for template binding */
-  isStudentSelected(s: Student): boolean {
-    return this.selectedStudents.some(st => st.id === s.id);
-  }
-
-  loadFeeStructure() {
-    if (!this.selectedClass) {
-      this.feeStructure = undefined;
-      return;
+    } else {
+      this.feeService.createFee(feeData).subscribe(() => {
+        alert('Fee created successfully');
+        this.showFeeDialog = false;
+        this.loadFees();
+      });
     }
+  }
 
-    this.feeSvc.getFeeStructureByClass(this.selectedClass).subscribe({
-      next: (f) => (this.feeStructure = f),
-      error: () => Swal.fire('Error', 'Failed to load fee structure', 'error')
+  confirmDelete(fee: Fee) {
+    this.feeToDelete = fee;
+    this.showDeleteDialog = true;
+  }
+
+  deleteFee() {
+    this.feeService.deleteFee(this.feeToDelete.feeId).subscribe(() => {
+      alert('Fee deleted successfully');
+      this.showDeleteDialog = false;
+      this.loadFees();
     });
-  }
-
-  addExtraCharge() {
-    this.extraCharges.push({ name: 'Other', amount: 0 });
-  }
-
-  removeExtraCharge(i: number) {
-    this.extraCharges.splice(i, 1);
-  }
-
-  computeTotalForStudent(student: Student) {
-    if (!this.feeStructure) return 0;
-    const base = this.feeStructure.baseFee;
-    const fundSum = this.feeStructure.otherFunds?.reduce((s, x) => s + (x.amount || 0), 0) || 0;
-    const extras = this.extraCharges.reduce((s, x) => s + Number(x.amount || 0), 0);
-    return base + fundSum + extras;
-  }
-
-  generateInvoices(singleStudent?: Student) {
-    const targets = singleStudent ? [singleStudent] : this.selectedStudents;
-    if (!targets.length) {
-      Swal.fire('Select Students', 'Select at least one student to generate invoice', 'warning');
-      return;
-    }
-    if (!this.feeStructure) {
-      Swal.fire('Fee Structure', 'Please select class and load fee structure', 'warning');
-      return;
-    }
-
-    const created: any[] = [];
-    targets.forEach((s) => {
-      const total = this.computeTotalForStudent(s);
-      this.feeSvc
-        .createInvoice({
-          studentId: s.id,
-          studentName: s.name,
-          className: s.className,
-          section: s.section,
-          month: this.month,
-          totalFee: total,
-          paidAmount: 0
-        })
-        .subscribe({
-          next: (inv) => created.push(inv),
-          error: () => Swal.fire('Error', `Failed to create invoice for ${s.name}`, 'error')
-        });
-    });
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Invoices Generated',
-      text: `${targets.length} invoice(s) created successfully.`,
-      timer: 2000,
-      showConfirmButton: false
-    }).then(() => this.router.navigate(['/collect-fee']));
   }
 }

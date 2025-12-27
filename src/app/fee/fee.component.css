@@ -1,0 +1,169 @@
+/* ===============================
+   GLOBAL CARD
+================================ */
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+.card-header {
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.card-body {
+  background-color: #ffffff;
+}
+
+/* ===============================
+   TABLE
+================================ */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.table th,
+.table td {
+  padding: 10px 12px;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* ===============================
+   SEARCH INPUT
+================================ */
+input[type="text"] {
+  border-radius: 8px;
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.btn-primary:hover {
+  background-color: #1e40af;
+}
+
+.btn-info {
+  background-color: #0ea5e9;
+  border-color: #0ea5e9;
+}
+
+.btn-success {
+  background-color: #22c55e;
+  border-color: #22c55e;
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  border-color: #ef4444;
+}
+
+/* ===============================
+   PAGINATION
+================================ */
+.pagination {
+  margin: 0;
+}
+
+.page-link {
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.page-link.active {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+/* ===============================
+   MODAL BACKDROP
+================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  z-index: 1050;
+}
+
+/* ===============================
+   MODAL CONTENT
+================================ */
+.modal-content {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.modal-content h5 {
+  font-weight: 600;
+}
+
+.modal-content label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ===============================
+   FORM
+================================ */
+.form-control {
+  border-radius: 8px;
+  height: 40px;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border-color: #2563eb;
+}
+
+/* ===============================
+   MODAL FOOTER BUTTONS
+================================ */
+.modal-content .btn {
+  min-width: 90px;
+}
+
+/* ===============================
+   DELETE MODAL
+================================ */
+.text-danger {
+  font-weight: 600;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 576px) {
+  .modal-content {
+    max-width: 95%;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+}

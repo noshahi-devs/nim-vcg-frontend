@@ -1,177 +1,148 @@
-// import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
-import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-
-interface Student {
-  id: number;
-  name: string;
-  class: string;
-  section: string;
-}
-
-interface FeeStructure {
-  class: string;
-  totalFee: number;
-  funds: number;
-}
-
-interface FeeRecord {
-  id: number;
-  studentId: number;
-  studentName: string;
-  class: string;
-  section: string;
-  month: string;
-  paymentType: 'Full' | 'Installment' | 'Half';
-  paidAmount: number;
-  remainingFee: number;
-  status: 'Paid' | 'Partial' | 'Unpaid';
-  date: string;
-}
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
+import { FeeTypeService } from '../services/feetype.service';
+import { FeeType } from '../Models/feetype';
 
 @Component({
   selector: 'app-fee',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './fee.component.html',
+  styleUrls: ['./fee.component.css'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, BreadcrumbComponent]
 })
 export class FeeComponent implements OnInit {
-  title = 'Fee Management';
 
-  // Filters
-  selectedClass: string = '';
-  selectedSection: string = '';
-  searchTerm: string = '';
+  title = 'Fee Types';
 
-  // Dropdown Data
-  classes = ['Nursery', 'KG', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'];
-  sections = ['A', 'B', 'C'];
+  form!: FormGroup;
 
-  // Student Data (mock)
-  students: Student[] = [
-    { id: 1, name: 'Ayesha Khan', class: 'Five', section: 'A' },
-    { id: 2, name: 'Ali Raza', class: 'Five', section: 'B' },
-    { id: 3, name: 'Fatima Noor', class: 'Six', section: 'A' },
-  ];
+  feeTypes: FeeType[] = [];
+  filteredFeeTypes: FeeType[] = [];
+  paginatedFeeTypes: FeeType[] = [];
 
-  filteredStudents: Student[] = [];
+  rowsPerPage = 10;
+  currentPage = 1;
+  totalPages = 1;
+  searchTerm = '';
 
-  // Fee Structures (based on class)
-  feeStructures: FeeStructure[] = [
-    { class: 'Five', totalFee: 5000, funds: 500 },
-    { class: 'Six', totalFee: 5500, funds: 600 },
-  ];
+  showAddEditDialog = false;
+  showViewDialog = false;
+  showDeleteDialog = false;
+  isEditMode = false;
 
-  // Active Student & Fee Info
-  selectedStudent: Student | null = null;
-  selectedFeeStructure: FeeStructure | null = null;
+  selectedFeeType!: FeeType;
+  feeTypeToDelete!: FeeType;
 
-  feeMonth: string = '';
-  paymentType: 'Full' | 'Installment' | 'Half' = 'Full';
-  paidAmount: number = 0;
-  remainingFee: number = 0;
+  constructor(private feeTypeService: FeeTypeService) {}
 
-  // Fee Records
-  feeRecords: FeeRecord[] = [];
+  ngOnInit(): void {
+    this.initForm();
+    this.loadFeeTypes();
+  }
 
-  constructor(private router: Router) {}
-
-  ngOnInit(): void {}
-
-  // 🔍 Filter students
-  filterStudents() {
-    this.filteredStudents = this.students.filter((s) => {
-      return (
-        (!this.selectedClass || s.class === this.selectedClass) &&
-        (!this.selectedSection || s.section === this.selectedSection) &&
-        (!this.searchTerm ||
-          s.name.toLowerCase().includes(this.searchTerm.toLowerCase()))
-      );
+  initForm() {
+    this.form = new FormGroup({
+      feeTypeId: new FormControl(0),
+      typeName: new FormControl('', Validators.required)
     });
   }
 
-  // 📚 Select student
-  selectStudent(student: Student) {
-    this.selectedStudent = student;
-    this.selectedFeeStructure = this.feeStructures.find(
-      (f) => f.class === student.class
-    ) || null;
-
-    if (this.selectedFeeStructure) {
-      const total = this.selectedFeeStructure.totalFee + this.selectedFeeStructure.funds;
-      this.remainingFee = total;
-      this.paidAmount = 0;
-    }
+  loadFeeTypes() {
+    this.feeTypeService.getFeeTypes().subscribe({
+      next: (res) => {
+        this.feeTypes = res || [];
+        this.filteredFeeTypes = [...this.feeTypes];
+        this.updatePagination();
+      },
+      error: () => {
+        this.feeTypes = [];
+        this.filteredFeeTypes = [];
+        this.paginatedFeeTypes = [];
+      }
+    });
   }
 
-  // 💰 Auto-calc remaining fee
-  updateRemaining() {
-    if (this.selectedFeeStructure) {
-      const total = this.selectedFeeStructure.totalFee + this.selectedFeeStructure.funds;
-      this.remainingFee = total - this.paidAmount;
-    }
+  searchFeeTypes() {
+    this.filteredFeeTypes = this.feeTypes.filter(x =>
+      x.typeName?.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
-  // 💾 Save Fee Record
-  saveFee() {
-    if (!this.selectedStudent || !this.selectedFeeStructure || !this.feeMonth) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Missing Information',
-        text: 'Please select a student and fill all required fields.',
+  updatePagination() {
+    this.totalPages = Math.ceil(this.filteredFeeTypes.length / this.rowsPerPage);
+    const start = (this.currentPage - 1) * this.rowsPerPage;
+    this.paginatedFeeTypes = this.filteredFeeTypes.slice(start, start + this.rowsPerPage);
+  }
+
+  changePage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updatePagination();
+  }
+
+  get toEntry() {
+    return this.filteredFeeTypes.length === 0
+      ? 0
+      : Math.min(this.currentPage * this.rowsPerPage, this.filteredFeeTypes.length);
+  }
+
+  openAddDialog() {
+    this.isEditMode = false;
+    this.showAddEditDialog = true;
+    this.form.reset({ feeTypeId: 0 });
+  }
+
+  openEditDialog(ft: FeeType) {
+    this.isEditMode = true;
+    this.showAddEditDialog = true;
+    this.form.patchValue(ft);
+  }
+
+  openViewDialog(ft: FeeType) {
+    this.selectedFeeType = ft;
+    this.showViewDialog = true;
+  }
+
+  saveFeeType() {
+    if (this.form.invalid) return;
+
+    const payload = this.form.value;
+
+    if (this.isEditMode) {
+      this.feeTypeService.updateFeeType(payload).subscribe(() => {
+        this.closeDialog();
+        this.loadFeeTypes();
       });
-      return;
+    } else {
+      this.feeTypeService.createFeeType(payload).subscribe(() => {
+        this.closeDialog();
+        this.loadFeeTypes();
+      });
     }
-
-    const total = this.selectedFeeStructure.totalFee + this.selectedFeeStructure.funds;
-    const status =
-      this.paidAmount === total
-        ? 'Paid'
-        : this.paidAmount === 0
-        ? 'Unpaid'
-        : 'Partial';
-
-    const record: FeeRecord = {
-      id: this.feeRecords.length + 1,
-      studentId: this.selectedStudent.id,
-      studentName: this.selectedStudent.name,
-      class: this.selectedStudent.class,
-      section: this.selectedStudent.section,
-      month: this.feeMonth,
-      paymentType: this.paymentType,
-      paidAmount: this.paidAmount,
-      remainingFee: this.remainingFee,
-      status,
-      date: new Date().toISOString().split('T')[0],
-    };
-
-    this.feeRecords.push(record);
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Fee Saved Successfully',
-      text: `${this.selectedStudent.name}'s fee has been recorded.`,
-      timer: 2000,
-      showConfirmButton: false,
-    }).then(() => {
-      // redirect to fee paid summary page
-      this.router.navigate(['/fee-paid']);
-    });
-
-    this.resetForm();
   }
 
-  resetForm() {
-    this.selectedStudent = null;
-    this.selectedFeeStructure = null;
-    this.feeMonth = '';
-    this.paymentType = 'Full';
-    this.paidAmount = 0;
-    this.remainingFee = 0;
+  confirmDelete(ft: FeeType) {
+    this.feeTypeToDelete = ft;
+    this.showDeleteDialog = true;
+  }
+
+  deleteFeeType() {
+    this.feeTypeService.deleteFeeType(this.feeTypeToDelete.feeTypeId).subscribe(() => {
+      this.showDeleteDialog = false;
+      this.loadFeeTypes();
+    });
+  }
+
+  closeDialog() {
+    this.showAddEditDialog = false;
+    this.showViewDialog = false;
+    this.showDeleteDialog = false;
+    this.form.reset();
   }
 }
