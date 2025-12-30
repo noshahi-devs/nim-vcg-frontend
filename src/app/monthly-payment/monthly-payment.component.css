@@ -1,0 +1,78 @@
+/* Modal backdrop */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+  overflow-y: auto; /* allow scrolling if content is tall */
+  padding: 1rem; /* spacing around modal */
+}
+
+/* Modal content */
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto; /* important: scroll inside modal if content exceeds */
+  z-index: 1060; /* make sure it's above backdrop */
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Ensure selects / multi-selects render above modal */
+.modal-content select {
+  z-index: 1070; /* above modal content */
+  position: relative;
+}
+
+/* Optional: improve multi-select dropdown visibility */
+select[multiple] {
+  height: auto;
+  max-height: 200px; /* scroll inside select */
+  overflow-y: auto;
+}
+
+/* Optional: table inside modal */
+.modal-body table {
+  max-height: 300px;
+  overflow-y: auto;
+  display: block;
+}
+.custom-dropdown {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+}
+
+.selected-items {
+  padding: 6px 10px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ccc;
+  z-index: 10;
+  border-radius: 6px;
+  padding: 5px;
+}

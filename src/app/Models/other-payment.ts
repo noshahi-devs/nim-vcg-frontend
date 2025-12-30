@@ -11,4 +11,5 @@ export class OthersPayment {
   student!: Student;
   fees: { feeId: number }[] = [];
   otherPaymentDetails: OtherPaymentDetail[] = [];
+  academicMonths: any[];
 }

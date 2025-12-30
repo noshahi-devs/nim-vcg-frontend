@@ -1,66 +1,83 @@
-<!-- <div class="dashboard-main-body">
+<div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <div class="card mb-3">
-    <div class="card-body">
-      <div class="row g-3 align-items-end">
-        <div class="col-md-4">
-          <label>Search (name, invoice no)</label>
-          <input class="form-control" [(ngModel)]="search" placeholder="search" />
+  <div class="card h-100 p-0 radius-12">
+
+    <!-- Row 1: Standard & Student Filter -->
+    <div class="card-header border-bottom bg-base py-16 px-24 d-flex flex-wrap gap-3 align-items-center justify-content-between">
+      <div class="d-flex gap-3 flex-wrap align-items-center">
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-md fw-medium text-secondary-light">Standard:</span>
+          <select class="form-select form-select-sm radius-12 h-40-px" [(ngModel)]="selectedStandardId" (change)="filterStudents()">
+            <option value="">All</option>
+            <option *ngFor="let s of standards" [value]="s.standardId">{{ s.standardName }}</option>
+          </select>
         </div>
 
-        <div class="col-md-8 text-end">
-          <button class="btn btn-outline-secondary" (click)="loadInvoices()">Reload Invoices</button>
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-md fw-medium text-secondary-light">Student:</span>
+          <select class="form-select form-select-sm radius-12 h-40-px" [(ngModel)]="studentId" (change)="loadFeeInfo()">
+            <option value="">All</option>
+            <option *ngFor="let s of filteredStudents" [value]="s.studentId">{{ s.studentName }}</option>
+          </select>
         </div>
       </div>
 
-      <div class="row mt-3">
-        <div class="col-md-7">
-          <h6>Pending / All Invoices</h6>
-          <table class="table table-sm">
-            <thead><tr><th>#</th><th>Invoice</th><th>Student</th><th>Month</th><th>Total</th><th>Balance</th><th>Action</th></tr></thead>
+      <div class="d-flex gap-2">
+        <button class="btn btn-secondary btn-sm px-12 py-8 radius-8" (click)="printReceipt()"><i class="bi bi-printer-fill"></i> Print</button>
+        <button class="btn btn-secondary btn-sm px-12 py-8 radius-8" (click)="downloadReceipt()"><i class="bi bi-download"></i> Download</button>
+      </div>
+    </div>
+
+    <!-- Fee Info & Form -->
+    <div class="card-body p-24">
+      <div *ngIf="selectedStudent">
+        <h5>Fee Details for {{ selectedStudent.studentName }}</h5>
+        <p>Total Fee: {{ totalFee }} | Paid: {{ paidAmount }} | Remaining: {{ remainingAmount }}</p>
+
+        <form [formGroup]="paymentForm" (ngSubmit)="submitPayment()">
+          <div class="d-flex flex-wrap gap-3 align-items-center mb-12">
+            <input type="number" formControlName="amountPaid" class="form-control w-auto" placeholder="Amount Paid">
+            <select formControlName="paymentType" class="form-select w-auto">
+              <option value="Cash">Cash</option>
+              <option value="Bank">Bank</option>
+              <option value="Other">Other</option>
+            </select>
+            <input type="date" formControlName="paymentDate" class="form-control w-auto">
+            <input type="text" formControlName="notes" class="form-control w-auto" placeholder="Notes">
+            <button type="submit" class="btn btn-primary btn-sm px-12 py-8">Collect Fee</button>
+          </div>
+        </form>
+
+        <!-- Previous Payments Table -->
+        <h6>Previous Payments</h6>
+        <div class="table-responsive scroll-sm">
+          <table class="table bordered-table sm-table mb-0">
+            <thead>
+              <tr>
+                <th>Payment ID</th>
+                <th>Amount Paid</th>
+                <th>Remaining Amount</th>
+                <th>Payment Date</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr *ngFor="let inv of invoices">
-                <td>{{inv.id}}</td>
-                <td>{{inv.invoiceNo}}</td>
-                <td>{{inv.studentName}}</td>
-                <td>{{inv.month}}</td>
-                <td>{{inv.totalFee | number}}</td>
-                <td>{{inv.balance | number}}</td>
-                <td><button class="btn btn-sm btn-primary" (click)="selectInvoice(inv)">Collect</button></td>
+              <tr *ngFor="let p of previousPayments">
+                <td>{{ p.monthlyPaymentId }}</td>
+                <td>{{ p.amountPaid }}</td>
+                <td>{{ p.amountRemaining }}</td>
+                <td>{{ p.paymentDate | date:'shortDate' }}</td>
+              </tr>
+              <tr *ngIf="previousPayments.length === 0">
+                <td colspan="4" class="text-center py-12 text-secondary-light">No payments found</td>
               </tr>
             </tbody>
           </table>
         </div>
-
-        <div class="col-md-5">
-          <h6>Collect Payment</h6>
-          <div *ngIf="selectedInvoice; else noSel">
-            <p><strong>{{selectedInvoice.invoiceNo}}</strong> — {{selectedInvoice.studentName}}</p>
-            <p>Total: {{selectedInvoice.totalFee | number}}</p>
-            <p>Paid: {{selectedInvoice.paidAmount | number}}</p>
-            <p>Balance: {{selectedInvoice.balance | number}}</p>
-
-            <label>Payment Amount</label>
-            <input type="number" class="form-control mb-2" [(ngModel)]="paymentAmount" />
-
-            <label>Method</label>
-            <select class="form-select mb-2" [(ngModel)]="paymentMethod">
-              <option>Cash</option>
-              <option>Bank</option>
-              <option>Online</option>
-            </select>
-
-            <div class="d-flex gap-2">
-              <button class="btn btn-success" (click)="collectPayment()">Collect Fee & Print Slip</button>
-              <button class="btn btn-secondary" (click)="selectedInvoice = undefined">Cancel</button>
-            </div>
-          </div>
-          <ng-template #noSel>
-            <div class="text-secondary">Select an invoice from the left to collect payment.</div>
-          </ng-template>
-        </div>
+      </div>
+      <div *ngIf="!selectedStudent" class="text-center py-24 text-secondary-light">
+        Select a student to view fee details and collect payment.
       </div>
     </div>
   </div>
-</div> -->
+</div>
