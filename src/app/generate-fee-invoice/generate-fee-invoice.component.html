@@ -2,9 +2,10 @@
 
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- FILTERS -->
+  <!-- ================= FILTERS ================= -->
   <div class="card radius-12 p-24 mb-24">
-    <form [formGroup]="feeForm" class="row g-3">
+    <form [formGroup]="filterForm" class="row g-3">
+
       <div class="col-md-3">
         <label>Standard</label>
         <select class="form-control" formControlName="standardId" (change)="applyFilters()">
@@ -27,34 +28,41 @@
 
       <div class="col-md-3">
         <label>Min Amount</label>
-        <input type="number" class="form-control" formControlName="amount" (input)="applyFilters()">
+        <input type="number" class="form-control"
+               formControlName="minAmount"
+               (input)="applyFilters()">
       </div>
 
       <div class="col-md-3 d-flex align-items-end">
-        <button class="btn btn-secondary w-100" type="button" (click)="resetFilters()">
+        <button type="button" class="btn btn-secondary w-100" (click)="resetFilters()">
           Reset
         </button>
       </div>
+
     </form>
   </div>
 
-  <!-- TABLE -->
+  <!-- ================= TABLE ================= -->
   <div class="card radius-12">
+
     <div class="card-header d-flex justify-content-between align-items-center">
-       <div class="d-flex align-items-center flex-wrap gap-3">
-        <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
-        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="rowsPerPage" (change)="currentPage = 1; updatePagination()">
+      <div class="d-flex align-items-center gap-3">
+        <span>Show</span>
+        <select class="form-select form-select-sm w-auto"
+                [(ngModel)]="rowsPerPage"
+                (change)="currentPage = 1; updatePagination()">
           <option [value]="10">10</option>
           <option [value]="25">25</option>
           <option [value]="50">50</option>
         </select>
 
-        <form class="navbar-search ms-3">
-          <input type="text" class="bg-base h-40-px w-auto" [(ngModel)]="searchTerm" (input)="
-  applyFilters()" name="search" placeholder="Search exam types..." />
-          <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
-        </form>
+        <input type="text"
+               class="form-control ms-3"
+               placeholder="Search..."
+               [(ngModel)]="searchTerm"
+               (input)="applyFilters()">
       </div>
+
       <button class="btn btn-primary btn-sm" (click)="openAddFee()">+ Add Fee</button>
     </div>
 
@@ -65,27 +73,29 @@
             <th>#</th>
             <th>Standard</th>
             <th>Fee Type</th>
+            <th>Frequency</th>
             <th>Amount</th>
             <th>Due Date</th>
             <th class="text-center">Actions</th>
           </tr>
         </thead>
+
         <tbody>
           <tr *ngFor="let fee of paginatedFees; let i = index">
             <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
             <td>{{ fee.standard?.standardName }}</td>
             <td>{{ fee.feeType?.typeName }}</td>
+            <td>{{ fee.paymentFrequency }}</td>
             <td>Rs. {{ fee.amount }}</td>
             <td>{{ fee.dueDate | date }}</td>
             <td class="text-center">
-              <button class="btn btn-info btn-sm me-1" (click)="openEditFee(fee)">View</button>
               <button class="btn btn-success btn-sm me-1" (click)="openEditFee(fee)">Edit</button>
               <button class="btn btn-danger btn-sm" (click)="confirmDelete(fee)">Delete</button>
             </td>
           </tr>
 
           <tr *ngIf="paginatedFees.length === 0">
-            <td colspan="6" class="text-center text-muted py-4">
+            <td colspan="7" class="text-center text-muted py-4">
               No records found
             </td>
           </tr>
@@ -93,7 +103,7 @@
       </table>
     </div>
 
-    <!-- PAGINATION -->
+    <!-- ================= PAGINATION ================= -->
     <div class="p-24 d-flex justify-content-between">
       <span>
         Showing {{ (currentPage - 1) * rowsPerPage + 1 }}
@@ -114,54 +124,53 @@
   </div>
 </div>
 
-<!-- ADD / EDIT FEE MODAL -->
+<!-- ================= ADD / EDIT MODAL ================= -->
 <div *ngIf="showFeeDialog" class="modal-backdrop">
   <div class="modal-box">
-    <h5 class="mb-3">{{ isEditMode ? 'Edit Fee' : 'Add Fee' }}</h5>
+    <h5>{{ isEditMode ? 'Edit Fee' : 'Add Fee' }}</h5>
 
     <form [formGroup]="feeForm">
-      <div class="mb-2">
-        <label>Standard</label>
-        <select class="form-control" formControlName="standardId">
-          <option value="">Select Standard</option>
-          <option *ngFor="let s of standards" [value]="s.standardId">
-            {{ s.standardName }}
-          </option>
-        </select>
-      </div>
 
-      <div class="mb-2">
-        <label>Fee Type</label>
-        <select class="form-control" formControlName="feeTypeId">
-          <option value="">Select Fee Type</option>
-          <option *ngFor="let f of feeTypes" [value]="f.feeTypeId">
-            {{ f.typeName }}
-          </option>
-        </select>
-      </div>
+      <label>Standard</label>
+      <select class="form-control mb-2" formControlName="standardId">
+        <option value="">Select Standard</option>
+        <option *ngFor="let s of standards" [value]="s.standardId">{{ s.standardName }}</option>
+      </select>
 
-      <div class="mb-2">
-        <label>Amount</label>
-        <input type="number" class="form-control" formControlName="amount">
-      </div>
+      <label>Fee Type</label>
+      <select class="form-control mb-2" formControlName="feeTypeId">
+        <option value="">Select Fee Type</option>
+        <option *ngFor="let f of feeTypes" [value]="f.feeTypeId">{{ f.typeName }}</option>
+      </select>
 
-      <div class="mb-3">
-        <label>Due Date</label>
-        <input type="date" class="form-control" formControlName="dueDate">
-      </div>
+      <label>Payment Frequency</label>
+      <select class="form-control mb-2" formControlName="paymentFrequency">
+        <option value="">Select Frequency</option>
+        <option value="Monthly">Monthly</option>
+        <option value="Quarterly">Quarterly</option>
+        <option value="Yearly">Yearly</option>
+      </select>
+
+      <label>Amount</label>
+      <input type="number" class="form-control mb-2" formControlName="amount">
+
+      <label>Due Date</label>
+      <input type="date" class="form-control mb-3" formControlName="dueDate">
+
     </form>
 
     <div class="text-end">
-      <button class="btn btn-success me-2" (click)="saveFee()" [disabled]="feeForm.invalid">
+      <button class="btn btn-success me-2"
+              (click)="saveFee()"
+              [disabled]="feeForm.invalid">
         {{ isEditMode ? 'Update' : 'Create' }}
       </button>
-
       <button class="btn btn-secondary" (click)="showFeeDialog=false">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- DELETE MODAL -->
+<!-- ================= DELETE MODAL ================= -->
 <div *ngIf="showDeleteDialog" class="modal-backdrop">
   <div class="modal-box">
     <h5>Confirm Delete</h5>

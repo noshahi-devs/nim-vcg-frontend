@@ -36,6 +36,7 @@ export class Student {
   previousSchool: string = '';
   status: string = '';
   section: string = '';
+  // totalFee: number;
 }
 
 export enum GenderList {

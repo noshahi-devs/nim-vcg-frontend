@@ -21,6 +21,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
 
   title = 'Generate Fee Invoice';
 
+  // ===== DATA =====
   fees: Fee[] = [];
   filteredFees: Fee[] = [];
   paginatedFees: Fee[] = [];
@@ -28,20 +29,24 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   feeTypes: FeeType[] = [];
   standards: Standard[] = [];
 
+  // ===== FILTERS =====
+  filterForm!: FormGroup;
   searchTerm = '';
+
+  // ===== PAGINATION =====
   rowsPerPage = 10;
   currentPage = 1;
   totalPages = 1;
+  Math = Math;
 
+  // ===== MODALS =====
   showFeeDialog = false;
   isEditMode = false;
-
-  feeForm!: FormGroup;
-
   showDeleteDialog = false;
-  feeToDelete!: Fee;
 
-  Math = Math;
+  // ===== FORMS =====
+  feeForm!: FormGroup;
+  feeToDelete!: Fee;
 
   constructor(
     private feeService: FeeService,
@@ -50,10 +55,20 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    /* ---------- FILTER FORM ---------- */
+    this.filterForm = new FormGroup({
+      standardId: new FormControl(''),
+      feeTypeId: new FormControl(''),
+      minAmount: new FormControl('')
+    });
+
+    /* ---------- ADD / EDIT FORM ---------- */
     this.feeForm = new FormGroup({
       feeId: new FormControl(0),
       standardId: new FormControl('', Validators.required),
       feeTypeId: new FormControl('', Validators.required),
+      paymentFrequency: new FormControl('', Validators.required),
       amount: new FormControl('', Validators.required),
       dueDate: new FormControl('', Validators.required)
     });
@@ -62,6 +77,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     this.loadFees();
   }
 
+  /* ---------- LOADERS ---------- */
   loadDropdowns() {
     this.feeTypeService.getFeeTypes().subscribe(res => this.feeTypes = res);
     this.standardService.getStandards().subscribe(res => this.standards = res);
@@ -74,13 +90,15 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     });
   }
 
+  /* ---------- FILTERING ---------- */
   applyFilters() {
+    const { standardId, feeTypeId, minAmount } = this.filterForm.value;
     const term = this.searchTerm.toLowerCase();
 
     this.filteredFees = this.fees.filter(f =>
-      (!this.feeForm.value.standardId || f.standardId == this.feeForm.value.standardId) &&
-      (!this.feeForm.value.feeTypeId || f.feeTypeId == this.feeForm.value.feeTypeId) &&
-      (!this.feeForm.value.minBalance || f.amount >= this.feeForm.value.minBalance) &&
+      (!standardId || f.standardId == standardId) &&
+      (!feeTypeId || f.feeTypeId == feeTypeId) &&
+      (!minAmount || f.amount >= minAmount) &&
       (
         !term ||
         f.standard?.standardName?.toLowerCase().includes(term) ||
@@ -92,6 +110,13 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     this.updatePagination();
   }
 
+  resetFilters() {
+    this.filterForm.reset();
+    this.searchTerm = '';
+    this.applyFilters();
+  }
+
+  /* ---------- PAGINATION ---------- */
   updatePagination() {
     this.totalPages = Math.ceil(this.filteredFees.length / this.rowsPerPage);
     const start = (this.currentPage - 1) * this.rowsPerPage;
@@ -104,13 +129,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     this.updatePagination();
   }
 
-  resetFilters() {
-    this.feeForm.reset();
-    this.searchTerm = '';
-    this.applyFilters();
-  }
-
-  /* ---------- FEE DIALOG ---------- */
+  /* ---------- ADD / EDIT ---------- */
   openAddFee() {
     this.isEditMode = false;
     this.feeForm.reset();
@@ -120,7 +139,14 @@ export class GenerateFeeInvoiceComponent implements OnInit {
 
   openEditFee(fee: Fee) {
     this.isEditMode = true;
-    this.feeForm.patchValue(fee);
+    this.feeForm.patchValue({
+      feeId: fee.feeId,
+      standardId: fee.standardId,
+      feeTypeId: fee.feeTypeId,
+      paymentFrequency: fee.paymentFrequency,
+      amount: fee.amount,
+      dueDate: fee.dueDate
+    });
     this.showFeeDialog = true;
   }
 
@@ -143,6 +169,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     }
   }
 
+  /* ---------- DELETE ---------- */
   confirmDelete(fee: Fee) {
     this.feeToDelete = fee;
     this.showDeleteDialog = true;

@@ -19,7 +19,9 @@ export class MonthlyPayment {
 
   //feeStructures: { feeStructureId: number }[] = [];
 
-  fees: { feeId: number }[] = [];
+  fees: {
+    amount: number; feeId: number 
+}[] = [];
   academicMonths: { monthId: number }[] = [];
 
 

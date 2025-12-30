@@ -1,3 +1,4 @@
+import { MonthlyPayment } from './Models/monthly-payment';
 import { Routes } from '@angular/router';
 import { AddBlogComponent } from './add-blog/add-blog.component';
 import { AddUserComponent } from './add-user/add-user.component';
@@ -115,6 +116,7 @@ import { SectionListComponent } from './section-list/section-list.component';
 import { SalarySlipComponent } from './salary-slip/salary-slip.component';
 import { GenerateFeeInvoiceComponent } from './generate-fee-invoice/generate-fee-invoice.component';
 import { CollectFeeComponent } from './collect-fee/collect-fee.component';
+import { MonthlyPaymentComponent } from './monthly-payment/monthly-payment.component';
 import { FeeDefaultersComponent } from './fee-defaulters/fee-defaulters.component';
 import { ExamResultComponent } from './exam-result/exam-result.component';
 import { ExamScheduleComponent } from './exam-schedule/exam-schedule.component';
@@ -134,6 +136,8 @@ import { BankCashComponent } from './bank-cash/bank-cash.component';
 import { AuthGuard } from './SecurityModels/auth.guard';
 import { ExamScheduleStandardsCreateComponent } from './exam-schedule-standards-create/exam-schedule-standards-create.component';
 import { ExamScheduleStandardsListComponent } from './exam-schedule-standards-list/exam-schedule-standards-list.component';
+import { OtherPaymentComponent } from './other-payment/other-payment.component';
+import { PaymentDetailComponent } from './payment-detail/payment-detail.component';
 export const routes: Routes = [
    { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
   {
@@ -174,7 +178,9 @@ export const routes: Routes = [
             { path: 'dropdown', component: DropdownComponent },
             { path: 'email', component: EmailComponent },
             { path: 'faq', component: FaqComponent },
-           
+            { path: 'monthly-payment', component: MonthlyPaymentComponent },
+            { path: 'payment-detail', component:  PaymentDetailComponent },
+            { path: 'other-payment', component: OtherPaymentComponent },
             { path: 'form-layout', component: FormLayoutComponent },
             { path: 'form-validation', component: FormValidationComponent },
             { path: 'form', component: FormComponent },
