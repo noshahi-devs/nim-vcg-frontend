@@ -1,87 +1,53 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- Date Filter Card -->
+  <!-- Filters Card -->
   <div class="card radius-12 mb-4">
     <div class="card-header bg-base py-16 px-24 border-bottom">
-      <h6 class="fw-semibold mb-0">Select Date</h6>
+      <h6 class="fw-semibold mb-0">Select Filters</h6>
     </div>
     <div class="card-body p-24">
       <div class="row g-3 align-items-end">
+
+        <!-- Date Filter -->
         <div class="col-md-4">
           <label class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
           <input type="date" class="form-control radius-8" [(ngModel)]="selectedDate" />
         </div>
+
+        <!-- Standard Filter -->
         <div class="col-md-4">
-          <button 
-            type="button" 
-            class="btn btn-primary px-4 py-2 radius-8"
-            (click)="loadReport()">
+          <label class="form-label fw-semibold">Standard</label>
+          <select class="form-select radius-8" [(ngModel)]="selectedStandardId">
+            <option value="">All Standards</option>
+            <option *ngFor="let s of standards" [value]="s.standardId">{{ s.standardName }}</option>
+          </select>
+        </div>
+
+        <!-- Load Report Button -->
+        <div class="col-md-4">
+          <button type="button" class="btn btn-primary px-4 py-2 radius-8" (click)="loadReport()">
             <iconify-icon icon="mdi:file-chart" class="me-2"></iconify-icon>
             Load Report
           </button>
         </div>
+
       </div>
     </div>
   </div>
 
   <!-- Summary Stats -->
   <div class="row g-3 mb-4" *ngIf="reportLoaded">
-    <div class="col-md-3">
+    <div class="col-md-3" *ngFor="let stat of summaryStats">
       <div class="card radius-12 h-100">
         <div class="card-body p-24">
           <div class="d-flex align-items-center gap-3">
-            <div class="w-64-px h-64-px radius-12 bg-primary-50 d-flex align-items-center justify-content-center">
-              <iconify-icon icon="mdi:google-classroom" class="text-primary-600" style="font-size: 32px;"></iconify-icon>
+            <div class="w-64-px h-64-px radius-12 d-flex align-items-center justify-content-center" [ngClass]="stat.bgClass">
+              <iconify-icon [icon]="stat.icon" [ngClass]="stat.textClass" style="font-size: 32px;"></iconify-icon>
             </div>
             <div>
-              <h6 class="fw-bold mb-1">{{ totalClasses }}</h6>
-              <small class="text-secondary-light">Total Classes</small>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card radius-12 h-100">
-        <div class="card-body p-24">
-          <div class="d-flex align-items-center gap-3">
-            <div class="w-64-px h-64-px radius-12 bg-success-50 d-flex align-items-center justify-content-center">
-              <iconify-icon icon="mdi:check-circle" class="text-success-600" style="font-size: 32px;"></iconify-icon>
-            </div>
-            <div>
-              <h6 class="fw-bold mb-1 text-success-600">{{ markedClasses }}</h6>
-              <small class="text-secondary-light">Marked</small>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card radius-12 h-100">
-        <div class="card-body p-24">
-          <div class="d-flex align-items-center gap-3">
-            <div class="w-64-px h-64-px radius-12 bg-danger-50 d-flex align-items-center justify-content-center">
-              <iconify-icon icon="mdi:alert-circle" class="text-danger-600" style="font-size: 32px;"></iconify-icon>
-            </div>
-            <div>
-              <h6 class="fw-bold mb-1 text-danger-600">{{ unmarkedClasses }}</h6>
-              <small class="text-secondary-light">Not Marked</small>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card radius-12 h-100">
-        <div class="card-body p-24">
-          <div class="d-flex align-items-center gap-3">
-            <div class="w-64-px h-64-px radius-12 bg-warning-50 d-flex align-items-center justify-content-center">
-              <iconify-icon icon="mdi:chart-line" class="text-warning-600" style="font-size: 32px;"></iconify-icon>
-            </div>
-            <div>
-              <h6 class="fw-bold mb-1 text-warning-600">{{ overallPercentage }}%</h6>
-              <small class="text-secondary-light">Overall Attendance</small>
+              <h6 class="fw-bold mb-1" [ngClass]="stat.textClass">{{ stat.value }}</h6>
+              <small class="text-secondary-light">{{ stat.label }}</small>
             </div>
           </div>
         </div>
@@ -94,26 +60,26 @@
     <div class="col-md-6 col-lg-4 col-xl-3" *ngFor="let report of classReports">
       <div class="card radius-12 h-100">
         <div class="card-body p-24">
+
           <!-- Class Header -->
           <div class="d-flex justify-content-between align-items-start mb-3">
             <div>
-              <h5 class="fw-bold mb-1">Class {{ report.className }}-{{ report.section }}</h5>
+              <h5 class="fw-bold mb-1">{{ report.standardName }}-{{ report.section }}</h5>
               <small class="text-secondary-light">{{ report.totalStudents }} Students</small>
             </div>
-            <span class="badge {{ getStatusBadgeClass(report) }} px-3 py-2 radius-8">
-              {{ getStatusText(report) }}
+            <span class="badge px-3 py-2 radius-8" [ngClass]="report.attendanceMarked ? 'badge-success' : 'badge-danger'">
+              {{ report.attendanceMarked ? 'Marked' : 'Not Marked' }}
             </span>
           </div>
 
-          <!-- Attendance Stats -->
+          <!-- Attendance Progress -->
           <div class="mb-3" *ngIf="report.attendanceMarked">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <span class="text-sm text-secondary-light">Attendance</span>
               <span class="text-sm fw-semibold">{{ report.percentage }}%</span>
             </div>
             <div class="progress" style="height: 8px;">
-              <div 
-                class="progress-bar" 
+              <div class="progress-bar"
                 [class.bg-success]="report.percentage >= 90"
                 [class.bg-warning]="report.percentage >= 75 && report.percentage < 90"
                 [class.bg-danger]="report.percentage < 75"
@@ -122,30 +88,12 @@
             </div>
           </div>
 
-          <!-- Status Breakdown -->
+          <!-- Attendance Breakdown -->
           <div class="row g-2">
-            <div class="col-6">
-              <div class="text-center p-2 bg-success-50 radius-8">
-                <h6 class="fw-bold mb-0 text-success-600">{{ report.present }}</h6>
-                <small class="text-secondary-light">Present</small>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="text-center p-2 bg-danger-50 radius-8">
-                <h6 class="fw-bold mb-0 text-danger-600">{{ report.absent }}</h6>
-                <small class="text-secondary-light">Absent</small>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="text-center p-2 bg-warning-50 radius-8">
-                <h6 class="fw-bold mb-0 text-warning-600">{{ report.leave }}</h6>
-                <small class="text-secondary-light">Leave</small>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="text-center p-2 bg-info-50 radius-8">
-                <h6 class="fw-bold mb-0 text-info-600">{{ report.late }}</h6>
-                <small class="text-secondary-light">Late</small>
+            <div class="col-6" *ngFor="let status of ['present','absent','leave','late']">
+              <div class="text-center p-2 radius-8" [ngClass]="statusBgClass(status)">
+                <h6 class="fw-bold mb-0" [ngClass]="statusTextClass(status)">{{ report[status] }}</h6>
+                <small class="text-secondary-light">{{ capitalize(status) }}</small>
               </div>
             </div>
           </div>
@@ -158,13 +106,13 @@
             </div>
           </div>
 
-          <!-- Unmarked Students Warning -->
           <div class="alert alert-warning mt-3 mb-0 py-2 px-3" *ngIf="report.attendanceMarked && report.unmarked > 0">
             <div class="d-flex align-items-center gap-2">
               <iconify-icon icon="mdi:alert-circle" style="font-size: 18px;"></iconify-icon>
               <small class="mb-0">{{ report.unmarked }} student(s) unmarked</small>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -178,3 +126,4 @@
       <p class="text-secondary-light">Please select a date and click "Load Report" to view class-wise attendance.</p>
     </div>
   </div>
+</div>

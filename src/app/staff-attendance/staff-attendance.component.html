@@ -1,8 +1,6 @@
-<div class="dashboard-main-body">
+<!-- <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- Staff Attendance -->
-    <!-- Filters Card -->
     <div class="card radius-12 mb-4">
       <div class="card-header bg-base py-16 px-24 border-bottom">
         <h6 class="fw-semibold mb-0">Filters</h6>
@@ -10,7 +8,6 @@
       <div class="card-body p-24">
         <div class="row g-3">
           
-          <!-- Department -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Department <span class="text-danger">*</span></label>
             <select class="form-select radius-8" [(ngModel)]="selectedDepartment">
@@ -19,7 +16,6 @@
             </select>
           </div>
 
-          <!-- Date -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
             <input type="date" class="form-control radius-8" [(ngModel)]="selectedDate" />
@@ -38,9 +34,7 @@
       </div>
     </div>
 
-    <!-- Staff Table -->
     <div class="card radius-12" *ngIf="staffLoaded">
-      <!-- Toolbar with Show, Search, Filter -->
       <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
         <div class="d-flex align-items-center flex-wrap gap-3">
           <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
@@ -50,7 +44,6 @@
             <option [value]="50">50</option>
           </select>
 
-          <!-- Search -->
           <form class="navbar-search">
             <input
               type="text"
@@ -64,7 +57,6 @@
         </div>
       </div>
 
-      <!-- Stats Bar -->
       <div class="card-header bg-base py-16 px-24 border-bottom">
         <div class="row g-3">
           <div class="col-md-2">
@@ -107,7 +99,6 @@
       </div>
 
       <div class="card-body p-24">
-        <!-- Action Buttons Above Table -->
         <div class="d-flex flex-wrap gap-3 mb-4">
           <button 
             type="button" 
@@ -223,7 +214,6 @@
           </table>
         </div>
 
-        <!-- Pagination -->
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3">
           <span class="text-secondary-light text-sm">Showing {{ paginationStart }} to {{ paginationEnd }} of {{ filteredStaff.length }} entries</span>
           <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
@@ -262,7 +252,6 @@
       </div>
     </div>
 
-    <!-- Empty State -->
     <div class="card radius-12" *ngIf="!staffLoaded">
       <div class="card-body p-5 text-center">
         <iconify-icon icon="mdi:account-search" style="font-size: 64px;" class="text-secondary-light mb-3"></iconify-icon>
@@ -271,7 +260,6 @@
       </div>
     </div>
 
-  <!-- History Modal -->
   <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content radius-12">
@@ -283,7 +271,6 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <!-- Date Range Filters -->
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               <label class="form-label fw-semibold">Start Date</label>
@@ -295,7 +282,6 @@
             </div>
           </div>
 
-          <!-- History Table -->
           <div class="table-responsive">
             <table class="table bordered-table mb-0">
               <thead>
@@ -343,4 +329,74 @@
         </div>
       </div>
     </div>
+  </div> -->
+
+
+  <div class="container mt-4">
+  <h3>{{ title }}</h3>
+
+  <!-- Filters -->
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <label for="attendanceDate" class="form-label">Select Date</label>
+      <input type="date" id="attendanceDate" class="form-control" [(ngModel)]="selectedDate">
+    </div>
+
+    <div class="col-md-4">
+      <label for="searchStaff" class="form-label">Search Staff</label>
+      <input type="text" id="searchStaff" class="form-control" placeholder="Search by Name or ID" [(ngModel)]="searchQuery">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end gap-2">
+      <button class="btn btn-success" (click)="markAllPresent()">Mark All Present</button>
+      <button class="btn btn-warning" (click)="markAllAbsent()">Mark All Absent</button>
+      <button class="btn btn-primary" (click)="saveAttendance()">Save Attendance</button>
+    </div>
   </div>
+
+  <!-- Attendance Table -->
+  <div *ngIf="staffLoaded && staffMembers.length > 0" class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Staff ID</th>
+          <th>Status</th>
+          <th>Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let staff of paginatedStaff; let i = index">
+          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+          <td>{{ staff.staffName }}</td>
+          <td>{{ staff.staffId }}</td>
+          <td>
+            <select class="form-select form-select-sm" [(ngModel)]="staff.status">
+              <option value="">-- Select --</option>
+              <option *ngFor="let s of ['Present','Absent','Leave','Late']" [value]="s">{{ s }}</option>
+            </select>
+          </td>
+          <td>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="staff.remarks" placeholder="Enter remarks">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No Staff Loaded -->
+  <div *ngIf="staffLoaded && staffMembers.length === 0" class="alert alert-info">
+    No staff available for the selected date.
+  </div>
+
+  <!-- Attendance Stats -->
+  <div class="mt-3">
+    <p>
+      <strong>Total Staff:</strong> {{ attendanceStats.total }} | 
+      <strong>Present:</strong> {{ attendanceStats.present }} | 
+      <strong>Absent:</strong> {{ attendanceStats.absent }} | 
+      <strong>Unmarked:</strong> {{ attendanceStats.unmarked }}
+    </p>
+  </div>
+</div>

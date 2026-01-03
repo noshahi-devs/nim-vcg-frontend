@@ -1,174 +1,112 @@
-<!-- <div class="dashboard-main-body">
-  <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <div class="card radius-12 mb-24">
-    <div class="card-body p-24">
-      <div class="row gy-3">
-        <div class="col-md-3">
-          <label class="form-label">Select Exam <span class="text-danger">*</span></label>
-          <select class="form-select" [(ngModel)]="selectedExamId" (change)="onFilterChange()">
-            <option [value]="0">Select Exam</option>
-            <option *ngFor="let exam of exams" [value]="exam.examId">{{ exam.examName }}</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label">Select Class <span class="text-danger">*</span></label>
-          <select class="form-select" [(ngModel)]="selectedClassId">
-            <option [value]="0">Select Class</option>
-            <option *ngFor="let cls of classes" [value]="cls.id">{{ cls.name }}</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label">Select Section <span class="text-danger">*</span></label>
-          <select class="form-select" [(ngModel)]="selectedSectionId">
-            <option [value]="0">Select Section</option>
-            <option *ngFor="let sec of sections" [value]="sec.id">{{ sec.name }}</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label">Select Subject <span class="text-danger">*</span></label>
-          <select class="form-select" [(ngModel)]="selectedSubjectId" (change)="onFilterChange()">
-            <option [value]="0">Select Subject</option>
-            <option *ngFor="let subject of subjects" [value]="subject.id">{{ subject.name }}</option>
-          </select>
-        </div>
-      </div>
-    </div>
+<form #entryForm="ngForm" (ngSubmit)="onSubmit()">
+
+
+  <div>
+    <label for="markEntryDate">Mark Entry Date:</label>
+    <input type="date" id="markEntryDate" name="markEntryDate" #markEntryDate="ngModel" [(ngModel)]="markEntry.markEntryDate" required>
   </div>
 
-  <div class="card radius-12 mb-24">
-    <div class="card-body p-24">
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-        <div class="d-flex align-items-center gap-3 flex-wrap">
-          <button type="button" (click)="saveMarks()" 
-                  class="btn btn-primary-600 radius-8 px-20 py-11 d-flex align-items-center gap-2"
-                  [disabled]="studentMarks.length === 0">
-            <iconify-icon icon="material-symbols:save" class="text-xl"></iconify-icon>
-            Save Marks
-          </button>
-          
-          <button type="button" (click)="publishResults()" 
-                  class="btn btn-success-600 radius-8 px-20 py-11 d-flex align-items-center gap-2"
-                  [disabled]="studentMarks.length === 0">
-            <iconify-icon icon="material-symbols:publish" class="text-xl"></iconify-icon>
-            Publish Result
-          </button>
-
-          <button type="button" (click)="importExcel()" 
-                  class="btn btn-info-600 radius-8 px-20 py-11 d-flex align-items-center gap-2">
-            <iconify-icon icon="material-symbols:upload-file" class="text-xl"></iconify-icon>
-            Import Excel
-          </button>
-
-          <button type="button" (click)="exportExcel()" 
-                  class="btn btn-outline-primary-600 radius-8 px-20 py-11 d-flex align-items-center gap-2"
-                  [disabled]="studentMarks.length === 0">
-            <iconify-icon icon="material-symbols:download" class="text-xl"></iconify-icon>
-            Export Excel
-          </button>
-        </div>
-      </div>
-    </div>
+  <div>
+    <label for="staffId">Staff:</label>
+    <select id="staffId" name="staffId" #staffId="ngModel" [(ngModel)]="markEntry.staffId">
+      <option *ngFor="let staff of staffList" [value]="staff.staffId">{{ staff.staffName }}</option>
+    </select>
   </div>
 
-  <div class="card h-100 p-0 radius-12">
-    <div class="card-header border-bottom bg-base py-16 px-24">
-      <h6 class="text-lg fw-semibold mb-0">Student Marks Entry</h6>
-    </div>
 
-    <div class="card-body p-24">
-      <div *ngIf="loading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-
-      <div *ngIf="!loading && studentMarks.length === 0" class="text-center py-5">
-        <iconify-icon icon="mdi:information-outline" class="text-secondary-light" style="font-size: 48px;"></iconify-icon>
-        <p class="text-secondary-light mt-3 mb-0">Please select Exam and Subject to load students</p>
-      </div>
-
-      <div *ngIf="!loading && studentMarks.length > 0" class="table-responsive scroll-sm">
-        <table class="table bordered-table sm-table mb-0">
-          <thead>
-            <tr>
-              <th scope="col" style="width: 80px;">Roll No</th>
-              <th scope="col">Student Name</th>
-              <th scope="col" style="width: 120px;">Total Marks</th>
-              <th scope="col" style="width: 150px;">Obtained Marks</th>
-              <th scope="col" style="width: 120px;">Percentage</th>
-              <th scope="col" style="width: 100px;">Grade</th>
-              <th scope="col" style="width: 200px;">Remarks</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let student of studentMarks; let i = index">
-              <td>
-                <span class="fw-semibold">{{ student.rollNo }}</span>
-              </td>
-              <td>
-                <span class="text-primary-600">{{ student.studentName }}</span>
-              </td>
-              <td>
-                <input type="number" 
-                       class="form-control form-control-sm" 
-                       [(ngModel)]="student.totalMarks"
-                       (ngModelChange)="calculateGradeAndPercentage(student)"
-                       min="0" />
-              </td>
-              <td>
-                <input type="number" 
-                       class="form-control form-control-sm" 
-                       [(ngModel)]="student.obtainedMarks"
-                       (ngModelChange)="onObtainedMarksChange(student)"
-                       [max]="student.totalMarks"
-                       min="0" />
-              </td>
-              <td class="text-center">
-                <span class="fw-semibold">{{ student.percentage || 0 }}%</span>
-              </td>
-              <td class="text-center">
-                <span *ngIf="student.grade" 
-                      class="px-12 py-4 radius-4 fw-medium text-sm"
-                      [ngClass]="getGradeBadgeClass(student.grade)">
-                  {{ student.grade }}
-                </span>
-                <span *ngIf="!student.grade" class="text-secondary-light">-</span>
-              </td>
-              <td>
-                <input type="text" 
-                       class="form-control form-control-sm" 
-                       [(ngModel)]="student.remarks"
-                       placeholder="Optional remarks" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div *ngIf="studentMarks.length > 0" class="mt-24 p-16 bg-neutral-50 radius-8">
-        <h6 class="text-md fw-semibold mb-3">Grading Scale</h6>
-        <div class="row gy-2">
-          <div class="col-md-2">
-            <span class="badge bg-success-focus text-success-600 border border-success-main px-12 py-4 fw-medium">A+ (90-100%)</span>
-          </div>
-          <div class="col-md-2">
-            <span class="badge bg-success-focus text-success-600 border border-success-main px-12 py-4 fw-medium">A (80-89%)</span>
-          </div>
-          <div class="col-md-2">
-            <span class="badge bg-info-focus text-info-600 border border-info-main px-12 py-4 fw-medium">B (70-79%)</span>
-          </div>
-          <div class="col-md-2">
-            <span class="badge bg-warning-focus text-warning-600 border border-warning-main px-12 py-4 fw-medium">C (60-69%)</span>
-          </div>
-          <div class="col-md-2">
-            <span class="badge bg-orange-focus text-orange-600 border border-orange-main px-12 py-4 fw-medium">D (50-59%)</span>
-          </div>
-          <div class="col-md-2">
-            <span class="badge bg-danger-focus text-danger-600 border border-danger-main px-12 py-4 fw-medium">F (<50%)</span>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div>
+    <label for="examScheduleId">ExamSchedule:</label>
+    <select id="examScheduleId" name="examScheduleId" #examScheduleId="ngModel" [(ngModel)]="markEntry.examScheduleId">
+      <option *ngFor="let examSchedul of examSchedulesVM" [value]="examSchedul.examScheduleId">{{ examSchedul.examScheduleName }}</option>
+    </select>
   </div>
-</div> -->
+
+
+  <div>
+    <label for="examTypeId">ExamType:</label>
+    <select id="examTypeId" name="examTypeId" #examTypeId="ngModel" [(ngModel)]="markEntry.examTypeId">
+      <option *ngFor="let examType of examtypes" [value]="examType.examTypeId">{{ examType.examTypeName }}</option>
+    </select>
+  </div>
+
+
+  <div>
+    <label for="subjectId">Subject:</label>
+    <select id="subjectId" name="subjectId" #subjectId="ngModel" [(ngModel)]="markEntry.subjectId">
+      <option *ngFor="let sbject of subjects" [value]="sbject.subjectId">{{ sbject.subjectName }}</option>
+    </select>
+  </div>
+
+
+  <div>
+    <label for="standardId">Standard:</label>
+    <select id="standardId" name="standardId" #standardId="ngModel" [(ngModel)]="markEntry.standardId">
+      <option *ngFor="let standard of standards" [value]="standard.standardId">{{ standard.standardName }}</option>
+    </select>
+  </div>
+
+
+
+
+  <div>
+    <label for="totalMarks">Total Marks:</label>
+    <input type="number" id="totalMarks" name="totalMarks" [(ngModel)]="markEntry.totalMarks">
+  </div>
+
+  <div>
+    <label for="passMarks">Pass Marks:</label>
+    <input type="number" id="passMarks" name="passMarks" [(ngModel)]="markEntry.passMarks">
+  </div>
+
+  <button type="button" *ngIf="markEntry.studentMarksDetails.length == 0" (click)="loadStudentsMark()">Load Students</button>
+
+  <!-- Display students -->
+  <div *ngIf="markEntry.studentMarksDetails.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Student Id</th>
+          <th>Student Name</th>
+          <th>Obtained Score</th>
+          <th>Grade</th>
+          <th>Pass/Fail Status</th>
+          <th>Feedback</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of markEntry.studentMarksDetails ; let i =index;">
+          <td>{{ student.studentId }}</td>
+          <td>{{ student.studentName }}</td>
+          <td><input type="number" id="obtainedScore-{{i}}" name="obtainedScore-{{i}}" #obtainedScore="ngModel" [(ngModel)]="student.obtainedScore"></td>
+          <td>
+            <!--<select [(ngModel)]="student.grade">-->
+            <!-- Populate with grade options -->
+            <!--<option *ngFor="let grade of student.grade" [value]="grade">{{ grade }}</option>
+            </select>-->
+
+            <select [(ngModel)]="student.grade"name="grade-{{i}}" >
+              <option *ngFor="let grade of gradesSystemValues" [value]="grade">{{ grade }}</option>
+            </select>
+
+
+          </td>
+          <td>
+            <!--<select [(ngModel)]="student.passStatus">-->
+            <!-- Populate with pass/fail status options -->
+            <!--<option *ngFor="let status of passFailStatus" [value]="status">{{ status }}</option>
+            </select>-->
+
+            <select [(ngModel)]="student.passStatus" name="passStatus-{{i}}">
+              <option *ngFor="let status of passFailStatusValues" [value]="status">{{ status }}</option>
+            </select>
+
+          </td>
+          <td><input type="text" [(ngModel)]="student.feedback" name="feedback-{{i}}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button type="submit">Submit</button>
+</form>
