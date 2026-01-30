@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 
 export interface Income {
   id: number;
   date: string;
-  source: 'Fee' | 'Donation' | 'Misc';
+  source: string;
   description: string;
   amount: number;
-  paymentMethod: 'Cash' | 'Bank' | 'Cheque' | 'Online';
+  paymentMethod: string;
   receivedBy: string;
   campus: string;
   createdAt: string;
@@ -16,10 +18,10 @@ export interface Income {
 export interface Expense {
   id: number;
   date: string;
-  expenseType: 'Salary' | 'Bill' | 'Purchase' | 'Maintenance' | 'Other';
+  expenseType: string;
   description: string;
   amount: number;
-  paymentMethod: 'Cash' | 'Bank' | 'Cheque' | 'Online';
+  paymentMethod: string;
   paidTo: string;
   approvedBy: string;
   campus: string;
@@ -30,25 +32,12 @@ export interface Transaction {
   id: number;
   date: string;
   transactionId: string;
-  type: 'Income' | 'Expense';
+  type: string;
   category: string;
   description: string;
   debit: number;
   credit: number;
   balance: number;
-}
-
-export interface DashboardData {
-  totalIncome: number;
-  totalExpenses: number;
-  profitLoss: number;
-  cashBankBalance: number;
-  chartData: {
-    months: string[];
-    income: number[];
-    expenses: number[];
-  };
-  recentTransactions: Transaction[];
 }
 
 export interface ProfitLossReport {
@@ -61,221 +50,214 @@ export interface ProfitLossReport {
   expenseByCategory: { category: string; amount: number }[];
 }
 
+export interface DashboardData {
+  chartData: {
+    months: string[];
+    income: number[];
+    expenses: number[];
+  };
+  totalIncome: number;
+  totalExpenses: number;
+  profitLoss: number;
+  cashBankBalance: number;
+  recentTransactions: Transaction[];
+}
+
+// Triggering recompile to pick up recentTransactions changes
 @Injectable({ providedIn: 'root' })
 export class AccountsService {
-  private incomeList: Income[] = [
-    {
-      id: 1,
-      date: '2025-11-01',
-      source: 'Fee',
-      description: 'November Fee Collection',
-      amount: 125000,
-      paymentMethod: 'Bank',
-      receivedBy: 'Admin',
-      campus: 'Main Campus',
-      createdAt: '2025-11-01T10:00:00'
-    },
-    {
-      id: 2,
-      date: '2025-11-05',
-      source: 'Donation',
-      description: 'Annual Donation',
-      amount: 50000,
-      paymentMethod: 'Cheque',
-      receivedBy: 'Principal',
-      campus: 'Main Campus',
-      createdAt: '2025-11-05T14:30:00'
-    },
-    {
-      id: 3,
-      date: '2025-11-08',
-      source: 'Misc',
-      description: 'Library Fine Collection',
-      amount: 5000,
-      paymentMethod: 'Cash',
-      receivedBy: 'Librarian',
-      campus: 'Main Campus',
-      createdAt: '2025-11-08T11:15:00'
-    }
-  ];
 
-  private expenseList: Expense[] = [
-    {
-      id: 1,
-      date: '2025-11-02',
-      expenseType: 'Salary',
-      description: 'Staff Salary - November',
-      amount: 85000,
-      paymentMethod: 'Bank',
-      paidTo: 'Staff Members',
-      approvedBy: 'Principal',
-      campus: 'Main Campus',
-      createdAt: '2025-11-02T09:00:00'
-    },
-    {
-      id: 2,
-      date: '2025-11-06',
-      expenseType: 'Bill',
-      description: 'Electricity Bill',
-      amount: 12000,
-      paymentMethod: 'Online',
-      paidTo: 'WAPDA',
-      approvedBy: 'Admin',
-      campus: 'Main Campus',
-      createdAt: '2025-11-06T15:00:00'
-    },
-    {
-      id: 3,
-      date: '2025-11-09',
-      expenseType: 'Purchase',
-      description: 'Stationery Purchase',
-      amount: 8000,
-      paymentMethod: 'Cash',
-      paidTo: 'ABC Stationers',
-      approvedBy: 'Admin',
-      campus: 'Main Campus',
-      createdAt: '2025-11-09T10:30:00'
-    }
-  ];
+  private apiUrl = 'https://localhost:7225/api';
 
-  constructor() {}
-
-  // Dashboard Data
-  getDashboardData(): Observable<DashboardData> {
-    const totalIncome = this.incomeList.reduce((sum, item) => sum + item.amount, 0);
-    const totalExpenses = this.expenseList.reduce((sum, item) => sum + item.amount, 0);
-    const profitLoss = totalIncome - totalExpenses;
-    const cashBankBalance = profitLoss; // Simplified
-
-    const chartData = {
-      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      income: [95000, 98000, 102000, 105000, 110000, 115000, 118000, 120000, 122000, 125000, 180000, 0],
-      expenses: [75000, 78000, 80000, 82000, 85000, 87000, 90000, 92000, 95000, 98000, 105000, 0]
-    };
-
-    const transactions = this.getLedgerData();
-    const recentTransactions = transactions.slice(0, 5);
-
-    return of({
-      totalIncome,
-      totalExpenses,
-      profitLoss,
-      cashBankBalance,
-      chartData,
-      recentTransactions
-    });
-  }
+  constructor(private http: HttpClient) { }
 
   // Income Management
   getIncomeList(): Observable<Income[]> {
-    return of([...this.incomeList].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    return this.http.get<Income[]>(`${this.apiUrl}/GeneralIncomes`);
   }
 
   addIncome(income: Partial<Income>): Observable<Income> {
-    const newIncome: Income = {
-      id: this.incomeList.length + 1,
-      date: income.date || new Date().toISOString().split('T')[0],
-      source: income.source || 'Misc',
-      description: income.description || '',
-      amount: income.amount || 0,
-      paymentMethod: income.paymentMethod || 'Cash',
-      receivedBy: income.receivedBy || 'Admin',
-      campus: income.campus || 'Main Campus',
-      createdAt: new Date().toISOString()
-    };
-    this.incomeList.unshift(newIncome);
-    return of(newIncome);
+    return this.http.post<Income>(`${this.apiUrl}/GeneralIncomes`, income);
   }
 
-  updateIncome(id: number, income: Partial<Income>): Observable<Income | undefined> {
-    const index = this.incomeList.findIndex(i => i.id === id);
-    if (index !== -1) {
-      this.incomeList[index] = { ...this.incomeList[index], ...income };
-      return of(this.incomeList[index]);
-    }
-    return of(undefined);
+  updateIncome(id: number, income: Partial<Income>): Observable<Income> {
+    return this.http.put<Income>(`${this.apiUrl}/GeneralIncomes/${id}`, income);
   }
 
-  deleteIncome(id: number): Observable<boolean> {
-    const index = this.incomeList.findIndex(i => i.id === id);
-    if (index !== -1) {
-      this.incomeList.splice(index, 1);
-      return of(true);
-    }
-    return of(false);
+  deleteIncome(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/GeneralIncomes/${id}`);
   }
 
   // Expense Management
   getExpenses(): Observable<Expense[]> {
-    return of([...this.expenseList].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    return this.http.get<Expense[]>(`${this.apiUrl}/GeneralExpenses`);
   }
 
   addExpense(expense: Partial<Expense>): Observable<Expense> {
-    const newExpense: Expense = {
-      id: this.expenseList.length + 1,
-      date: expense.date || new Date().toISOString().split('T')[0],
-      expenseType: expense.expenseType || 'Other',
-      description: expense.description || '',
-      amount: expense.amount || 0,
-      paymentMethod: expense.paymentMethod || 'Cash',
-      paidTo: expense.paidTo || '',
-      approvedBy: expense.approvedBy || 'Admin',
-      campus: expense.campus || 'Main Campus',
-      createdAt: new Date().toISOString()
-    };
-    this.expenseList.unshift(newExpense);
-    return of(newExpense);
+    return this.http.post<Expense>(`${this.apiUrl}/GeneralExpenses`, expense);
   }
 
-  updateExpense(id: number, expense: Partial<Expense>): Observable<Expense | undefined> {
-    const index = this.expenseList.findIndex(e => e.id === id);
-    if (index !== -1) {
-      this.expenseList[index] = { ...this.expenseList[index], ...expense };
-      return of(this.expenseList[index]);
-    }
-    return of(undefined);
+  updateExpense(id: number, expense: Partial<Expense>): Observable<Expense> {
+    return this.http.put<Expense>(`${this.apiUrl}/GeneralExpenses/${id}`, expense);
   }
 
-  deleteExpense(id: number): Observable<boolean> {
-    const index = this.expenseList.findIndex(e => e.id === id);
-    if (index !== -1) {
-      this.expenseList.splice(index, 1);
-      return of(true);
-    }
-    return of(false);
+  deleteExpense(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/GeneralExpenses/${id}`);
+  }
+
+  // Ledger: Client-side aggregation of real data
+  getLedger(): Observable<Transaction[]> {
+    return forkJoin({
+      incomes: this.getIncomeList(),
+      expenses: this.getExpenses()
+    }).pipe(
+      map(({ incomes, expenses }) => {
+        const transactions: Transaction[] = [];
+        let balance = 0;
+        let transactionCounter = 1;
+
+        const all = [
+          ...incomes.map(i => ({ ...i, type: 'Income', category: i.source })),
+          ...expenses.map(e => ({ ...e, type: 'Expense', category: e.expenseType }))
+        ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        all.forEach(t => {
+          const debit = t.type === 'Expense' ? t.amount : 0;
+          const credit = t.type === 'Income' ? t.amount : 0;
+          balance += credit - debit;
+
+          transactions.push({
+            id: transactionCounter++,
+            date: t.date,
+            transactionId: `TXN-${new Date(t.date).getFullYear()}-${String(transactionCounter).padStart(4, '0')}`,
+            type: t.type,
+            category: t.category,
+            description: t.description,
+            debit,
+            credit,
+            balance
+          });
+        });
+
+        return transactions.reverse();
+      })
+    );
   }
 
   // Profit & Loss Report
   getProfitLossReport(startDate: string, endDate: string, campusId?: string): Observable<ProfitLossReport> {
-    const filteredIncome = this.incomeList.filter(i => {
-      const inRange = i.date >= startDate && i.date <= endDate;
-      const inCampus = !campusId || i.campus === campusId;
-      return inRange && inCampus;
-    });
+    return forkJoin({
+      incomes: this.getIncomeList(),
+      expenses: this.getExpenses()
+    }).pipe(
+      map(({ incomes, expenses }) => {
+        const filteredIncome = incomes.filter(i => {
+          const inRange = i.date >= startDate && i.date <= endDate;
+          const inCampus = !campusId || i.campus === campusId;
+          return inRange && inCampus;
+        });
 
-    const filteredExpenses = this.expenseList.filter(e => {
-      const inRange = e.date >= startDate && e.date <= endDate;
-      const inCampus = !campusId || e.campus === campusId;
-      return inRange && inCampus;
-    });
+        const filteredExpenses = expenses.filter(e => {
+          const inRange = e.date >= startDate && e.date <= endDate;
+          const inCampus = !campusId || e.campus === campusId;
+          return inRange && inCampus;
+        });
 
-    const totalIncome = filteredIncome.reduce((sum, i) => sum + i.amount, 0);
-    const totalExpenses = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
-    const netProfit = totalIncome - totalExpenses;
+        const totalIncome = filteredIncome.reduce((sum, i) => sum + i.amount, 0);
+        const totalExpenses = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
+        const netProfit = totalIncome - totalExpenses;
 
-    // Group by category
-    const incomeByCategory = this.groupByCategory(filteredIncome, 'source');
-    const expenseByCategory = this.groupByCategory(filteredExpenses, 'expenseType');
+        // Group by category
+        const incomeByCategory = this.groupByCategory(filteredIncome, 'source');
+        const expenseByCategory = this.groupByCategory(filteredExpenses, 'expenseType');
 
-    return of({
-      startDate,
-      endDate,
-      totalIncome,
-      totalExpenses,
-      netProfit,
-      incomeByCategory,
-      expenseByCategory
-    });
+        return {
+          startDate,
+          endDate,
+          totalIncome,
+          totalExpenses,
+          netProfit,
+          incomeByCategory,
+          expenseByCategory
+        };
+      })
+    );
+  }
+
+  getDashboardData(): Observable<DashboardData> {
+    return forkJoin({
+      incomes: this.getIncomeList(),
+      expenses: this.getExpenses()
+    }).pipe(
+      map(({ incomes, expenses }) => {
+        const monthMap = new Map<string, { income: number; expenses: number }>();
+
+        const getMonthKey = (dateStr: string) => {
+          const d = new Date(dateStr);
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        };
+
+        const processItem = (date: string, amount: number, type: 'income' | 'expenses') => {
+          const key = getMonthKey(date);
+          if (!monthMap.has(key)) {
+            monthMap.set(key, { income: 0, expenses: 0 });
+          }
+          const data = monthMap.get(key)!;
+          data[type] += amount;
+        };
+
+        incomes.forEach(i => processItem(i.date, i.amount, 'income'));
+        expenses.forEach(e => processItem(e.date, e.amount, 'expenses'));
+
+        // Sort keys chronologically
+        const sortedKeys = Array.from(monthMap.keys()).sort();
+
+        const months = sortedKeys.map(key => {
+          const [year, month] = key.split('-');
+          const date = new Date(parseInt(year), parseInt(month) - 1);
+          return date.toLocaleString('default', { month: 'short', year: 'numeric' });
+        });
+
+        const income = sortedKeys.map(key => monthMap.get(key)!.income);
+        const expensesData = sortedKeys.map(key => monthMap.get(key)!.expenses);
+
+        // Get recent transactions from ledger logic
+        const allTransactions = [
+          ...incomes.map(i => ({ ...i, type: 'Income', category: i.source })),
+          ...expenses.map(e => ({ ...e, type: 'Expense', category: e.expenseType }))
+        ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        const recentTransactions: Transaction[] = allTransactions.slice(0, 5).map((t, idx) => ({
+          id: idx + 1,
+          date: t.date,
+          transactionId: `TXN-${new Date(t.date).getFullYear()}-${String(idx + 1).padStart(4, '0')}`,
+          type: t.type,
+          category: t.category,
+          description: t.description,
+          debit: t.type === 'Expense' ? t.amount : 0,
+          credit: t.type === 'Income' ? t.amount : 0,
+          balance: 0 // Balance not tracked here easily
+        }));
+
+        const totalIncome = incomes.reduce((sum, i) => sum + i.amount, 0);
+        const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+        const profitLoss = totalIncome - totalExpenses;
+        const cashBankBalance = profitLoss; // Simplified for now
+
+        return {
+          chartData: {
+            months,
+            income,
+            expenses: expensesData
+          },
+          totalIncome,
+          totalExpenses,
+          profitLoss,
+          cashBankBalance,
+          recentTransactions
+        };
+      })
+    );
   }
 
   private groupByCategory(items: any[], categoryField: string): { category: string; amount: number }[] {
@@ -294,40 +276,4 @@ export class AccountsService {
     }));
   }
 
-  // Ledger / Transactions
-  getLedger(): Observable<Transaction[]> {
-    return of(this.getLedgerData());
-  }
-
-  private getLedgerData(): Transaction[] {
-    const transactions: Transaction[] = [];
-    let balance = 0;
-    let transactionCounter = 1;
-
-    // Combine income and expenses
-    const allTransactions = [
-      ...this.incomeList.map(i => ({ ...i, type: 'Income' as const, category: i.source })),
-      ...this.expenseList.map(e => ({ ...e, type: 'Expense' as const, category: e.expenseType }))
-    ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-    allTransactions.forEach(t => {
-      const debit = t.type === 'Expense' ? t.amount : 0;
-      const credit = t.type === 'Income' ? t.amount : 0;
-      balance += credit - debit;
-
-      transactions.push({
-        id: transactionCounter++,
-        date: t.date,
-        transactionId: `TXN-${new Date(t.date).getFullYear()}-${String(transactionCounter).padStart(4, '0')}`,
-        type: t.type,
-        category: t.category,
-        description: t.description,
-        debit,
-        credit,
-        balance
-      });
-    });
-
-    return transactions.reverse(); // Most recent first
-  }
 }

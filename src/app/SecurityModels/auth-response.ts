@@ -4,6 +4,7 @@ export class AuthResponse {
   public email!: string;
   public token!: string;
   public roles: string[] = [];
+  permissions?: string[]; // optional
 
 
 }
