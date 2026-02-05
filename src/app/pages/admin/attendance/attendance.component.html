@@ -1,62 +1,151 @@
-<div class="container mt-4">
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <h3>{{ title }}</h3>
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div>
+        <p class="text-secondary-light fw-medium mb-1">Total Students</p>
+        <h3 class="fw-bold mb-0">{{ students.length }}</h3>
+      </div>
+      <div class="stat-icon total">
+        <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
+      </div>
+    </div>
+    <div class="stat-card present">
+      <div>
+        <p class="text-secondary-light fw-medium mb-1">Present Today</p>
+        <h3 class="fw-bold mb-0 text-success-600">{{ getStats().present }}</h3>
+      </div>
+      <div class="stat-icon present">
+        <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
+      </div>
+    </div>
+    <div class="stat-card absent">
+      <div>
+        <p class="text-secondary-light fw-medium mb-1">Absent Today</p>
+        <h3 class="fw-bold mb-0 text-danger-600">{{ getStats().absent }}</h3>
+      </div>
+      <div class="stat-icon absent">
+        <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
+      </div>
+    </div>
+  </div>
 
-  <!-- Filter: Standard -->
-  <div class="row mb-3">
-    <div class="col-md-4">
-      <label class="form-label">Select Standard</label>
-      <select class="form-select" [(ngModel)]="selectedClass" (change)="loadStudents()">
-        <option value="">-- Select Standard --</option>
-        <option *ngFor="let std of standards" [value]="std.standardName">
-          {{ std.standardName }}
-        </option>
-      </select>
+  <!-- Filter Section -->
+  <div class="filter-card">
+    <div class="row align-items-center gy-3">
+      <div class="col-md-4">
+        <label class="form-label fw-bold text-dark">Select Standard</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0">
+            <iconify-icon icon="solar:folder-bold-duotone" class="text-primary-600"></iconify-icon>
+          </span>
+          <select class="form-select border-start-0" [(ngModel)]="selectedClass" (change)="loadStudents()">
+            <option value="">-- Choose Class --</option>
+            <option *ngFor="let std of standards" [value]="std.standardName">
+              {{ std.standardName }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label fw-bold text-dark">Attendance Date</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0">
+            <iconify-icon icon="solar:calendar-bold-duotone" class="text-primary-600"></iconify-icon>
+          </span>
+          <input type="date" class="form-control border-start-0" [(ngModel)]="selectedDate" />
+        </div>
+      </div>
+
+      <div class="col-md-4 d-flex justify-content-end align-items-end gap-2" *ngIf="studentsLoaded && students.length">
+        <button class="btn btn-outline-success border-2 fw-bold" (click)="markAllPresent()">
+          All Present
+        </button>
+        <button class="btn btn-outline-danger border-2 fw-bold" (click)="markAllAbsent()">
+          All Absent
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="premium-table-card" *ngIf="studentsLoaded && students.length">
+    <div class="table-header">
+      <h5 class="mb-0 fw-bold">Daily Attendance Sheet</h5>
+      <div class="action-bar" *ngIf="!hasRole('Admin')">
+        <button class="btn-premium btn-save" (click)="saveAttendance()">
+          <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon>
+          Save Final Attendance
+        </button>
+        <button class="btn btn-light rounded-pill border" (click)="resetForm()">Reset</button>
+      </div>
     </div>
 
-    <div class="col-md-4">
-      <label class="form-label">Select Date</label>
-      <input type="date" class="form-control" [(ngModel)]="selectedDate" />
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Roll No</th>
+            <th>Student Name</th>
+            <th class="text-center">Verification</th>
+            <th class="text-end">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let student of students; let i = index" class="animate__animated animate__fadeInUp"
+            [style.animation-delay]="i * 0.05 + 's'">
+            <td>
+              <span class="badge bg-neutral-100 text-neutral-800 px-12 py-6 radius-8 fw-bold">
+                {{ student.enrollmentNo || 'N/A' }}
+              </span>
+            </td>
+            <td>
+              <div class="student-info">
+                <div class="avatar-circle">
+                  {{ student.studentName?.charAt(0) }}
+                </div>
+                <div>
+                  <div class="fw-bold text-dark text-md">{{ student.studentName }}</div>
+                  <div class="text-xs text-secondary-light">ID: {{ student.studentId }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="text-center">
+              <iconify-icon *ngIf="student.status === 'Present'" icon="solar:verified-check-bold"
+                class="text-success-600 text-xl"></iconify-icon>
+              <iconify-icon *ngIf="student.status === 'Absent'" icon="solar:danger-bold"
+                class="text-danger-600 text-xl"></iconify-icon>
+              <span *ngIf="!student.status" class="text-xs text-secondary-light italic">Pending...</span>
+            </td>
+            <td class="text-end">
+              <div class="status-toggles justify-content-end">
+                <button class="status-btn present-btn" [class.present-active]="student.status === 'Present'"
+                  (click)="student.status = 'Present'" [disabled]="hasRole('Admin')">
+                  Present
+                </button>
+                <button class="status-btn absent-btn" [class.absent-active]="student.status === 'Absent'"
+                  (click)="student.status = 'Absent'" [disabled]="hasRole('Admin')">
+                  Absent
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- Attendance Buttons -->
-  <div class="mb-3" *ngIf="studentsLoaded && students.length">
-    <button class="btn btn-success me-2" (click)="markAllPresent()">Mark All Present</button>
-    <button class="btn btn-danger me-2" (click)="markAllAbsent()">Mark All Absent</button>
-    <button class="btn btn-primary" (click)="saveAttendance()">Save Attendance</button>
-    <button class="btn btn-secondary ms-2" (click)="resetForm()">Reset</button>
-  </div>
-
-  <!-- Students Table -->
-  <div *ngIf="studentsLoaded && students.length">
-    <table class="table table-bordered table-striped">
-      <thead class="table-light">
-        <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Roll No</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let student of students; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ student.studentName }}</td>
-          <td>{{ student.enrollmentNo }}</td>
-          <td>
-            <select class="form-select form-select-sm" [(ngModel)]="student.status">
-              <option value="">-- Select --</option>
-              <option value="Present">Present</option>
-              <option value="Absent">Absent</option>
-            </select>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="studentsLoaded && !students.length" class="alert alert-warning">
-    No students found for this standard.
+  <!-- Empty State -->
+  <div *ngIf="studentsLoaded && !students.length" class="card p-48 text-center radius-24 border">
+    <div
+      class="w-100-px h-100-px bg-warning-100 text-warning-600 radius-circle d-flex align-items-center justify-content-center mx-auto mb-24">
+      <iconify-icon icon="solar:info-square-bold-duotone" class="text-5xl"></iconify-icon>
+    </div>
+    <h4 class="fw-bold">No Students Found</h4>
+    <p class="text-secondary-light">Please check if the selected standard has students enrolled.</p>
+    <button class="btn btn-primary mt-16 radius-12" (click)="resetForm()">Select Another Class</button>
   </div>
 </div>

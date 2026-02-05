@@ -1,10 +1,12 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ExamScheduleService } from '../../../services/exam-schedule.service';
 import { ExamScheduleVm } from '../../../Models/exam-schedule-vm';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import Swal from 'sweetalert2';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-exam-schedule',
@@ -27,17 +29,16 @@ export class ExamScheduleComponent implements OnInit {
   totalPages: number = 1;
 
   searchTerm: string = "";
+  loading = false;
 
   form!: FormGroup;
 
   showAddEditDialog = false;
   showViewDialog = false;
-  showDeleteDialog = false;
-
   isEditMode = false;
 
-  selectedSchedule!: ExamScheduleVm;
-  scheduleToDelete!: ExamScheduleVm;
+  selectedSchedule: ExamScheduleVm | null = null;
+  Math = Math;
 
   constructor(private service: ExamScheduleService) { }
 
@@ -57,18 +58,22 @@ export class ExamScheduleComponent implements OnInit {
   }
 
   loadExamSchedules() {
-    this.service.GetExamSchedules().subscribe({
-      next: (res: ExamScheduleVm[]) => {
-        this.examSchedules = res || [];
-        this.filteredExamSchedules = [...this.examSchedules];
-        this.updatePagination();
-      },
-      error: () => {
-        this.examSchedules = [];
-        this.filteredExamSchedules = [];
-        this.paginatedExamSchedules = [];
-      }
-    });
+    this.loading = true;
+    this.service.GetExamSchedules()
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (res: ExamScheduleVm[]) => {
+          this.examSchedules = res || [];
+          this.filteredExamSchedules = [...this.examSchedules];
+          this.updatePagination();
+        },
+        error: (err) => {
+          console.error(err);
+          this.examSchedules = [];
+          this.filteredExamSchedules = [];
+          this.updatePagination();
+        }
+      });
   }
 
   searchExamSchedules() {
@@ -80,7 +85,7 @@ export class ExamScheduleComponent implements OnInit {
   }
 
   updatePagination() {
-    this.totalPages = Math.ceil(this.filteredExamSchedules.length / this.rowsPerPage);
+    this.totalPages = Math.ceil(this.filteredExamSchedules.length / this.rowsPerPage) || 1;
     const start = (this.currentPage - 1) * this.rowsPerPage;
     const end = start + this.rowsPerPage;
     this.paginatedExamSchedules = this.filteredExamSchedules.slice(start, end);
@@ -92,74 +97,89 @@ export class ExamScheduleComponent implements OnInit {
     this.updatePagination();
   }
 
-  get toEntry() {
-    return this.filteredExamSchedules.length === 0
-      ? 0
-      : Math.min(this.currentPage * this.rowsPerPage, this.filteredExamSchedules.length);
-  }
-
-  // Open Add form
   openAddDialog() {
     this.isEditMode = false;
-    this.showAddEditDialog = true;
     this.form.reset({
       examScheduleId: 0,
+      examYear: new Date().getFullYear().toString()
     });
+    this.showAddEditDialog = true;
   }
 
-  // Open Edit form
   openEditDialog(schedule: ExamScheduleVm) {
     this.isEditMode = true;
+    this.form.patchValue({
+      ...schedule,
+      startDate: schedule.startDate ? new Date(schedule.startDate).toISOString().split('T')[0] : '',
+      endDate: schedule.endDate ? new Date(schedule.endDate).toISOString().split('T')[0] : ''
+    });
     this.showAddEditDialog = true;
-    this.form.patchValue(schedule);
   }
 
-  // View Details
   openViewDialog(schedule: ExamScheduleVm) {
     this.selectedSchedule = schedule;
     this.showViewDialog = true;
   }
 
-  // Save
-  saveExamSchedule() {
-    if (this.form.invalid) return;
+  async saveExamSchedule() {
+    if (this.form.invalid) {
+      Swal.fire('Error', 'Please fill all required fields', 'error');
+      return;
+    }
 
     const payload = this.form.value;
+    const request = this.isEditMode
+      ? this.service.UpdateExamSchedule(payload)
+      : this.service.SaveExamSchedule(payload);
 
-    if (this.isEditMode) {
-      this.service.UpdateExamSchedule(payload).subscribe(() => {
+    Swal.fire({
+      title: this.isEditMode ? 'Updating...' : 'Saving...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    request.subscribe({
+      next: () => {
+        Swal.fire('Success', `Schedule ${this.isEditMode ? 'updated' : 'saved'} successfully`, 'success');
         this.closeDialog();
         this.loadExamSchedules();
-      });
-    } else {
-      this.service.SaveExamSchedule(payload).subscribe(() => {
-        this.closeDialog();
-        this.loadExamSchedules();
-      });
-    }
-  }
-
-  // Confirm delete
-  confirmDelete(schedule: ExamScheduleVm) {
-    this.scheduleToDelete = schedule;
-    this.showDeleteDialog = true;
-  }
-
-  // Delete final
-  deleteExamSchedule() {
-    if (!this.scheduleToDelete) return;
-
-    this.service.DeleteExamSchedule(this.scheduleToDelete.examScheduleId).subscribe(() => {
-      this.showDeleteDialog = false;
-      this.loadExamSchedules();
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'Failed to save schedule', 'error');
+      }
     });
   }
 
-  // Close modals
+  confirmDelete(schedule: ExamScheduleVm) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to delete "${schedule.examScheduleName}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.service.DeleteExamSchedule(schedule.examScheduleId).subscribe({
+          next: () => {
+            Swal.fire('Deleted!', 'Schedule has been deleted.', 'success');
+            this.loadExamSchedules();
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire('Error', 'Failed to delete schedule.', 'error');
+          }
+        });
+      }
+    });
+  }
+
   closeDialog() {
     this.showAddEditDialog = false;
     this.showViewDialog = false;
+    this.selectedSchedule = null;
     this.form.reset();
   }
-
 }

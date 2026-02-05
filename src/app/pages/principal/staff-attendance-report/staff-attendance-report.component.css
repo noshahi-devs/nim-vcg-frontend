@@ -1,106 +1,72 @@
-/* Date Range Option Styles */
-.date-range-option {
-  color: #6c757d;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.date-range-option:hover {
-  background-color: #e9ecef;
-  color: #495057;
-}
-
-.date-range-option.active {
-  background-color: #800020;
+/* Staff Report Premium Styles (Sync with Student Report) */
+.report-header-card {
+  background: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
+  border-radius: 24px;
+  padding: 32px;
   color: white;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
 }
 
-.date-range-option.active:hover {
-  background-color: #660019;
+.search-glass-card {
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f1f5f9;
+  margin-bottom: 24px;
+}
+
+.report-table-premium {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+}
+
+.table-glass {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-glass th {
+  background: #f8fafc;
+  padding: 20px 24px;
+  text-align: left;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.table-glass td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.status-pill {
+  padding: 6px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.status-pill.present {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.status-pill.absent {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.export-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
-}
-
-/* Dropdown Menu Styles */
-.dropdown-menu {
-  border-radius: 12px;
-  border: 1px solid #dee2e6;
-}
-
-/* Calendar Input Styles */
-input[type="date"] {
-  cursor: pointer;
-}
-
-input[type="date"]:focus {
-  border-color: #800020;
-  box-shadow: 0 0 0 0.2rem rgba(128, 0, 32, 0.25);
-}
-
-/* Calendar Grid Styles */
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-}
-
-.calendar-day-header {
-  text-align: center;
+  padding: 8px 16px;
+  border-radius: 10px;
   font-weight: 600;
-  font-size: 12px;
-  color: #6c757d;
-  padding: 8px 4px;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.calendar-day {
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #495057;
-  font-weight: 500;
-}
-
-.calendar-day:not(.empty):hover {
-  background-color: #e9ecef;
-  transform: scale(1.05);
-}
-
-.calendar-day.empty {
-  cursor: default;
-  pointer-events: none;
-}
-
-.calendar-day.today {
-  border: 2px solid #800020;
-  font-weight: 700;
-}
-
-.calendar-day.selected {
-  background-color: #800020;
-  color: white;
-  font-weight: 700;
-}
-
-.calendar-day.selected:hover {
-  background-color: #660019;
-}
-
-.calendar-day.in-range {
-  background-color: rgba(128, 0, 32, 0.15);
-  color: #800020;
-}
-
-.calendar-day.in-range:hover {
-  background-color: rgba(128, 0, 32, 0.25);
-}
-
-/* Apply Button Disabled State */
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  backdrop-filter: blur(10px);
 }

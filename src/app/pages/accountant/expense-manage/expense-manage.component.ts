@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AccountsService, Expense } from '../../../services/accounts.service';
+import { AuthService } from '../../../SecurityModels/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -32,10 +33,17 @@ export class ExpenseManageComponent implements OnInit {
   paymentMethods = ['Cash', 'Bank', 'Cheque', 'Online'];
   campuses = ['Main Campus', 'Branch Campus'];
 
-  constructor(private accountsService: AccountsService) { }
+  constructor(
+    private accountsService: AccountsService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
     this.loadExpenseList();
+  }
+
+  hasRole(role: string): boolean {
+    return this.authService.hasRole(role);
   }
 
   loadExpenseList(): void {

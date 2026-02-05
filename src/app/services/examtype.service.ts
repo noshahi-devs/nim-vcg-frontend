@@ -72,29 +72,34 @@ import { Observable } from 'rxjs';
 })
 export class ExamtypeService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   apiUrl: string = 'https://localhost:7225/api/ExamTypes';
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  };
+  // Helper function to add token header
+  private getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    return {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      })
+    };
+  }
 
   // ✔ Get All Exam Types
   public GetdbsExamType(): Observable<Examtype[]> {
-    return this.http.get<Examtype[]>(this.apiUrl);
+    return this.http.get<Examtype[]>(this.apiUrl, this.getAuthHeaders());
   }
 
   // ✔ Get Single Exam Type by ID
   public GetExamType(id: number): Observable<Examtype> {
-    return this.http.get<Examtype>(`${this.apiUrl}/${id}`);
+    return this.http.get<Examtype>(`${this.apiUrl}/${id}`, this.getAuthHeaders());
   }
 
   // ✔ Create Exam Type
   public SaveExamType(examType: Examtype): Observable<Examtype> {
-    return this.http.post<Examtype>(this.apiUrl, examType, this.httpOptions);
+    return this.http.post<Examtype>(this.apiUrl, examType, this.getAuthHeaders());
   }
 
   // ✔ Update Exam Type
@@ -102,13 +107,13 @@ export class ExamtypeService {
     return this.http.put<Examtype>(
       `${this.apiUrl}/${examType.examTypeId}`,
       examType,
-      this.httpOptions
+      this.getAuthHeaders()
     );
   }
 
   // ✔ Delete Exam Type
   public DeleteExamType(id: number): Observable<Examtype> {
-    return this.http.delete<Examtype>(`${this.apiUrl}/${id}`);
+    return this.http.delete<Examtype>(`${this.apiUrl}/${id}`, this.getAuthHeaders());
   }
 
 }

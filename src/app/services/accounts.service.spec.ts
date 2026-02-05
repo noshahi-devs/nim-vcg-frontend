@@ -36,6 +36,7 @@ describe('AccountsService', () => {
 
         const req = httpMock.expectOne('https://localhost:7225/api/GeneralIncomes');
         expect(req.request.method).toBe('GET');
+        expect(req.request.headers.has('Authorization')).toBeTrue();
         req.flush(dummyIncomes);
     });
 
@@ -51,6 +52,7 @@ describe('AccountsService', () => {
 
         const req = httpMock.expectOne('https://localhost:7225/api/GeneralExpenses');
         expect(req.request.method).toBe('POST');
+        expect(req.request.headers.has('Authorization')).toBeTrue();
         req.flush(returnedExpense);
     });
 });

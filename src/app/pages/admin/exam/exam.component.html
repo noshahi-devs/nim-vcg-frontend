@@ -2,22 +2,26 @@
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
   <div class="card h-100 p-0 radius-12">
-    <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+    <div
+      class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
       <div class="d-flex align-items-center flex-wrap gap-3">
         <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
-        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="rowsPerPage" (change)="currentPage = 1; updatePagination()">
+        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="rowsPerPage"
+          (change)="currentPage = 1; updatePagination()">
           <option [value]="10">10</option>
           <option [value]="25">25</option>
           <option [value]="50">50</option>
         </select>
 
         <form class="navbar-search ms-3">
-          <input type="text" class="bg-base h-40-px w-auto" [(ngModel)]="searchTerm" (input)="searchExamTypes()" name="search" placeholder="Search exam types..." />
+          <input type="text" class="bg-base h-40-px w-auto" [(ngModel)]="searchTerm" (input)="searchExamTypes()"
+            name="search" placeholder="Search exam types..." />
           <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
         </form>
       </div>
 
-      <button type="button" (click)="openAddDialog()" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+      <button *ngIf="hasRole('Principal')" type="button" (click)="openAddDialog()"
+        class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
         <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
         Add New Exam Type
       </button>
@@ -39,8 +43,10 @@
               <td>{{ et?.examTypeName }}</td>
               <td class="text-center">
                 <button (click)="openViewDialog(et)" class="btn btn-info btn-sm me-1">View</button>
-                <button (click)="openEditDialog(et)" class="btn btn-success btn-sm me-1">Edit</button>
-                <button (click)="confirmDelete(et)" class="btn btn-danger btn-sm">Delete</button>
+                <button *ngIf="hasRole('Principal')" (click)="openEditDialog(et)"
+                  class="btn btn-success btn-sm me-1">Edit</button>
+                <button *ngIf="hasRole('Principal')" (click)="confirmDelete(et)"
+                  class="btn btn-danger btn-sm">Delete</button>
               </td>
             </tr>
 
@@ -52,16 +58,20 @@
       </div>
 
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
-        <span>Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to {{ toEntry }} of {{ filteredExamTypes?.length || 0 }} entries</span>
+        <span>Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to {{ toEntry }} of {{ filteredExamTypes?.length || 0 }}
+          entries</span>
         <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
           <li class="page-item">
-            <a class="page-link" [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">Prev</a>
+            <a class="page-link" [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)"
+              href="javascript:void(0)">Prev</a>
           </li>
           <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
-            <a class="page-link" [class.active]="currentPage === i + 1" (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
+            <a class="page-link" [class.active]="currentPage === i + 1" (click)="changePage(i + 1)"
+              href="javascript:void(0)">{{ i + 1 }}</a>
           </li>
           <li class="page-item">
-            <a class="page-link" [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)" href="javascript:void(0)">Next</a>
+            <a class="page-link" [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
+              href="javascript:void(0)">Next</a>
           </li>
         </ul>
       </div>
@@ -84,7 +94,8 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" (click)="closeDialog()">Cancel</button>
-      <button class="btn btn-primary" (click)="saveExamType()" [disabled]="form.invalid">{{ isEditMode ? 'Update' : 'Save' }}</button>
+      <button class="btn btn-primary" (click)="saveExamType()" [disabled]="form.invalid">{{ isEditMode ? 'Update' :
+        'Save' }}</button>
     </div>
   </div>
 </div>

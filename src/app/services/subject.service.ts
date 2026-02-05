@@ -15,31 +15,39 @@ export class SubjectService {
 
   constructor(private http: HttpClient) { }
 
+  // Helper function to add token header
+  private getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    return {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+  }
+
   // Get all subjects
   getSubjects(): Observable<Subject[]> {
-    return this.http.get<Subject[]>(this.apiUrl);
+    return this.http.get<Subject[]>(this.apiUrl, this.getAuthHeaders());
   }
 
   // Retrieve a specific subject by ID
   getSubjectById(id: number): Observable<Subject> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.get<Subject>(url);
+    return this.http.get<Subject>(url, this.getAuthHeaders());
   }
 
   // Create a new subject
   createSubject(subject: Subject): Observable<Subject> {
-    return this.http.post<Subject>(this.apiUrl, subject);
+    return this.http.post<Subject>(this.apiUrl, subject, this.getAuthHeaders());
   }
 
   // Update an existing subject
   updateSubject(subject: Subject): Observable<Subject> {
     const url = `${this.apiUrl}/${subject.subjectId}`;
-    return this.http.put<Subject>(url, subject);
+    return this.http.put<Subject>(url, subject, this.getAuthHeaders());
   }
 
   // Delete a subject
   deleteSubject(id: number): Observable<Subject> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.delete<Subject>(url);
+    return this.http.delete<Subject>(url, this.getAuthHeaders());
   }
 }

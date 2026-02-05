@@ -3,14 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import Swal from 'sweetalert2';
-
-interface LeaveType {
-  id: number;
-  name: string;
-  description: string;
-  maxDays: number;
-  status: boolean;
-}
+import { LeaveTypeMaster, LeaveTypeService } from '../../../services/leave-type.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-leave-type',
@@ -25,51 +19,50 @@ export class LeaveTypeComponent implements OnInit {
   Math = Math;
 
   // Leave types
-  leaveTypes: LeaveType[] = [];
-  filteredTypes: LeaveType[] = [];
+  leaveTypes: LeaveTypeMaster[] = [];
+  filteredTypes: LeaveTypeMaster[] = [];
+  loading = false;
 
   // Modal
   showModal = false;
   isEditMode = false;
-  leaveTypeForm: LeaveType = this.getEmptyForm();
+  leaveTypeForm: LeaveTypeMaster = this.getEmptyForm();
 
   // Pagination
   rowsPerPage = 10;
   currentPage = 1;
 
+  constructor(private leaveTypeService: LeaveTypeService) { }
+
   ngOnInit(): void {
     this.loadLeaveTypes();
   }
 
-  getEmptyForm(): LeaveType {
+  getEmptyForm(): LeaveTypeMaster {
     return {
-      id: 0,
-      name: '',
+      leaveTypeMasterId: 0,
+      leaveTypeName: '',
       description: '',
-      maxDays: 0,
-      status: true
+      maxDaysAllowed: 0,
+      isPaid: true,
+      isActive: true
     };
   }
 
   loadLeaveTypes(): void {
-    const savedTypes = localStorage.getItem('leaveTypes');
-    if (savedTypes) {
-      this.leaveTypes = JSON.parse(savedTypes);
-    } else {
-      this.leaveTypes = [
-        { id: 1, name: 'Sick Leave', description: 'Leave for medical reasons', maxDays: 10, status: true },
-        { id: 2, name: 'Casual Leave', description: 'Leave for personal matters', maxDays: 15, status: true },
-        { id: 3, name: 'Annual Leave', description: 'Yearly vacation leave', maxDays: 30, status: true },
-        { id: 4, name: 'Maternity Leave', description: 'Leave for maternity purposes', maxDays: 90, status: true },
-        { id: 5, name: 'Emergency Leave', description: 'Leave for emergency situations', maxDays: 5, status: true }
-      ];
-      this.saveToLocalStorage();
-    }
-    this.filteredTypes = [...this.leaveTypes];
-  }
-
-  saveToLocalStorage(): void {
-    localStorage.setItem('leaveTypes', JSON.stringify(this.leaveTypes));
+    this.loading = true;
+    this.leaveTypeService.getLeaveTypes()
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (data) => {
+          this.leaveTypes = data;
+          this.filteredTypes = [...this.leaveTypes];
+        },
+        error: (err) => {
+          console.error('Error loading leave types:', err);
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load leave types.' });
+        }
+      });
   }
 
   openAddModal(): void {
@@ -78,7 +71,7 @@ export class LeaveTypeComponent implements OnInit {
     this.showModal = true;
   }
 
-  openEditModal(type: LeaveType): void {
+  openEditModal(type: LeaveTypeMaster): void {
     this.isEditMode = true;
     this.leaveTypeForm = { ...type };
     this.showModal = true;
@@ -90,21 +83,12 @@ export class LeaveTypeComponent implements OnInit {
   }
 
   validateForm(): boolean {
-    if (!this.leaveTypeForm.name.trim()) {
+    if (!this.leaveTypeForm.leaveTypeName.trim()) {
       Swal.fire({ icon: 'warning', title: 'Missing Information', text: 'Please enter leave type name.', confirmButtonColor: '#800020' });
       return false;
     }
-    if (!this.leaveTypeForm.description.trim()) {
-      Swal.fire({ icon: 'warning', title: 'Missing Information', text: 'Please enter description.', confirmButtonColor: '#800020' });
-      return false;
-    }
-    if (this.leaveTypeForm.maxDays <= 0) {
+    if (this.leaveTypeForm.maxDaysAllowed <= 0) {
       Swal.fire({ icon: 'warning', title: 'Invalid Input', text: 'Maximum days must be greater than 0.', confirmButtonColor: '#800020' });
-      return false;
-    }
-    const duplicate = this.leaveTypes.find(t => t.name.toLowerCase() === this.leaveTypeForm.name.toLowerCase() && t.id !== this.leaveTypeForm.id);
-    if (duplicate) {
-      Swal.fire({ icon: 'error', title: 'Duplicate Entry', text: 'A leave type with this name already exists.', confirmButtonColor: '#800020' });
       return false;
     }
     return true;
@@ -114,27 +98,36 @@ export class LeaveTypeComponent implements OnInit {
     if (!this.validateForm()) return;
 
     if (this.isEditMode) {
-      const index = this.leaveTypes.findIndex(t => t.id === this.leaveTypeForm.id);
-      if (index !== -1) {
-        this.leaveTypes[index] = { ...this.leaveTypeForm };
-        this.saveToLocalStorage();
-        Swal.fire({ icon: 'success', title: 'Updated!', text: 'Leave type updated successfully.', timer: 2000, showConfirmButton: false });
-      }
+      this.leaveTypeService.updateLeaveType(this.leaveTypeForm.leaveTypeMasterId, this.leaveTypeForm).subscribe({
+        next: () => {
+          Swal.fire({ icon: 'success', title: 'Updated!', text: 'Leave type updated successfully.', timer: 2000, showConfirmButton: false });
+          this.loadLeaveTypes();
+          this.closeModal();
+        },
+        error: (err) => {
+          console.error('Error updating leave type:', err);
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update leave type.' });
+        }
+      });
     } else {
-      this.leaveTypeForm.id = this.leaveTypes.length > 0 ? Math.max(...this.leaveTypes.map(t => t.id)) + 1 : 1;
-      this.leaveTypes.push({ ...this.leaveTypeForm });
-      this.saveToLocalStorage();
-      Swal.fire({ icon: 'success', title: 'Added!', text: 'Leave type added successfully.', timer: 2000, showConfirmButton: false });
+      this.leaveTypeService.createLeaveType(this.leaveTypeForm).subscribe({
+        next: () => {
+          Swal.fire({ icon: 'success', title: 'Added!', text: 'Leave type added successfully.', timer: 2000, showConfirmButton: false });
+          this.loadLeaveTypes();
+          this.closeModal();
+        },
+        error: (err) => {
+          console.error('Error creating leave type:', err);
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create leave type.' });
+        }
+      });
     }
-
-    this.filteredTypes = [...this.leaveTypes];
-    this.closeModal();
   }
 
-  confirmDelete(type: LeaveType): void {
+  confirmDelete(type: LeaveTypeMaster): void {
     Swal.fire({
       title: 'Are you sure?',
-      html: `Do you want to delete <strong>${type.name}</strong>?<br><small class="text-secondary-light">This action cannot be undone.</small>`,
+      html: `Do you want to delete <strong>${type.leaveTypeName}</strong>?<br><small class="text-secondary-light">This action cannot be undone.</small>`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -143,22 +136,35 @@ export class LeaveTypeComponent implements OnInit {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.leaveTypes = this.leaveTypes.filter(t => t.id !== type.id);
-        this.saveToLocalStorage();
-        this.filteredTypes = [...this.leaveTypes];
-        Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Leave type deleted.', timer: 2000, showConfirmButton: false });
+        this.leaveTypeService.deleteLeaveType(type.leaveTypeMasterId).subscribe({
+          next: () => {
+            Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Leave type deleted.', timer: 2000, showConfirmButton: false });
+            this.loadLeaveTypes();
+          },
+          error: (err) => {
+            console.error('Error deleting leave type:', err);
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete leave type.' });
+          }
+        });
       }
     });
   }
 
-  toggleStatus(type: LeaveType): void {
-    const index = this.leaveTypes.findIndex(t => t.id === type.id);
-    if (index !== -1) {
-      this.leaveTypes[index].status = !this.leaveTypes[index].status;
-      this.saveToLocalStorage();
-      this.filteredTypes = [...this.leaveTypes];
-      Swal.fire({ icon: 'success', title: 'Status Updated!', text: `Leave type is now ${this.leaveTypes[index].status ? 'Active' : 'Inactive'}.`, timer: 1500, showConfirmButton: false });
-    }
+  toggleStatus(type: LeaveTypeMaster): void {
+    // Optimistic update
+    const previousStatus = type.isActive;
+    type.isActive = !type.isActive;
+
+    this.leaveTypeService.updateLeaveType(type.leaveTypeMasterId, type).subscribe({
+      next: () => {
+        Swal.fire({ icon: 'success', title: 'Status Updated!', text: `Leave type is now ${type.isActive ? 'Active' : 'Inactive'}.`, timer: 1500, showConfirmButton: false });
+      },
+      error: (err) => {
+        type.isActive = previousStatus; // Revert
+        console.error('Error updating status:', err);
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update status.' });
+      }
+    });
   }
 
   getStatusClass(status: boolean): string {
@@ -166,10 +172,10 @@ export class LeaveTypeComponent implements OnInit {
   }
 
   get totalTypes(): number { return this.leaveTypes.length; }
-  get activeTypes(): number { return this.leaveTypes.filter(t => t.status).length; }
-  get inactiveTypes(): number { return this.leaveTypes.filter(t => !t.status).length; }
+  get activeTypes(): number { return this.leaveTypes.filter(t => t.isActive).length; }
+  get inactiveTypes(): number { return this.leaveTypes.filter(t => !t.isActive).length; }
 
-  get paginatedTypes(): LeaveType[] {
+  get paginatedTypes(): LeaveTypeMaster[] {
     const start = (this.currentPage - 1) * this.rowsPerPage;
     return this.filteredTypes.slice(start, start + this.rowsPerPage);
   }

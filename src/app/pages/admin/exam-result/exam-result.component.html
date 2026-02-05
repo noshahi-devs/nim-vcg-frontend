@@ -2,94 +2,121 @@
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
   <!-- Filters -->
-  <div class="card radius-12 mb-24">
+  <div class="card radius-12 mb-24 overflow-hidden border-0 shadow-sm">
+    <div class="card-header border-bottom bg-base py-16 px-24">
+      <h6 class="text-md fw-semibold mb-0 text-primary-600">
+        <iconify-icon icon="solar:filter-bold-duotone" class="me-2"></iconify-icon>
+        Result Filters
+      </h6>
+    </div>
     <div class="card-body p-24">
-      <div class="row gy-3">
+      <div class="row gy-4">
         <div class="col-md-3">
-          <label class="form-label">Select Exam <span class="text-danger">*</span></label>
-          <select class="form-select" [(ngModel)]="selectedExamId" (change)="onFilterChange()">
+          <label class="form-label fw-bold">Select Exam <span class="text-danger">*</span></label>
+          <select class="form-select radius-8 h-45-px" [(ngModel)]="selectedExamId">
             <option [value]="0">Select Exam</option>
             <option *ngFor="let exam of exams" [value]="exam.examId">{{ exam.examName }}</option>
           </select>
         </div>
+
         <div class="col-md-3">
-          <label class="form-label">Select Student <span class="text-danger">*</span></label>
-          <select class="form-select" [(ngModel)]="selectedStudentId" (change)="onFilterChange()">
+          <label class="form-label fw-bold">Select Class (Required)</label>
+          <select class="form-select radius-8 h-45-px" [(ngModel)]="selectedClassId" (change)="onClassChange()">
+            <option [value]="0">All Classes</option>
+            <option *ngFor="let cls of classes" [value]="cls.standardId">{{ cls.standardName }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-bold">Select Section (Optional)</label>
+          <select class="form-select radius-8 h-45-px" [(ngModel)]="selectedSectionId" (change)="onSectionChange()">
+            <option [value]="0">All Sections</option>
+            <option *ngFor="let sec of sections" [value]="sec.sectionId">{{ sec.sectionName }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-bold">Select Student <span class="text-danger">*</span></label>
+          <select class="form-select radius-8 h-45-px" [(ngModel)]="selectedStudentId">
             <option [value]="0">Select Student</option>
-            <option *ngFor="let student of students" [value]="student.id">
-              {{ student.rollNo }} - {{ student.name }}
+            <option *ngFor="let student of filteredStudents" [value]="student.studentId">
+              {{ student.admissionNo }} - {{ student.studentName }}
             </option>
           </select>
+          <small class="text-secondary" *ngIf="selectedClassId > 0 && filteredStudents.length === 0">No students found
+            in this class.</small>
         </div>
-        <div class="col-md-3">
-          <label class="form-label">Select Class (Optional)</label>
-          <select class="form-select" [(ngModel)]="selectedClassId">
-            <option [value]="0">All Classes</option>
-            <option *ngFor="let cls of classes" [value]="cls.id">{{ cls.name }}</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label">Select Section (Optional)</label>
-          <select class="form-select" [(ngModel)]="selectedSectionId">
-            <option [value]="0">All Sections</option>
-            <option *ngFor="let sec of sections" [value]="sec.id">{{ sec.name }}</option>
-          </select>
+
+        <div class="col-12 text-end">
+          <button class="btn btn-primary radius-8 px-32 h-45-px d-inline-flex align-items-center gap-2"
+            (click)="loadResults()" [disabled]="!selectedExamId || !selectedStudentId">
+            <iconify-icon icon="solar:magnifer-bold-duotone" class="text-xl"></iconify-icon>
+            View Result
+          </button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Action Buttons -->
-  <div *ngIf="examResults.length > 0" class="card radius-12 mb-24">
-    <div class="card-body p-24">
-      <div class="d-flex align-items-center gap-3 flex-wrap">
-        <button type="button" (click)="printResult()" 
-                class="btn btn-primary-600 radius-8 px-20 py-11 d-flex align-items-center gap-2">
-          <iconify-icon icon="material-symbols:print" class="text-xl"></iconify-icon>
+  <div *ngIf="examResults.length > 0 && !loading" class="card radius-12 mb-24 border-0 shadow-sm overflow-hidden">
+    <div class="card-body p-16 px-24 bg-neutral-50 d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div class="d-flex align-items-center gap-2">
+        <div
+          class="w-40-px h-40-px radius-8 bg-primary-100 text-primary-600 d-flex justify-content-center align-items-center">
+          <iconify-icon icon="solar:printer-bold-duotone" class="text-xl"></iconify-icon>
+        </div>
+        <h6 class="mb-0 text-primary-600">Export Options</h6>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <button type="button" (click)="printResult()"
+          class="btn btn-primary-600 radius-8 px-24 py-11 d-flex align-items-center gap-2 shadow-sm">
+          <iconify-icon icon="solar:printer-bold-duotone" class="text-xl"></iconify-icon>
           Print Result
         </button>
-        
-        <button type="button" (click)="downloadPDF()" 
-                class="btn btn-success-600 radius-8 px-20 py-11 d-flex align-items-center gap-2">
-          <iconify-icon icon="material-symbols:download" class="text-xl"></iconify-icon>
+        <button type="button" (click)="printResult()"
+          class="btn btn-success-600 radius-8 px-24 py-11 d-flex align-items-center gap-2 shadow-sm">
+          <iconify-icon icon="solar:file-download-bold-duotone" class="text-xl"></iconify-icon>
           Download PDF
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="loading" class="card radius-12">
-    <div class="card-body p-24 text-center py-5">
-      <div class="spinner-border text-primary" role="status">
+  <!-- Loading & Empty States -->
+  <div *ngIf="loading" class="card radius-12 shadow-sm border-0">
+    <div class="card-body p-40 text-center">
+      <div class="spinner-border text-primary mb-3" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
-      <p class="text-secondary-light mt-3 mb-0">Loading results...</p>
+      <p class="text-secondary-light fw-medium">Analyzing student performance...</p>
     </div>
   </div>
 
-  <!-- Empty State -->
-  <div *ngIf="!loading && examResults.length === 0" class="card radius-12">
-    <div class="card-body p-24 text-center py-5">
-      <iconify-icon icon="mdi:information-outline" class="text-secondary-light" style="font-size: 48px;"></iconify-icon>
-      <p class="text-secondary-light mt-3 mb-0">Please select Exam and Student to view results</p>
+  <div *ngIf="!loading && examResults.length === 0" class="card radius-12 shadow-sm border-0">
+    <div class="card-body p-80 text-center">
+      <iconify-icon icon="solar:document-text-bold-duotone" class="text-neutral-300 display-1 mb-24"></iconify-icon>
+      <h5 class="text-neutral-900 mb-8">No Result Loaded</h5>
+      <p class="text-secondary-light mx-auto" style="max-width: 400px;">Please use the filters above to select an exam
+        and a student to view their detailed performance report.</p>
     </div>
   </div>
 
-  <!-- Results Display -->
+  <!-- Results Component -->
   <div *ngIf="!loading && examResults.length > 0">
-    <!-- Summary Cards -->
+    <!-- Summary Stats -->
     <div class="row gy-4 mb-24">
       <div class="col-xxl-3 col-sm-6">
-        <div class="card radius-12 h-100">
+        <div class="card radius-12 border-0 shadow-sm h-100 bg-base">
           <div class="card-body p-24">
             <div class="d-flex align-items-center gap-3">
-              <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-primary-50">
-                <iconify-icon icon="mdi:book-open-page-variant" class="text-primary-600 text-3xl"></iconify-icon>
+              <div
+                class="w-56-px h-56-px radius-12 d-flex justify-content-center align-items-center bg-primary-100 text-primary-600">
+                <iconify-icon icon="solar:chart-square-bold-duotone" class="text-3xl"></iconify-icon>
               </div>
               <div>
-                <h6 class="text-xl fw-semibold mb-1">{{ totalMarks }}</h6>
-                <span class="text-sm text-secondary-light">Total Marks</span>
+                <h4 class="fw-bold mb-1 text-neutral-900">{{ totalMarks }}</h4>
+                <p class="text-sm text-secondary-light fw-medium mb-0">Max Marks</p>
               </div>
             </div>
           </div>
@@ -97,15 +124,16 @@
       </div>
 
       <div class="col-xxl-3 col-sm-6">
-        <div class="card radius-12 h-100">
+        <div class="card radius-12 border-0 shadow-sm h-100 bg-base">
           <div class="card-body p-24">
             <div class="d-flex align-items-center gap-3">
-              <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-success-50">
-                <iconify-icon icon="mdi:check-circle" class="text-success-600 text-3xl"></iconify-icon>
+              <div
+                class="w-56-px h-56-px radius-12 d-flex justify-content-center align-items-center bg-success-100 text-success-600">
+                <iconify-icon icon="solar:ranking-bold-duotone" class="text-3xl"></iconify-icon>
               </div>
               <div>
-                <h6 class="text-xl fw-semibold mb-1">{{ obtainedMarks }}</h6>
-                <span class="text-sm text-secondary-light">Obtained Marks</span>
+                <h4 class="fw-bold mb-1 text-neutral-900">{{ obtainedMarks }}</h4>
+                <p class="text-sm text-secondary-light fw-medium mb-0">Marks Scored</p>
               </div>
             </div>
           </div>
@@ -113,15 +141,16 @@
       </div>
 
       <div class="col-xxl-3 col-sm-6">
-        <div class="card radius-12 h-100">
+        <div class="card radius-12 border-0 shadow-sm h-100 bg-base">
           <div class="card-body p-24">
             <div class="d-flex align-items-center gap-3">
-              <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-info-50">
-                <iconify-icon icon="mdi:percent" class="text-info-600 text-3xl"></iconify-icon>
+              <div
+                class="w-56-px h-56-px radius-12 d-flex justify-content-center align-items-center bg-info-100 text-info-600">
+                <iconify-icon icon="solar:pie-chart-bold-duotone" class="text-3xl"></iconify-icon>
               </div>
               <div>
-                <h6 class="text-xl fw-semibold mb-1">{{ percentage | number:'1.2-2' }}%</h6>
-                <span class="text-sm text-secondary-light">Percentage</span>
+                <h4 class="fw-bold mb-1 text-neutral-900">{{ percentage | number:'1.1-1' }}%</h4>
+                <p class="text-sm text-secondary-light fw-medium mb-0">Avg Percentage</p>
               </div>
             </div>
           </div>
@@ -129,22 +158,23 @@
       </div>
 
       <div class="col-xxl-3 col-sm-6">
-        <div class="card radius-12 h-100">
+        <div class="card radius-12 border-0 shadow-sm h-100 bg-base">
           <div class="card-body p-24">
             <div class="d-flex align-items-center gap-3">
-              <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center"
-                   [ngClass]="resultStatus === 'PASS' ? 'bg-success-50' : 'bg-danger-50'">
-                <iconify-icon [icon]="resultStatus === 'PASS' ? 'mdi:trophy' : 'mdi:alert-circle'" 
-                              [class]="resultStatus === 'PASS' ? 'text-success-600' : 'text-danger-600'"
-                              class="text-3xl"></iconify-icon>
+              <div class="w-56-px h-56-px radius-12 d-flex justify-content-center align-items-center"
+                [ngClass]="resultStatus === 'PASS' ? 'bg-success-100 text-success-600' : 'bg-danger-100 text-danger-600'">
+                <iconify-icon
+                  [icon]="resultStatus === 'PASS' ? 'solar:medal-star-bold-duotone' : 'solar:danger-bold-duotone'"
+                  class="text-3xl"></iconify-icon>
               </div>
               <div>
-                <h6 class="text-xl fw-semibold mb-1">
-                  <span class="px-12 py-4 radius-4 fw-medium text-sm" [ngClass]="getResultStatusClass()">
+                <h6 class="mb-1">
+                  <span class="badge px-16 py-6 radius-8 text-md"
+                    [ngClass]="resultStatus === 'PASS' ? 'bg-success-100 text-success-600' : 'bg-danger-100 text-danger-600'">
                     {{ resultStatus }}
                   </span>
                 </h6>
-                <span class="text-sm text-secondary-light">Result Status</span>
+                <p class="text-sm text-secondary-light fw-medium mb-0">Final Status</p>
               </div>
             </div>
           </div>
@@ -152,100 +182,78 @@
       </div>
     </div>
 
-    <!-- Detailed Results Table -->
-    <div class="card radius-12">
-      <div class="card-header border-bottom bg-base py-16 px-24">
-        <h6 class="text-lg fw-semibold mb-0">Subject-wise Results</h6>
+    <!-- Details Table -->
+    <div class="card radius-12 shadow-sm border-0 overflow-hidden">
+      <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
+        <h6 class="text-md fw-bold mb-0">Detailed Subject Report</h6>
+        <span class="badge bg-primary-100 text-primary-600 px-16 py-8 radius-8">Academic Results 2025</span>
       </div>
 
-      <div class="card-body p-24">
-        <div class="table-responsive scroll-sm">
-          <table class="table bordered-table sm-table mb-0">
-            <thead>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0 border-0">
+            <thead class="bg-neutral-50">
               <tr>
-                <th scope="col">S.L</th>
-                <th scope="col">Subject</th>
-                <th scope="col">Total Marks</th>
-                <th scope="col">Obtained Marks</th>
-                <th scope="col">Percentage</th>
-                <th scope="col" class="text-center">Grade</th>
-                <th scope="col" class="text-center">Status</th>
+                <th class="ps-24 py-16">Subject Name</th>
+                <th class="text-center py-16">Total Marks</th>
+                <th class="text-center py-16">Obtained</th>
+                <th class="text-center py-16">Percentage</th>
+                <th class="text-center py-16">Grade</th>
+                <th class="pe-24 text-center py-16">Status</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let result of examResults; let i = index">
-                <td>{{ i + 1 }}</td>
-                <td>
-                  <span class="fw-semibold text-primary-600">{{ result.subjectName }}</span>
+              <tr *ngFor="let result of displayResults; let i = index">
+                <td class="ps-24">
+                  <div class="d-flex align-items-center">
+                    <div class="w-10-px h-10-px rounded-circle bg-primary-600 me-12"></div>
+                    <span class="fw-bold text-neutral-800">{{ result.subjectName }}</span>
+                  </div>
                 </td>
-                <td>{{ result.totalMarks }}</td>
-                <td>
-                  <span class="fw-semibold">{{ result.obtainedMarks }}</span>
+                <td class="text-center fw-medium">{{ result.totalMarks }}</td>
+                <td class="text-center fw-bold text-primary-600">{{ result.obtainedMarks }}</td>
+                <td class="text-center fw-medium">
+                  <div class="d-flex align-items-center justify-content-center gap-2">
+                    <div class="progress w-60-px h-6-px bg-neutral-100 radius-12">
+                      <div class="progress-bar" [style.width.%]="result.percentage"
+                        [ngClass]="result.isPassed ? 'bg-success-600' : 'bg-danger-600'"></div>
+                    </div>
+                    <span class="text-xs">{{ result.percentage }}%</span>
+                  </div>
                 </td>
-                <td>{{ result.percentage }}%</td>
                 <td class="text-center">
-                  <span class="px-12 py-4 radius-4 fw-medium text-sm"
-                        [ngClass]="getGradeBadgeClass(result.grade)">
+                  <span class="badge radius-4 px-12 py-6 text-sm" [ngClass]="getGradeBadgeClass(result.grade)">
                     {{ result.grade }}
                   </span>
                 </td>
-                <td class="text-center">
-                  <span *ngIf="result.isPassed" 
-                        class="bg-success-focus text-success-600 border border-success-main px-12 py-4 radius-4 fw-medium text-sm">
-                    Pass
-                  </span>
-                  <span *ngIf="!result.isPassed" 
-                        class="bg-danger-focus text-danger-600 border border-danger-main px-12 py-4 radius-4 fw-medium text-sm">
-                    Fail
+                <td class="pe-24 text-center">
+                  <span class="badge radius-20 px-12 py-6 text-xs d-inline-flex align-items-center gap-1"
+                    [ngClass]="result.isPassed ? 'bg-success-50 text-success-600 border border-success-200' : 'bg-danger-50 text-danger-600 border border-danger-200'">
+                    <iconify-icon
+                      [icon]="result.isPassed ? 'solar:check-circle-bold-duotone' : 'solar:close-circle-bold-duotone'"></iconify-icon>
+                    {{ result.isPassed ? 'Passed' : 'Failed' }}
                   </span>
                 </td>
               </tr>
             </tbody>
-            <tfoot class="bg-neutral-50">
-              <tr>
-                <td colspan="2" class="fw-bold">Overall Result</td>
-                <td class="fw-bold">{{ totalMarks }}</td>
-                <td class="fw-bold">{{ obtainedMarks }}</td>
-                <td class="fw-bold">{{ percentage | number:'1.2-2' }}%</td>
-                <td class="text-center">
-                  <span class="px-12 py-4 radius-4 fw-medium text-sm"
-                        [ngClass]="getGradeBadgeClass(overallGrade)">
-                    {{ overallGrade }}
-                  </span>
+            <tfoot class="bg-primary-50">
+              <tr class="fw-bold">
+                <td class="ps-24 py-20 text-primary-600 uppercase ls-1">Aggregate Result</td>
+                <td class="text-center py-20">{{ totalMarks }}</td>
+                <td class="text-center py-20 text-primary-700 fs-5">{{ obtainedMarks }}</td>
+                <td class="text-center py-20">{{ percentage | number:'1.2-2' }}%</td>
+                <td class="text-center py-20">
+                  <span class="badge bg-primary-600 text-white radius-8 px-16 py-8 shadow-sm">{{ overallGrade }}</span>
                 </td>
-                <td class="text-center">
-                  <span class="px-12 py-4 radius-4 fw-medium text-sm" [ngClass]="getResultStatusClass()">
+                <td class="pe-24 text-center py-20">
+                  <span class="badge radius-8 px-20 py-10"
+                    [ngClass]="resultStatus === 'PASS' ? 'bg-success-600 text-white' : 'bg-danger-600 text-white'">
                     {{ resultStatus }}
                   </span>
                 </td>
               </tr>
             </tfoot>
           </table>
-        </div>
-
-        <!-- Grade Scale Reference -->
-        <div class="mt-24 p-16 bg-neutral-50 radius-8">
-          <h6 class="text-md fw-semibold mb-3">Grading Scale</h6>
-          <div class="row gy-2">
-            <div class="col-md-2">
-              <span class="badge bg-success-focus text-success-600 border border-success-main px-12 py-4 fw-medium">A+ (90-100%)</span>
-            </div>
-            <div class="col-md-2">
-              <span class="badge bg-success-focus text-success-600 border border-success-main px-12 py-4 fw-medium">A (80-89%)</span>
-            </div>
-            <div class="col-md-2">
-              <span class="badge bg-info-focus text-info-600 border border-info-main px-12 py-4 fw-medium">B (70-79%)</span>
-            </div>
-            <div class="col-md-2">
-              <span class="badge bg-warning-focus text-warning-600 border border-warning-main px-12 py-4 fw-medium">C (60-69%)</span>
-            </div>
-            <div class="col-md-2">
-              <span class="badge bg-orange-focus text-orange-600 border border-orange-main px-12 py-4 fw-medium">D (50-59%)</span>
-            </div>
-            <div class="col-md-2">
-              <span class="badge bg-danger-focus text-danger-600 border border-danger-main px-12 py-4 fw-medium">F (<50%)</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>

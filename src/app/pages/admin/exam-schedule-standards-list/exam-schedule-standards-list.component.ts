@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { ExamScheduleStandardService } from '../../../services/exam-schedule-standard.service';
+import Swal from 'sweetalert2';
+import { finalize } from 'rxjs';
 
 declare var bootstrap: any;
 
@@ -13,11 +15,12 @@ declare var bootstrap: any;
   imports: [CommonModule, FormsModule, RouterModule, BreadcrumbComponent],
   templateUrl: './exam-schedule-standards-list.component.html',
   styleUrls: ['./exam-schedule-standards-list.component.css'],
-
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ExamScheduleStandardsListComponent implements OnInit {
 
   title = 'Exam Schedule Standards';
+  Math = Math;
 
   list: any[] = [];
   filteredList: any[] = [];
@@ -27,10 +30,10 @@ export class ExamScheduleStandardsListComponent implements OnInit {
   rowsPerPage = 10;
   currentPage = 1;
   totalPages = 0;
+  loading = false;
 
   selectedItem: any = null;
   editModel: any = null;
-  deleteId: number | null = null;
 
   constructor(private service: ExamScheduleStandardService) { }
 
@@ -39,11 +42,22 @@ export class ExamScheduleStandardsListComponent implements OnInit {
   }
 
   loadData() {
-    this.service.GetExamScheduleStandards().subscribe(res => {
-      this.list = res;
-      this.filteredList = [...this.list];
-      this.updatePagination();
-    });
+    this.loading = true;
+    this.service.GetExamScheduleStandards()
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (res) => {
+          this.list = res || [];
+          this.filteredList = [...this.list];
+          this.updatePagination();
+        },
+        error: (err) => {
+          console.error(err);
+          this.list = [];
+          this.filteredList = [];
+          this.updatePagination();
+        }
+      });
   }
 
   search() {
@@ -57,7 +71,7 @@ export class ExamScheduleStandardsListComponent implements OnInit {
   }
 
   updatePagination() {
-    this.totalPages = Math.ceil(this.filteredList.length / this.rowsPerPage);
+    this.totalPages = Math.ceil(this.filteredList.length / this.rowsPerPage) || 1;
     const start = (this.currentPage - 1) * this.rowsPerPage;
     const end = start + this.rowsPerPage;
     this.paginatedList = this.filteredList.slice(start, end);
@@ -72,33 +86,62 @@ export class ExamScheduleStandardsListComponent implements OnInit {
   /* ---------- VIEW ---------- */
   openViewModal(item: any) {
     this.selectedItem = item;
-    new bootstrap.Modal(document.getElementById('viewModal')).show();
+    const modal = new bootstrap.Modal(document.getElementById('viewModal'));
+    modal.show();
   }
 
   /* ---------- EDIT ---------- */
   openEditModal(item: any) {
     this.editModel = JSON.parse(JSON.stringify(item));
-    new bootstrap.Modal(document.getElementById('editModal')).show();
+    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
   }
 
   update() {
-    this.service.updateExamScheduleStandards(this.editModel).subscribe(() => {
-      bootstrap.Modal.getInstance(document.getElementById('editModal'))?.hide();
-      this.loadData();
+    Swal.fire({
+      title: 'Updating...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    this.service.updateExamScheduleStandards(this.editModel).subscribe({
+      next: () => {
+        Swal.fire('Updated!', 'Schedule standard updated successfully', 'success');
+        const modalElement = document.getElementById('editModal');
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        modal?.hide();
+        this.loadData();
+      },
+      error: (err) => {
+        console.error(err);
+        Swal.fire('Error', 'Failed to update schedule standard', 'error');
+      }
     });
   }
 
   /* ---------- DELETE ---------- */
-  confirmDelete(id: number) {
-    this.deleteId = id;
-    new bootstrap.Modal(document.getElementById('deleteModal')).show();
-  }
-
-  delete() {
-    if (!this.deleteId) return;
-    this.service.DeleteExamScheduleStandard(this.deleteId).subscribe(() => {
-      bootstrap.Modal.getInstance(document.getElementById('deleteModal'))?.hide();
-      this.loadData();
+  confirmDelete(id: number, name: string) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to delete the schedule standard for "${name}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.service.DeleteExamScheduleStandard(id).subscribe({
+          next: () => {
+            Swal.fire('Deleted!', 'Schedule standard has been deleted.', 'success');
+            this.loadData();
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire('Error', 'Failed to delete entry.', 'error');
+          }
+        });
+      }
     });
   }
 }

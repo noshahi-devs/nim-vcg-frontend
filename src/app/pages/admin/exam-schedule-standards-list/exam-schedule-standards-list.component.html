@@ -1,146 +1,245 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <div class="card radius-12">
+  <div class="card radius-12 shadow-sm border-0 overflow-hidden">
+    <!-- TOOLBAR -->
+    <div
+      class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+      <div class="d-flex align-items-center flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
+          <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="rowsPerPage"
+            (change)="currentPage=1;updatePagination()">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+        </div>
 
-    <!-- HEADER -->
-    <div class="card-header d-flex justify-content-between">
-      <div class="d-flex gap-3">
-        <select class="form-select w-auto"
-                [(ngModel)]="rowsPerPage"
-                (change)="currentPage=1;updatePagination()">
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
-        </select>
-
-        <input class="form-control"
-               placeholder="Search Exam / Standard"
-               [(ngModel)]="searchTerm"
-               (input)="search()">
+        <form class="navbar-search ms-sm-3">
+          <input type="text" class="bg-base h-40-px w-auto radius-12 ps-40" placeholder="Search Exam / Standard"
+            [(ngModel)]="searchTerm" (input)="search()">
+          <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+        </form>
       </div>
 
       <a routerLink="/exam-schedule-standards-create"
-         class="btn btn-primary btn-sm">
-        + Add Exam Schedule
+        class="btn btn-primary text-sm btn-sm px-16 py-12 radius-8 d-flex align-items-center gap-2">
+        <iconify-icon icon="solar:add-circle-bold-duotone" class="text-xl"></iconify-icon>
+        Add Exam Schedule
       </a>
     </div>
 
-    <!-- TABLE -->
-    <div class="card-body table-responsive">
-      <table class="table bordered-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Exam Schedule</th>
-            <th>Standard</th>
-            <th>Subjects</th>
-            <th class="text-center">Actions</th>
-          </tr>
-        </thead>
+    <!-- TABLE AREA -->
+    <div class="card-body p-24">
+      <div class="table-responsive scroll-sm">
+        <table class="table bordered-table sm-table mb-0">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Exam Schedule</th>
+              <th scope="col">Standard</th>
+              <th scope="col" class="text-center">Subjects Count</th>
+              <th scope="col" class="text-center">Actions</th>
+            </tr>
+          </thead>
 
-        <tbody>
-          <tr *ngFor="let item of paginatedList; let i = index">
-            <td>{{ (currentPage-1)*rowsPerPage + i + 1 }}</td>
-            <td>{{ item.examScheduleName }}</td>
-            <td>{{ item.standardName }}</td>
-            <td>{{ item.examSubjects?.length || 0 }}</td>
+          <tbody>
+            <tr *ngFor="let item of paginatedList; let i = index">
+              <td>{{ (currentPage-1)*rowsPerPage + i + 1 }}</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <span class="fw-bold text-primary-600">{{ item.examScheduleName }}</span>
+                </div>
+              </td>
+              <td><span class="badge bg-info-100 text-info-600 px-12 py-4 radius-4 fw-medium">{{ item.standardName
+                  }}</span></td>
+              <td class="text-center">
+                <span class="badge bg-neutral-100 text-neutral-800 px-12 py-4 radius-20 fw-bold border">{{
+                  item.examSubjects?.length || 0 }}</span>
+              </td>
 
-            <td class="text-center">
-              <button class="btn btn-info btn-sm"
-                      (click)="openViewModal(item)">View</button>
-              <button class="btn btn-success btn-sm"
-                      (click)="openEditModal(item)">Edit</button>
-              <button class="btn btn-danger btn-sm"
-                      (click)="confirmDelete(item.examScheduleStandardId)">
-                Delete
-              </button>
-            </td>
-          </tr>
+              <td class="text-center">
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                  <button
+                    class="btn btn-primary-100 text-primary-600 btn-sm w-32-px h-32-px d-flex justify-content-center align-items-center radius-8"
+                    (click)="openViewModal(item)" title="View Details">
+                    <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
+                  </button>
+                  <button
+                    class="btn btn-success-100 text-success-600 btn-sm w-32-px h-32-px d-flex justify-content-center align-items-center radius-8"
+                    (click)="openEditModal(item)" title="Edit">
+                    <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
+                  </button>
+                  <button
+                    class="btn btn-danger-100 text-danger-600 btn-sm w-32-px h-32-px d-flex justify-content-center align-items-center radius-8"
+                    (click)="confirmDelete(item.examScheduleStandardId, item.examScheduleName)" title="Delete">
+                    <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
 
-          <tr *ngIf="paginatedList.length === 0">
-            <td colspan="5" class="text-center">No data found</td>
-          </tr>
-        </tbody>
-      </table>
+            <tr *ngIf="paginatedList.length === 0 && !loading">
+              <td colspan="5" class="text-center py-40 text-secondary-light fs-5">
+                <iconify-icon icon="solar:calendar-block-bold-duotone"
+                  class="display-4 text-neutral-300 d-block mb-3"></iconify-icon>
+                No schedule standards found matching your search.
+              </td>
+            </tr>
+            <tr *ngIf="loading">
+              <td colspan="5" class="text-center py-40">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- PAGINATION -->
-      <ul class="pagination justify-content-end mt-3">
-        <li class="page-item"
-            *ngFor="let p of [].constructor(totalPages); let i = index">
-          <a class="page-link"
-             [class.active]="currentPage===i+1"
-             (click)="changePage(i+1)">
-            {{ i+1 }}
-          </a>
-        </li>
-      </ul>
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24"
+        *ngIf="filteredList.length > 0">
+        <span class="text-secondary-light text-sm">
+          Showing {{ (currentPage-1)*rowsPerPage + 1 }} to {{ Math.min(currentPage*rowsPerPage, filteredList.length) }}
+          of {{ filteredList.length }} entries
+        </span>
+        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
+          <li class="page-item">
+            <a class="page-link bg-neutral-100 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+              [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let p of [].constructor(totalPages); let i = index">
+            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+              [class.bg-primary-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
+              [class.bg-neutral-100]="currentPage !== i + 1" [class.text-secondary-light]="currentPage !== i + 1"
+              (click)="changePage(i + 1)" href="javascript:void(0)">
+              {{ i+1 }}
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link bg-neutral-100 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+              [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
+              href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- VIEW MODAL -->
-<div class="modal fade" id="viewModal">
+<div class="modal fade" id="viewModal" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5>Exam Details</h5>
+    <div class="modal-content radius-16 shadow-lg border-0">
+      <div class="modal-header py-20 px-24 border-bottom bg-base">
+        <h5 class="modal-title fw-bold text-primary-600">
+          <iconify-icon icon="solar:info-square-bold-duotone" class="me-2"></iconify-icon>
+          Exam Schedule Details
+        </h5>
         <button class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <div class="modal-body" *ngIf="selectedItem">
-        <p><b>Exam:</b> {{ selectedItem.examScheduleName }}</p>
-        <p><b>Standard:</b> {{ selectedItem.standardName }}</p>
+      <div class="modal-body p-24" *ngIf="selectedItem">
+        <div class="row g-4 mb-24">
+          <div class="col-md-6">
+            <div class="bg-primary-50 p-16 radius-12 h-100">
+              <span class="text-xs text-secondary-light text-uppercase fw-bold ls-1 mb-8 d-block">Exam Schedule</span>
+              <h6 class="mb-0 text-primary-600 fw-bold">{{ selectedItem.examScheduleName }}</h6>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="bg-info-50 p-16 radius-12 h-100">
+              <span class="text-xs text-secondary-light text-uppercase fw-bold ls-1 mb-8 d-block">Applied
+                Standard</span>
+              <h6 class="mb-0 text-info-600 fw-bold">{{ selectedItem.standardName }}</h6>
+            </div>
+          </div>
+        </div>
 
-        <table class="table table-bordered">
-          <tr *ngFor="let s of selectedItem.examSubjects">
-            <td>{{ s.subjectName }}</td>
-            <td>{{ s.examTypeName }}</td>
-            <td>{{ s.examDate | date }}</td>
-            <td>{{ s.examStartTime }} - {{ s.examEndTime }}</td>
-          </tr>
-        </table>
+        <h6 class="text-md fw-bold mb-16 px-4">Subject Dates & Times</h6>
+        <div class="table-responsive radius-12 border overflow-hidden">
+          <table class="table table-hover mb-0">
+            <thead class="bg-neutral-50">
+              <tr>
+                <th class="ps-16">Subject</th>
+                <th>Exm Type</th>
+                <th>Date</th>
+                <th class="pe-16">Timing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of selectedItem.examSubjects">
+                <td class="ps-16"><span class="fw-semibold">{{ s.subjectName }}</span></td>
+                <td><span class="badge bg-neutral-100 text-neutral-600">{{ s.examTypeName }}</span></td>
+                <td>{{ s.examDate | date:'mediumDate' }}</td>
+                <td class="pe-16 text-secondary-light">{{ s.examStartTime }} - {{ s.examEndTime }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer py-16 px-24 border-top bg-base text-end">
+        <button class="btn btn-neutral-600 text-white radius-8 px-24" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- EDIT MODAL -->
-<div class="modal fade" id="editModal">
+<div class="modal fade" id="editModal" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5>Edit Exam Schedule</h5>
+    <div class="modal-content radius-16 shadow-lg border-0">
+      <div class="modal-header py-20 px-24 border-bottom bg-base">
+        <h5 class="modal-title fw-bold text-success-600">
+          <iconify-icon icon="solar:pen-new-square-bold-duotone" class="me-2"></iconify-icon>
+          Update Exam Dates
+        </h5>
         <button class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <div class="modal-body">
-        <table class="table">
-          <tr *ngFor="let s of editModel?.examSubjects">
-            <td>{{ s.subjectName }}</td>
-            <td><input type="date" [(ngModel)]="s.examDate" class="form-control"></td>
-            <td><input type="time" [(ngModel)]="s.examStartTime" class="form-control"></td>
-            <td><input type="time" [(ngModel)]="s.examEndTime" class="form-control"></td>
-          </tr>
-        </table>
+      <div class="modal-body p-24">
+        <div
+          class="alert bg-success-50 border-success-focus text-success-600 radius-8 mb-24 d-flex align-items-center gap-2">
+          <iconify-icon icon="solar:info-circle-bold-duotone" class="text-xl"></iconify-icon>
+          Updating subjects for <strong>{{ editModel?.examScheduleName }} ({{ editModel?.standardName }})</strong>
+        </div>
+
+        <div class="table-responsive radius-12 border overflow-hidden">
+          <table class="table table-hover mb-0 fw-medium">
+            <thead class="bg-neutral-50">
+              <tr>
+                <th class="ps-16">Subject</th>
+                <th>Date</th>
+                <th>Start Time</th>
+                <th class="pe-16">End Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of editModel?.examSubjects">
+                <td class="ps-16 py-12 align-middle">{{ s.subjectName }}</td>
+                <td><input type="date" [(ngModel)]="s.examDate" class="form-control form-control-sm radius-8"></td>
+                <td><input type="time" [(ngModel)]="s.examStartTime" class="form-control form-control-sm radius-8"></td>
+                <td class="pe-16"><input type="time" [(ngModel)]="s.examEndTime"
+                    class="form-control form-control-sm radius-8"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button class="btn btn-success" (click)="update()">Update</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- DELETE MODAL -->
-<div class="modal fade" id="deleteModal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content p-3 text-center">
-      <p>Are you sure you want to delete?</p>
-      <div class="d-flex justify-content-center gap-2">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button class="btn btn-danger" (click)="delete()">Delete</button>
+      <div class="modal-footer py-16 px-24 border-top bg-base d-flex gap-2 justify-content-end">
+        <button class="btn btn-neutral-100 text-neutral-600 radius-8 px-20" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-success radius-8 px-32 d-flex align-items-center gap-2" (click)="update()">
+          <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon>
+          Update All Dates
+        </button>
       </div>
     </div>
   </div>

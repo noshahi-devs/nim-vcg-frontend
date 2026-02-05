@@ -1,15 +1,10 @@
 import { MyAttendanceComponent } from './pages/teacher/my-attendance/my-attendance.component';
 import { MonthlyPayment } from './Models/monthly-payment';
 import { Routes } from '@angular/router';
-import { AddBlogComponent } from './pages/admin/add-blog/add-blog.component';
-import { AddUserComponent } from './pages/admin/add-user/add-user.component';
 import { AlertComponent } from './pages/ui-elements/alert/alert.component';
-import { AssignRoleComponent } from './pages/admin/assign-role/assign-role.component';
 import { AvatarComponent } from './pages/ui-elements/avatar/avatar.component';
 import { BadgesComponent } from './pages/ui-elements/badges/badges.component';
 import { BlankPageComponent } from './pages/ui-elements/blank-page/blank-page.component';
-import { BlogDetailsComponent } from './pages/admin/blog-details/blog-details.component';
-import { BlogComponent } from './pages/admin/blog/blog.component';
 import { ButtonComponent } from './pages/ui-elements/button/button.component';
 import { CalendarMainComponent } from './pages/ui-elements/calendar-main/calendar-main.component';
 import { CalendarComponent } from './pages/ui-elements/calendar/calendar.component';
@@ -23,8 +18,6 @@ import { CodeGeneratorComponent } from './pages/ui-elements/code-generator/code-
 import { ColorsComponent } from './pages/ui-elements/colors/colors.component';
 import { ColumnChartComponent } from './pages/ui-elements/column-chart/column-chart.component';
 import { ComingSoonComponent } from './pages/ui-elements/coming-soon/coming-soon.component';
-import { CompanyComponent } from './pages/admin/company/company.component';
-import { CurrenciesComponent } from './pages/admin/currencies/currencies.component';
 import { DropdownComponent } from './pages/ui-elements/dropdown/dropdown.component';
 import { EmailComponent } from './pages/ui-elements/email/email.component';
 import { ErrorComponent } from './pages/ui-elements/error/error.component';
@@ -60,8 +53,6 @@ import { LanguageComponent } from './pages/admin/language/language.component';
 import { LineChartComponent } from './pages/ui-elements/line-chart/line-chart.component';
 import { ListComponent } from './pages/ui-elements/list/list.component';
 import { MaintenanceComponent } from './pages/ui-elements/maintenance/maintenance.component';
-import { MarketplaceDetailsComponent } from './pages/admin/marketplace-details/marketplace-details.component';
-import { MarketplaceComponent } from './pages/admin/marketplace/marketplace.component';
 import { NotificationAlertComponent } from './pages/ui-elements/notification-alert/notification-alert.component';
 import { NotificationComponent } from './pages/ui-elements/notification/notification.component';
 import { PaginationComponent } from './pages/ui-elements/pagination/pagination.component';
@@ -71,7 +62,6 @@ import { PortfolioComponent } from './pages/general/portfolio/portfolio.componen
 import { PricingComponent } from './pages/ui-elements/pricing/pricing.component';
 import { ProgressComponent } from './pages/ui-elements/progress/progress.component';
 import { RadioComponent } from './pages/ui-elements/radio/radio.component';
-import { RoleAccessComponent } from './pages/admin/role-access/role-access.component';
 import { SignInComponent } from './pages/auth/sign-in/sign-in.component';
 import { SignUpComponent } from './pages/auth/sign-up/sign-up.component';
 import { StarRatingComponent } from './pages/ui-elements/star-rating/star-rating.component';
@@ -85,11 +75,8 @@ import { TermsConditionComponent } from './pages/ui-elements/terms-condition/ter
 import { TestimonialsComponent } from './pages/ui-elements/testimonials/testimonials.component';
 import { TextGeneratorNewComponent } from './pages/ui-elements/text-generator-new/text-generator-new.component';
 import { TextGeneratorComponent } from './pages/ui-elements/text-generator/text-generator.component';
-import { ThemeComponent } from './pages/admin/theme/theme.component';
 import { TooltipComponent } from './pages/ui-elements/tooltip/tooltip.component';
 import { TypographyComponent } from './pages/ui-elements/typography/typography.component';
-import { UsersGridComponent } from './pages/admin/users-grid/users-grid.component';
-import { UsersListComponent } from './pages/admin/users-list/users-list.component';
 import { VeiwDetailsComponent } from './pages/ui-elements/veiw-details/veiw-details.component';
 import { VideoGeneratorComponent } from './pages/ui-elements/video-generator/video-generator.component';
 import { VideosComponent } from './pages/general/videos/videos.component';
@@ -139,6 +126,9 @@ import { ExamScheduleStandardsCreateComponent } from './pages/admin/exam-schedul
 import { ExamScheduleStandardsListComponent } from './pages/admin/exam-schedule-standards-list/exam-schedule-standards-list.component';
 import { OtherPaymentComponent } from './pages/accountant/other-payment/other-payment.component';
 import { PaymentDetailComponent } from './pages/accountant/payment-detail/payment-detail.component';
+import { ThemeComponent } from './theme/theme.component';
+import { RoleAccessComponent } from './pages/admin/role-access/role-access.component';
+import { AssignRoleComponent } from './pages/admin/assign-role/assign-role.component';
 
 
 export const routes: Routes = [
@@ -153,42 +143,43 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent, data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
-      { path: 'class-list', component: ClassListComponent, data: { roles: ['Admin'] } },
+
+      // Class Management
+      { path: 'class-list', component: ClassListComponent, data: { roles: ['Admin', 'Principal'] } },
+      { path: 'newclass', component: NewClassComponent, data: { roles: ['Admin'] } },
       { path: 'class-management', component: ClassManagementComponent, data: { roles: ['Admin'] } },
-      { path: 'section-list', component: SectionListComponent, data: { roles: ['Admin'] } },
+
+      // Section Management
+      { path: 'section-list', component: SectionListComponent, data: { roles: ['Admin', 'Principal'] } },
       { path: 'section-add', component: SectionAddComponent, data: { roles: ['Admin'] } },
 
+      // Staff Management
       { path: 'staff-list', component: StaffListComponent, data: { roles: ['Admin', 'Principal'] } },
       { path: 'staff-add', component: StaffAddComponent, data: { roles: ['Admin'] } },
+      { path: 'staff-view-profile/:id', component: StaffViewProfileComponent, data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
+      { path: 'staff-edit-profile/:id', component: StaffEditProfileComponent, data: { roles: ['Admin'] } },
       { path: 'staff-job-letter', component: StaffJobLetterComponent, data: { roles: ['Admin'] } },
       { path: 'staff-manage-login', component: StaffManageLoginComponent, data: { roles: ['Admin'] } },
+
+      // Attendance
+      { path: 'attendance', component: AttendanceComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
       { path: 'staff-attendance', component: StaffAttendanceComponent, data: { roles: ['Admin', 'Principal'] } },
       { path: 'staff-attendance-report', component: StaffAttendanceReportComponent, data: { roles: ['Admin', 'Principal'] } },
+      { path: 'student-attendance-report', component: StudentAttendanceReportComponent, data: { roles: ['Admin', 'Principal'] } },
+      { path: 'my-attendance', component: MyAttendanceComponent, data: { roles: ['Teacher', 'Accountant'] } },
+
+      // Student Management
       { path: 'student-add', component: StudentAddComponent, data: { roles: ['Admin'] } },
-      { path: 'student-list', component: StudentListComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
+      { path: 'student-list', component: StudentListComponent, data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
       { path: 'student-view/:id', component: StudentViewComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
       { path: 'student-edit/:id', component: StudentEditComponent, data: { roles: ['Admin'] } },
       { path: 'student-promote', component: StudentPromoteComponent, data: { roles: ['Admin'] } },
+
+      // Fee & Finance
       { path: 'fee', component: FeeComponent, data: { roles: ['Admin', 'Accountant'] } },
       { path: 'generate-fee-invoice', component: GenerateFeeInvoiceComponent, data: { roles: ['Admin', 'Accountant'] } },
-      { path: 'collect-fee', component: CollectFeeComponent, data: { roles: ['Admin', 'Accountant'] } },
+      { path: 'collect-fee', component: CollectFeeComponent, data: { roles: ['Accountant'] } }, // Admin View Only in doc, but usually need access. Doc says No Access for collection actions.
       { path: 'fee-defaulters', component: FeeDefaultersComponent, data: { roles: ['Admin', 'Accountant'] } },
-      { path: 'exam-result', component: ExamResultComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
-      { path: 'exam-schedule', component: ExamScheduleComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
-      { path: 'marks-entry', component: MarksEntryComponent, data: { roles: ['Teacher'] } },
-      { path: 'auto-grade-calculation', component: AutoGradeCalculationComponent, data: { roles: ['Admin'] } },
-      { path: 'attendance', component: AttendanceComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
-      { path: 'student-attendance-report', component: StudentAttendanceReportComponent, data: { roles: ['Admin', 'Principal'] } },
-      { path: 'leave', component: LeaveComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
-      { path: 'apply-leave', component: ApplyLeavesComponent, data: { roles: ['Teacher'] } },
-      { path: 'my-leaves', component: MyLeavesComponent, data: { roles: ['Teacher'] } },
-      { path: 'my-attendance', component: MyAttendanceComponent, data: { roles: ['Teacher'] } },
-      { path: 'manage-leaves', component: LeaveManageComponent, data: { roles: ['Admin', 'Principal'] } },
-      { path: 'leave-type', component: LeaveTypeComponent, data: { roles: ['Admin'] } },
-      { path: 'subject', component: SubjectComponent, data: { roles: ['Admin'] } },
-      { path: 'subject-add', component: SubjectAddComponent, data: { roles: ['Admin'] } },
-      { path: 'subject-list', component: SubjectListComponent, data: { roles: ['Admin'] } },
-      { path: 'report', component: ReportComponent, data: { roles: ['Admin', 'Principal', 'Accountant'] } },
       { path: 'accounts', component: AccountsComponent, data: { roles: ['Admin', 'Accountant'] } },
       { path: 'income-manage', component: IncomeManageComponent, data: { roles: ['Admin', 'Accountant'] } },
       { path: 'expense-manage', component: ExpenseManageComponent, data: { roles: ['Admin', 'Accountant'] } },
@@ -198,11 +189,53 @@ export const routes: Routes = [
       { path: 'payment-detail', component: PaymentDetailComponent, data: { roles: ['Admin', 'Accountant'] } },
       { path: 'monthly-payment', component: MonthlyPaymentComponent, data: { roles: ['Admin', 'Accountant'] } },
       { path: 'other-payment', component: OtherPaymentComponent, data: { roles: ['Admin', 'Accountant'] } },
-      { path: 'exam-analytics', component: ExamAnalyticsComponent, data: { roles: ['Admin', 'Principal'] } },
-      { path: 'class-wise-report', component: ClassWiseReportComponent, data: { roles: ['Admin', 'Principal'] } },
-      // ⚙️ Settings (optional for admins)
-      { path: 'settings', component: StarRatingComponent, data: { roles: ['Admin'] } },
+      { path: 'salary', component: SalaryComponent, data: { roles: ['Admin', 'Accountant'] } },
+      { path: 'salary-slip', component: SalarySlipComponent, data: { roles: ['Admin', 'Accountant'] } },
+      { path: 'wallet', component: WalletComponent, data: { roles: ['Admin', 'Accountant'] } },
+      { path: 'invoice-list', component: InvoiceListComponent, data: { roles: ['Admin', 'Accountant'] } },
+      { path: 'invoice-add', component: InvoiceAddComponent, data: { roles: ['Admin', 'Accountant'] } },
+      { path: 'invoice-edit/:id', component: InvoiceEditComponent, data: { roles: ['Admin', 'Accountant'] } },
+      { path: 'invoice-preview/:id', component: InvoicePreviewComponent, data: { roles: ['Admin', 'Accountant'] } },
+      { path: 'payment-gateway', component: PaymentGatewayComponent, data: { roles: ['Admin', 'Accountant'] } },
 
+      // Exams & Results
+      { path: 'exam', component: ExamComponent, data: { roles: ['Admin', 'Principal'] } },
+      { path: 'exam-schedule', component: ExamScheduleComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
+      { path: 'exam-schedule-standards-create', component: ExamScheduleStandardsCreateComponent, data: { roles: ['Admin', 'Principal'] } },
+      { path: 'exam-schedule-standards-list', component: ExamScheduleStandardsListComponent, data: { roles: ['Admin', 'Principal'] } },
+      { path: 'exam-result', component: ExamResultComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
+      { path: 'exam-analytics', component: ExamAnalyticsComponent, data: { roles: ['Admin', 'Principal'] } },
+      { path: 'marks-entry', component: MarksEntryComponent, data: { roles: ['Teacher'] } },
+      { path: 'auto-grade-calculation', component: AutoGradeCalculationComponent, data: { roles: ['Admin'] } },
+
+      // Leave Management
+      { path: 'leave', component: LeaveComponent, data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
+      { path: 'apply-leave', component: ApplyLeavesComponent, data: { roles: ['Teacher', 'Accountant'] } },
+      { path: 'my-leaves', component: MyLeavesComponent, data: { roles: ['Teacher', 'Accountant'] } },
+      { path: 'manage-leaves', component: LeaveManageComponent, data: { roles: ['Admin', 'Principal'] } },
+      { path: 'leave-type', component: LeaveTypeComponent, data: { roles: ['Admin'] } },
+
+      // Subject Management
+      { path: 'subject', component: SubjectComponent, data: { roles: ['Admin'] } },
+      { path: 'subject-add', component: SubjectAddComponent, data: { roles: ['Admin'] } },
+      { path: 'subject-list', component: SubjectListComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
+
+      // Reports
+      { path: 'report', component: ReportComponent, data: { roles: ['Admin', 'Principal', 'Accountant'] } },
+      { path: 'class-wise-report', component: ClassWiseReportComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
+
+      // User Management
+      { path: 'users-list', component: ListComponent, data: { roles: ['Admin'] } },
+      { path: 'role-access', component: RoleAccessComponent, data: { roles: ['Admin'] } },
+      { path: 'assign-role', component: AssignRoleComponent, data: { roles: ['Admin'] } },
+
+      // Settings & Others
+      { path: 'language', component: LanguageComponent, data: { roles: ['Admin'] } },
+      { path: 'theme', component: ThemeComponent, data: { roles: ['Admin'] } },
+      { path: 'settings', component: StarRatingComponent, data: { roles: ['Admin'] } },
+      { path: 'view-profile', component: StaffViewProfileComponent, data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
+
+      { path: 'unauthorized', component: ErrorComponent },
       { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
     ]
   }

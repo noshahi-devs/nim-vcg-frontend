@@ -6,6 +6,7 @@ import { Standard } from '../../../Models/standard';
 import { MonthlyPayment } from '../../../Models/monthly-payment';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { AuthService } from '../../../SecurityModels/auth.service';
 
 @Component({
   selector: 'app-collect-fee',
@@ -35,7 +36,11 @@ export class CollectFeeComponent implements OnInit {
 
   paymentForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private commonService: CommonServices) {
+  constructor(
+    private fb: FormBuilder,
+    private commonService: CommonServices,
+    private authService: AuthService
+  ) {
     this.paymentForm = this.fb.group({
       amountPaid: ['', [Validators.required, Validators.min(1)]],
       paymentType: ['Cash', Validators.required],
@@ -47,6 +52,10 @@ export class CollectFeeComponent implements OnInit {
   ngOnInit(): void {
     this.loadStandards();
     this.loadStudents();
+  }
+
+  hasRole(role: string): boolean {
+    return this.authService.hasRole(role);
   }
 
   loadStandards() {
@@ -89,25 +98,22 @@ export class CollectFeeComponent implements OnInit {
   }
 
   submitPayment() {
-    if (!this.studentId || this.paymentForm.invalid) return;
+    if (!this.selectedStudent || !this.studentId || this.paymentForm.invalid) return;
 
     if (this.paymentForm.value.amountPaid > this.remainingAmount) {
       alert("Amount cannot exceed remaining balance!");
       return;
     }
 
-    // Create a new payment object
-    const newPayment: MonthlyPayment = {
-      monthlyPaymentId: Math.floor(Math.random() * 10000),
-      student: this.selectedStudent,
-      totalAmount: this.totalFee,
-      amountPaid: this.paymentForm.value.amountPaid,
-      amountRemaining: this.remainingAmount - this.paymentForm.value.amountPaid,
-      paymentDate: this.paymentForm.value.paymentDate,
-      studentId: 0,
-      totalFeeAmount: 0,
-      waver: 0,
-      previousDue: 0,
+    const val = this.paymentForm.value;
+
+    const newPayment: Partial<MonthlyPayment> = {
+      studentId: this.selectedStudent.studentId,
+      amountPaid: val.amountPaid,
+      paymentDate: val.paymentDate,
+      // The backend will calculate totals, dues, remaining based on StudentId and AmountPaid
+      // We pass empty arrays if we aren't selecting specific months/fees in this UI,
+      // assuming this is a payment against Due Balance.
       fees: [],
       academicMonths: [],
       paymentMonths: [],
@@ -115,13 +121,17 @@ export class CollectFeeComponent implements OnInit {
       dueBalances: []
     };
 
-    // Simulate saving (or you could call existing API to save)
-    this.previousPayments.push(newPayment);
-    this.paidAmount += this.paymentForm.value.amountPaid;
-    this.remainingAmount -= this.paymentForm.value.amountPaid;
-
-    alert("Payment collected successfully!");
-    this.paymentForm.reset({ paymentDate: new Date().toISOString().substring(0, 10), paymentType: 'Cash' });
+    this.commonService.createMonthlyPayment(newPayment as MonthlyPayment).subscribe({
+      next: (savedPayment) => {
+        alert("Payment collected successfully!");
+        this.paymentForm.reset({ paymentDate: new Date().toISOString().substring(0, 10), paymentType: 'Cash' });
+        this.loadFeeInfo(); // Reload to get updated balance and list
+      },
+      error: (err) => {
+        console.error('Error collecting fee', err);
+        alert('Failed to collect fee.');
+      }
+    });
   }
 
   printReceipt() {

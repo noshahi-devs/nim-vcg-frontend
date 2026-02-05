@@ -3,6 +3,11 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { SectionService } from '../../../services/section.service';
+import { StandardService } from '../../../services/standard.service';
+import { Section } from '../../../Models/section';
+import { Standard } from '../../../Models/standard';
+import Swal from 'sweetalert2';
 
 declare var bootstrap: any;
 
@@ -14,99 +19,93 @@ declare var bootstrap: any;
   templateUrl: './section-list.component.html',
   styleUrls: ['./section-list.component.css']
 })
-export class SectionListComponent implements OnInit, AfterViewInit {
+export class SectionListComponent implements OnInit {
   title = 'Section List';
   searchTerm = '';
   filterClass = '';
-  sectionToDelete: any = null;
+  loading = false;
 
-  classes = ['9', '10', '11', '12'];
-  private readonly STORAGE_KEY = 'sectionList';
+  sectionList: Section[] = [];
+  classes: Standard[] = [];
 
-  sectionList: any[] = [];
+  constructor(
+    private sectionService: SectionService,
+    private standardService: StandardService
+  ) { }
 
   ngOnInit(): void {
-    const savedData = this.loadSectionsFromStorage();
-    if (savedData && savedData.length > 0) {
-      this.sectionList = savedData;
-    } else {
-      this.saveSectionsToStorage();
-      this.sectionList = this.loadSectionsFromStorage() || [];
-    }
+    this.loadSections();
+    this.loadClasses();
   }
 
-  loadSectionsFromStorage(): any[] | null {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : null;
+  loadSections(): void {
+    this.loading = true;
+    this.sectionService.getSections().subscribe({
+      next: (data) => {
+        this.sectionList = data || [];
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading sections:', err);
+        this.loading = false;
+        // Fallback or error message
+      }
+    });
   }
 
-  saveSectionsToStorage(): void {
-    localStorage.setItem(
-      this.STORAGE_KEY,
-      JSON.stringify([
-        {
-          id: 1,
-          sectionName: 'Section A - Class 10',
-          class: '10',
-          section: 'A',
-          teacher: 'Sir Ahmed',
-          totalStudents: 35,
-          roomNo: 'R-101',
-          image: 'assets/images/user-grid/user-grid-img2.png'
-        },
-        {
-          id: 2,
-          sectionName: 'Section B - Class 10',
-          class: '10',
-          section: 'B',
-          teacher: 'Miss Sana',
-          totalStudents: 30,
-          roomNo: 'R-102',
-          image: 'assets/images/user-grid/user-grid-img3.png'
-        },
-        {
-          id: 3,
-          sectionName: 'Section A - Class 9',
-          class: '9',
-          section: 'A',
-          teacher: 'Sir Bilal',
-          totalStudents: 28,
-          roomNo: 'R-201',
-          image: 'assets/images/user-grid/user-grid-img2.png'
-        }
-      ])
-    );
+  loadClasses(): void {
+    this.standardService.getStandards().subscribe({
+      next: (data) => {
+        this.classes = data || [];
+      },
+      error: (err) => {
+        console.error('Error loading classes:', err);
+      }
+    });
   }
 
   get filteredSectionList() {
     let list = this.sectionList;
-    if (this.filterClass) list = list.filter(s => s.class === this.filterClass);
+    if (this.filterClass) {
+      list = list.filter(s => s.className === this.filterClass);
+    }
     if (this.searchTerm) {
       const search = this.searchTerm.toLowerCase();
       list = list.filter(s =>
-        s.sectionName.toLowerCase().includes(search) ||
-        s.teacher.toLowerCase().includes(search) ||
-        s.roomNo.toLowerCase().includes(search)
+        s.sectionName?.toLowerCase().includes(search) ||
+        s.classTeacher?.staffName?.toLowerCase().includes(search) ||
+        s.roomNo?.toLowerCase().includes(search)
       );
     }
     return list;
   }
 
-  confirmDelete(sectionItem: any) {
-    this.sectionToDelete = sectionItem;
-    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    modal.show();
+  confirmDelete(sectionItem: Section) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to delete section "${sectionItem.sectionName}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.deleteSection(sectionItem.sectionId);
+      }
+    });
   }
 
-  deleteSection() {
-    if (this.sectionToDelete) {
-      this.sectionList = this.sectionList.filter(s => s.id !== this.sectionToDelete.id);
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.sectionList));
-      this.sectionToDelete = null;
-    }
-    const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
-    modal.hide();
+  deleteSection(id: number) {
+    this.sectionService.deleteSection(id).subscribe({
+      next: () => {
+        this.sectionList = this.sectionList.filter(s => s.sectionId !== id);
+        Swal.fire('Deleted!', 'Section has been deleted.', 'success');
+      },
+      error: (err) => {
+        console.error('Error deleting section:', err);
+        Swal.fire('Error', 'Failed to delete section.', 'error');
+      }
+    });
   }
-
-  ngAfterViewInit() { }
 }

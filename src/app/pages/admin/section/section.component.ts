@@ -201,7 +201,7 @@ export class SectionComponent implements AfterViewInit, OnInit {
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize() {
+  onResize(event: any) {
     this.updateBarChart();
     this.revenueChart = this.createChartTwo('#487fff');
   }

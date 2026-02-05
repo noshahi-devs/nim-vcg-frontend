@@ -195,6 +195,10 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   currentThemeSetting: string = 'light';
   roles: string[] = [];
 
+  get currentUser() {
+    return this.authService.userValue;
+  }
+
   private routerSubscription!: Subscription;
 
   @ViewChild('themeButton') themeButton!: ElementRef<HTMLElement>;
@@ -272,5 +276,9 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.currentThemeSetting = newTheme;
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

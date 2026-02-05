@@ -12,27 +12,35 @@ export class MarkEntryService {
 
   constructor(private http: HttpClient) { }
 
+  // Helper function to add token header
+  private getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    return {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+  }
+
   getAllMarkEntries(): Observable<MarksEntry[]> {
-    return this.http.get<MarksEntry[]>(`${this.apiBaseUrl}`);
+    return this.http.get<MarksEntry[]>(`${this.apiBaseUrl}`, this.getAuthHeaders());
   }
 
   getMarkEntryById(id: number): Observable<MarksEntry> {
-    return this.http.get<MarksEntry>(`${this.apiBaseUrl}/${id}`);
+    return this.http.get<MarksEntry>(`${this.apiBaseUrl}/${id}`, this.getAuthHeaders());
   }
 
   GetStudents(markEntry: MarksEntry): Observable<StudentMarksDetails[]> {
-    return this.http.post<StudentMarksDetails[]>(`${this.apiBaseUrl}/GetStudents`, markEntry);
+    return this.http.post<StudentMarksDetails[]>(`${this.apiBaseUrl}/GetStudents`, markEntry, this.getAuthHeaders());
   }
 
   createMarkEntry(markEntry: MarksEntry): Observable<MarksEntry> {
-    return this.http.post<MarksEntry>(`${this.apiBaseUrl}`, markEntry);
+    return this.http.post<MarksEntry>(`${this.apiBaseUrl}`, markEntry, this.getAuthHeaders());
   }
 
   updateMarkEntry(markEntry: MarksEntry): Observable<MarksEntry> {
-    return this.http.put<MarksEntry>(`${this.apiBaseUrl}`, markEntry);
+    return this.http.put<MarksEntry>(`${this.apiBaseUrl}`, markEntry, this.getAuthHeaders());
   }
 
   deleteMarkEntry(id: number): Observable<any> {
-    return this.http.delete(`${this.apiBaseUrl}/${id}`);
+    return this.http.delete(`${this.apiBaseUrl}/${id}`, this.getAuthHeaders());
   }
 }

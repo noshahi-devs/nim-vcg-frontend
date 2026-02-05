@@ -19,7 +19,15 @@ export class DashboardService {
 
     constructor(private http: HttpClient) { }
 
+    // Helper function to add token header
+    private getAuthHeaders() {
+        const token = localStorage.getItem('token');
+        return {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+    }
+
     getStats(): Observable<DashboardStats> {
-        return this.http.get<DashboardStats>(`${this.apiUrl}/stats`);
+        return this.http.get<DashboardStats>(`${this.apiUrl}/stats`, this.getAuthHeaders());
     }
 }

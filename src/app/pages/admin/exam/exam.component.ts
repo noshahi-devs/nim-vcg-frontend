@@ -5,6 +5,7 @@ import { Examtype } from '../../../Models/examtype';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../../SecurityModels/auth.service';
 
 @Component({
   selector: 'app-exam',
@@ -39,11 +40,18 @@ export class ExamComponent implements OnInit {
 
   selectedExamType!: Examtype;
 
-  constructor(private examTypeService: ExamtypeService) { }
+  constructor(
+    private examTypeService: ExamtypeService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.loadExamTypes();
+  }
+
+  hasRole(role: string): boolean {
+    return this.authService.hasRole(role);
   }
 
   initForm() {

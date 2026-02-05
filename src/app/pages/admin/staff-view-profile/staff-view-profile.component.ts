@@ -2,6 +2,7 @@ import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angul
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../SecurityModels/auth.service';
 declare var $: any;
 @Component({
   selector: 'app-staff-view-profile',
@@ -72,12 +73,29 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private authService: AuthService
+  ) { }
 
   ngOnInit() {
     // Get staff ID from route
     this.route.params.subscribe(params => {
-      this.staffId = +params['id']; // + converts string to number
+      const idParam = params['id'];
+      if (idParam) {
+        this.staffId = +idParam;
+      } else {
+        // Handle "My Profile" case: no ID provided
+        const currentUser = this.authService.userValue;
+        if (currentUser) {
+          // Look up staff ID by email
+          const currentStaff = this.staffList.find(s => s.email === currentUser.email);
+          if (currentStaff) {
+            this.staffId = +currentStaff.id;
+          }
+        }
+      }
       this.loadStaffData();
     });
   }
@@ -102,6 +120,18 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
 
     // Convert to number and find matching staff
     this.staffData = this.staffList.find(staff => +staff.id === +this.staffId);
+
+    // 🔐 Authorization Check: Prevent users from seeing other staff by searching route
+    const currentUser = this.authService.userValue;
+    const isPrivileged = this.authService.hasAnyRole(['Admin', 'Principal']);
+
+    if (this.staffData && !isPrivileged) {
+      // If not Admin/Principal, user can only see their own profile (matching by email)
+      if (currentUser && this.staffData.email !== currentUser.email) {
+        console.warn('Unauthorized access attempt to staff profile:', this.staffId);
+        this.router.navigate(['/unauthorized']);
+      }
+    }
   }
 
 

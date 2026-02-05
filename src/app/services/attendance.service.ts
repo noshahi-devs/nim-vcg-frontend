@@ -8,24 +8,45 @@ import { AttList } from '../Models/attlist';
   providedIn: 'root'
 })
 export class AttendanceService {
-  private apiUrl = 'https://localhost:7225/api/Attendances'; 
+  private apiUrl = 'https://localhost:7225/api/Attendances';
 
   constructor(private http: HttpClient) { }
 
+  // Helper function to add token header
+  private getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    return {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+  }
+
   getAttendances(): Observable<Attendance[]> {
-    return this.http.get<Attendance[]>(this.apiUrl);
+    return this.http.get<Attendance[]>(this.apiUrl, this.getAuthHeaders());
   }
 
   getAttendance(id: number): Observable<Attendance> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.get<Attendance>(url);
+    return this.http.get<Attendance>(url, this.getAuthHeaders());
   }
 
   addAttendance(attendance: Attendance): Observable<Attendance> {
-    return this.http.post<Attendance>(this.apiUrl, attendance);
+    return this.http.post<Attendance>(this.apiUrl, attendance, this.getAuthHeaders());
   }
 
   getAttendanceListData(attendance: Attendance): Observable<AttList[]> {
-    return this.http.get<AttList[]>(this.apiUrl +"/GetList/"+ attendance.type);
+    return this.http.get<AttList[]>(this.apiUrl + "/GetList/" + attendance.type, this.getAuthHeaders());
+  }
+
+  // Report Methods
+  getClassWiseAttendance(classId: number, date: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Report/Class/${classId}?date=${date}`, this.getAuthHeaders());
+  }
+
+  getStudentAttendanceReport(studentId: number, startDate: string, endDate: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Report/Student/${studentId}?startDate=${startDate}&endDate=${endDate}`, this.getAuthHeaders());
+  }
+
+  getStaffAttendanceReport(staffId: number, startDate: string, endDate: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Report/Staff/${staffId}?startDate=${startDate}&endDate=${endDate}`, this.getAuthHeaders());
   }
 }

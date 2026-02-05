@@ -5,15 +5,17 @@ import Swal from 'sweetalert2';
 
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AttendanceService } from '../../../services/attendance.service';
+import { AuthService } from '../../../SecurityModels/auth.service';
 import { StandardService } from '../../../services/standard.service';
 import { Student } from '../../../Models/student';
 import { Standard } from '../../../Models/standard';
+
 import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-attendance',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BreadcrumbComponent],
   templateUrl: './attendance.component.html',
   styleUrls: ['./attendance.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -28,17 +30,22 @@ export class AttendanceComponent implements OnInit {
 
   /** STANDARDS & STUDENTS */
   standards: Standard[] = [];
-  students: Student[] = [];
+  students: any[] = [];
   studentsLoaded = false;
 
   constructor(
     private standardService: StandardService,
-    private attendanceService: AttendanceService
+    private attendanceService: AttendanceService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
     this.setTodayDate();
     this.loadStandards();
+  }
+
+  hasRole(role: string): boolean {
+    return this.authService.hasRole(role);
   }
 
   setTodayDate(): void {
@@ -69,17 +76,37 @@ export class AttendanceComponent implements OnInit {
       return;
     }
 
-    // Find the selected standard
     const std = this.standards.find(s => s.standardName === this.selectedClass);
-    if (!std || !std.students) {
-      this.students = [];
-      this.studentsLoaded = true;
-      return;
-    }
+    if (!std) return;
 
-    // Students of this standard
-    this.students = std.students;
-    this.studentsLoaded = true;
+    // Fetch existing attendance for this class and date
+    this.attendanceService.getClassWiseAttendance(std.standardId, this.selectedDate).subscribe({
+      next: (data) => {
+        if (data && data.length > 0) {
+          // Map existing statuses
+          this.students = data.map((record: any) => ({
+            studentId: record.studentId,
+            studentName: record.studentName,
+            status: record.status // "Present", "Absent", or "Unmarked"
+          })) as any[];
+        } else if (std.students) {
+          // If no records, load from standard's student list
+          this.students = std.students.map((s: any) => ({
+            ...s,
+            status: '' // Unmarked
+          })) as any[];
+        }
+        this.studentsLoaded = true;
+      },
+      error: (err) => {
+        console.error('Error fetching existing attendance', err);
+        // Fallback to standard's student list if API fails
+        if (std.students) {
+          this.students = std.students;
+        }
+        this.studentsLoaded = true;
+      }
+    });
   }
 
   /** ==========================
@@ -104,24 +131,50 @@ export class AttendanceComponent implements OnInit {
         title: 'Incomplete Attendance',
         text: `${unmarked.length} students not marked. Continue?`,
         showCancelButton: true,
-        confirmButtonText: 'Save'
+        confirmButtonText: 'Save',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33'
       });
       if (!res.isConfirmed) return;
     }
 
-    this.students.forEach(s => {
-      this.attendanceService.addAttendance({
+    const attendanceRecords = this.students.filter(s => s.status).map(s => {
+      return this.attendanceService.addAttendance({
         attendanceId: 0,
         date: new Date(this.selectedDate),
-        type: 0,
+        type: 0, // 0 for Student
         attendanceIdentificationNumber: s.studentId,
         description: '',
         isPresent: s.status === 'Present'
-      }).subscribe();
+      });
     });
 
-    Swal.fire('Saved!', 'Attendance saved successfully', 'success');
-    this.resetForm();
+    if (attendanceRecords.length === 0) {
+      Swal.fire('No Data', 'No students to mark attendance for.', 'info');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Saving...',
+      text: 'Please wait while we save the attendance.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    import('rxjs').then(({ forkJoin }) => {
+      forkJoin(attendanceRecords).subscribe({
+        next: () => {
+          Swal.fire('Saved!', 'Attendance saved successfully', 'success');
+          this.resetForm();
+        },
+        error: (err) => {
+          console.error('Error saving attendance:', err);
+          Swal.fire('Error', 'Failed to save attendance. Please try again.', 'error');
+        }
+      });
+    });
   }
 
   resetForm(): void {
@@ -129,5 +182,12 @@ export class AttendanceComponent implements OnInit {
     this.studentsLoaded = false;
     this.selectedClass = '';
     this.setTodayDate();
+  }
+
+  getStats() {
+    return {
+      present: this.students.filter(s => s.status === 'Present').length,
+      absent: this.students.filter(s => s.status === 'Absent').length
+    };
   }
 }

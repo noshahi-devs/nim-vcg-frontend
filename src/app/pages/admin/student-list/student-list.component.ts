@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,7 @@ declare var bootstrap: any;
 @Component({
   selector: 'app-student-list',
   standalone: true,
-  imports: [FormsModule, RouterLink, CommonModule, BreadcrumbComponent],
+  imports: [FormsModule, RouterLink, CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './student-list.component.html',
   styleUrls: ['./student-list.component.css']

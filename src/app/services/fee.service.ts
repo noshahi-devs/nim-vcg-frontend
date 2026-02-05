@@ -11,31 +11,39 @@ export class FeeService {
 
   constructor(private http: HttpClient) { }
 
+  // Helper function to add token header
+  private getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    return {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+  }
+
   // Method to fetch all fees
   getAllFees(): Observable<Fee[]> {
-    return this.http.get<Fee[]>(this.apiUrl);
+    return this.http.get<Fee[]>(this.apiUrl, this.getAuthHeaders());
   }
 
   // Method to fetch a specific fee by ID
   getFeeById(id: number): Observable<Fee> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.get<Fee>(url);
+    return this.http.get<Fee>(url, this.getAuthHeaders());
   }
 
   // Method to create a new fee
   createFee(fee: Fee): Observable<Fee> {
-    return this.http.post<Fee>(this.apiUrl, fee);
+    return this.http.post<Fee>(this.apiUrl, fee, this.getAuthHeaders());
   }
 
   // Method to update an existing fee
   updateFee(fee: Fee): Observable<Fee> {
     const url = `${this.apiUrl}/${fee.feeId}`;
-    return this.http.put<Fee>(url, fee);
+    return this.http.put<Fee>(url, fee, this.getAuthHeaders());
   }
 
   // Method to delete a fee by ID
   deleteFee(id: number): Observable<any> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.delete(url);
+    return this.http.delete(url, this.getAuthHeaders());
   }
 }

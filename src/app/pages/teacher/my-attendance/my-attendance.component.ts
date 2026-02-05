@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { AttendanceService } from '../../../services/attendance.service';
@@ -8,37 +8,10 @@ import Swal from 'sweetalert2';
 @Component({
     selector: 'app-my-attendance',
     standalone: true,
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
     imports: [CommonModule, BreadcrumbComponent],
-    template: `
-    <div class="dashboard-main-body">
-    <app-breadcrumb [title]="title"></app-breadcrumb>
-
-    <div class="row gy-4">
-    <!-- Check In Card -->
-    <div class="col-xxl-6 col-md-6">
-      <div class="card h-100 radius-12 p-24 text-center">
-        <h6 class="mb-12">Mark Attendance</h6>
-        <p class="text-secondary-light mb-24">Date: {{ today | date:'mediumDate' }}</p>
-
-        <div *ngIf="alreadyMarked; else markBtn">
-            <span class="badge bg-success-600 text-white text-lg px-24 py-12 radius-8">
-                <i class="ri-check-line"></i> Attendance Marked
-            </span>
-        </div>
-
-        <ng-template #markBtn>
-            <button (click)="markAttendance()" 
-                    class="btn btn-primary-600 radius-8 px-32 py-12 d-inline-flex align-items-center gap-2">
-                <i class="ri-fingerprint-line text-xl"></i> 
-                Check In Now
-            </button>
-        </ng-template>
-
-      </div>
-    </div>
-    </div>
-  `,
-    styles: []
+    templateUrl: './my-attendance.component.html',
+    styleUrls: ['./my-attendance.component.css']
 })
 export class MyAttendanceComponent implements OnInit {
     title = 'My Attendance';
@@ -46,6 +19,7 @@ export class MyAttendanceComponent implements OnInit {
     alreadyMarked = false;
     userId: string | null = null;
     userName: string | null = null;
+    history: any[] = [];
 
     constructor(
         private authService: AuthService,
@@ -55,50 +29,58 @@ export class MyAttendanceComponent implements OnInit {
     ngOnInit(): void {
         const user = this.authService.userValue;
         if (user) {
-            // Assuming AuthResponse has id or similar. 
-            // Based on previous AuthService view, it stores whatever API returns.
-            // We will need to map this correctly. If user.id doesn't exist, we might need to rely on email or specific claim.
-            // For now, I will assume user.id or user.userId exists. 
-            // If strict typing issues arise, I will fix.
             this.userId = (user as any).id || (user as any).userId;
             this.userName = (user as any).username;
+            this.loadHistory();
         }
+    }
+
+    loadHistory() {
+        this.attendanceService.getAttendances().subscribe({
+            next: (data) => {
+                // Filter records for this user (Today and history)
+                // Note: The API currently returns ALL records. We filter by ID.
+                this.history = data.filter(a => a.attendanceIdentificationNumber.toString() === this.userId?.toString())
+                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+                const todayStr = this.today.toISOString().split('T')[0];
+                this.alreadyMarked = this.history.some(a => a.date.toString().startsWith(todayStr));
+            }
+        });
     }
 
     markAttendance() {
         if (!this.userId) {
-            Swal.fire('Error', 'User ID not found. Please relogin.', 'error');
+            Swal.fire('Error', 'User profile not loaded correctly.', 'error');
             return;
         }
 
         Swal.fire({
-            title: 'Mark Attendance?',
-            text: `Mark present for ${this.today.toLocaleDateString()}?`,
-            icon: 'question',
+            title: 'Confirm Check-In',
+            text: `Record your presence for today, ${this.today.toLocaleDateString()}?`,
+            icon: 'info',
             showCancelButton: true,
-            confirmButtonText: 'Yes, Check In'
+            confirmButtonText: 'Yes, Confirm',
+            confirmButtonColor: '#6366f1'
         }).then((result) => {
             if (result.isConfirmed) {
-
-                // Prepare payload
                 const payload = {
                     attendanceId: 0,
                     date: new Date(),
-                    type: 1, // Staff type
-                    attendanceIdentificationNumber: this.userId, // Sending User ID as identification
-                    staffId: this.userId, // Sending User ID as staffId
+                    type: 1, // Staff
+                    attendanceIdentificationNumber: parseInt(this.userId || '0'), // Assuming numeric ID for now, see fix below
                     isPresent: true,
-                    description: 'Self Marked by ' + this.userName
+                    description: 'Self Marked'
                 };
 
                 this.attendanceService.addAttendance(payload as any).subscribe({
                     next: () => {
-                        this.alreadyMarked = true;
-                        Swal.fire('Success', 'Attendance marked successfully!', 'success');
+                        Swal.fire('Checked In!', 'Your attendance has been recorded.', 'success');
+                        this.loadHistory();
                     },
                     error: (err) => {
                         console.error(err);
-                        Swal.fire('Error', 'Failed to mark attendance.', 'error');
+                        Swal.fire('Error', 'Database rejected attendance. Please contact admin.', 'error');
                     }
                 });
             }

@@ -71,38 +71,46 @@ export class AccountsService {
 
   constructor(private http: HttpClient) { }
 
+  // Helper function to add token header
+  private getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    return {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+  }
+
   // Income Management
   getIncomeList(): Observable<Income[]> {
-    return this.http.get<Income[]>(`${this.apiUrl}/GeneralIncomes`);
+    return this.http.get<Income[]>(`${this.apiUrl}/GeneralIncomes`, this.getAuthHeaders());
   }
 
   addIncome(income: Partial<Income>): Observable<Income> {
-    return this.http.post<Income>(`${this.apiUrl}/GeneralIncomes`, income);
+    return this.http.post<Income>(`${this.apiUrl}/GeneralIncomes`, income, this.getAuthHeaders());
   }
 
   updateIncome(id: number, income: Partial<Income>): Observable<Income> {
-    return this.http.put<Income>(`${this.apiUrl}/GeneralIncomes/${id}`, income);
+    return this.http.put<Income>(`${this.apiUrl}/GeneralIncomes/${id}`, income, this.getAuthHeaders());
   }
 
   deleteIncome(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/GeneralIncomes/${id}`);
+    return this.http.delete(`${this.apiUrl}/GeneralIncomes/${id}`, this.getAuthHeaders());
   }
 
   // Expense Management
   getExpenses(): Observable<Expense[]> {
-    return this.http.get<Expense[]>(`${this.apiUrl}/GeneralExpenses`);
+    return this.http.get<Expense[]>(`${this.apiUrl}/GeneralExpenses`, this.getAuthHeaders());
   }
 
   addExpense(expense: Partial<Expense>): Observable<Expense> {
-    return this.http.post<Expense>(`${this.apiUrl}/GeneralExpenses`, expense);
+    return this.http.post<Expense>(`${this.apiUrl}/GeneralExpenses`, expense, this.getAuthHeaders());
   }
 
   updateExpense(id: number, expense: Partial<Expense>): Observable<Expense> {
-    return this.http.put<Expense>(`${this.apiUrl}/GeneralExpenses/${id}`, expense);
+    return this.http.put<Expense>(`${this.apiUrl}/GeneralExpenses/${id}`, expense, this.getAuthHeaders());
   }
 
   deleteExpense(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/GeneralExpenses/${id}`);
+    return this.http.delete(`${this.apiUrl}/GeneralExpenses/${id}`, this.getAuthHeaders());
   }
 
   // Ledger: Client-side aggregation of real data

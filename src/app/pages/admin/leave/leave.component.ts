@@ -3,18 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { RouterModule } from '@angular/router';
+import { LeaveService } from '../../../services/leave.service';
+import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
 import Swal from 'sweetalert2';
-
-interface LeaveApplication {
-  id: number;
-  employeeName: string;
-  leaveType: string;
-  fromDate: string;
-  toDate: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
-  reason: string;
-  appliedOn: string;
-}
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-leave',
@@ -29,80 +21,106 @@ export class LeaveComponent implements OnInit {
   Math = Math;
 
   // Stats
-  totalLeaves = 0;
-  pendingLeaves = 0;
-  approvedLeaves = 0;
-  rejectedLeaves = 0;
+  totalLeavesCount = 0;
+  pendingLeavesCount = 0;
+  approvedLeavesCount = 0;
+  rejectedLeavesCount = 0;
 
   // Recent applications
-  recentApplications: LeaveApplication[] = [];
-  filteredApplications: LeaveApplication[] = [];
+  recentApplications: Leave[] = [];
+  filteredApplications: Leave[] = [];
+  loading = false;
 
   // Pagination
   rowsPerPage = 10;
   currentPage = 1;
 
+  constructor(private leaveService: LeaveService) { }
+
   ngOnInit(): void {
     this.loadLeaveData();
-    this.calculateStats();
   }
 
   loadLeaveData(): void {
-    const savedLeaves = localStorage.getItem('leaveApplications');
-
-    if (savedLeaves) {
-      this.recentApplications = JSON.parse(savedLeaves);
-    } else {
-      this.recentApplications = [
-        { id: 1, employeeName: 'Ali Hassan', leaveType: 'Sick Leave', fromDate: '2024-11-15', toDate: '2024-11-17', status: 'Pending', reason: 'Medical checkup', appliedOn: '2024-11-10' },
-        { id: 2, employeeName: 'Sara Ahmed', leaveType: 'Casual Leave', fromDate: '2024-11-20', toDate: '2024-11-22', status: 'Approved', reason: 'Family function', appliedOn: '2024-11-08' },
-        { id: 3, employeeName: 'Usman Khan', leaveType: 'Annual Leave', fromDate: '2024-11-25', toDate: '2024-11-30', status: 'Pending', reason: 'Personal work', appliedOn: '2024-11-09' },
-        { id: 4, employeeName: 'Ayesha Malik', leaveType: 'Sick Leave', fromDate: '2024-11-12', toDate: '2024-11-13', status: 'Rejected', reason: 'Fever', appliedOn: '2024-11-11' },
-        { id: 5, employeeName: 'Bilal Raza', leaveType: 'Casual Leave', fromDate: '2024-11-18', toDate: '2024-11-19', status: 'Approved', reason: 'Personal emergency', appliedOn: '2024-11-07' },
-        { id: 6, employeeName: 'Fatima Noor', leaveType: 'Annual Leave', fromDate: '2024-12-01', toDate: '2024-12-05', status: 'Pending', reason: 'Vacation', appliedOn: '2024-11-09' },
-        { id: 7, employeeName: 'Hamza Tariq', leaveType: 'Sick Leave', fromDate: '2024-11-14', toDate: '2024-11-15', status: 'Approved', reason: 'Doctor appointment', appliedOn: '2024-11-12' }
-      ];
-      localStorage.setItem('leaveApplications', JSON.stringify(this.recentApplications));
-    }
-
-    this.filteredApplications = [...this.recentApplications];
+    this.loading = true;
+    this.leaveService.getLeaves()
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (data) => {
+          this.recentApplications = data;
+          this.filteredApplications = [...data];
+          this.calculateStats();
+        },
+        error: (err) => {
+          console.error('Error loading leaves:', err);
+          Swal.fire('Error', 'Failed to load leave data', 'error');
+        }
+      });
   }
 
   calculateStats(): void {
-    this.totalLeaves = this.recentApplications.length;
-    this.pendingLeaves = this.recentApplications.filter(l => l.status === 'Pending').length;
-    this.approvedLeaves = this.recentApplications.filter(l => l.status === 'Approved').length;
-    this.rejectedLeaves = this.recentApplications.filter(l => l.status === 'Rejected').length;
+    this.totalLeavesCount = this.recentApplications.length;
+    this.pendingLeavesCount = this.recentApplications.filter(l => l.status === LeaveStatus.Pending).length;
+    this.approvedLeavesCount = this.recentApplications.filter(l => l.status === LeaveStatus.Approved).length;
+    this.rejectedLeavesCount = this.recentApplications.filter(l => l.status === LeaveStatus.Rejected).length;
   }
 
-  getStatusClass(status: string): string {
+  getLeaveTypeName(type: number): string {
+    return LeaveType[type];
+  }
+
+  getLeaveStatusName(status: number): string {
+    return LeaveStatus[status];
+  }
+
+  getStatusClass(status: number): string {
     switch (status) {
-      case 'Approved': return 'bg-success-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
-      case 'Pending': return 'bg-warning-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
-      case 'Rejected': return 'bg-danger-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
+      case LeaveStatus.Approved: return 'bg-success-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
+      case LeaveStatus.Pending: return 'bg-warning-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
+      case LeaveStatus.Rejected: return 'bg-danger-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
       default: return 'bg-neutral-200 text-neutral-900 px-24 py-4 radius-4 fw-medium text-sm';
     }
   }
 
   refreshData(): void {
     this.loadLeaveData();
-    this.calculateStats();
-    Swal.fire({ icon: 'success', title: 'Refreshed!', text: 'Data refreshed successfully.', timer: 1500, showConfirmButton: false });
+    Swal.fire({
+      icon: 'success',
+      title: 'Refreshed!',
+      text: 'Data refreshed successfully.',
+      timer: 1500,
+      showConfirmButton: false
+    });
   }
 
   exportData(): void {
-    Swal.fire({ icon: 'info', title: 'Export', text: 'Export functionality will be implemented soon.', confirmButtonColor: '#800020' });
-  }
-
-  viewDetails(leave: LeaveApplication): void {
     Swal.fire({
-      title: 'Leave Details',
-      html: `<div class="text-start"><p><strong>Employee:</strong> ${leave.employeeName}</p><p><strong>Leave Type:</strong> ${leave.leaveType}</p><p><strong>From:</strong> ${leave.fromDate}</p><p><strong>To:</strong> ${leave.toDate}</p><p><strong>Reason:</strong> ${leave.reason}</p><p><strong>Applied On:</strong> ${leave.appliedOn}</p><p><strong>Status:</strong> <span class="badge ${this.getStatusClass(leave.status)}">${leave.status}</span></p></div>`,
+      icon: 'info',
+      title: 'Export',
+      text: 'Export functionality will be implemented soon.',
       confirmButtonColor: '#800020'
     });
   }
 
-  get paginatedApplications(): LeaveApplication[] {
+  viewDetails(leave: Leave): void {
+    Swal.fire({
+      title: 'Leave Details',
+      html: `
+        <div class="text-start">
+          <p><strong>Employee:</strong> ${leave.staff?.staffName || 'Unknown'}</p>
+          <p><strong>Leave Type:</strong> ${this.getLeaveTypeName(leave.leaveType)}</p>
+          <p><strong>From:</strong> ${new Date(leave.startDate).toLocaleDateString()}</p>
+          <p><strong>To:</strong> ${new Date(leave.endDate).toLocaleDateString()}</p>
+          <p><strong>Reason:</strong> ${leave.reason}</p>
+          <p><strong>Applied On:</strong> ${new Date(leave.appliedDate!).toLocaleDateString()}</p>
+          <p><strong>Status:</strong> ${this.getLeaveStatusName(leave.status)}</p>
+        </div>
+      `,
+      confirmButtonColor: '#800020'
+    });
+  }
+
+  get paginatedApplications(): Leave[] {
     const start = (this.currentPage - 1) * this.rowsPerPage;
     return this.filteredApplications.slice(start, start + this.rowsPerPage);
   }

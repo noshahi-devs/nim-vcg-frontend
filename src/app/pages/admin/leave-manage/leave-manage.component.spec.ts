@@ -1,23 +1,37 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { LeaveManageComponent } from './leave-manage.component';
+import { LeaveService } from '../../../services/leave.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 
-import { LeaveComponent } from './leave-manage.component';
-
-describe('LeaveComponent', () => {
-  let component: LeaveComponent;
-  let fixture: ComponentFixture<LeaveComponent>;
+describe('LeaveManageComponent', () => {
+  let component: LeaveManageComponent;
+  let fixture: ComponentFixture<LeaveManageComponent>;
+  let leaveService: jasmine.SpyObj<LeaveService>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [LeaveComponent]
-    })
-    .compileComponents();
+    const spy = jasmine.createSpyObj('LeaveService', ['getLeaves', 'updateLeaveStatus']);
+    spy.getLeaves.and.returnValue(of([]));
 
-    fixture = TestBed.createComponent(LeaveComponent);
+    await TestBed.configureTestingModule({
+      imports: [LeaveManageComponent, HttpClientTestingModule],
+      providers: [
+        { provide: LeaveService, useValue: spy }
+      ]
+    })
+      .compileComponents();
+
+    leaveService = TestBed.inject(LeaveService) as jasmine.SpyObj<LeaveService>;
+    fixture = TestBed.createComponent(LeaveManageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should load leaves on init', () => {
+    expect(leaveService.getLeaves).toHaveBeenCalled();
   });
 });

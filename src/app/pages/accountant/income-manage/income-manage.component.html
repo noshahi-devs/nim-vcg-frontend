@@ -42,7 +42,7 @@
         <div class="col-md-2">
           <input type="date" class="form-control" [(ngModel)]="filterDateTo" (change)="applyFilters()" placeholder="To Date">
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2" *ngIf="hasRole('Accountant')">
           <button type="button" (click)="openAddModal()" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
             <iconify-icon icon="solar:add-circle-bold" class="icon text-xl"></iconify-icon>
             Add Income
@@ -71,7 +71,7 @@
               <th scope="col">Payment Method</th>
               <th scope="col">Received By</th>
               <th scope="col">Campus</th>
-              <th scope="col" class="text-center">Actions</th>
+              <th scope="col" class="text-center" *ngIf="hasRole('Accountant')">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -83,7 +83,7 @@
               <td>{{ income.paymentMethod }}</td>
               <td>{{ income.receivedBy }}</td>
               <td>{{ income.campus }}</td>
-              <td class="text-center">
+              <td class="text-center" *ngIf="hasRole('Accountant')">
                 <div class="d-flex align-items-center justify-content-center gap-2">
                   <button type="button" (click)="openEditModal(income)" 
                           class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" 

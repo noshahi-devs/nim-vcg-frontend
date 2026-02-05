@@ -3,34 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import Swal from 'sweetalert2';
-
-export interface BankAccount {
-  id: number;
-  accountName: string;
-  accountNumber: string;
-  bankName: string;
-  branchName: string;
-  accountType: 'Savings' | 'Current';
-  balance: number;
-  status: 'Active' | 'Inactive';
-}
-
-export interface CashAccount {
-  id: number;
-  accountName: string;
-  location: string;
-  balance: number;
-  lastUpdated: string;
-}
-
-export interface PaymentGateway {
-  id: number;
-  gatewayName: string;
-  apiKey: string;
-  secretKey: string;
-  status: 'Active' | 'Inactive';
-  transactionFee: number;
-}
+import { BankAccount, BankAccountService } from '../../../services/bank-account.service';
+import { PaymentGatewaySetting, PaymentGatewayService } from '../../../services/payment-gateway.service';
 
 @Component({
   selector: 'app-bank-cash',
@@ -51,60 +25,53 @@ export class BankCashComponent implements OnInit {
   currentBankAccount: Partial<BankAccount> = {};
 
   // Cash Accounts
-  cashAccounts: CashAccount[] = [];
+  cashAccounts: BankAccount[] = [];
   showCashModal = false;
   isEditCashMode = false;
-  currentCashAccount: Partial<CashAccount> = {};
+  currentCashAccount: Partial<BankAccount> = {};
 
   // Payment Gateways
-  paymentGateways: PaymentGateway[] = [];
+  paymentGateways: PaymentGatewaySetting[] = [];
   showGatewayModal = false;
   isEditGatewayMode = false;
-  currentGateway: Partial<PaymentGateway> = {};
+  currentGateway: Partial<PaymentGatewaySetting> = {};
 
   // Totals
   totalBankBalance = 0;
   totalCashBalance = 0;
   totalBalance = 0;
 
-  accountTypes = ['Savings', 'Current'];
-  statuses = ['Active', 'Inactive'];
+  constructor(
+    private bankAccountService: BankAccountService,
+    private gatewayService: PaymentGatewayService
+  ) { }
 
   ngOnInit(): void {
-    this.loadMockData();
-    this.calculateTotals();
+    this.loadData();
   }
 
-  loadMockData(): void {
-    this.bankAccounts = [
-      { id: 1, accountName: 'School Main Account', accountNumber: '1234567890', bankName: 'HBL', branchName: 'Main Branch', accountType: 'Current', balance: 500000, status: 'Active' },
-      { id: 2, accountName: 'Fee Collection Account', accountNumber: '0987654321', bankName: 'UBL', branchName: 'City Branch', accountType: 'Current', balance: 350000, status: 'Active' },
-      { id: 3, accountName: 'Savings Account', accountNumber: '5555666677', bankName: 'MCB', branchName: 'Downtown', accountType: 'Savings', balance: 200000, status: 'Active' }
-    ];
+  loadData(): void {
+    this.bankAccountService.getBankAccounts().subscribe(data => {
+      this.bankAccounts = data.filter(a => a.accountType === 'Bank');
+      this.cashAccounts = data.filter(a => a.accountType === 'Cash');
+      this.calculateTotals();
+    });
 
-    this.cashAccounts = [
-      { id: 1, accountName: 'Main Office Cash', location: 'Admin Office', balance: 50000, lastUpdated: '2025-01-10' },
-      { id: 2, accountName: 'Fee Counter Cash', location: 'Fee Counter', balance: 25000, lastUpdated: '2025-01-10' },
-      { id: 3, accountName: 'Petty Cash', location: 'Accounts Department', balance: 10000, lastUpdated: '2025-01-09' }
-    ];
-
-    this.paymentGateways = [
-      { id: 1, gatewayName: 'JazzCash', apiKey: 'jazz_api_key_***', secretKey: '***hidden***', status: 'Active', transactionFee: 2.5 },
-      { id: 2, gatewayName: 'EasyPaisa', apiKey: 'easy_api_key_***', secretKey: '***hidden***', status: 'Active', transactionFee: 2.0 },
-      { id: 3, gatewayName: 'Bank Transfer', apiKey: 'bank_api_key_***', secretKey: '***hidden***', status: 'Inactive', transactionFee: 0 }
-    ];
+    this.gatewayService.getGateways().subscribe(data => {
+      this.paymentGateways = data;
+    });
   }
 
   calculateTotals(): void {
-    this.totalBankBalance = this.bankAccounts.reduce((sum, acc) => sum + acc.balance, 0);
-    this.totalCashBalance = this.cashAccounts.reduce((sum, acc) => sum + acc.balance, 0);
+    this.totalBankBalance = this.bankAccounts.reduce((sum, acc) => sum + (acc.balance || 0), 0);
+    this.totalCashBalance = this.cashAccounts.reduce((sum, acc) => sum + (acc.balance || 0), 0);
     this.totalBalance = this.totalBankBalance + this.totalCashBalance;
   }
 
-  // Bank Methods
+  // --- Bank Methods ---
   openAddBankModal(): void {
     this.isEditBankMode = false;
-    this.currentBankAccount = { accountType: 'Current', status: 'Active', balance: 0 };
+    this.currentBankAccount = { accountType: 'Bank', isActive: true, balance: 0 };
     this.showBankModal = true;
   }
 
@@ -120,16 +87,22 @@ export class BankCashComponent implements OnInit {
       return;
     }
 
+    const account = this.currentBankAccount as BankAccount;
+    account.accountType = 'Bank';
+
     if (this.isEditBankMode) {
-      const index = this.bankAccounts.findIndex(a => a.id === this.currentBankAccount.id);
-      if (index !== -1) this.bankAccounts[index] = this.currentBankAccount as BankAccount;
-      Swal.fire('Success', 'Bank account updated', 'success');
+      this.bankAccountService.updateBankAccount(account.bankAccountId, account).subscribe(() => {
+        Swal.fire('Success', 'Bank account updated', 'success');
+        this.loadData();
+        this.closeBankModal();
+      });
     } else {
-      this.bankAccounts.push({ id: this.bankAccounts.length + 1, ...this.currentBankAccount } as BankAccount);
-      Swal.fire('Success', 'Bank account added', 'success');
+      this.bankAccountService.createBankAccount(account).subscribe(() => {
+        Swal.fire('Success', 'Bank account added', 'success');
+        this.loadData();
+        this.closeBankModal();
+      });
     }
-    this.calculateTotals();
-    this.closeBankModal();
   }
 
   deleteBankAccount(account: BankAccount): void {
@@ -141,25 +114,25 @@ export class BankCashComponent implements OnInit {
       confirmButtonText: 'Yes'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bankAccounts = this.bankAccounts.filter(a => a.id !== account.id);
-        this.calculateTotals();
-        Swal.fire('Deleted!', '', 'success');
+        this.bankAccountService.deleteBankAccount(account.bankAccountId).subscribe(() => {
+          Swal.fire('Deleted!', '', 'success');
+          this.loadData();
+        });
       }
     });
   }
 
-  closeBankModal(): void {
-    this.showBankModal = false;
-  }
+  closeBankModal(): void { this.showBankModal = false; }
 
-  // Cash Methods
+
+  // --- Cash Methods ---
   openAddCashModal(): void {
     this.isEditCashMode = false;
-    this.currentCashAccount = { balance: 0, lastUpdated: new Date().toISOString().split('T')[0] };
+    this.currentCashAccount = { accountType: 'Cash', isActive: true, balance: 0, bankName: 'Cash', accountNumber: 'CASH-' + Date.now() };
     this.showCashModal = true;
   }
 
-  openEditCashModal(account: CashAccount): void {
+  openEditCashModal(account: BankAccount): void {
     this.isEditCashMode = true;
     this.currentCashAccount = { ...account };
     this.showCashModal = true;
@@ -167,50 +140,42 @@ export class BankCashComponent implements OnInit {
 
   saveCashAccount(): void {
     if (!this.currentCashAccount.accountName) {
-      Swal.fire('Error', 'Please fill all required fields', 'warning');
+      Swal.fire('Error', 'Please fill name', 'warning');
       return;
     }
+    const account = this.currentCashAccount as BankAccount;
+    account.accountType = 'Cash';
 
     if (this.isEditCashMode) {
-      const index = this.cashAccounts.findIndex(a => a.id === this.currentCashAccount.id);
-      if (index !== -1) this.cashAccounts[index] = this.currentCashAccount as CashAccount;
-      Swal.fire('Success', 'Cash account updated', 'success');
+      this.bankAccountService.updateBankAccount(account.bankAccountId, account).subscribe(() => {
+        Swal.fire('Success', 'Cash account updated', 'success');
+        this.loadData();
+        this.closeCashModal();
+      });
     } else {
-      this.cashAccounts.push({ id: this.cashAccounts.length + 1, ...this.currentCashAccount } as CashAccount);
-      Swal.fire('Success', 'Cash account added', 'success');
+      this.bankAccountService.createBankAccount(account).subscribe(() => {
+        Swal.fire('Success', 'Cash account added', 'success');
+        this.loadData();
+        this.closeCashModal();
+      });
     }
-    this.calculateTotals();
-    this.closeCashModal();
   }
 
-  deleteCashAccount(account: CashAccount): void {
-    Swal.fire({
-      title: 'Delete?',
-      text: `Delete ${account.accountName}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.cashAccounts = this.cashAccounts.filter(a => a.id !== account.id);
-        this.calculateTotals();
-        Swal.fire('Deleted!', '', 'success');
-      }
-    });
+  deleteCashAccount(account: BankAccount): void {
+    this.deleteBankAccount(account);
   }
 
-  closeCashModal(): void {
-    this.showCashModal = false;
-  }
+  closeCashModal(): void { this.showCashModal = false; }
 
-  // Gateway Methods
+
+  // --- Gateway Methods ---
   openAddGatewayModal(): void {
     this.isEditGatewayMode = false;
-    this.currentGateway = { status: 'Active', transactionFee: 0 };
+    this.currentGateway = { isActive: true, isTestMode: true };
     this.showGatewayModal = true;
   }
 
-  openEditGatewayModal(gateway: PaymentGateway): void {
+  openEditGatewayModal(gateway: PaymentGatewaySetting): void {
     this.isEditGatewayMode = true;
     this.currentGateway = { ...gateway };
     this.showGatewayModal = true;
@@ -218,45 +183,36 @@ export class BankCashComponent implements OnInit {
 
   saveGateway(): void {
     if (!this.currentGateway.gatewayName) {
-      Swal.fire('Error', 'Please fill all required fields', 'warning');
+      Swal.fire('Error', 'Please fill required fields', 'warning');
       return;
     }
+    const gw = this.currentGateway as PaymentGatewaySetting;
 
     if (this.isEditGatewayMode) {
-      const index = this.paymentGateways.findIndex(g => g.id === this.currentGateway.id);
-      if (index !== -1) this.paymentGateways[index] = this.currentGateway as PaymentGateway;
-      Swal.fire('Success', 'Gateway updated', 'success');
+      this.gatewayService.updateGateway(gw.id, gw).subscribe(() => {
+        Swal.fire('Success', 'Gateway updated', 'success');
+        this.loadData();
+        this.closeGatewayModal();
+      });
     } else {
-      this.paymentGateways.push({ id: this.paymentGateways.length + 1, ...this.currentGateway } as PaymentGateway);
-      Swal.fire('Success', 'Gateway added', 'success');
+      this.gatewayService.createGateway(gw).subscribe(() => {
+        Swal.fire('Success', 'Gateway added', 'success');
+        this.loadData();
+        this.closeGatewayModal();
+      });
     }
-    this.closeGatewayModal();
   }
 
-  deleteGateway(gateway: PaymentGateway): void {
-    Swal.fire({
-      title: 'Delete?',
-      text: `Delete ${gateway.gatewayName}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.paymentGateways = this.paymentGateways.filter(g => g.id !== gateway.id);
-        Swal.fire('Deleted!', '', 'success');
-      }
+  deleteGateway(gateway: PaymentGatewaySetting): void {
+    this.gatewayService.deleteGateway(gateway.id).subscribe(() => {
+      Swal.fire('Deleted', '', 'success');
+      this.loadData();
     });
   }
 
-  closeGatewayModal(): void {
-    this.showGatewayModal = false;
-  }
+  closeGatewayModal(): void { this.showGatewayModal = false; }
 
   formatCurrency(amount: number): string {
     return new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', minimumFractionDigits: 0 }).format(amount);
-  }
-
-  getStatusClass(status: string): string {
-    return status === 'Active' ? 'bg-success-focus text-success-main px-12 py-4 radius-4 fw-medium text-sm' : 'bg-danger-focus text-danger-main px-12 py-4 radius-4 fw-medium text-sm';
   }
 }

@@ -344,6 +344,7 @@ import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { AuthService } from '../../../SecurityModels/auth.service';
 
 @Component({
   selector: 'app-income-manage',
@@ -372,10 +373,17 @@ export class IncomeManageComponent implements OnInit {
   paymentMethods = ['Cash', 'Bank', 'Cheque', 'Online'];
   campuses = ['Main Campus', 'Branch Campus'];
 
-  constructor(private accountsService: AccountsService) { }
+  constructor(
+    private accountsService: AccountsService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
     this.loadIncomeList();
+  }
+
+  hasRole(role: string): boolean {
+    return this.authService.hasRole(role);
   }
 
   loadIncomeList(): void {

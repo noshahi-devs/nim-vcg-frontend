@@ -2,23 +2,13 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { LeaveService } from '../../../services/leave.service';
+import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
+import { AuthService } from '../../../SecurityModels/auth.service';
 import Swal from 'sweetalert2';
+import { finalize } from 'rxjs';
 
 declare var bootstrap: any;
-
-interface LeaveApplication {
-  id: number;
-  employeeName: string;
-  designation: string;
-  leaveType: string;
-  fromDate: string;
-  toDate: string;
-  totalDays: number;
-  reason: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
-  appliedOn: string;
-  remarks?: string;
-}
 
 @Component({
   selector: 'app-leave-manage',
@@ -33,8 +23,9 @@ export class LeaveManageComponent implements OnInit {
   Math = Math;
 
   // All leaves
-  allLeaves: LeaveApplication[] = [];
-  filteredLeaves: LeaveApplication[] = [];
+  allLeaves: Leave[] = [];
+  filteredLeaves: Leave[] = [];
+  loading = false;
 
   // Filters
   statusFilter = 'All';
@@ -47,35 +38,39 @@ export class LeaveManageComponent implements OnInit {
   // Modal
   showModal = false;
   modalAction: 'approve' | 'reject' = 'approve';
-  selectedLeave: LeaveApplication | null = null;
+  selectedLeave: Leave | null = null;
   remarks = '';
 
   // Leave types for filter
-  leaveTypes: string[] = [];
+  leaveTypes = Object.keys(LeaveType).filter(key => isNaN(Number(key)));
+
+  constructor(
+    private leaveService: LeaveService,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
     this.loadAllLeaves();
-    this.loadLeaveTypes();
+  }
+
+  hasRole(role: string): boolean {
+    return this.authService.hasRole(role);
   }
 
   loadAllLeaves(): void {
-    const savedLeaves = localStorage.getItem('leaveApplications');
-    if (savedLeaves) {
-      this.allLeaves = JSON.parse(savedLeaves);
-    } else {
-      this.allLeaves = [];
-    }
-    this.applyFilters();
-  }
-
-  loadLeaveTypes(): void {
-    const savedTypes = localStorage.getItem('leaveTypes');
-    if (savedTypes) {
-      const types = JSON.parse(savedTypes);
-      this.leaveTypes = types.map((t: any) => t.name);
-    } else {
-      this.leaveTypes = ['Sick Leave', 'Casual Leave', 'Annual Leave', 'Maternity Leave', 'Emergency Leave'];
-    }
+    this.loading = true;
+    this.leaveService.getLeaves()
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (data) => {
+          this.allLeaves = data;
+          this.applyFilters();
+        },
+        error: (err) => {
+          console.error('Error loading leaves:', err);
+          Swal.fire('Error', 'Failed to load leave requests', 'error');
+        }
+      });
   }
 
   applyFilters(): void {
@@ -83,12 +78,14 @@ export class LeaveManageComponent implements OnInit {
 
     // Status filter
     if (this.statusFilter !== 'All') {
-      filtered = filtered.filter(leave => leave.status === this.statusFilter);
+      const statusValue = LeaveStatus[this.statusFilter as keyof typeof LeaveStatus];
+      filtered = filtered.filter(leave => leave.status === statusValue);
     }
 
     // Leave type filter
     if (this.leaveTypeFilter !== 'All') {
-      filtered = filtered.filter(leave => leave.leaveType === this.leaveTypeFilter);
+      const typeValue = LeaveType[this.leaveTypeFilter as keyof typeof LeaveType];
+      filtered = filtered.filter(leave => leave.leaveType === typeValue);
     }
 
     this.filteredLeaves = filtered;
@@ -115,14 +112,14 @@ export class LeaveManageComponent implements OnInit {
     });
   }
 
-  openApproveModal(leave: LeaveApplication): void {
+  openApproveModal(leave: Leave): void {
     this.selectedLeave = leave;
     this.modalAction = 'approve';
     this.remarks = '';
     this.showModal = true;
   }
 
-  openRejectModal(leave: LeaveApplication): void {
+  openRejectModal(leave: Leave): void {
     this.selectedLeave = leave;
     this.modalAction = 'reject';
     this.remarks = '';
@@ -136,7 +133,7 @@ export class LeaveManageComponent implements OnInit {
   }
 
   confirmAction(): void {
-    if (!this.selectedLeave) return;
+    if (!this.selectedLeave || !this.selectedLeave.leaveId) return;
 
     if (!this.remarks.trim()) {
       Swal.fire({
@@ -148,45 +145,54 @@ export class LeaveManageComponent implements OnInit {
       return;
     }
 
-    // Update leave status
-    const index = this.allLeaves.findIndex(l => l.id === this.selectedLeave!.id);
-    if (index !== -1) {
-      this.allLeaves[index].status = this.modalAction === 'approve' ? 'Approved' : 'Rejected';
-      this.allLeaves[index].remarks = this.remarks;
+    const newStatus = this.modalAction === 'approve' ? LeaveStatus.Approved : LeaveStatus.Rejected;
+    const adminId = 1; // Placeholder: In real app, get from auth service
 
-      // Save to localStorage
-      localStorage.setItem('leaveApplications', JSON.stringify(this.allLeaves));
-
-      // Show success message
-      Swal.fire({
-        icon: 'success',
-        title: `Leave ${this.modalAction === 'approve' ? 'Approved' : 'Rejected'}!`,
-        html: `
-          <div class="text-start">
-            <p><strong>Employee:</strong> ${this.selectedLeave.employeeName}</p>
-            <p><strong>Leave Type:</strong> ${this.selectedLeave.leaveType}</p>
-            <p><strong>Duration:</strong> ${this.selectedLeave.fromDate} to ${this.selectedLeave.toDate}</p>
-            <p><strong>Remarks:</strong> ${this.remarks}</p>
-          </div>
-        `,
-        confirmButtonColor: '#800020',
-        timer: 3000
-      });
-
-      // Refresh data
-      this.applyFilters();
-    }
-
-    this.closeModal();
+    this.leaveService.updateLeaveStatus(this.selectedLeave.leaveId, {
+      status: newStatus,
+      adminId: adminId,
+      remarks: this.remarks
+    }).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: `Leave ${this.modalAction === 'approve' ? 'Approved' : 'Rejected'}!`,
+          confirmButtonColor: '#800020',
+          timer: 2000
+        });
+        this.loadAllLeaves();
+        this.closeModal();
+      },
+      error: (err) => {
+        console.error('Error updating leave status:', err);
+        Swal.fire('Error', 'Failed to update leave status', 'error');
+      }
+    });
   }
 
-  getStatusClass(status: string): string {
+  getLeaveTypeName(type: number): string {
+    return LeaveType[type];
+  }
+
+  getLeaveStatusName(status: number): string {
+    return LeaveStatus[status];
+  }
+
+  getStatusClass(status: number): string {
     switch (status) {
-      case 'Approved': return 'bg-success-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
-      case 'Pending': return 'bg-warning-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
-      case 'Rejected': return 'bg-danger-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
-      default: return 'bg-neutral-200 text-neutral-900 px-24 py-4 radius-4 fw-medium text-sm';
+      case LeaveStatus.Approved: return 'bg-success-600 text-white px-12 py-4 radius-4 fw-medium text-sm';
+      case LeaveStatus.Pending: return 'bg-warning-600 text-white px-12 py-4 radius-4 fw-medium text-sm';
+      case LeaveStatus.Rejected: return 'bg-danger-600 text-white px-12 py-4 radius-4 fw-medium text-sm';
+      case LeaveStatus.Cancelled: return 'bg-neutral-600 text-white px-12 py-4 radius-4 fw-medium text-sm';
+      default: return 'bg-neutral-200 text-neutral-900 px-12 py-4 radius-4 fw-medium text-sm';
     }
+  }
+
+  getDurationDays(start: any, end: any): number {
+    const s = new Date(start);
+    const e = new Date(end);
+    const diffTime = Math.abs(e.getTime() - s.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
   }
 
   // Statistics
@@ -195,19 +201,19 @@ export class LeaveManageComponent implements OnInit {
   }
 
   get pendingLeaves(): number {
-    return this.allLeaves.filter(l => l.status === 'Pending').length;
+    return this.allLeaves.filter(l => l.status === LeaveStatus.Pending).length;
   }
 
   get approvedLeaves(): number {
-    return this.allLeaves.filter(l => l.status === 'Approved').length;
+    return this.allLeaves.filter(l => l.status === LeaveStatus.Approved).length;
   }
 
   get rejectedLeaves(): number {
-    return this.allLeaves.filter(l => l.status === 'Rejected').length;
+    return this.allLeaves.filter(l => l.status === LeaveStatus.Rejected).length;
   }
 
   // Pagination
-  get paginatedLeaves(): LeaveApplication[] {
+  get paginatedLeaves(): Leave[] {
     const start = (this.currentPage - 1) * this.rowsPerPage;
     return this.filteredLeaves.slice(start, start + this.rowsPerPage);
   }

@@ -2,14 +2,18 @@ import { Student } from "./student";
 import { Subject } from "./subject";
 
 export class Standard {
-  standardId!: number;
-  standardName!: string;
-  standardCapacity!: string;
-  //studentCount!: number;
-  //subjectCount!: number;
-  students: Student[] = [];
-  subjects: Subject[] = [];
-classTeacher: any;
-  section: string;
-className: any;
+  standardId: number = 0;
+  standardName: string = '';
+  standardCode?: string;
+  gradeLevel?: string;
+  roomNo?: string;
+  standardCapacity?: string;
+  remarks?: string;
+  status?: string;
+  students?: Student[] = [];
+  subjects?: Subject[] = [];
+  classTeacher?: string;
+  classCode?: string;
+  className?: string;
+  section?: string;
 }

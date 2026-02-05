@@ -1,57 +1,72 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import Swal from 'sweetalert2';
 import { StandardService } from '../../../services/standard.service';
+import { StaffService } from '../../../services/staff.service';
 import { Standard } from '../../../Models/standard';
+import { Staff, Designation } from '../../../Models/staff';
 
 @Component({
   selector: 'app-new-class',
   standalone: true,
   imports: [CommonModule, FormsModule, BreadcrumbComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './newclass.component.html',
   styleUrls: ['./newclass.component.css']
 })
 export class NewClassComponent implements OnInit {
 
-  title = 'Add Class';
-
-  teachers: any[] = [];
+  title = 'Create New Class';
+  teachers: Staff[] = [];
   standards: Standard[] = [];
 
-  newClass: Standard = {
-    standardId: 0,
-    standardName: '',
-    standardCapacity: '',
-    students: [],
-    subjects: [],
-    classTeacher: undefined,
-    section: '',
-    className: undefined
-  };
+  newClass: Standard = new Standard();
 
   constructor(
     private router: Router,
-    private standardService: StandardService
+    private standardService: StandardService,
+    private staffService: StaffService
   ) { }
 
   ngOnInit(): void {
-    // Load teachers from localStorage
-    const staffList = JSON.parse(localStorage.getItem('staffList') || '[]');
-    this.teachers = staffList.filter((s: any) => s.role === 'Teacher');
-
-    if (this.teachers.length === 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'No Teachers Found',
-        text: 'Please add a teacher in the Staff Module before creating a class.',
-      });
-    }
-
+    this.loadTeachers();
     // Load existing classes from API (optional)
     this.loadStandards();
+  }
+
+  loadTeachers(): void {
+    this.staffService.getAllStaffs().subscribe({
+      next: (data) => {
+        // Filter those in Teacher department or with teacher-like designations
+        this.teachers = data.filter(s =>
+          s.department?.departmentName === 'Teacher' ||
+          (s.designation !== undefined && s.designation >= Designation.Professor && s.designation <= Designation.SubstituteTeacher)
+        );
+        // If no filter works, just show all
+        if (this.teachers.length === 0) {
+          this.teachers = data;
+        }
+
+        if (this.teachers.length === 0) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'No Teachers Found',
+            text: 'Please add a teacher in the Staff Module before creating a class.',
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Error loading teachers:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to load teachers.'
+        });
+      }
+    });
   }
 
   loadStandards() {
@@ -65,38 +80,48 @@ export class NewClassComponent implements OnInit {
     });
   }
 
-  async onSubmit(form: any) {
+  onSubmit(form: any): void {
     if (form.invalid) {
-      Swal.fire("Error", "Please fill all fields.", "error");
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Form',
+        text: 'Please fill in all required fields.',
+        confirmButtonColor: '#3085d6'
+      });
       return;
     }
 
+    // Map to backend Standard model
     const payload: Standard = {
-      standardName: this.newClass.standardName,
-      standardCapacity: this.newClass.standardCapacity.toString(),
+      ...this.newClass,
       standardId: 0,
+      standardCapacity: this.newClass.standardCapacity?.toString() || '0',
       students: [],
       subjects: [],
-      classTeacher: undefined,
-      section: '',
-      className: undefined
+      status: this.newClass.status || 'Active'
     };
 
+    console.log('Class payload:', payload);
+
     this.standardService.createStandard(payload).subscribe({
-      next: async () => {
-        await Swal.fire({
+      next: () => {
+        Swal.fire({
           icon: 'success',
-          text: 'Class created successfully!',
-          timer: 1500,
-          showConfirmButton: false
+          title: 'Class Created!',
+          text: 'The new class has been added successfully.',
+          showConfirmButton: false,
+          timer: 1500
         });
-        this.router.navigate(['/class-list']);
+        setTimeout(() => this.router.navigate(['/class-list']), 1500);
       },
       error: (err) => {
-        Swal.fire("Error", "Failed to save class", "error");
-        console.log(err);
+        console.error('Error creating class:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to create class. ' + (err.error?.message || err.message || 'Unknown error')
+        });
       }
     });
   }
-
 }

@@ -4,6 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { SectionService } from '../../../services/section.service';
+import { StaffService } from '../../../services/staff.service';
+import { StandardService } from '../../../services/standard.service';
+import { Staff } from '../../../Models/staff';
+import { Standard } from '../../../Models/standard';
+import { Section } from '../../../Models/section';
 
 @Component({
   selector: 'app-section-add',
@@ -14,33 +20,38 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 })
 export class SectionAddComponent implements OnInit {
   title = 'Add Section';
-  teachers: any[] = [];
-  classes = ['9', '10', '11', '12'];
+  teachers: Staff[] = [];
+  classes: Standard[] = [];
 
-  newSection = {
+  newSection: Section = {
+    sectionId: 0,
     sectionName: '',
-    class: '',
-    section: '',
-    teacher: '',
+    className: '',
+    sectionCode: '',
+    staffId: undefined,
     roomNo: '',
-    capacity: ''
+    capacity: 0
   };
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private sectionService: SectionService,
+    private staffService: StaffService,
+    private standardService: StandardService
+  ) { }
+
 
   ngOnInit(): void {
-    const staffList = JSON.parse(localStorage.getItem('staffList') || '[]');
-    this.teachers = staffList.filter((s: any) => s.role === 'Teacher');
+    this.staffService.getAllStaffs().subscribe(data => {
+      this.teachers = data || []; // Adjust filter as needed if you only want teachers
+    });
 
-    if (this.teachers.length === 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'No Teachers Found',
-        text: 'Please add a teacher in the Staff Module before creating a section.',
-        confirmButtonText: 'OK'
-      });
-    }
+
+    this.standardService.getStandards().subscribe(data => {
+      this.classes = data;
+    });
   }
+
 
   async onSubmit(form: any): Promise<void> {
     if (form.invalid) {
@@ -65,31 +76,31 @@ export class SectionAddComponent implements OnInit {
     });
 
     if (confirmResult.isConfirmed) {
-      // Generate section name
-      this.newSection.sectionName = `Section ${this.newSection.section} - Class ${this.newSection.class}`;
+      // Set section name
+      this.newSection.sectionName = `Section ${this.newSection.sectionCode} - ${this.newSection.className}`;
 
-      // Save to localStorage
-      const savedSections = JSON.parse(localStorage.getItem('sectionList') || '[]');
-      const newSectionData = {
-        id: savedSections.length + 1,
-        ...this.newSection,
-        totalStudents: 0,
-        image: 'assets/images/user-grid/user-grid-img2.png'
-      };
-      savedSections.push(newSectionData);
-      localStorage.setItem('sectionList', JSON.stringify(savedSections));
-
-      await Swal.fire({
-        icon: 'success',
-        title: 'Section Added Successfully!',
-        text: 'Redirecting to section list...',
-        showConfirmButton: false,
-        timer: 1800
+      this.sectionService.createSection(this.newSection).subscribe({
+        next: async () => {
+          await Swal.fire({
+            icon: 'success',
+            title: 'Section Added Successfully!',
+            text: 'Redirecting to section list...',
+            showConfirmButton: false,
+            timer: 1800
+          });
+          this.router.navigate(['/section-list']);
+        },
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to add section. Please try again.'
+          });
+          console.error(err);
+        }
       });
-
-      // Redirect after short delay
-      this.router.navigate(['/section-list']);
     }
+
   }
 
 }

@@ -2,20 +2,10 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
-
-interface LeaveApplication {
-  id: number;
-  employeeName: string;
-  designation: string;
-  leaveType: string;
-  fromDate: string;
-  toDate: string;
-  totalDays: number;
-  reason: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
-  appliedOn: string;
-  remarks?: string;
-}
+import { LeaveService } from '../../../services/leave.service';
+import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
+import Swal from 'sweetalert2';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-my-leaves',
@@ -30,11 +20,13 @@ export class MyLeavesComponent implements OnInit {
   Math = Math;
 
   // Current user
+  staffId = 1;
   currentUserName = 'Ali Hassan';
 
   // All leaves
-  allLeaves: LeaveApplication[] = [];
-  filteredLeaves: LeaveApplication[] = [];
+  allLeaves: Leave[] = [];
+  filteredLeaves: Leave[] = [];
+  loading = false;
 
   // Filters
   statusFilter = 'All';
@@ -45,8 +37,10 @@ export class MyLeavesComponent implements OnInit {
   currentPage = 1;
 
   // Sorting
-  sortColumn = 'appliedOn';
+  sortColumn = 'appliedDate';
   sortDirection: 'asc' | 'desc' = 'desc';
+
+  constructor(private leaveService: LeaveService) { }
 
   ngOnInit(): void {
     this.loadCurrentUser();
@@ -57,20 +51,25 @@ export class MyLeavesComponent implements OnInit {
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
       const user = JSON.parse(savedUser);
+      this.staffId = user.staffId || 1;
       this.currentUserName = user.name || 'Ali Hassan';
     }
   }
 
   loadMyLeaves(): void {
-    const savedLeaves = localStorage.getItem('leaveApplications');
-    if (savedLeaves) {
-      const allApplications: LeaveApplication[] = JSON.parse(savedLeaves);
-      // Filter only current user's leaves
-      this.allLeaves = allApplications.filter(leave => leave.employeeName === this.currentUserName);
-    } else {
-      this.allLeaves = [];
-    }
-    this.applyFilters();
+    this.loading = true;
+    this.leaveService.getStaffLeaves(this.staffId)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (data) => {
+          this.allLeaves = data;
+          this.applyFilters();
+        },
+        error: (err) => {
+          console.error('Error loading my leaves:', err);
+          Swal.fire('Error', 'Failed to load your leave history', 'error');
+        }
+      });
   }
 
   applyFilters(): void {
@@ -78,24 +77,25 @@ export class MyLeavesComponent implements OnInit {
 
     // Status filter
     if (this.statusFilter !== 'All') {
-      filtered = filtered.filter(leave => leave.status === this.statusFilter);
+      const statusValue = LeaveStatus[this.statusFilter as keyof typeof LeaveStatus];
+      filtered = filtered.filter(leave => leave.status === statusValue);
     }
 
     // Search filter
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(leave =>
-        leave.leaveType.toLowerCase().includes(query) ||
+        LeaveType[leave.leaveType].toLowerCase().includes(query) ||
         leave.reason.toLowerCase().includes(query)
       );
     }
 
     // Apply sorting
-    filtered.sort((a, b) => {
-      let aValue: any = a[this.sortColumn as keyof LeaveApplication];
-      let bValue: any = b[this.sortColumn as keyof LeaveApplication];
+    filtered.sort((a: any, b: any) => {
+      let aValue = a[this.sortColumn];
+      let bValue = b[this.sortColumn];
 
-      if (this.sortColumn === 'appliedOn' || this.sortColumn === 'fromDate') {
+      if (this.sortColumn === 'appliedDate' || this.sortColumn === 'startDate') {
         aValue = new Date(aValue).getTime();
         bValue = new Date(bValue).getTime();
       }
@@ -106,7 +106,7 @@ export class MyLeavesComponent implements OnInit {
     });
 
     this.filteredLeaves = filtered;
-    this.currentPage = 1; // Reset to first page
+    this.currentPage = 1;
   }
 
   sortBy(column: string): void {
@@ -119,22 +119,37 @@ export class MyLeavesComponent implements OnInit {
     this.applyFilters();
   }
 
-  getStatusClass(status: string): string {
+  getLeaveTypeName(type: number): string {
+    return LeaveType[type];
+  }
+
+  getLeaveStatusName(status: number): string {
+    return LeaveStatus[status];
+  }
+
+  getStatusClass(status: number): string {
     switch (status) {
-      case 'Approved': return 'bg-success-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
-      case 'Pending': return 'bg-warning-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
-      case 'Rejected': return 'bg-danger-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
+      case LeaveStatus.Approved: return 'bg-success-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
+      case LeaveStatus.Pending: return 'bg-warning-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
+      case LeaveStatus.Rejected: return 'bg-danger-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
       default: return 'bg-neutral-200 text-neutral-900 px-24 py-4 radius-4 fw-medium text-sm';
     }
   }
 
-  getStatusIcon(status: string): string {
+  getStatusIcon(status: number): string {
     switch (status) {
-      case 'Approved': return 'solar:check-circle-bold';
-      case 'Pending': return 'solar:clock-circle-bold';
-      case 'Rejected': return 'solar:close-circle-bold';
+      case LeaveStatus.Approved: return 'solar:check-circle-bold';
+      case LeaveStatus.Pending: return 'solar:clock-circle-bold';
+      case LeaveStatus.Rejected: return 'solar:close-circle-bold';
       default: return 'solar:question-circle-bold';
     }
+  }
+
+  getDurationDays(start: any, end: any): number {
+    const s = new Date(start);
+    const e = new Date(end);
+    const diffTime = Math.abs(e.getTime() - s.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
   }
 
   // Statistics
@@ -143,19 +158,19 @@ export class MyLeavesComponent implements OnInit {
   }
 
   get pendingLeaves(): number {
-    return this.allLeaves.filter(l => l.status === 'Pending').length;
+    return this.allLeaves.filter(l => l.status === LeaveStatus.Pending).length;
   }
 
   get approvedLeaves(): number {
-    return this.allLeaves.filter(l => l.status === 'Approved').length;
+    return this.allLeaves.filter(l => l.status === LeaveStatus.Approved).length;
   }
 
   get rejectedLeaves(): number {
-    return this.allLeaves.filter(l => l.status === 'Rejected').length;
+    return this.allLeaves.filter(l => l.status === LeaveStatus.Rejected).length;
   }
 
   // Pagination
-  get paginatedLeaves(): LeaveApplication[] {
+  get paginatedLeaves(): Leave[] {
     const start = (this.currentPage - 1) * this.rowsPerPage;
     return this.filteredLeaves.slice(start, start + this.rowsPerPage);
   }
