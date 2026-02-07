@@ -17,45 +17,57 @@ export class CommonServices {
   private apiUrl2 = 'https://localhost:7225/api/Common/Frequency';
   constructor(private http: HttpClient) { }
 
+  // Helper function to add token header
+  private getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    return {
+      headers: { Authorization: `Bearer ${token}` }
+    };
+  }
+
   // GET all academic months
   getAllAcademicMonths(): Observable<AcademicMonth[]> {
-    const url = `${this.apiUrl}AcademicMonths`;  // Use apiUrl
-    return this.http.get<AcademicMonth[]>(url);
+    const url = `${this.apiUrl}AcademicMonths`;
+    return this.http.get<AcademicMonth[]>(url, this.getAuthHeaders());
   }
   getAllFees(): Observable<Fee[]> {
     const url = `${this.apiUrl}Fees`;
-    return this.http.get<Fee[]>(url);
+    return this.http.get<Fee[]>(url, this.getAuthHeaders());
   }
 
   getAllFeeType(): Observable<FeeType[]> {
-    const url = `${this.apiUrl}FeeTypes`;  // Replace with your actual API endpoint
-    return this.http.get<FeeType[]>(url);
+    const url = `${this.apiUrl}FeeTypes`;
+    return this.http.get<FeeType[]>(url, this.getAuthHeaders());
   }
 
   getFrequencyEnum(): Observable<string[]> {
-    return this.http.get<string[]>(this.apiUrl2);
+    return this.http.get<string[]>(this.apiUrl2, this.getAuthHeaders());
   }
 
   getAllStudents(): Observable<any[]> {
-    const url = `${this.apiUrl}Students`;  // Replace with your actual API endpoint
-    return this.http.get<any[]>(url);
+    const url = `${this.apiUrl}Students`;
+    return this.http.get<any[]>(url, this.getAuthHeaders());
   }
 
   getAllStandards(): Observable<any[]> {
-    const url = `${this.apiUrl}Standards`;  // Replace with your actual API endpoint
-    return this.http.get<any[]>(url);
+    const url = `${this.apiUrl}Standards`;
+    return this.http.get<any[]>(url, this.getAuthHeaders());
   }
 
   getDueBalance(studentId: number): Observable<DueBalance> {
-    return this.http.get<DueBalance>(`https://localhost:7225/api/Common/DueBalances/${studentId}`);
+    return this.http.get<DueBalance>(`https://localhost:7225/api/Common/DueBalances/${studentId}`, this.getAuthHeaders());
   }
 
   getAllPaymentsByStudentId(studentId: number): Observable<MonthlyPayment[]> {
-    return this.http.get<MonthlyPayment[]>(`${this.apiUrl3}/GetAllPaymentByStudentId/${studentId}`);
+    return this.http.get<MonthlyPayment[]>(`${this.apiUrl3}/GetAllPaymentByStudentId/${studentId}`, this.getAuthHeaders());
   }
 
   getAllOtherPaymentsByStudentId(studentId: number): Observable<OthersPayment[]> {
-    return this.http.get<OthersPayment[]>(`${this.apiUrl3}/GetAllOtherPaymentByStudentId/${studentId}`);
+    return this.http.get<OthersPayment[]>(`${this.apiUrl3}/GetAllOtherPaymentByStudentId/${studentId}`, this.getAuthHeaders());
+  }
+
+  createMonthlyPayment(payment: MonthlyPayment): Observable<MonthlyPayment> {
+    return this.http.post<MonthlyPayment>(`${this.apiUrl}MonthlyPayments`, payment, this.getAuthHeaders());
   }
 
   getfeePaymentDetailsByStudentId(studentId: number): Observable<any> {

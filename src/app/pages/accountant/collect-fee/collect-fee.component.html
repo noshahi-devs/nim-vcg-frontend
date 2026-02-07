@@ -1,0 +1,87 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="card h-100 p-0 radius-12">
+
+    <!-- Row 1: Standard & Student Filter -->
+    <div
+      class="card-header border-bottom bg-base py-16 px-24 d-flex flex-wrap gap-3 align-items-center justify-content-between">
+      <div class="d-flex gap-3 flex-wrap align-items-center">
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-md fw-medium text-secondary-light">Standard:</span>
+          <select class="form-select form-select-sm radius-12 h-40-px" [(ngModel)]="selectedStandardId"
+            (change)="filterStudents()">
+            <option value="">All</option>
+            <option *ngFor="let s of standards" [value]="s.standardId">{{ s.standardName }}</option>
+          </select>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-md fw-medium text-secondary-light">Student:</span>
+          <select class="form-select form-select-sm radius-12 h-40-px" [(ngModel)]="studentId" (change)="loadFeeInfo()">
+            <option value="">All</option>
+            <option *ngFor="let s of filteredStudents" [value]="s.studentId">{{ s.studentName }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-secondary btn-sm px-12 py-8 radius-8" (click)="printReceipt()"><i
+            class="bi bi-printer-fill"></i> Print</button>
+        <button class="btn btn-secondary btn-sm px-12 py-8 radius-8" (click)="downloadReceipt()"><i
+            class="bi bi-download"></i> Download</button>
+      </div>
+    </div>
+
+    <!-- Fee Info & Form -->
+    <div class="card-body p-24">
+      <div *ngIf="selectedStudent">
+        <h5>Fee Details for {{ selectedStudent.studentName }}</h5>
+        <p>Total Fee: {{ totalFee }} | Paid: {{ paidAmount }} | Remaining: {{ remainingAmount }}</p>
+
+        <form [formGroup]="paymentForm" (ngSubmit)="submitPayment()" *ngIf="hasRole('Accountant')">
+          <div class="d-flex flex-wrap gap-3 align-items-center mb-12">
+            <input type="number" formControlName="amountPaid" class="form-control w-auto" placeholder="Amount Paid">
+            <select formControlName="paymentType" class="form-select w-auto">
+              <option value="Cash">Cash</option>
+              <option value="Bank">Bank</option>
+              <option value="Other">Other</option>
+            </select>
+            <input type="date" formControlName="paymentDate" class="form-control w-auto">
+            <input type="text" formControlName="notes" class="form-control w-auto" placeholder="Notes">
+            <button type="submit" class="btn btn-primary btn-sm px-12 py-8">Collect Fee</button>
+          </div>
+        </form>
+
+        <!-- Previous Payments Table -->
+        <h6>Previous Payments</h6>
+        <div class="table-responsive scroll-sm">
+          <table class="table bordered-table sm-table mb-0">
+            <thead>
+              <tr>
+                <th>Payment ID</th>
+                <th>Amount Paid</th>
+                <th>Remaining Amount</th>
+                <th>Payment Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of previousPayments">
+                <td>{{ p.monthlyPaymentId }}</td>
+                <td>{{ p.amountPaid }}</td>
+                <td>{{ p.amountRemaining }}</td>
+                <td>{{ p.paymentDate | date:'shortDate' }}</td>
+              </tr>
+              <tr *ngIf="previousPayments.length === 0">
+                <td colspan="4" class="text-center py-12 text-secondary-light">No payments found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div *ngIf="!selectedStudent" class="text-center py-24 text-secondary-light">
+        Select a student to view fee details and collect payment.
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,258 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <!-- Analytics Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card radius-12 shadow-sm h-100 gradient-card-1">
+        <div class="card-body p-24">
+          <div class="d-flex align-items-center justify-content-between mb-16">
+            <div
+              class="icon-box w-64-px h-64-px bg-white bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+              <iconify-icon icon="mdi:account-alert" class="text-white" style="font-size: 32px;"></iconify-icon>
+            </div>
+            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2">Total</span>
+          </div>
+          <h2 class="fw-bold text-white mb-8">{{ totalDefaulters }}</h2>
+          <p class="text-white text-opacity-75 mb-0">Total Defaulters</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card radius-12 shadow-sm h-100 gradient-card-2">
+        <div class="card-body p-24">
+          <div class="d-flex align-items-center justify-content-between mb-16">
+            <div
+              class="icon-box w-64-px h-64-px bg-white bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+              <iconify-icon icon="mdi:cash-multiple" class="text-white" style="font-size: 32px;"></iconify-icon>
+            </div>
+            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2">PKR</span>
+          </div>
+          <h2 class="fw-bold text-white mb-8">{{ totalOutstanding | number }}</h2>
+          <p class="text-white text-opacity-75 mb-0">Outstanding Amount</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card radius-12 shadow-sm h-100 gradient-card-3">
+        <div class="card-body p-24">
+          <div class="d-flex align-items-center justify-content-between mb-16">
+            <div
+              class="icon-box w-64-px h-64-px bg-white bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+              <iconify-icon icon="mdi:alert-circle" class="text-white" style="font-size: 32px;"></iconify-icon>
+            </div>
+            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2">Critical</span>
+          </div>
+          <h2 class="fw-bold text-white mb-8">{{ criticalCount }}</h2>
+          <p class="text-white text-opacity-75 mb-0">Critical Cases (30+ days)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xxl-3 col-sm-6">
+      <div class="card radius-12 shadow-sm h-100 gradient-card-4">
+        <div class="card-body p-24">
+          <div class="d-flex align-items-center justify-content-between mb-16">
+            <div
+              class="icon-box w-64-px h-64-px bg-white bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+              <iconify-icon icon="mdi:alert" class="text-white" style="font-size: 32px;"></iconify-icon>
+            </div>
+            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2">Warning</span>
+          </div>
+          <h2 class="fw-bold text-white mb-8">{{ warningCount }}</h2>
+          <p class="text-white text-opacity-75 mb-0">Warning Cases (15+ days)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Actions -->
+  <div class="card radius-12 shadow-sm mb-4">
+    <div class="card-body p-24">
+      <div class="row g-3 mb-3">
+        <!-- Search -->
+        <div class="col-lg-4">
+          <label class="form-label fw-semibold">Search</label>
+          <div class="position-relative">
+            <input type="text" class="form-control radius-8 ps-5" [(ngModel)]="searchQuery"
+              (ngModelChange)="onSearchChange()" placeholder="Search by student name or class..." />
+            <iconify-icon icon="mdi:magnify"
+              class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary-light"></iconify-icon>
+          </div>
+        </div>
+
+        <!-- Class Filter -->
+        <div class="col-lg-2">
+          <label class="form-label fw-semibold">Class</label>
+          <select class="form-select radius-8" [(ngModel)]="selectedClass" (ngModelChange)="onFilterChange()">
+            <option value="all">All Classes</option>
+            <option *ngFor="let cls of uniqueClasses" [value]="cls">{{ cls }}</option>
+          </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="col-lg-2">
+          <label class="form-label fw-semibold">Status</label>
+          <select class="form-select radius-8" [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()">
+            <option value="all">All Status</option>
+            <option value="Critical">Critical</option>
+            <option value="Warning">Warning</option>
+            <option value="Overdue">Overdue</option>
+          </select>
+        </div>
+
+        <!-- Min Amount -->
+        <div class="col-lg-2">
+          <label class="form-label fw-semibold">Min Amount</label>
+          <input type="number" class="form-control radius-8" [(ngModel)]="minAmount" (ngModelChange)="onFilterChange()"
+            placeholder="0" />
+        </div>
+
+        <!-- Items Per Page -->
+        <div class="col-lg-2">
+          <label class="form-label fw-semibold">Show</label>
+          <select class="form-select radius-8" [(ngModel)]="itemsPerPage" (ngModelChange)="onFilterChange()">
+            <option [value]="10">10 per page</option>
+            <option [value]="25">25 per page</option>
+            <option [value]="50">50 per page</option>
+            <option [value]="100">100 per page</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-primary radius-8" (click)="loadDefaulters()">
+          <iconify-icon icon="mdi:refresh" class="me-1"></iconify-icon>Refresh
+        </button>
+        <button class="btn btn-success radius-8" (click)="sendBulkReminders()"
+          [disabled]="filteredDefaulters.length === 0">
+          <iconify-icon icon="mdi:email-multiple" class="me-1"></iconify-icon>Send Bulk Reminders
+        </button>
+        <button class="btn btn-outline-primary radius-8" (click)="exportCSV()"
+          [disabled]="filteredDefaulters.length === 0">
+          <iconify-icon icon="mdi:file-excel" class="me-1"></iconify-icon>Export CSV
+        </button>
+        <button class="btn btn-outline-danger radius-8" (click)="exportPDF()"
+          [disabled]="filteredDefaulters.length === 0">
+          <iconify-icon icon="mdi:file-pdf" class="me-1"></iconify-icon>Export PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-secondary-light">Loading defaulters...</p>
+  </div>
+
+  <!-- Defaulters Table -->
+  <div *ngIf="!isLoading" class="card radius-12 shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive" *ngIf="filteredDefaulters.length > 0; else noData">
+        <table class="table table-hover mb-0">
+          <thead class="bg-neutral-100">
+            <tr>
+              <th class="px-24 py-16 fw-semibold">#</th>
+              <th class="px-24 py-16 fw-semibold">Student</th>
+              <th class="px-24 py-16 fw-semibold">Class</th>
+              <th class="px-24 py-16 fw-semibold">Fee Type</th>
+              <th class="px-24 py-16 fw-semibold">Amount</th>
+              <th class="px-24 py-16 fw-semibold">Due Date</th>
+              <th class="px-24 py-16 fw-semibold">Days Overdue</th>
+              <th class="px-24 py-16 fw-semibold">Status</th>
+              <th class="px-24 py-16 fw-semibold text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let defaulter of paginatedDefaulters; let i = index" class="border-bottom">
+              <td class="px-24 py-16">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+              <td class="px-24 py-16">
+                <div class="d-flex align-items-center gap-2">
+                  <div
+                    class="w-40-px h-40-px bg-primary-600 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                    <span class="text-white fw-bold">{{ defaulter.studentName.charAt(0) }}</span>
+                  </div>
+                  <span class="fw-semibold">{{ defaulter.studentName }}</span>
+                </div>
+              </td>
+              <td class="px-24 py-16">
+                <span class="badge bg-neutral-200 text-neutral-900 px-3 py-2">{{ defaulter.className }} - {{
+                  defaulter.section }}</span>
+              </td>
+              <td class="px-24 py-16">{{ defaulter.feeType }}</td>
+              <td class="px-24 py-16">
+                <span class="fw-bold text-primary-600">PKR {{ defaulter.amount | number }}</span>
+              </td>
+              <td class="px-24 py-16">{{ defaulter.dueDate | date:'mediumDate' }}</td>
+              <td class="px-24 py-16">
+                <span class="badge bg-danger-100 text-danger-600 px-3 py-2">{{ defaulter.daysOverdue }} days</span>
+              </td>
+              <td class="px-24 py-16">
+                <span class="badge text-white px-3 py-2" [ngClass]="getStatusBadgeClass(defaulter.status)">
+                  {{ defaulter.status }}
+                </span>
+              </td>
+              <td class="px-24 py-16 text-center">
+                <button class="btn btn-sm btn-outline-primary radius-8" (click)="sendReminder(defaulter)"
+                  title="Send Reminder">
+                  <iconify-icon icon="mdi:email-send"></iconify-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #noData>
+        <div class="text-center py-5">
+          <iconify-icon icon="mdi:alert-circle-outline" class="text-secondary-light"
+            style="font-size: 80px;"></iconify-icon>
+          <h5 class="mt-3 text-secondary-light fw-semibold">No Fee Defaulters Found</h5>
+          <p class="text-secondary-light mb-0">All fees are up to date or try adjusting your filters</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Pagination -->
+    <div class="card-footer bg-white border-top p-24" *ngIf="filteredDefaulters.length > 0">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <span class="text-secondary-light">
+          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
+          {{ currentPage * itemsPerPage > filteredDefaulters.length ? filteredDefaulters.length : currentPage *
+          itemsPerPage }} of
+          {{ filteredDefaulters.length }} entries
+        </span>
+
+        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
+          <li class="page-item">
+            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
+              [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+            </a>
+          </li>
+
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
+            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
+              [class.bg-primary-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
+              [class.bg-neutral-200]="currentPage !== i + 1" [class.text-secondary-light]="currentPage !== i + 1"
+              (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
+          </li>
+
+          <li class="page-item">
+            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
+              [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
+              href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

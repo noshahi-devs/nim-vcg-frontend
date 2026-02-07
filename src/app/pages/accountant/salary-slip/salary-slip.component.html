@@ -1,0 +1,230 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <!-- Search Staff Section -->
+  <div class="card radius-12 mb-4">
+    <div class="card-body p-24">
+      <div class="row g-3">
+        <div class="col-md-12">
+          <label class="form-label fw-semibold">Search Staff</label>
+          <div class="position-relative">
+            <input type="text" class="form-control radius-8 ps-5" [(ngModel)]="searchQuery"
+              placeholder="Search by staff name, ID, or role..." />
+            <iconify-icon icon="mdi:magnify"
+              class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary-light"></iconify-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Salary Slips Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-xxl-4 col-md-6" *ngFor="let slip of paginatedRecords">
+      <div class="card radius-12 shadow-sm h-100 salary-card">
+        <div class="card-body p-24">
+          <div class="d-flex align-items-center gap-3 mb-20 pb-20 border-bottom">
+            <div
+              class="w-64-px h-64-px bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+              <span class="text-white fw-bold" style="font-size: 24px;">{{ getProfileInitials(slip.staffName) }}</span>
+            </div>
+            <div class="flex-grow-1">
+              <h5 class="fw-bold mb-1">{{ slip.staffName }}</h5>
+              <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                <span class="badge bg-neutral-200 text-neutral-900 px-2 py-1">{{ slip.staffId }}</span>
+              </div>
+              <span class="text-secondary-light">{{ slip.role }}</span>
+            </div>
+          </div>
+
+          <!-- Salary Details -->
+          <div class="mb-20">
+            <div class="d-flex align-items-center justify-content-between mb-12 pb-12 border-bottom">
+              <span class="text-secondary-light fw-medium">Salary Month:</span>
+              <span class="fw-bold">{{ getMonthName(slip.month) }}</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-12 pb-12 border-bottom">
+              <span class="text-secondary-light fw-medium">Payment Date:</span>
+              <span class="fw-bold">{{ slip.date | date:'mediumDate' }}</span>
+            </div>
+
+            <!-- Earnings Section -->
+            <div class="mt-3 mb-2">
+              <h6 class="fw-bold text-success-600 mb-2">
+                <iconify-icon icon="mdi:cash-plus" class="me-1"></iconify-icon>Earnings
+              </h6>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-8">
+              <span class="text-secondary-light">Basic Salary:</span>
+              <span class="fw-semibold">PKR {{ slip.basicSalary | number }}</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-8" *ngIf="slip.festivalBonus > 0">
+              <span class="text-secondary-light">Festival Bonus:</span>
+              <span class="fw-semibold text-success-600">PKR {{ slip.festivalBonus | number }}</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-8" *ngIf="slip.allowance > 0">
+              <span class="text-secondary-light">General Allowance:</span>
+              <span class="fw-semibold text-success-600">PKR {{ slip.allowance | number }}</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-8" *ngIf="slip.medicalAllowance > 0">
+              <span class="text-secondary-light">Medical Allowance:</span>
+              <span class="fw-semibold text-success-600">PKR {{ slip.medicalAllowance | number }}</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-8" *ngIf="slip.housingAllowance > 0">
+              <span class="text-secondary-light">Housing Allowance:</span>
+              <span class="fw-semibold text-success-600">PKR {{ slip.housingAllowance | number }}</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-12 pb-12 border-bottom"
+              *ngIf="slip.transportationAllowance > 0">
+              <span class="text-secondary-light">Transportation:</span>
+              <span class="fw-semibold text-success-600">PKR {{ slip.transportationAllowance | number }}</span>
+            </div>
+
+            <!-- Deductions Section -->
+            <div class="mt-3 mb-2" *ngIf="slip.savingFund > 0 || slip.taxes > 0">
+              <h6 class="fw-bold text-danger-600 mb-2">
+                <iconify-icon icon="mdi:cash-minus" class="me-1"></iconify-icon>Deductions
+              </h6>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-8" *ngIf="slip.savingFund > 0">
+              <span class="text-secondary-light">Saving Fund:</span>
+              <span class="fw-semibold text-danger-600">PKR {{ slip.savingFund | number }}</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-12 pb-12 border-bottom"
+              *ngIf="slip.taxes > 0">
+              <span class="text-secondary-light">Taxes:</span>
+              <span class="fw-semibold text-danger-600">PKR {{ slip.taxes | number }}</span>
+            </div>
+
+            <!-- Net Salary -->
+            <div class="d-flex align-items-center justify-content-between mt-3 p-3 bg-primary-50 rounded">
+              <span class="fw-bold text-primary-600">Net Salary:</span>
+              <span class="text-primary-600 fw-bold" style="font-size: 22px;">PKR {{ slip.netSalary | number }}</span>
+            </div>
+          </div>
+
+          <div class="mb-20">
+            <span class="badge bg-success-600 text-white px-3 py-2 radius-8 w-100 text-center">
+              <iconify-icon icon="mdi:check-circle" class="me-1"></iconify-icon>{{ slip.status }}
+            </span>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-primary flex-fill radius-8 py-2"
+              (click)="printDetailedReceipt(slip)">
+              <iconify-icon icon="mdi:printer" class="me-1"></iconify-icon>Print Slip
+            </button>
+            <button type="button" class="btn btn-outline-secondary flex-fill radius-8 py-2"
+              (click)="printThermalReceipt(slip)">
+              <iconify-icon icon="mdi:receipt" class="me-1"></iconify-icon>Thermal
+            </button>
+            <button type="button" class="btn btn-success flex-shrink-0 radius-8 py-2 px-3" title="Paid">
+              <iconify-icon icon="mdi:check-circle" style="font-size: 20px;"></iconify-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12" *ngIf="filteredRecords.length === 0">
+      <div class="card radius-12">
+        <div class="card-body p-24 text-center py-5">
+          <iconify-icon icon="mdi:account-search" class="text-secondary-light" style="font-size: 80px;"></iconify-icon>
+          <h5 class="mt-3 text-secondary-light fw-semibold">Search for Staff Member</h5>
+          <p class="text-secondary-light mb-0">Enter staff name, ID, or role in the search box above to view salary
+            slips</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2" *ngIf="filteredRecords.length > 0">
+    <span class="text-secondary-light text-sm">Showing {{ paginationStart }} to {{ paginationEnd }} of {{
+      filteredRecords.length }} slips</span>
+    <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
+      <li class="page-item">
+        <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+          [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+          <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+        </a>
+      </li>
+      <li class="page-item" *ngFor="let page of totalPagesArray">
+        <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+          [class.bg-primary-600]="currentPage === page" [class.text-white]="currentPage === page"
+          [class.bg-neutral-200]="currentPage !== page" [class.text-secondary-light]="currentPage !== page"
+          (click)="changePage(page)" href="javascript:void(0)">{{ page }}</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+          [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+          <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Print Templates Hidden -->
+<div id="detailed-receipt" style="display: none;" *ngIf="selectedSlip">
+  <div style="max-width: 800px; margin: 0 auto; padding: 40px; font-family: Arial, sans-serif;">
+    <div style="text-align: center; border-bottom: 3px solid #800020; padding-bottom: 20px; margin-bottom: 30px;">
+      <h1 style="color: #800020; margin: 0 0 10px 0;">Noshahi Institute Manager</h1>
+      <p style="margin: 0; color: #666;">Salary Payment Receipt</p>
+    </div>
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+      <h3 style="margin: 0 0 15px 0;">Staff: {{ selectedSlip.staffName }}</h3>
+      <p style="margin: 5px 0;"><strong>ID:</strong> {{ selectedSlip.staffId }} | <strong>Role:</strong> {{
+        selectedSlip.role }}</p>
+    </div>
+    <h3 style="margin: 20px 0;">Salary Payment History</h3>
+    <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
+      <thead>
+        <tr style="background: #800020; color: white;">
+          <th style="padding: 12px; border: 1px solid #ddd;">Month</th>
+          <th style="padding: 12px; border: 1px solid #ddd;">Date</th>
+          <th style="padding: 12px; border: 1px solid #ddd;">Fixed</th>
+          <th style="padding: 12px; border: 1px solid #ddd;">Bonus</th>
+          <th style="padding: 12px; border: 1px solid #ddd;">Deduction</th>
+          <th style="padding: 12px; border: 1px solid #ddd;">Net Paid</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of getStaffSalaryHistory(selectedSlip.staffId)">
+          <td style="padding: 12px; border: 1px solid #ddd;">{{ getMonthName(record.month) }}</td>
+          <td style="padding: 12px; border: 1px solid #ddd;">{{ record.date }}</td>
+          <td style="padding: 12px; border: 1px solid #ddd;">PKR {{ record.basicSalary | number }}</td>
+          <td style="padding: 12px; border: 1px solid #ddd; color: #28a745;">PKR {{ record.festivalBonus | number }}
+          </td>
+          <td style="padding: 12px; border: 1px solid #ddd; color: #dc3545;">PKR {{ (record.savingFund + record.taxes) |
+            number }}</td>
+          <td style="padding: 12px; border: 1px solid #ddd; font-weight: bold;">PKR {{ record.netSalary | number }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="text-align: center; margin-top: 30px; color: #666; font-size: 12px;">
+      <p>This is a computer-generated receipt.</p>
+    </div>
+  </div>
+</div>
+
+<div id="thermal-receipt" style="display: none;" *ngIf="selectedSlip">
+  <div style="width: 300px; margin: 0 auto; padding: 10px; font-family: 'Courier New', monospace; font-size: 12px;">
+    <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px;">
+      <h2 style="margin: 0; font-size: 16px;">SCHOOL MANAGEMENT</h2>
+      <p style="margin: 5px 0 0 0; font-size: 10px;">SALARY RECEIPT</p>
+    </div>
+    <p style="margin: 2px 0;">ID: {{ selectedSlip.staffId }}</p>
+    <p style="margin: 2px 0;">Name: {{ selectedSlip.staffName }}</p>
+    <p style="margin: 2px 0;">Role: {{ selectedSlip.role }}</p>
+    <p style="margin: 2px 0;">Month: {{ getMonthName(selectedSlip.month) }}</p>
+    <p style="margin: 2px 0;">Date: {{ selectedSlip.date }}</p>
+    <div style="border-top: 1px dashed #000; margin: 10px 0;"></div>
+    <p style="margin: 2px 0;">Fixed: PKR {{ selectedSlip.basicSalary | number }}</p>
+    <p style="margin: 2px 0;">Bonus: PKR {{ selectedSlip.festivalBonus | number }}</p>
+    <p style="margin: 2px 0;">Deduction: PKR {{ (selectedSlip.savingFund + selectedSlip.taxes) | number }}</p>
+    <div style="border-top: 1px dashed #000; margin: 10px 0;"></div>
+    <p style="margin: 2px 0; font-weight: bold; font-size: 14px;">NET: PKR {{ selectedSlip.netSalary | number }}</p>
+    <div style="text-align: center; margin-top: 15px; font-size: 10px;">
+      <p>Status: {{ selectedSlip.status }}</p>
+      <p>Thank You!</p>
+    </div>
+  </div>
+</div>

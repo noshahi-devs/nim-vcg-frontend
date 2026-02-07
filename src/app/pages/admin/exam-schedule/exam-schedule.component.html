@@ -1,0 +1,241 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="card h-100 p-0 radius-12 overflow-hidden shadow-sm">
+    <!-- Filters & Actions -->
+    <div
+      class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+      <div class="d-flex align-items-center flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
+          <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="rowsPerPage"
+            (change)="currentPage = 1; updatePagination()">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+        </div>
+
+        <form class="navbar-search ms-sm-3">
+          <input type="text" class="bg-base h-40-px w-auto radius-12 ps-40" [(ngModel)]="searchTerm"
+            (input)="searchExamSchedules()" name="search" placeholder="Search schedule..." />
+          <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+        </form>
+      </div>
+
+      <button type="button" (click)="openAddDialog()"
+        class="btn btn-primary text-sm btn-sm px-16 py-12 radius-8 d-flex align-items-center gap-2">
+        <iconify-icon icon="solar:add-circle-bold-duotone" class="text-xl"></iconify-icon>
+        Add New Schedule
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="card-body p-24">
+      <div class="table-responsive scroll-sm">
+        <table class="table bordered-table sm-table mb-0">
+          <thead>
+            <tr>
+              <th scope="col">S.L</th>
+              <th scope="col">Schedule Name</th>
+              <th scope="col">Year</th>
+              <th scope="col" class="text-center">Dates</th>
+              <th scope="col" class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sch of paginatedExamSchedules; let i = index">
+              <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div
+                    class="w-32-px h-32-px radius-8 bg-primary-50 text-primary-600 d-flex justify-content-center align-items-center me-12">
+                    <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon>
+                  </div>
+                  <span class="fw-semibold text-primary-600">{{ sch.examScheduleName }}</span>
+                </div>
+              </td>
+              <td><span class="badge bg-neutral-100 text-neutral-600 px-12 py-4 radius-4">{{ sch.examYear }}</span></td>
+              <td class="text-center">
+                <span class="text-secondary-light text-sm">
+                  {{ sch.startDate | date:'dd MMM yyyy' }} - {{ sch.endDate | date:'dd MMM yyyy' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="d-flex align-items-center gap-2 justify-content-center">
+                  <button type="button" (click)="openViewDialog(sch)"
+                    class="btn btn-primary-100 text-primary-600 btn-sm w-32-px h-32-px d-flex justify-content-center align-items-center radius-8"
+                    title="View">
+                    <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
+                  </button>
+                  <button type="button" (click)="openEditDialog(sch)"
+                    class="btn btn-success-100 text-success-600 btn-sm w-32-px h-32-px d-flex justify-content-center align-items-center radius-8"
+                    title="Edit">
+                    <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
+                  </button>
+                  <button type="button" (click)="confirmDelete(sch)"
+                    class="btn btn-danger-100 text-danger-600 btn-sm w-32-px h-32-px d-flex justify-content-center align-items-center radius-8"
+                    title="Delete">
+                    <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="paginatedExamSchedules.length === 0 && !loading">
+              <td colspan="5" class="text-center py-40 text-secondary-light">
+                <iconify-icon icon="solar:calendar-add-bold-duotone"
+                  class="text-neutral-300 display-4 mb-3 d-block"></iconify-icon>
+                No exam schedules found. Click "Add New Schedule" to begin.
+              </td>
+            </tr>
+            <tr *ngIf="loading">
+              <td colspan="5" class="text-center py-40">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24"
+        *ngIf="filteredExamSchedules.length > 0">
+        <span class="text-secondary-light text-sm">
+          Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to {{ Math.min(currentPage * rowsPerPage,
+          filteredExamSchedules.length) }} of {{ filteredExamSchedules.length }} entries
+        </span>
+
+        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
+          <li class="page-item">
+            <a class="page-link bg-neutral-100 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+              [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+            </a>
+          </li>
+
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
+            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+              [class.bg-primary-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
+              [class.bg-neutral-100]="currentPage !== i + 1" [class.text-secondary-light]="currentPage !== i + 1"
+              (click)="changePage(i + 1)" href="javascript:void(0)">
+              {{ i + 1 }}
+            </a>
+          </li>
+
+          <li class="page-item">
+            <a class="page-link bg-neutral-100 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+              [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
+              href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add / Edit Modal -->
+<div *ngIf="showAddEditDialog" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content radius-16 shadow-lg border-0">
+      <div class="modal-header py-20 px-24 border-bottom bg-base">
+        <h5 class="modal-title fw-bold text-primary-600">
+          <iconify-icon icon="solar:pen-new-square-bold-duotone" class="me-2"></iconify-icon>
+          {{ isEditMode ? 'Edit Exam Schedule' : 'Create New Schedule' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeDialog()"></button>
+      </div>
+
+      <div class="modal-body p-24">
+        <form [formGroup]="form" (ngSubmit)="saveExamSchedule()">
+          <div class="row gy-4">
+            <div class="col-md-12">
+              <label class="form-label fw-semibold">Schedule Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control radius-8 h-45-px" formControlName="examScheduleName"
+                placeholder="e.g., Final Term - 2025" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
+              <input type="date" class="form-control radius-8 h-45-px" formControlName="startDate" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">End Date <span class="text-danger">*</span></label>
+              <input type="date" class="form-control radius-8 h-45-px" formControlName="endDate" />
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label fw-semibold">Academic Year <span class="text-danger">*</span></label>
+              <input type="text" class="form-control radius-8 h-45-px" formControlName="examYear" placeholder="2025" />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer py-16 px-24 border-top bg-base">
+        <button type="button" class="btn btn-neutral-100 text-neutral-600 radius-8 px-20"
+          (click)="closeDialog()">Cancel</button>
+        <button type="button" class="btn btn-primary radius-8 px-32 d-flex align-items-center gap-2"
+          (click)="saveExamSchedule()" [disabled]="form.invalid">
+          <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon>
+          {{ isEditMode ? 'Update Schedule' : 'Create Schedule' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Details Modal -->
+<div *ngIf="showViewDialog && selectedSchedule" class="modal fade show d-block" tabindex="-1"
+  style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content radius-16 shadow-lg border-0">
+      <div class="modal-header py-20 px-24 border-bottom bg-base text-primary-600">
+        <h5 class="modal-title fw-bold">
+          <iconify-icon icon="solar:info-square-bold-duotone" class="me-2"></iconify-icon>
+          Schedule Information
+        </h5>
+        <button type="button" class="btn-close" (click)="closeDialog()"></button>
+      </div>
+
+      <div class="modal-body p-24">
+        <div class="d-flex flex-column gap-4">
+          <div class="bg-primary-50 p-16 radius-12">
+            <span class="text-xs text-secondary-light text-uppercase fw-bold ls-1 mb-8 d-block">Schedule Name</span>
+            <h6 class="mb-0 text-primary-600 fw-bold">{{ selectedSchedule.examScheduleName }}</h6>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="p-16 radius-12 border">
+                <span class="text-xs text-secondary-light text-uppercase fw-bold d-block mb-4">Start Date</span>
+                <span class="fw-semibold">{{ selectedSchedule.startDate | date:'mediumDate' }}</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-16 radius-12 border">
+                <span class="text-xs text-secondary-light text-uppercase fw-bold d-block mb-4">End Date</span>
+                <span class="fw-semibold">{{ selectedSchedule.endDate | date:'mediumDate' }}</span>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="p-16 radius-12 border bg-neutral-50">
+                <span class="text-xs text-secondary-light text-uppercase fw-bold d-block mb-4">Academic Year</span>
+                <span class="fw-bold">{{ selectedSchedule.examYear }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer py-16 px-24 border-top bg-base">
+        <button class="btn btn-neutral-600 text-white radius-8 px-24" (click)="closeDialog()">Close Details</button>
+      </div>
+    </div>
+  </div>
+</div>

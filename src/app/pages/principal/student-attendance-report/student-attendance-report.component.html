@@ -1,0 +1,84 @@
+<div class="dashboard-main-body">
+  <!-- Header Card -->
+  <div class="report-header-card d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div>
+      <h3 class="fw-bold mb-8">Student Attendance Report</h3>
+      <p class="mb-0 opacity-75">Detailed monthly and weekly attendance analysis</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="export-btn" (click)="getReport()" *ngIf="studentId">
+        <iconify-icon icon="solar:download-bold-duotone" class="me-8"></iconify-icon> Export PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Card -->
+  <div class="search-glass-card">
+    <div class="row g-4 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-dark">Student ID / Roll No</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><iconify-icon icon="solar:user-id-bold-duotone"
+              class="text-primary"></iconify-icon></span>
+          <input type="number" class="form-control border-start-0 py-12 radius-8" [(ngModel)]="studentId"
+            placeholder="Enter ID">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-dark">Start Date</label>
+        <input type="date" class="form-control py-12 radius-8" [(ngModel)]="startDate">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-dark">End Date</label>
+        <input type="date" class="form-control py-12 radius-8" [(ngModel)]="endDate">
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-primary w-100 py-12 radius-12 fw-bold" (click)="getReport()">
+          <iconify-icon icon="solar:tuning-bold-duotone" class="me-8"></iconify-icon> Generate Analytic Report
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Data -->
+  <div class="report-table-premium animate__animated animate__fadeIn" *ngIf="report.length">
+    <div class="p-24 border-bottom bg-white d-flex justify-content-between align-items-center">
+      <h5 class="fw-bold mb-0">Record Details</h5>
+      <span class="badge bg-primary-100 text-primary-600 px-16 py-8 radius-8">Found {{ report.length }} Records</span>
+    </div>
+    <div class="table-responsive">
+      <table class="table-glass">
+        <thead>
+          <tr>
+            <th>Date of record</th>
+            <th>Week Day</th>
+            <th>Attendance Status</th>
+            <th>Instructor Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of report">
+            <td class="fw-bold text-dark">{{ row.date | date:'mediumDate' }}</td>
+            <td class="text-secondary-light">{{ row.date | date:'EEEE' }}</td>
+            <td>
+              <span class="status-pill" [ngClass]="row.status === 'Present' ? 'present' : 'absent'">
+                {{ row.status }}
+              </span>
+            </td>
+            <td class="text-secondary-light italic">{{ row.remarks || 'No remarks provided' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!report.length && studentId" class="card p-60 text-center radius-24 border-0 shadow-sm mt-32">
+    <div
+      class="w-120-px h-120-px bg-light mx-auto rounded-circle d-flex align-items-center justify-content-center mb-24">
+      <iconify-icon icon="solar:clipboard-list-bold-duotone" class="text-6xl text-secondary-light"></iconify-icon>
+    </div>
+    <h4 class="fw-bold">No Data for Selected Range</h4>
+    <p class="text-secondary-light">Please try adjusting your date range or student ID.</p>
+  </div>
+</div>

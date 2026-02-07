@@ -1,0 +1,85 @@
+<div class="dashboard-main-body">
+  <!-- Header Card -->
+  <div class="report-header-card d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div>
+      <h3 class="fw-bold mb-8">Staff Attendance Report</h3>
+      <p class="mb-0 opacity-75">Employee performance and regularity tracking</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="export-btn" (click)="getReport()" *ngIf="selectedStaffId">
+        <iconify-icon icon="solar:printer-bold-duotone" class="me-8"></iconify-icon> Print Report
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Card -->
+  <div class="search-glass-card">
+    <div class="row g-4 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-dark">Staff Member</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><iconify-icon icon="solar:user-speak-bold-duotone"
+              class="text-primary"></iconify-icon></span>
+          <select class="form-select border-start-0 py-12 radius-8" [(ngModel)]="selectedStaffId">
+            <option [ngValue]="null">-- Choose Staff --</option>
+            <option *ngFor="let s of staffList" [value]="s.staffId">{{ s.staffName }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-dark">Start Date</label>
+        <input type="date" class="form-control py-12 radius-8" [(ngModel)]="startDate">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-dark">End Date</label>
+        <input type="date" class="form-control py-12 radius-8" [(ngModel)]="endDate">
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-primary w-100 py-12 radius-12 fw-bold" (click)="getReport()">
+          Generate Staff Summary
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Data -->
+  <div class="report-table-premium animate__animated animate__fadeIn" *ngIf="report.length">
+    <div class="p-24 border-bottom bg-white d-flex justify-content-between align-items-center">
+      <h5 class="fw-bold mb-0">Record Details</h5>
+      <span class="badge bg-primary-100 text-primary-600 px-16 py-8 radius-8">Summary Collected</span>
+    </div>
+    <div class="table-responsive">
+      <table class="table-glass">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Shift start</th>
+            <th>Shift end</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of report">
+            <td class="fw-bold text-dark">{{ row.date | date:'mediumDate' }}</td>
+            <td>
+              <span class="status-pill" [ngClass]="row.status === 'Present' ? 'present' : 'absent'">
+                {{ row.status }}
+              </span>
+            </td>
+            <td><iconify-icon icon="solar:login-2-linear" class="me-8 text-primary"></iconify-icon>{{ row.checkIn ||
+              '--:--' }}</td>
+            <td><iconify-icon icon="solar:logout-2-linear" class="me-8 text-danger"></iconify-icon>{{ row.checkOut ||
+              '--:--' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!report.length && selectedStaffId" class="card p-60 text-center radius-24 border-0 shadow-sm mt-32">
+    <iconify-icon icon="solar:user-block-bold-duotone" class="text-6xl text-secondary-light mb-16"></iconify-icon>
+    <h4 class="fw-bold">No Records Found</h4>
+    <p class="text-secondary-light">This staff member has no attendance records for the selected period.</p>
+  </div>
+</div>

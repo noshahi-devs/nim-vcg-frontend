@@ -1,0 +1,42 @@
+<div class="dashboard-main-body">
+    <app-breadcrumb [title]="title"></app-breadcrumb>
+
+    <div class="card h-100 p-0 radius-12 col-md-8 mx-auto shadow-sm">
+        <div class="card-header border-bottom bg-base py-16 px-24">
+            <h6 class="text-lg fw-semibold mb-0 text-primary-600">Assign Role to Staff</h6>
+        </div>
+        <div class="card-body p-24">
+
+            <div class="mb-24">
+                <label class="form-label fw-medium text-secondary-light">Select Staff Member</label>
+                <div class="position-relative">
+                    <select class="form-select radius-8 h-45-px" [(ngModel)]="selectedStaffId">
+                        <option value="" disabled selected>Select Staff</option>
+                        <option *ngFor="let staff of staffList" [value]="staff.staffId">
+                            {{ staff.staffName }} ({{ Designation[staff.designation!] }})
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-24">
+                <label class="form-label fw-medium text-secondary-light">Select Role</label>
+                <div class="position-relative">
+                    <select class="form-select radius-8 h-45-px" [(ngModel)]="selectedRole">
+                        <option value="" disabled selected>Select Role</option>
+                        <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-32">
+                <button class="btn btn-primary px-32 py-12 radius-8 d-flex align-items-center gap-2" (click)="assign()"
+                    [disabled]="!selectedStaffId || !selectedRole">
+                    <iconify-icon icon="solar:user-speak-bold-duotone" class="text-xl"></iconify-icon>
+                    Assign Role
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

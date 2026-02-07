@@ -1,0 +1,184 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="card h-100 p-0 radius-12 overflow-hidden shadow-sm border-0">
+    <!-- Header Toolbar -->
+    <div
+      class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+      <div class="d-flex align-items-center flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
+          <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="rowsPerPage"
+            (change)="currentPage = 1">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+        </div>
+
+        <!-- Search -->
+        <form class="navbar-search ms-sm-3">
+          <input type="text" class="bg-base h-40-px w-auto radius-12 ps-40" [(ngModel)]="searchTerm"
+            (input)="filterStudents()" name="search" placeholder="Search students..." />
+          <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+        </form>
+
+        <!-- Class & Section Filters -->
+        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="selectedClassId"
+          (change)="filterStudents()">
+          <option [value]="0">All Classes</option>
+          <option *ngFor="let c of classes" [value]="c.standardId">{{ c.standardName }}</option>
+        </select>
+
+        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="selectedSectionId"
+          (change)="filterStudents()">
+          <option [value]="0">All Sections</option>
+          <option *ngFor="let s of sections" [value]="s.sectionId">{{ s.sectionName }}</option>
+        </select>
+      </div>
+
+      <div *ngIf="selectedStudents.length > 0">
+        <span class="badge bg-primary-100 text-primary-600 px-16 py-8 radius-8 fw-bold">
+          {{ selectedStudents.length }} Students Selected
+        </span>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card-body p-24">
+      <div class="table-responsive scroll-sm">
+        <table class="table bordered-table sm-table mb-0">
+          <thead>
+            <tr>
+              <th scope="col">
+                <div class="form-check d-flex align-items-center justify-content-center">
+                  <input type="checkbox" class="form-check-input radius-4" style="width: 20px; height: 20px;"
+                    (change)="toggleAllSelections($event)" [checked]="areAllSelected()" />
+                </div>
+              </th>
+              <th scope="col">#</th>
+              <th scope="col">Student Name</th>
+              <th scope="col">Admission No</th>
+              <th scope="col" class="text-center">Current Context</th>
+              <th scope="col" class="text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of paginatedStudents; let i = index">
+              <td>
+                <div class="form-check d-flex align-items-center justify-content-center">
+                  <input type="checkbox" class="form-check-input radius-4" style="width: 20px; height: 20px;"
+                    [checked]="selectedStudents.includes(student.studentId)"
+                    (change)="toggleSelection(student.studentId)" />
+                </div>
+              </td>
+              <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div
+                    class="w-28-px h-28-px radius-circle bg-primary-100 text-primary-600 d-flex justify-content-center align-items-center me-12">
+                    <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
+                  </div>
+                  <span class="fw-bold text-neutral-800">{{ student.studentName }}</span>
+                </div>
+              </td>
+              <td><span class="badge bg-neutral-100 text-neutral-800 fw-bold border">{{ student.admissionNo }}</span>
+              </td>
+              <td class="text-center">
+                <span class="text-sm text-secondary-light">
+                  {{ student.standard?.standardName }} / {{ student.section || 'No Section' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <span class="badge radius-20 px-16 py-4"
+                  [ngClass]="student.status ? 'bg-success-100 text-success-600' : 'bg-danger-100 text-danger-600'">
+                  {{ student.status ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="paginatedStudents.length === 0 && !loading">
+              <td colspan="6" class="text-center py-40">
+                <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"
+                  class="display-4 text-neutral-300 d-block mb-3"></iconify-icon>
+                <p class="text-secondary-light fw-medium">No students matched your criteria.</p>
+              </td>
+            </tr>
+            <tr *ngIf="loading">
+              <td colspan="6" class="text-center py-40">
+                <div class="spinner-border text-primary" role="status"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination & Promotion Area -->
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
+        <span class="text-secondary-light text-sm">
+          Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to {{ Math.min(currentPage * rowsPerPage,
+          filteredStudents.length) }} of {{ filteredStudents.length }} entries
+        </span>
+
+        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
+          <li class="page-item">
+            <a class="page-link bg-neutral-100 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
+              [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="ep:arrow-left"></iconify-icon>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
+            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
+              [class.bg-primary-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
+              [class.bg-neutral-100]="currentPage !== i + 1" [class.text-secondary-light]="currentPage !== i + 1"
+              (click)="changePage(i+1)" href="javascript:void(0)">{{ i+1 }}</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link bg-neutral-100 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
+              [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
+              href="javascript:void(0)">
+              <iconify-icon icon="ep:arrow-right"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Promotion Section Container -->
+      <div class="mt-32 p-24 bg-primary-100 radius-16 border border-primary-100 shadow-sm">
+        <div class="row align-items-end gy-4">
+          <div class="col-12 mb-8">
+            <h6 class="text-primary-600 fw-bold d-flex align-items-center gap-2">
+              <iconify-icon icon="solar:square-academic-cap-bold-duotone" class="text-2xl"></iconify-icon>
+              Promotion Destination
+            </h6>
+            <p class="text-sm text-primary-500 mb-0">Select the target class and section for the selected students.</p>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-bold text-primary-700">Next Class</label>
+            <select class="form-select radius-8 h-45-px border-0 shadow-sm" [(ngModel)]="nextClassId">
+              <option [value]="0">Select Class</option>
+              <option *ngFor="let c of classes" [value]="c.standardId">{{ c.standardName }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-bold text-primary-700">Next Section</label>
+            <select class="form-select radius-8 h-45-px border-0 shadow-sm" [(ngModel)]="nextSectionId">
+              <option [value]="0">Select Section</option>
+              <option *ngFor="let s of sections" [value]="s.sectionId">{{ s.sectionName }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <button
+              class="btn btn-primary w-100 radius-8 h-45-px d-flex align-items-center justify-content-center gap-2 shadow"
+              (click)="promoteSelected()" [disabled]="selectedStudents.length === 0 || loading">
+              <iconify-icon icon="solar:user-speak-bold-duotone" class="text-xl"></iconify-icon>
+              Promote {{ selectedStudents.length || '' }} Selected Students
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

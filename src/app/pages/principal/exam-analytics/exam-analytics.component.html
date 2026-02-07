@@ -1,0 +1,96 @@
+<div class="dashboard-main-body">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+    <h6 class="fw-semibold mb-0">Exam Analytics</h6>
+    <ul class="d-flex align-items-center gap-2">
+      <li class="fw-medium">
+        <a routerLink="/dashboard" class="d-flex align-items-center gap-1 hover-text-primary">
+          <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
+          Dashboard
+        </a>
+      </li>
+      <li>-</li>
+      <li class="fw-medium">Exam Analytics</li>
+    </ul>
+  </div>
+
+  <div class="card basic-data-table">
+    <div class="card-header border-bottom bg-base py-16 px-24">
+      <div class="row align-items-center">
+        <div class="col-md-4">
+          <label class="form-label">Select Exam</label>
+          <select class="form-select" [(ngModel)]="selectedExamId" (change)="loadAnalytics()">
+            <option [ngValue]="null">Select Exam</option>
+            <option *ngFor="let exam of exams" [value]="exam.examId">{{ exam.examName }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="card-body p-24" *ngIf="analytics">
+
+      <!-- Stats Cards -->
+      <div class="row gy-4 mb-24">
+        <div class="col-xxl-3 col-sm-6">
+          <div class="card p-3 shadow-none border bg-gradient-primary text-white">
+            <h6 class="mb-1 text-white">Pass %</h6>
+            <h4 class="mb-0 text-white">{{ analytics.passPercentage }}%</h4>
+          </div>
+        </div>
+        <div class="col-xxl-3 col-sm-6">
+          <div class="card p-3 shadow-none border bg-success-subtle text-success-main">
+            <h6 class="mb-1">Passed</h6>
+            <h4 class="mb-0">{{ analytics.passedStudents }} / {{ analytics.totalStudents }}</h4>
+          </div>
+        </div>
+        <div class="col-xxl-3 col-sm-6">
+          <div class="card p-3 shadow-none border bg-danger-subtle text-danger-main">
+            <h6 class="mb-1">Failed</h6>
+            <h4 class="mb-0">{{ analytics.failedStudents }}</h4>
+          </div>
+        </div>
+        <div class="col-xxl-3 col-sm-6">
+          <div class="card p-3 shadow-none border bg-info-subtle text-info-main">
+            <h6 class="mb-1">Top Performer</h6>
+            <h4 class="mb-0 text-lg">{{ analytics.topPerformer }}</h4>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subject Performance -->
+      <h6 class="fw-semibold mb-16">Subject Performance</h6>
+      <div class="table-responsive">
+        <table class="table bordered-table mb-0">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Avg Marks</th>
+              <th>High Score</th>
+              <th>Pass %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sub of analytics.subjectWiseAnalytics">
+              <td>{{ sub.subjectName }}</td>
+              <td>{{ sub.averageMarks }}</td>
+              <td>{{ sub.highestMarks }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress w-100" style="height: 10px;">
+                    <div class="progress-bar bg-success-main" role="progressbar" [style.width.%]="sub.passPercentage">
+                    </div>
+                  </div>
+                  <span>{{ sub.passPercentage }}%</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="card-body p-24 text-center" *ngIf="!analytics && selectedExamId">
+      <div class="spinner-border text-primary" role="status" *ngIf="isLoading"></div>
+      <p *ngIf="!isLoading">No data available</p>
+    </div>
+  </div>
+</div>

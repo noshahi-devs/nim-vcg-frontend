@@ -12,42 +12,40 @@ export class ExamScheduleService {
 
   constructor(private http: HttpClient) { }
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-
-    })
-  }
-  httpFormOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'multipart/form-data',
-
-    })
+  // Helper function to add token header
+  private getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    return {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      })
+    };
   }
 
   apiUrl: string = "https://localhost:7225/api/ExamSchedules";
 
   public GetExamSchedules(): Observable<ExamScheduleVm[]> {
-    return this.http.get<ExamScheduleVm[]>(this.apiUrl);
+    return this.http.get<ExamScheduleVm[]>(this.apiUrl, this.getAuthHeaders());
   }
 
   public GetExamScheduleOptions(): Observable<GetExamScheduleOptionsResponse[]> {
-    return this.http.get<GetExamScheduleOptionsResponse[]>(this.apiUrl + '/GetExamScheduleOptions');
+    return this.http.get<GetExamScheduleOptionsResponse[]>(this.apiUrl + '/GetExamScheduleOptions', this.getAuthHeaders());
   }
 
   public GetExamScheduleById(id: number): Observable<ExamScheduleVm> {
-    return this.http.get<ExamScheduleVm>(this.apiUrl + '/' + id);
+    return this.http.get<ExamScheduleVm>(this.apiUrl + '/' + id, this.getAuthHeaders());
   }
 
   public SaveExamSchedule(examSchedule: ExamSchedule): Observable<any> {
-    return this.http.post<ExamSchedule>(this.apiUrl, examSchedule, this.httpOptions);
+    return this.http.post<ExamSchedule>(this.apiUrl, examSchedule, this.getAuthHeaders());
   }
 
   public UpdateExamSchedule(examSchedule: ExamSchedule): Observable<ExamSchedule> {
-    return this.http.put<ExamSchedule>(this.apiUrl + '/' + examSchedule.examScheduleId, examSchedule, this.httpOptions);
+    return this.http.put<ExamSchedule>(this.apiUrl + '/' + examSchedule.examScheduleId, examSchedule, this.getAuthHeaders());
   }
   public DeleteExamSchedule(id: number): Observable<ExamSchedule> {
-    return this.http.delete<ExamSchedule>(this.apiUrl + '/' + id);
+    return this.http.delete<ExamSchedule>(this.apiUrl + '/' + id, this.getAuthHeaders());
   }
 
 

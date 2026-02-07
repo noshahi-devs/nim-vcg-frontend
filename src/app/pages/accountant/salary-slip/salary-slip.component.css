@@ -1,0 +1,66 @@
+.salary-card {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.salary-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(45deg, #800020, #e91e63);
+}
+
+.text-success-600 {
+    color: #28a745 !important;
+}
+
+.text-danger-600 {
+    color: #dc3545 !important;
+}
+
+.btn-outline-primary {
+    border-color: #800020;
+    color: #800020;
+}
+
+.btn-outline-primary:hover {
+    background-color: #800020;
+    color: white;
+}
+
+.dashboard-main-body {
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.salary-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.print-btn-group {
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.salary-card:hover .print-btn-group {
+    opacity: 1;
+}
+
+.status-badge {
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+}

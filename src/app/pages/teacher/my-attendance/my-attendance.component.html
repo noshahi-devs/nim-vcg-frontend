@@ -1,0 +1,90 @@
+<div class="dashboard-main-body">
+    <app-breadcrumb [title]="title"></app-breadcrumb>
+
+    <div class="row gy-4">
+        <!-- MARK ATTENDANCE LEFT -->
+        <div class="col-xxl-4">
+            <div class="card h-100 radius-24 border-0 shadow-sm overflow-hidden marking-card">
+                <div class="card-header bg-gradient-primary p-32 text-center text-white">
+                    <iconify-icon icon="solar:fingerprint-bold-duotone" class="text-6xl mb-16"></iconify-icon>
+                    <h4 class="mb-4 fw-bold">Daily Check-In</h4>
+                    <p class="opacity-75 mb-0">{{ today | date:'fullDate' }}</p>
+                </div>
+
+                <div class="card-body p-32 text-center">
+                    <div *ngIf="alreadyMarked; else markBtnArea" class="animate__animated animate__zoomIn">
+                        <div class="check-success-icon mx-auto mb-24">
+                            <iconify-icon icon="solar:check-circle-bold-duotone"
+                                class="text-success-600"></iconify-icon>
+                        </div>
+                        <h5 class="fw-bold text-success-600 mb-8">Attendance Recorded!</h5>
+                        <p class="text-secondary-light">You have successfully checked in for today.</p>
+                        <div class="badge bg-success-100 text-success-600 px-24 py-12 radius-12 text-md mt-16">
+                            Status: Present
+                        </div>
+                    </div>
+
+                    <ng-template #markBtnArea>
+                        <p class="text-secondary-light mb-32">
+                            Please click the button below to record your attendance for today.
+                        </p>
+                        <button (click)="markAttendance()"
+                            class="btn-checkin animate__animated animate__pulse animate__infinite">
+                            <iconify-icon icon="solar:login-3-bold-duotone"></iconify-icon>
+                            Confirm Check-In
+                        </button>
+                        <p class="text-xs text-secondary-light mt-24 italic">
+                            * Your location and IP address may be recorded.
+                        </p>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE HISTORY RIGHT -->
+        <div class="col-xxl-8">
+            <div class="card h-100 radius-24 border-0 shadow-sm history-card">
+                <div class="card-header border-bottom bg-white p-24 d-flex align-items-center justify-content-between">
+                    <h5 class="fw-bold mb-0">Recent Attendance History</h5>
+                    <div class="badge bg-primary-50 text-primary-600 px-16 py-8 radius-8">
+                        This Month
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table premium-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Day</th>
+                                    <th>Check-In Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of history; let i = index">
+                                    <td class="fw-bold">{{ item.date | date:'mediumDate' }}</td>
+                                    <td class="text-secondary-light">{{ item.date | date:'EEEE' }}</td>
+                                    <td>{{ (item.date | date:'shortTime') || '--:--' }}</td>
+                                    <td>
+                                        <span class="badge" [class.bg-success-100]="item.isPresent"
+                                            [class.text-success-600]="item.isPresent"
+                                            [class.bg-danger-100]="!item.isPresent"
+                                            [class.text-danger-600]="!item.isPresent">
+                                            {{ item.isPresent ? 'Present' : 'Absent' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="history.length === 0">
+                                    <td colspan="4" class="text-center py-40 text-secondary-light">
+                                        No records found for the current period.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

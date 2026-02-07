@@ -1,0 +1,208 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="card h-100 p-0 radius-12">
+    <div
+      class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
+      <div class="d-flex align-items-center flex-wrap gap-3">
+        <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
+        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="rowsPerPage"
+          (change)="currentPage = 1">
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+          <option [value]="50">50</option>
+        </select>
+        <form class="navbar-search">
+          <input type="text" class="bg-base h-40-px w-auto" [(ngModel)]="searchTerm" (input)="searchLogins()"
+            name="search" placeholder="Search by Name, Email, Role..." />
+          <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+        </form>
+      </div>
+
+      <button type="button" (click)="openAddDialog()"
+        class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+        <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+        Add New Login
+      </button>
+    </div>
+
+    <div class="card-body p-24">
+      <div class="table-responsive scroll-sm">
+        <table class="table bordered-table sm-table mb-0">
+          <thead>
+            <tr>
+              <th scope="col">S.L</th>
+              <th scope="col">Full Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Role</th>
+              <th scope="col">Campus</th>
+              <th scope="col">Phone</th>
+              <th scope="col" class="text-center">Status</th>
+              <th scope="col">Created On</th>
+              <th scope="col" class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let login of paginatedLogins; let i = index">
+              <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
+              <td>{{ login.name }}</td>
+              <td>{{ login.email }}</td>
+              <td><span class="badge bg-primary-50 text-primary-600 px-12 py-4 radius-4 fw-medium text-sm">{{ login.role
+                  }}</span></td>
+              <td>{{ login.campus }}</td>
+              <td>{{ login.phone }}</td>
+              <td class="text-center">
+                <span *ngIf="login.status === 'active'"
+                  class="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">Active</span>
+                <span *ngIf="login.status === 'inactive'"
+                  class="bg-danger-focus text-danger-600 border border-danger-main px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
+              </td>
+              <td>{{ login.createdOn }}</td>
+              <td class="text-center">
+                <div class="d-flex align-items-center gap-10 justify-content-center">
+                  <button type="button" (click)="openEditDialog(login)"
+                    class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                    <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                  </button>
+                  <button type="button" (click)="confirmDelete(login)"
+                    class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle">
+                    <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="paginatedLogins.length === 0">
+              <td colspan="9" class="text-center py-24 text-secondary-light">No logins found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
+        <span>Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to {{ Math.min(currentPage * rowsPerPage,
+          filteredLogins.length) }} of {{ filteredLogins.length }} entries</span>
+        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
+          <li class="page-item">
+            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+              [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
+            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+              [class.bg-primary-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
+              [class.bg-neutral-200]="currentPage !== i + 1" [class.text-secondary-light]="currentPage !== i + 1"
+              (click)="changePage(i + 1)" href="javascript:void(0)">
+              {{ i + 1 }}
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+              [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
+              href="javascript:void(0)">
+              <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Login Management Modal -->
+<div class="modal fade" [class.show]="showDialog" [style.display]="showDialog ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content radius-16 bg-base">
+      <div class="modal-header py-16 px-24 border border-top-0 border-start-0 border-end-0">
+        <h1 class="modal-title fs-5">{{ isEditMode ? 'Edit Login' : 'Add New Login' }}</h1>
+        <button type="button" class="btn-close" (click)="closeDialog()" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-24">
+        <form (ngSubmit)="saveLogin()">
+          <div class="row">
+            <div class="col-md-6 mb-20">
+              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Full Name <span
+                  class="text-danger-600">*</span></label>
+              <input type="text" class="form-control radius-8" [(ngModel)]="loginForm.name" name="name"
+                placeholder="Enter Name" required />
+            </div>
+
+            <div class="col-md-6 mb-20">
+              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Username / Email <span
+                  class="text-danger-600">*</span></label>
+              <input type="email" class="form-control radius-8" [(ngModel)]="loginForm.email" name="email"
+                placeholder="Enter Email Address" required />
+            </div>
+
+            <div class="col-md-6 mb-20" *ngIf="!isEditMode">
+              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Password <span
+                  class="text-danger-600">*</span></label>
+              <input type="password" class="form-control radius-8" [(ngModel)]="loginForm.password" name="password"
+                placeholder="Enter Password" />
+            </div>
+
+            <div class="col-md-6 mb-20" *ngIf="!isEditMode">
+              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Confirm Password <span
+                  class="text-danger-600">*</span></label>
+              <input type="password" class="form-control radius-8" [(ngModel)]="confirmPassword" name="confirmPassword"
+                placeholder="Confirm Password" />
+            </div>
+
+            <div class="col-md-6 mb-20">
+              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Role <span
+                  class="text-danger-600">*</span></label>
+              <select class="form-select radius-8" [(ngModel)]="loginForm.role" name="role" required>
+                <option value="">Select Role</option>
+                <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-6 mb-20">
+              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Campus <span
+                  class="text-danger-600">*</span></label>
+              <select class="form-select radius-8" [(ngModel)]="loginForm.campus" name="campus" required>
+                <option value="">Select Campus</option>
+                <option *ngFor="let campus of campuses" [value]="campus.value">{{ campus.label }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-6 mb-20">
+              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Phone <span
+                  class="text-danger-600">*</span></label>
+              <input type="text" class="form-control radius-8" [(ngModel)]="loginForm.phone" name="phone"
+                placeholder="Enter Phone Number" required />
+            </div>
+
+            <div class="col-md-6 mb-20">
+              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Status <span
+                  class="text-danger-600">*</span></label>
+              <div class="d-flex align-items-center flex-wrap gap-28">
+                <div class="form-check checked-success d-flex align-items-center gap-2">
+                  <input class="form-check-input" type="radio" [(ngModel)]="loginForm.status" name="status" id="active"
+                    value="Active" />
+                  <label class="form-check-label text-secondary-light text-sm" for="active">Active</label>
+                </div>
+                <div class="form-check checked-danger d-flex align-items-center gap-2">
+                  <input class="form-check-input" type="radio" [(ngModel)]="loginForm.status" name="status"
+                    id="inactive" value="Inactive" />
+                  <label class="form-check-label text-secondary-light text-sm" for="inactive">Inactive</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-center gap-3 mt-24">
+              <button type="button" (click)="closeDialog()"
+                class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-40 py-11 radius-8">Cancel</button>
+              <button type="submit" class="btn btn-primary border border-primary-600 text-md px-48 py-12 radius-8">{{
+                isEditMode ? 'Update' : 'Save' }}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade" [class.show]="showDialog" *ngIf="showDialog" (click)="closeDialog()"></div>

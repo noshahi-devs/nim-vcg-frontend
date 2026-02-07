@@ -1,0 +1,77 @@
+<div class="dashboard-main-body">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+        <h6 class="fw-semibold mb-0">Role & Access</h6>
+        <ul class="d-flex align-items-center gap-2">
+            <li class="fw-medium">
+                <a routerLink="/dashboard" class="d-flex align-items-center gap-1 hover-text-primary">
+                    <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
+                    Dashboard
+                </a>
+            </li>
+            <li>-</li>
+            <li class="fw-medium">Role & Access</li>
+        </ul>
+    </div>
+
+    <div class="row gy-4">
+        <!-- ADD ROLE CARD -->
+        <div class="col-md-4">
+            <div class="card h-100 p-0 radius-12">
+                <div class="card-header border-bottom bg-base py-16 px-24">
+                    <h6 class="text-lg fw-semibold mb-0">Add New Role</h6>
+                </div>
+                <div class="card-body p-24">
+                    <label class="form-label">Role Name</label>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-control" [(ngModel)]="newRoleName" placeholder="e.g. Librarian">
+                        <button class="btn btn-primary" (click)="addRole()">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROLES LIST -->
+        <div class="col-md-8">
+            <div class="card h-100 p-0 radius-12">
+                <div class="card-header border-bottom bg-base py-16 px-24">
+                    <h6 class="text-lg fw-semibold mb-0">Existing Roles</h6>
+                </div>
+                <div class="card-body p-24">
+                    <div class="table-responsive">
+                        <table class="table bordered-table sm-table hover-table">
+                            <thead>
+                                <tr>
+                                    <th>Role Name</th>
+                                    <th>Permissions</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let role of roles">
+                                    <td class="fw-medium text-primary-600">{{ role.name }}</td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            <span *ngFor="let perm of role.permissions"
+                                                class="badge bg-neutral-200 text-neutral-600 rounded-pill fw-normal text-xs">
+                                                {{ perm }}
+                                            </span>
+                                            <span *ngIf="!role.permissions?.length" class="text-muted text-xs">No
+                                                permissions</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <button
+                                            class="w-32-px h-32-px bg-danger-subtle text-danger-main rounded-circle d-flex justify-content-center align-items-center"
+                                            (click)="deleteRole(role.id)">
+                                            <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

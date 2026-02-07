@@ -1,0 +1,124 @@
+<div class="dashboard-main-body">
+  <div class="d-flex align-items-center justify-content-between mb-24">
+    <h4 class="fw-bold mb-0">Class Attendance Report</h4>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-primary radius-12 d-flex align-items-center gap-2" (click)="loadReport()"
+        *ngIf="selectedClassId">
+        <iconify-icon icon="solar:refresh-linear"></iconify-icon> Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="report-summary-cards" *ngIf="reportData.length">
+    <div class="summary-card">
+      <div class="summary-icon bg-total">
+        <iconify-icon icon="solar:users-group-two-rounded-bold"></iconify-icon>
+      </div>
+      <div>
+        <div class="text-xs text-secondary-light fw-bold uppercase">Total Students</div>
+        <div class="h4 fw-bold mb-0">{{ reportData.length }}</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon bg-present">
+        <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
+      </div>
+      <div>
+        <div class="text-xs text-secondary-light fw-bold uppercase">Present</div>
+        <div class="h4 fw-bold mb-0 text-success-600">{{ summary.present }}</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon bg-absent">
+        <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+      </div>
+      <div>
+        <div class="text-xs text-secondary-light fw-bold uppercase">Absent</div>
+        <div class="h4 fw-bold mb-0 text-danger-600">{{ summary.absent }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Controls -->
+  <div class="controls-card">
+    <div class="row g-4 align-items-end">
+      <div class="col-md-5">
+        <label class="form-label fw-bold">Target Class</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><iconify-icon icon="solar:folder-bold-duotone"
+              class="text-primary"></iconify-icon></span>
+          <select class="form-select border-start-0 py-12 radius-8" [(ngModel)]="selectedClassId"
+            (change)="loadReport()">
+            <option [ngValue]="null">-- Select Class --</option>
+            <option *ngFor="let cls of classes" [value]="cls.standardId">{{ cls.standardName }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <label class="form-label fw-bold">Report Date</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><iconify-icon icon="solar:calendar-bold-duotone"
+              class="text-primary"></iconify-icon></span>
+          <input type="date" class="form-control border-start-0 py-12 radius-8" [(ngModel)]="selectedDate"
+            (change)="loadReport()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="p-60 text-center">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-16 text-secondary-light fw-bold">Analysing Attendance Data...</p>
+  </div>
+
+  <!-- Result Table -->
+  <div class="premium-table-container" *ngIf="!isLoading && reportData.length">
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>Roll No</th>
+          <th>Student Name</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of reportData">
+          <td><span class="fw-bold text-dark">{{ row.rollNo || '---' }}</span></td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="avatar-xs bg-primary-50 text-primary-600 rounded-8 p-8 fw-bold">
+                {{ row.studentName?.charAt(0) }}
+              </div>
+              <span class="fw-medium">{{ row.studentName }}</span>
+            </div>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="{
+                    'badge-present': row.status === 'Present',
+                    'badge-absent': row.status === 'Absent',
+                    'badge-unmarked': row.status === 'Unmarked'
+                  }">
+              {{ row.status }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-light border radius-8" [routerLink]="['/student-view', row.studentId]">
+              View Profile
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !reportData.length && selectedClassId"
+    class="card p-40 text-center border-0 shadow-sm radius-20">
+    <iconify-icon icon="solar:document-text-bold-duotone" class="text-primary-100 text-6xl mb-16"></iconify-icon>
+    <h5 class="fw-bold">No Records Found</h5>
+    <p class="text-secondary-light">No attendance data exists for this class on the selected date.</p>
+  </div>
+</div>

@@ -1,0 +1,186 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <!-- Stats Grid -->
+  <div class="row gy-4 mb-32">
+    <div class="col-xxl-3 col-sm-6">
+      <div class="stat-card-premium p-24 shadow-sm h-100 border-start border-primary border-5">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-secondary-light fw-bold mb-4 d-block uppercase text-xs">Total Staff</span>
+            <h3 class="fw-bold mb-0 text-dark">{{ attendanceStats.total }}</h3>
+          </div>
+          <div class="icon-box-premium bg-primary-100 text-primary-600">
+            <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xxl-3 col-sm-6">
+      <div class="stat-card-premium p-24 shadow-sm h-100 border-start border-success border-5">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-secondary-light fw-bold mb-4 d-block uppercase text-xs">Present Today</span>
+            <h3 class="fw-bold mb-0 text-success-600">{{ attendanceStats.present }}</h3>
+          </div>
+          <div class="icon-box-premium bg-success-100 text-success-600">
+            <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xxl-3 col-sm-6">
+      <div class="stat-card-premium p-24 shadow-sm h-100 border-start border-danger border-5">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-secondary-light fw-bold mb-4 d-block uppercase text-xs">Absent Today</span>
+            <h3 class="fw-bold mb-0 text-danger-600">{{ attendanceStats.absent }}</h3>
+          </div>
+          <div class="icon-box-premium bg-danger-100 text-danger-600">
+            <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xxl-3 col-sm-6">
+      <div class="stat-card-premium p-24 shadow-sm h-100 border-start border-warning border-5">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-secondary-light fw-bold mb-4 d-block uppercase text-xs">Unmarked</span>
+            <h3 class="fw-bold mb-0 text-warning-600">{{ attendanceStats.unmarked }}</h3>
+          </div>
+          <div class="icon-box-premium bg-warning-100 text-warning-600">
+            <iconify-icon icon="solar:question-square-bold-duotone"></iconify-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters & Actions -->
+  <div class="filter-wrapper mb-32">
+    <div class="row align-items-center gy-3">
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-dark mb-8">Attendance Date</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><iconify-icon icon="solar:calendar-bold-duotone"
+              class="text-primary"></iconify-icon></span>
+          <input type="date" class="form-control border-start-0 radius-8" [(ngModel)]="selectedDate">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-bold text-dark mb-8">Quick Search</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><iconify-icon icon="solar:magnifer-bold-duotone"
+              class="text-primary"></iconify-icon></span>
+          <input type="text" class="form-control border-start-0 radius-8" placeholder="Search by name or ID..."
+            [(ngModel)]="searchQuery">
+        </div>
+      </div>
+      <div class="col-md-5 d-flex justify-content-end align-items-end gap-2">
+        <button class="btn btn-outline-success border-2 fw-bold radius-12 py-10" (click)="markAllPresent()"
+          *ngIf="!hasRole('Admin')">
+          Mark All Present
+        </button>
+        <button class="btn btn-outline-danger border-2 fw-bold radius-12 py-10" (click)="markAllAbsent()"
+          *ngIf="!hasRole('Admin')">
+          Mark All Absent
+        </button>
+        <button class="btn btn-light border radius-12 py-10" (click)="loadStaff()">
+          <iconify-icon icon="solar:refresh-linear"></iconify-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div class="premium-table-container">
+    <div class="card-header border-bottom bg-white p-24 d-flex align-items-center justify-content-between">
+      <h5 class="fw-bold mb-0">Staff Attendance Sheet</h5>
+      <button class="btn-premium-grad" (click)="saveAttendance()" *ngIf="!hasRole('Admin')">
+        <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon>
+        Push Attendance to Server
+      </button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-premium mb-0">
+        <thead>
+          <tr>
+            <th class="ps-32">Staff Member</th>
+            <th>Employee ID</th>
+            <th class="text-center">Verification</th>
+            <th>Attendance Status</th>
+            <th class="pe-32">Daily Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let staff of paginatedStaff; let i = index" class="animate__animated animate__fadeInUp"
+            [style.animation-delay]="i * 0.05 + 's'">
+            <td class="ps-32">
+              <div class="staff-info-box">
+                <div class="staff-avatar">
+                  {{ staff.staffName?.charAt(0) }}
+                </div>
+                <div>
+                  <div class="fw-bold text-dark">{{ staff.staffName }}</div>
+                  <div class="text-xs text-secondary-light">{{ staff.designation || 'Staff Member' }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge bg-neutral-100 text-neutral-800 px-12 py-6 radius-8 fw-bold">
+                {{ staff.staffId }}
+              </span>
+            </td>
+            <td class="text-center">
+              <iconify-icon *ngIf="staff.status === 'Present'" icon="solar:verified-check-bold"
+                class="text-success-600 text-xl"></iconify-icon>
+              <iconify-icon *ngIf="staff.status === 'Absent'" icon="solar:danger-bold"
+                class="text-danger-600 text-xl"></iconify-icon>
+              <span *ngIf="!staff.status" class="text-xs text-secondary-light italic">Pending...</span>
+            </td>
+            <td>
+              <select class="form-select status-select-premium" [(ngModel)]="staff.status"
+                [disabled]="hasRole('Admin')">
+                <option value="">-- Mark Status --</option>
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+                <option value="Leave">On Leave</option>
+                <option value="Late">Half Day / Late</option>
+              </select>
+            </td>
+            <td class="pe-32">
+              <input type="text" class="form-control remarks-input-premium" [(ngModel)]="staff.remarks"
+                placeholder="Optional comments..." [disabled]="hasRole('Admin')">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="p-24 bg-light d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <p class="text-secondary-light text-sm mb-0">
+        Showing <b>{{ (currentPage - 1) * itemsPerPage + 1 }}</b> to <b>{{ Math.min(currentPage * itemsPerPage,
+          filteredStaff.length) }}</b> of <b>{{ filteredStaff.length }}</b> staff
+      </p>
+      <nav>
+        <ul class="pagination pagination-premium mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link" (click)="changePage(currentPage - 1)"><iconify-icon
+                icon="solar:alt-arrow-left-linear"></iconify-icon></button>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+            [class.active]="currentPage === i + 1">
+            <button class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button class="page-link" (click)="changePage(currentPage + 1)"><iconify-icon
+                icon="solar:alt-arrow-right-linear"></iconify-icon></button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

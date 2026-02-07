@@ -1,0 +1,78 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+      <div class="card outstanding-card mt-4">
+        <div class="card-header outstanding-header text-center">
+          <iconify-icon icon="solar:folder-plus-bold-duotone" class="text-4xl mb-2"></iconify-icon>
+          <h5 class="mb-0">Create New Class</h5>
+          <div class="section-divider"></div>
+        </div>
+
+        <div class="card-body p-40">
+          <form #classForm="ngForm" (ngSubmit)="onSubmit(classForm)" novalidate>
+
+            <div class="row">
+              <!-- CLASS NAME -->
+              <div class="col-12 mb-4">
+                <label class="form-label fw-bold text-dark mb-2">
+                  Class Name <span class="text-danger">*</span>
+                </label>
+                <div class="form-floating-custom">
+                  <iconify-icon icon="solar:letter-bold-duotone"></iconify-icon>
+                  <input type="text" class="form-control" name="standardName" [(ngModel)]="newClass.standardName"
+                    required #standardName="ngModel"
+                    [ngClass]="{ 'is-invalid': standardName.invalid && standardName.touched }"
+                    placeholder="e.g. 10th Grade, BSCS" />
+                </div>
+                <small *ngIf="standardName.invalid && standardName.touched"
+                  class="text-danger animate__animated animate__fadeIn">
+                  Class name is required
+                </small>
+              </div>
+
+              <!-- CLASS CAPACITY -->
+              <div class="col-md-6 mb-4">
+                <label class="form-label fw-bold text-dark mb-2">
+                  Capacity <span class="text-danger">*</span>
+                </label>
+                <div class="form-floating-custom">
+                  <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
+                  <input type="number" class="form-control" name="standardCapacity"
+                    [(ngModel)]="newClass.standardCapacity" required #standardCapacity="ngModel"
+                    [ngClass]="{ 'is-invalid': standardCapacity.invalid && standardCapacity.touched }"
+                    placeholder="Enter Capacity" />
+                </div>
+                <small *ngIf="standardCapacity.invalid && standardCapacity.touched"
+                  class="text-danger animate__animated animate__fadeIn">
+                  Capacity is required
+                </small>
+              </div>
+
+              <!-- TEACHER DROPDOWN -->
+              <div class="col-md-6 mb-4">
+                <label class="form-label fw-bold text-dark mb-2">Class Teacher</label>
+                <div class="form-floating-custom">
+                  <iconify-icon icon="solar:user-broken-bold-duotone"></iconify-icon>
+                  <select class="form-select" name="teacher" [(ngModel)]="newClass.classTeacher">
+                    <option value="" selected disabled>Select Teacher</option>
+                    <option *ngFor="let t of teachers" [value]="t.staffName">{{ t.staffName }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-center gap-3 mt-40">
+              <button type="submit" class="outstanding-btn d-flex align-items-center gap-2">
+                <iconify-icon icon="solar:check-read-bold-duotone" class="text-xl"></iconify-icon>
+                <span>Save Class</span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

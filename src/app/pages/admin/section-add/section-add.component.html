@@ -1,0 +1,83 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8 border-20">
+      <div class="card shadow-sm radius-12 mt-4">
+        <div class="card-header bg-base py-16 px-24 border-bottom text-center">
+          <h5 class="fw-semibold mb-0 text-primary-600">Create New Section</h5>
+        </div>
+
+        <div class="card-body px-24 py-16">
+          <form #sectionForm="ngForm" (ngSubmit)="onSubmit(sectionForm)" novalidate>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Select Class <span class="text-danger">*</span></label>
+              <select class="form-select radius-8" name="className" [(ngModel)]="newSection.className" required
+                #classSelect="ngModel" [ngClass]="{ 'is-invalid': classSelect.invalid && classSelect.touched }">
+                <option value="" disabled selected>Select a Class</option>
+                <option *ngFor="let c of classes" [value]="c.standardName">{{ c.standardName }}</option>
+              </select>
+              <small *ngIf="classSelect.invalid && classSelect.touched" class="text-danger">
+                Please select a class
+              </small>
+            </div>
+
+            <!-- Section Code -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Section Code <span class="text-danger">*</span></label>
+              <input type="text" class="form-control radius-8" name="sectionCode" [(ngModel)]="newSection.sectionCode"
+                required #sectionCode="ngModel" [ngClass]="{ 'is-invalid': sectionCode.invalid && sectionCode.touched }"
+                placeholder="e.g., A, B, C" />
+              <small *ngIf="sectionCode.invalid && sectionCode.touched" class="text-danger">
+                This field is required
+              </small>
+            </div>
+
+            <!-- Select Teacher -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Select Teacher <span class="text-danger">*</span></label>
+              <select class="form-select radius-8" name="staffId" [(ngModel)]="newSection.staffId" required
+                #teacher="ngModel" [ngClass]="{ 'is-invalid': teacher.invalid && teacher.touched }">
+                <option [value]="undefined" disabled selected>Select a Teacher</option>
+                <option *ngFor="let t of teachers" [value]="t.staffId">{{ t.staffName }}</option>
+              </select>
+              <small *ngIf="teacher.invalid && teacher.touched" class="text-danger">
+                Please select a teacher
+              </small>
+            </div>
+
+
+            <!-- Room Number -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Room Number <span class="text-danger">*</span></label>
+              <input type="text" class="form-control radius-8" name="roomNo" [(ngModel)]="newSection.roomNo" required
+                #roomNo="ngModel" [ngClass]="{ 'is-invalid': roomNo.invalid && roomNo.touched }"
+                placeholder="e.g., R-101" />
+              <small *ngIf="roomNo.invalid && roomNo.touched" class="text-danger">
+                This field is required
+              </small>
+            </div>
+
+            <!-- Capacity -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Capacity <span class="text-danger">*</span></label>
+              <input type="number" class="form-control radius-8" name="capacity" [(ngModel)]="newSection.capacity"
+                required #capacity="ngModel" [ngClass]="{ 'is-invalid': capacity.invalid && capacity.touched }"
+                placeholder="Enter Capacity" />
+              <small *ngIf="capacity.invalid && capacity.touched" class="text-danger">
+                This field is required
+              </small>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-center gap-3 mt-4">
+              <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
+                Save Section
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,141 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
+
+  <div class="row justify-content-center">
+    <div class="col-xxl-8 col-xl-10">
+      <div class="card radius-12">
+        <div class="card-header border-bottom bg-base py-16 px-24">
+          <h6 class="text-lg fw-semibold mb-0">Leave Application Form</h6>
+        </div>
+
+        <div class="card-body p-24">
+          <form (ngSubmit)="submitLeave()">
+            <div class="row gy-3">
+              <!-- Employee Name (Auto-filled, Disabled) -->
+              <div class="col-md-6">
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
+                  Employee Name <span class="text-danger-600">*</span>
+                </label>
+                <input type="text" class="form-control radius-8 bg-neutral-50" [(ngModel)]="employeeName"
+                  name="employeeName" disabled readonly />
+              </div>
+
+              <!-- Designation (Auto-filled, Disabled) -->
+              <div class="col-md-6">
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
+                  Designation <span class="text-danger-600">*</span>
+                </label>
+                <input type="text" class="form-control radius-8 bg-neutral-50" [(ngModel)]="designation"
+                  name="designation" disabled readonly />
+              </div>
+
+              <!-- Leave Type Dropdown -->
+              <div class="col-md-6">
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
+                  Leave Type <span class="text-danger-600">*</span>
+                </label>
+                <select class="form-select radius-8" [(ngModel)]="leaveTypeStr" name="leaveType" required>
+                  <option value="" disabled selected>Select Leave Type</option>
+                  <option *ngFor="let type of leaveTypes" [value]="type">
+                    {{ type }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- From Date -->
+              <div class="col-md-3">
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
+                  From Date <span class="text-danger-600">*</span>
+                </label>
+                <input type="date" class="form-control radius-8" [ngModel]="fromDate"
+                  (ngModelChange)="fromDate = $event; onDateChange()" name="fromDate" required />
+              </div>
+
+              <!-- To Date -->
+              <div class="col-md-3">
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
+                  To Date <span class="text-danger-600">*</span>
+                </label>
+                <input type="date" class="form-control radius-8" [ngModel]="toDate"
+                  (ngModelChange)="toDate = $event; onDateChange()" name="toDate" required />
+              </div>
+
+              <!-- Total Days (Calculated, Read-only) -->
+              <div class="col-12" *ngIf="totalDays > 0">
+                <div class="alert alert-info d-flex align-items-center gap-2 radius-8" role="alert">
+                  <iconify-icon icon="solar:info-circle-bold" class="text-info-600 text-xl"></iconify-icon>
+                  <span><strong>Total Days:</strong> {{ totalDays }} day(s)</span>
+                </div>
+              </div>
+
+              <!-- Reason Textarea -->
+              <div class="col-12">
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
+                  Reason for Leave <span class="text-danger-600">*</span>
+                </label>
+                <textarea class="form-control radius-8" [(ngModel)]="reason" name="reason" rows="4"
+                  placeholder="Please provide a detailed reason for your leave application..." required></textarea>
+              </div>
+
+              <!-- Info Box -->
+              <div class="col-12">
+                <div
+                  class="alert alert-warning-100 border border-warning-600 text-warning-600 radius-8 px-24 py-13 mb-0"
+                  role="alert">
+                  <div class="d-flex align-items-start gap-2">
+                    <iconify-icon icon="solar:info-circle-bold-duotone" class="text-xl mt-1"></iconify-icon>
+                    <div>
+                      <h6 class="fw-semibold mb-8">Important Information</h6>
+                      <ul class="mb-0 ps-3">
+                        <li>Your leave application will be submitted with <strong>Pending</strong> status</li>
+                        <li>You will be notified once your leave is approved or rejected</li>
+                        <li>Please ensure all information is correct before submitting</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="col-12">
+                <div class="d-flex align-items-center justify-content-center gap-3 mt-24">
+                  <button type="button" (click)="resetForm()"
+                    class="btn btn-outline-danger text-md px-40 py-12 radius-8">
+                    <iconify-icon icon="solar:restart-bold" class="icon text-xl me-1"></iconify-icon>
+                    Reset
+                  </button>
+                  <button type="submit" class="btn btn-primary text-md px-48 py-12 radius-8" [disabled]="submitting">
+                    <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    <iconify-icon *ngIf="!submitting" icon="solar:check-circle-bold"
+                      class="icon text-xl me-1"></iconify-icon>
+                    Submit Application
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Quick Stats Card -->
+      <div class="card radius-12 mt-24">
+        <div class="card-body p-24">
+          <h6 class="text-md fw-semibold mb-16">Available Leave Types</h6>
+          <div class="row g-3">
+            <div class="col-md-4 col-sm-6" *ngFor="let type of leaveTypes">
+              <div class="d-flex align-items-center gap-2 p-12 radius-8 border border-neutral-200">
+                <div
+                  class="w-40-px h-40-px rounded-circle d-flex justify-content-center align-items-center bg-primary-100 flex-shrink-0">
+                  <iconify-icon icon="solar:calendar-mark-bold-duotone" class="text-primary-600 text-xl"></iconify-icon>
+                </div>
+                <div class="flex-grow-1">
+                  <h6 class="text-sm fw-semibold mb-0">{{ type }}</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

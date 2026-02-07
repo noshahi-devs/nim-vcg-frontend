@@ -1,0 +1,110 @@
+:root {
+  --primary-color: #800020; /* Maroon */
+  --primary-light: #a52a2a;
+  --secondary-color: #ffd700; /* Gold */
+  --accent-color: #ff4500;
+  --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.3);
+}
+
+body {
+  font-family: 'Inter', sans-serif !important;
+  background: var(--bg-gradient);
+}
+.outstanding-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px !important;
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.outstanding-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(128, 0, 32, 0.12);
+}
+
+.outstanding-header {
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  color: white !important;
+  padding: 24px !important;
+  border: none !important;
+}
+
+.outstanding-header h5 {
+  color: white !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.outstanding-btn {
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  border: none;
+  color: white;
+  padding: 12px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 15px rgba(128, 0, 32, 0.2);
+}
+
+.outstanding-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(128, 0, 32, 0.3);
+  color: white;
+}
+
+.outstanding-btn:active {
+  transform: scale(0.95);
+}
+
+.form-floating-custom {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.form-floating-custom .form-control, 
+.form-floating-custom .form-select {
+  border: 2px solid transparent;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 14px 16px 14px 44px;
+  transition: all 0.3s ease;
+}
+
+.form-floating-custom .form-control:focus,
+.form-floating-custom .form-select:focus {
+  background: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.1);
+}
+
+.form-floating-custom i, 
+.form-floating-custom iconify-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #adb5bd;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+}
+
+.form-floating-custom .form-control:focus + i,
+.form-floating-custom .form-control:focus + iconify-icon {
+  color: var(--primary-color);
+}
+
+.section-divider {
+  height: 4px;
+  width: 50px;
+  background: var(--secondary-color);
+  margin: 8px auto 24px;
+  border-radius: 2px;
+}

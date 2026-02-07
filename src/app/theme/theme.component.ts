@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
+import { BreadcrumbComponent } from '@app/pages/ui-elements/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-theme',
