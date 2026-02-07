@@ -15,6 +15,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
+  title(title: any) {
+    throw new Error('Method not implemented.');
+  }
 
   currentThemeSetting: string = 'light';
   constructor(private themeService : ThemeService) { }

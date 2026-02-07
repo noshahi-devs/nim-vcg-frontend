@@ -1,174 +1,201 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- Stats Cards -->
-  <div class="row gy-4 mb-24">
+  <!-- Premium Stats Cards -->
+  <div class="row gy-4 mb-30 mt-2">
     <div class="col-xxl-3 col-sm-6">
-      <div class="card p-3 shadow-sm radius-12 h-100">
-        <div class="card-body p-16">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-secondary-light fw-medium mb-4 d-block">Total Leaves</span>
-              <h4 class="fw-bold mb-0">{{ totalLeavesCount }}</h4>
-            </div>
-            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-primary-100">
-              <iconify-icon icon="solar:document-text-bold-duotone" class="text-primary-600 text-xxxl"></iconify-icon>
-            </div>
+      <div class="premium-dashboard-card">
+        <div class="d-flex align-items-center justify-content-between mb-20">
+          <div class="icon-box-premium" style="background: rgba(128, 0, 32, 0.1); color: #800020;">
+            <iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon>
           </div>
+          <span class="badge radius-pill px-15 py-6 fw-black"
+            style="background: rgba(128, 0, 32, 0.05); color: #800020; font-size: 0.65rem;">TOTAL ENTRIES</span>
         </div>
+        <span class="text-secondary-light fw-bold text-uppercase letter-spacing-1 small d-block mb-5">Aggregate
+          Requests</span>
+        <h1 class="fw-black mb-0" style="color: #800020; font-size: 2.5rem;">{{ totalLeavesCount }}</h1>
       </div>
     </div>
 
     <div class="col-xxl-3 col-sm-6">
-      <div class="card p-3 shadow-sm radius-12 h-100">
-        <div class="card-body p-16">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-secondary-light fw-medium mb-4 d-block">Pending</span>
-              <h4 class="fw-bold mb-0">{{ pendingLeavesCount }}</h4>
-            </div>
-            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-warning-100">
-              <iconify-icon icon="solar:clock-circle-bold-duotone" class="text-warning-600 text-xxxl"></iconify-icon>
-            </div>
+      <div class="premium-dashboard-card">
+        <div class="d-flex align-items-center justify-content-between mb-20">
+          <div class="icon-box-premium" style="background: rgba(245, 158, 11, 0.1); color: #d97706;">
+            <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
           </div>
+          <span class="badge radius-pill px-15 py-6 fw-black"
+            style="background: rgba(245, 158, 11, 0.05); color: #d97706; font-size: 0.65rem;">IN QUEUE</span>
         </div>
+        <span class="text-secondary-light fw-bold text-uppercase letter-spacing-1 small d-block mb-5">Pending
+          Decisions</span>
+        <h1 class="fw-black mb-0" style="color: #d97706; font-size: 2.5rem;">{{ pendingLeavesCount }}</h1>
       </div>
     </div>
 
     <div class="col-xxl-3 col-sm-6">
-      <div class="card p-3 shadow-sm radius-12 h-100">
-        <div class="card-body p-16">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-secondary-light fw-medium mb-4 d-block">Approved</span>
-              <h4 class="fw-bold mb-0">{{ approvedLeavesCount }}</h4>
-            </div>
-            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-success-100">
-              <iconify-icon icon="solar:check-circle-bold-duotone" class="text-success-600 text-xxxl"></iconify-icon>
-            </div>
+      <div class="premium-dashboard-card">
+        <div class="d-flex align-items-center justify-content-between mb-20">
+          <div class="icon-box-premium" style="background: rgba(34, 197, 94, 0.1); color: #16a34a;">
+            <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
           </div>
+          <span class="badge radius-pill px-15 py-6 fw-black"
+            style="background: rgba(34, 197, 94, 0.05); color: #16a34a; font-size: 0.65rem;">AUTHORIZED</span>
         </div>
+        <span class="text-secondary-light fw-bold text-uppercase letter-spacing-1 small d-block mb-5">Approved
+          Manifests</span>
+        <h1 class="fw-black mb-0" style="color: #16a34a; font-size: 2.5rem;">{{ approvedLeavesCount }}</h1>
       </div>
     </div>
 
     <div class="col-xxl-3 col-sm-6">
-      <div class="card p-3 shadow-sm radius-12 h-100">
-        <div class="card-body p-16">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-secondary-light fw-medium mb-4 d-block">Rejected</span>
-              <h4 class="fw-bold mb-0">{{ rejectedLeavesCount }}</h4>
-            </div>
-            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-danger-100">
-              <iconify-icon icon="solar:close-circle-bold-duotone" class="text-danger-600 text-xxxl"></iconify-icon>
-            </div>
+      <div class="premium-dashboard-card">
+        <div class="d-flex align-items-center justify-content-between mb-20">
+          <div class="icon-box-premium" style="background: rgba(239, 68, 68, 0.1); color: #dc2626;">
+            <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
           </div>
+          <span class="badge radius-pill px-15 py-6 fw-black"
+            style="background: rgba(239, 68, 68, 0.05); color: #dc2626; font-size: 0.65rem;">DECLINED</span>
         </div>
+        <span class="text-secondary-light fw-bold text-uppercase letter-spacing-1 small d-block mb-5">Rejected
+          Applications</span>
+        <h1 class="fw-black mb-0" style="color: #dc2626; font-size: 2.5rem;">{{ rejectedLeavesCount }}</h1>
       </div>
     </div>
   </div>
 
-  <!-- Recent Leave Applications Table -->
-  <div class="card h-100 p-0 radius-12">
-    <div
-      class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-      <h6 class="text-lg fw-semibold mb-0">Recent Leave Applications</h6>
-      <div class="d-flex align-items-center gap-2">
-        <button type="button" (click)="refreshData()"
-          class="btn btn-outline-primary text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
-          <iconify-icon icon="solar:refresh-linear" class="icon text-xl"></iconify-icon>
-          Refresh
+  <!-- Recent Leave Applications Master Table -->
+  <div class="master-table-card">
+    <div class="master-table-header">
+      <div>
+        <h6>Attendance & Leave Registry</h6>
+        <p class="mb-0 text-white-50 small fw-bold text-uppercase letter-spacing-1">Activity Stream Manifest</p>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <button type="button" (click)="refreshData()" class="premium-action-btn">
+          <iconify-icon icon="solar:refresh-linear" class="text-xl"></iconify-icon>Sync Data
         </button>
-        <button type="button" (click)="exportData()"
-          class="btn btn-outline-success text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
-          <iconify-icon icon="solar:export-linear" class="icon text-xl"></iconify-icon>
-          Export
+        <button type="button" (click)="exportData()" class="premium-action-btn"
+          style="background: rgba(255,255,255,0.1)">
+          <iconify-icon icon="solar:cloud-download-linear" class="text-xl"></iconify-icon>Report
         </button>
       </div>
     </div>
 
-    <div class="card-body p-24">
-      <div class="table-responsive scroll-sm">
-        <table class="table bordered-table sm-table mb-0">
+    <div class="p-0">
+      <div class="table-responsive">
+        <table class="table premium-dashboard-table">
           <thead>
             <tr>
-              <th scope="col">S.L</th>
-              <th scope="col">Employee Name</th>
-              <th scope="col">Leave Type</th>
-              <th scope="col">From Date</th>
-              <th scope="col">To Date</th>
-              <th scope="col" class="text-center">Status</th>
-              <th scope="col" class="text-center">Action</th>
+              <th><span class="ps-15">S.L</span></th>
+              <th>Employee Profile</th>
+              <th>Category</th>
+              <th>Duration Period</th>
+              <th class="text-center">Current Status</th>
+              <th class="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let leave of paginatedApplications; let i = index">
-              <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
+              <td><span class="ps-15 fw-black text-secondary-light">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</span>
+              </td>
               <td>
                 <div class="d-flex align-items-center">
                   <div
-                    class="w-40-px h-40-px rounded-circle d-flex justify-content-center align-items-center bg-primary-100 text-primary-600 fw-bold me-12">
+                    class="w-44-px h-44-px rounded-14 d-flex justify-content-center align-items-center bg-primary-50 text-primary-600 fw-black shadow-sm me-15 border">
                     {{ (leave.staff?.staffName || '?').charAt(0) }}
                   </div>
-                  <span class="fw-medium">{{ leave.staff?.staffName || 'Unknown Staff' }}</span>
+                  <div>
+                    <span class="fw-bold text-dark d-block lead mb-0" style="font-size: 1rem;">{{ leave.staff?.staffName
+                      || 'N/A' }}</span>
+                    <small class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{
+                      leave.staff?.designation || 'Staff Member' }}</small>
+                  </div>
                 </div>
               </td>
-              <td><span class="badge bg-primary-50 text-primary-600 px-12 py-4 radius-4 fw-medium text-sm">{{
-                  getLeaveTypeName(leave.leaveType) }}</span></td>
-              <td>{{ leave.startDate | date:'dd MMM yyyy' }}</td>
-              <td>{{ leave.endDate | date:'dd MMM yyyy' }}</td>
-              <td class="text-center">
-                <span [ngClass]="getStatusClass(leave.status)">{{ getLeaveStatusName(leave.status) }}</span>
+              <td>
+                <span class="badge radius-8 px-15 py-8 fw-black"
+                  style="background: rgba(128, 0, 32, 0.05); color: #800020; border: 1px solid rgba(128, 0, 32, 0.1);">
+                  {{ getLeaveTypeName(leave.leaveType) }}
+                </span>
+              </td>
+              <td class="fw-medium text-dark">
+                <div class="d-flex align-items-center">
+                  <iconify-icon icon="solar:calendar-linear" class="me-8 text-primary-200"></iconify-icon>
+                  {{ leave.startDate | date:'dd MMM yyyy' }} <span class="mx-8 text-muted">→</span> {{ leave.endDate |
+                  date:'dd MMM yyyy' }}
+                </div>
               </td>
               <td class="text-center">
-                <button type="button" (click)="viewDetails(leave)"
-                  class="bg-info-focus text-info-600 bg-hover-info-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                  title="View Details">
-                  <iconify-icon icon="solar:eye-linear" class="icon text-xl"></iconify-icon>
+                <span class="status-pill" [ngClass]="{
+                  'pill-pending': leave.status === 0,
+                  'pill-approved': leave.status === 1,
+                  'pill-rejected': leave.status === 2
+                }">
+                  <iconify-icon
+                    [icon]="leave.status === 0 ? 'solar:reorder-bold' : (leave.status === 1 ? 'solar:verified-check-bold' : 'solar:shield-cross-bold')"
+                    class="me-5"></iconify-icon>
+                  {{ getLeaveStatusName(leave.status) }}
+                </span>
+              </td>
+              <td class="text-center">
+                <button type="button" (click)="viewDetails(leave)" class="view-btn-premium" title="Detailed Inspection">
+                  <iconify-icon icon="solar:magnifer-linear" class="text-xl"></iconify-icon>
                 </button>
               </td>
             </tr>
             <tr *ngIf="paginatedApplications.length === 0 && !loading">
-              <td colspan="7" class="text-center py-24 text-secondary-light">No leave applications found</td>
+              <td colspan="6" class="text-center py-100">
+                <div class="d-flex flex-column align-items-center justify-content-center">
+                  <iconify-icon icon="solar:folder-error-linear" class="text-primary-100 mb-20"
+                    style="font-size: 6rem;"></iconify-icon>
+                  <h3 class="fw-black text-secondary-light">Registry Empty</h3>
+                  <p class="text-muted lead">No archaeological leave records found in the current temporal frame</p>
+                </div>
+              </td>
             </tr>
             <tr *ngIf="loading">
-              <td colspan="7" class="text-center py-24 text-primary-600">
-                <div class="spinner-border spinner-border-sm" role="status"></div>
-                <span class="ms-8">Loading leave applications...</span>
+              <td colspan="6" class="text-center py-60">
+                <div class="spinner-grow text-primary-600 mb-15" role="status"></div>
+                <h5 class="fw-bold text-primary-600">Accessing Core Databases...</h5>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Pagination -->
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24"
+      <!-- Premium Pagination -->
+      <div class="d-flex align-items-center justify-content-between p-40 border-top bg-light-50"
         *ngIf="filteredApplications.length > 0">
-        <span>Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to {{ Math.min(currentPage * rowsPerPage,
-          filteredApplications.length) }} of {{ filteredApplications.length }} entries</span>
-        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
-          <li class="page-item">
-            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
-              <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
-            </a>
-          </li>
-          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
-            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.bg-primary-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
-              [class.bg-neutral-200]="currentPage !== i + 1" [class.text-secondary-light]="currentPage !== i + 1"
-              (click)="changePage(i + 1)" href="javascript:void(0)">
-              {{ i + 1 }}
-            </a>
-          </li>
-          <li class="page-item">
-            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
-              href="javascript:void(0)">
-              <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
-            </a>
-          </li>
-        </ul>
+        <span class="text-secondary-light fw-black small text-uppercase letter-spacing-2">
+          Page Record <span class="text-dark">{{ currentPage }}</span> of {{ totalPages }}
+        </span>
+        <nav>
+          <ul class="pagination mb-0 gap-3">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link shadow-lg border-0 radius-16 p-12 transition-all d-flex align-items-center"
+                (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+                <iconify-icon icon="solar:alt-arrow-left-bold" class="text-xl"></iconify-icon>
+              </a>
+            </li>
+
+            <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
+              <a class="page-link shadow-lg border-0 radius-16 py-12 px-20 fw-black transition-all"
+                [style.background]="currentPage === i + 1 ? '#800020' : 'white'"
+                [style.color]="currentPage === i + 1 ? 'white' : '#1e293b'" (click)="changePage(i + 1)"
+                href="javascript:void(0)">
+                {{ i + 1 }}
+              </a>
+            </li>
+
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <a class="page-link shadow-lg border-0 radius-16 p-12 transition-all d-flex align-items-center"
+                (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+                <iconify-icon icon="solar:alt-arrow-right-bold" class="text-xl"></iconify-icon>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </div>

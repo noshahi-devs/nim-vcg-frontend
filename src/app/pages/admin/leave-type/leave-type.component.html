@@ -1,197 +1,242 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- Stats Cards -->
-  <div class="row gy-4 mb-24">
+  <!-- Premium Stats Cards -->
+  <div class="row gy-4 mb-24 mt-2">
     <div class="col-xxl-4 col-sm-6">
-      <div class="card p-3 shadow-sm radius-12 h-100">
-        <div class="card-body p-16">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-secondary-light fw-medium mb-4 d-block">Total Types</span>
-              <h4 class="fw-bold mb-0">{{ totalTypes }}</h4>
-            </div>
-            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-primary-100">
-              <iconify-icon icon="solar:document-text-bold-duotone" class="text-primary-600 text-xxxl"></iconify-icon>
-            </div>
+      <div class="premium-stat-card">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-secondary-light fw-bold mb-4 d-block text-uppercase letter-spacing-1">Total Types</span>
+            <h2 class="fw-black mb-0" style="color: #800020;">{{ totalTypes }}</h2>
+          </div>
+          <div class="stat-icon-box" style="background: rgba(128, 0, 32, 0.1); color: #800020;">
+            <iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon>
           </div>
         </div>
       </div>
     </div>
 
     <div class="col-xxl-4 col-sm-6">
-      <div class="card p-3 shadow-sm radius-12 h-100">
-        <div class="card-body p-16">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-secondary-light fw-medium mb-4 d-block">Active</span>
-              <h4 class="fw-bold mb-0">{{ activeTypes }}</h4>
-            </div>
-            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-success-100">
-              <iconify-icon icon="solar:check-circle-bold-duotone" class="text-success-600 text-xxxl"></iconify-icon>
-            </div>
+      <div class="premium-stat-card">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-secondary-light fw-bold mb-4 d-block text-uppercase letter-spacing-1">Active</span>
+            <h2 class="fw-black mb-0" style="color: #16a34a;">{{ activeTypes }}</h2>
+          </div>
+          <div class="stat-icon-box" style="background: rgba(34, 197, 94, 0.1); color: #16a34a;">
+            <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
           </div>
         </div>
       </div>
     </div>
 
     <div class="col-xxl-4 col-sm-6">
-      <div class="card p-3 shadow-sm radius-12 h-100">
-        <div class="card-body p-16">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-secondary-light fw-medium mb-4 d-block">Inactive</span>
-              <h4 class="fw-bold mb-0">{{ inactiveTypes }}</h4>
-            </div>
-            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-danger-100">
-              <iconify-icon icon="solar:close-circle-bold-duotone" class="text-danger-600 text-xxxl"></iconify-icon>
-            </div>
+      <div class="premium-stat-card">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span class="text-secondary-light fw-bold mb-4 d-block text-uppercase letter-spacing-1">Inactive</span>
+            <h2 class="fw-black mb-0" style="color: #dc2626;">{{ inactiveTypes }}</h2>
+          </div>
+          <div class="stat-icon-box" style="background: rgba(239, 68, 68, 0.1); color: #dc2626;">
+            <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Main Table Card -->
-  <div class="card h-100 p-0 radius-12">
-    <div
-      class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-      <h6 class="text-lg fw-semibold mb-0">Leave Types</h6>
-      <button type="button" (click)="openAddModal()"
-        class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
-        <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-        Add Leave Type
+  <!-- Main Premium Table -->
+  <div class="premium-table-container">
+    <div class="premium-header">
+      <h6>Leave Configuration Master</h6>
+      <button type="button" (click)="openAddModal()" class="add-btn-premium">
+        <iconify-icon icon="ic:baseline-plus" class="text-xl"></iconify-icon>
+        Create New Type
       </button>
     </div>
 
-    <div class="card-body p-24">
+    <div class="p-0">
       <div class="table-responsive scroll-sm">
-        <table class="table bordered-table sm-table mb-0">
+        <table class="table premium-table">
           <thead>
             <tr>
-              <th scope="col">S.L</th>
-              <th scope="col">Type Name</th>
-              <th scope="col">Description</th>
-              <th scope="col" class="text-center">Max Days</th>
-              <th scope="col" class="text-center">Status</th>
-              <th scope="col" class="text-center">Actions</th>
+              <th><span class="ps-12">S.L</span></th>
+              <th>Type Name</th>
+              <th>Description</th>
+              <th class="text-center">Max Allocation</th>
+              <th class="text-center">Status</th>
+              <th class="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let type of paginatedTypes; let i = index">
-              <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
-              <td><span class="fw-semibold">{{ type.leaveTypeName }}</span></td>
-              <td><span class="text-sm">{{ type.description }}</span></td>
-              <td class="text-center">
-                <span class="badge bg-primary-50 text-primary-600 px-12 py-4 radius-4 fw-medium text-sm">{{
-                  type.maxDaysAllowed }} days</span>
+              <td><span class="ps-12 fw-bold text-secondary-light">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</span>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="w-8-px h-32-px radius-4 me-12" [style.background]="type.isActive ? '#16a34a' : '#dc2626'">
+                  </div>
+                  <span class="fw-bold text-dark text-lg">{{ type.leaveTypeName }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="text-secondary-light"
+                  style="max-width: 300px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                  [title]="type.description">
+                  {{ type.description }}
+                </span>
               </td>
               <td class="text-center">
-                <span [ngClass]="getStatusClass(type.isActive)">{{ type.isActive ? 'Active' : 'Inactive' }}</span>
+                <span class="badge rounded-pill px-16 py-8 fw-bold"
+                  style="background: rgba(128, 0, 32, 0.05); color: #800020; border: 1px solid rgba(128, 0, 32, 0.1);">
+                  {{ type.maxDaysAllowed }} Days / Year
+                </span>
               </td>
               <td class="text-center">
-                <div class="d-flex align-items-center gap-10 justify-content-center">
-                  <button type="button" (click)="toggleStatus(type)"
-                    class="bg-info-focus text-info-600 bg-hover-info-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                <span class="status-badge" [ngClass]="type.isActive ? 'status-active' : 'status-inactive'">
+                  <iconify-icon
+                    [icon]="type.isActive ? 'solar:check-read-linear' : 'solar:close-circle-linear'"></iconify-icon>
+                  {{ type.isActive ? 'Active' : 'Deactivated' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="d-flex align-items-center justify-content-center">
+                  <button type="button" (click)="toggleStatus(type)" class="action-btn btn-status"
                     [title]="type.isActive ? 'Deactivate' : 'Activate'">
                     <iconify-icon [icon]="type.isActive ? 'solar:eye-closed-linear' : 'solar:eye-linear'"
-                      class="icon text-xl"></iconify-icon>
+                      class="text-xl"></iconify-icon>
                   </button>
-                  <button type="button" (click)="openEditModal(type)"
-                    class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                    title="Edit">
-                    <iconify-icon icon="lucide:edit" class="icon text-xl"></iconify-icon>
+                  <button type="button" (click)="openEditModal(type)" class="action-btn btn-edit"
+                    title="Edit Configuration">
+                    <iconify-icon icon="solar:pen-new-square-linear" class="text-xl"></iconify-icon>
                   </button>
-                  <button type="button" (click)="confirmDelete(type)"
-                    class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                    title="Delete">
-                    <iconify-icon icon="fluent:delete-24-regular" class="icon text-xl"></iconify-icon>
+                  <button type="button" (click)="confirmDelete(type)" class="action-btn btn-delete"
+                    title="Remove Permanently">
+                    <iconify-icon icon="solar:trash-bin-trash-linear" class="text-xl"></iconify-icon>
                   </button>
                 </div>
               </td>
             </tr>
             <tr *ngIf="paginatedTypes.length === 0">
-              <td colspan="6" class="text-center py-24 text-secondary-light">
-                <iconify-icon icon="solar:inbox-line-bold-duotone" class="text-xxxl mb-2"></iconify-icon>
-                <p class="mb-0">No leave types found</p>
+              <td colspan="6" class="text-center py-60">
+                <div class="d-flex flex-column align-items-center">
+                  <iconify-icon icon="solar:empty-box-linear" class="text-primary-200"
+                    style="font-size: 5rem;"></iconify-icon>
+                  <h5 class="mt-16 text-secondary-light">No Leave Types Found</h5>
+                  <p class="text-muted">Start by adding a new leave configuration</p>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Pagination -->
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24"
-        *ngIf="filteredTypes.length > 0">
-        <span>Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to {{ Math.min(currentPage * rowsPerPage,
-          filteredTypes.length) }} of {{ filteredTypes.length }} entries</span>
-        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
-          <li class="page-item"><a
-              class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)"
-              href="javascript:void(0)"><iconify-icon icon="ep:d-arrow-left"></iconify-icon></a></li>
-          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"><a
-              class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.bg-primary-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
-              [class.bg-neutral-200]="currentPage !== i + 1" [class.text-secondary-light]="currentPage !== i + 1"
-              (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a></li>
-          <li class="page-item"><a
-              class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
-              href="javascript:void(0)"><iconify-icon icon="ep:d-arrow-right"></iconify-icon></a></li>
-        </ul>
+      <!-- Premium Pagination -->
+      <div class="d-flex align-items-center justify-content-between p-24 border-top" *ngIf="filteredTypes.length > 0">
+        <span class="text-secondary-light fw-medium">
+          Showing <b class="text-dark">{{ (currentPage - 1) * rowsPerPage + 1 }}</b> to
+          <b class="text-dark">{{ Math.min(currentPage * rowsPerPage, filteredTypes.length) }}</b>
+          of <b class="text-dark">{{ filteredTypes.length }}</b> configurations
+        </span>
+
+        <nav>
+          <ul class="pagination mb-0 gap-2">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link radius-12 border-0 shadow-sm" (click)="changePage(currentPage - 1)"
+                href="javascript:void(0)">
+                <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon>
+              </a>
+            </li>
+
+            <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
+              <a class="page-link radius-12 border-0 shadow-sm transition-all"
+                [style.background]="currentPage === i + 1 ? '#800020' : 'white'"
+                [style.color]="currentPage === i + 1 ? 'white' : '#64748b'" (click)="changePage(i + 1)"
+                href="javascript:void(0)">
+                {{ i + 1 }}
+              </a>
+            </li>
+
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <a class="page-link radius-12 border-0 shadow-sm" (click)="changePage(currentPage + 1)"
+                href="javascript:void(0)">
+                <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Add/Edit Modal -->
+<!-- Premium Modal -->
 <div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content radius-16 bg-base">
-      <div class="modal-header py-16 px-24 border border-top-0 border-start-0 border-end-0">
-        <h1 class="modal-title fs-5">{{ isEditMode ? 'Edit Leave Type' : 'Add New Leave Type' }}</h1>
+    <div class="modal-content modal-content-premium">
+      <div class="modal-header modal-header-premium">
+        <div>
+          <h3 class="fw-black mb-4" style="color: #800020;">{{ isEditMode ? 'Edit Configuration' : 'Create Leave Type'
+            }}</h3>
+          <p class="text-secondary-light mb-0">Define leave policy and allocation limits</p>
+        </div>
         <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
       </div>
-      <div class="modal-body p-24">
+      <div class="modal-body modal-body-premium">
         <form (ngSubmit)="saveLeaveType()">
-          <div class="row">
-            <div class="col-md-12 mb-20">
-              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Type Name <span
-                  class="text-danger-600">*</span></label>
-              <input type="text" class="form-control radius-8" [(ngModel)]="leaveTypeForm.leaveTypeName"
-                name="leaveTypeName" placeholder="e.g., Sick Leave" required />
+          <div class="row g-4">
+            <div class="col-md-12">
+              <label class="form-label-premium">Leave Type Name</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-0 radius-start-14"><iconify-icon
+                    icon="solar:tag-linear"></iconify-icon></span>
+                <input type="text" class="form-control input-premium border-start-0 radius-end-14"
+                  [(ngModel)]="leaveTypeForm.leaveTypeName" name="leaveTypeName"
+                  placeholder="e.g., Annual Privilege Leave" required />
+              </div>
             </div>
-            <div class="col-md-12 mb-20">
-              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Description <span
-                  class="text-danger-600">*</span></label>
-              <textarea class="form-control radius-8" [(ngModel)]="leaveTypeForm.description" name="description"
-                rows="3" placeholder="Enter a brief description..." required></textarea>
+
+            <div class="col-md-12">
+              <label class="form-label-premium">Detailed Description</label>
+              <textarea class="form-control input-premium" [(ngModel)]="leaveTypeForm.description" name="description"
+                rows="4" placeholder="Mention eligibility rules, conditions, etc..." required></textarea>
             </div>
-            <div class="col-md-6 mb-20">
-              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Maximum Days <span
-                  class="text-danger-600">*</span></label>
-              <input type="number" class="form-control radius-8" [(ngModel)]="leaveTypeForm.maxDaysAllowed"
-                name="maxDaysAllowed" min="1" placeholder="e.g., 10" required />
+
+            <div class="col-md-6">
+              <label class="form-label-premium">Annual Allocation (Days)</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-0 radius-start-14"><iconify-icon
+                    icon="solar:calendar-date-linear"></iconify-icon></span>
+                <input type="number" class="form-control input-premium border-start-0 radius-end-14"
+                  [(ngModel)]="leaveTypeForm.maxDaysAllowed" name="maxDaysAllowed" min="1" placeholder="e.g., 15"
+                  required />
+              </div>
             </div>
-            <div class="col-md-6 mb-20">
-              <label class="form-label fw-semibold text-primary-light text-sm mb-8">Status <span
-                  class="text-danger-600">*</span></label>
-              <div class="d-flex align-items-center gap-3 mt-2">
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" [(ngModel)]="leaveTypeForm.isActive" name="isActive"
-                    id="statusToggle">
-                  <label class="form-check-label fw-medium" for="statusToggle">{{ leaveTypeForm.isActive ? 'Active' :
-                    'Inactive' }}</label>
+
+            <div class="col-md-6">
+              <label class="form-label-premium">Availability Status</label>
+              <div class="p-16 radius-16 border d-flex align-items-center justify-content-between"
+                [style.background]="leaveTypeForm.isActive ? 'rgba(34, 197, 94, 0.05)' : 'rgba(239, 68, 68, 0.05)'">
+                <div>
+                  <span class="fw-bold d-block" [style.color]="leaveTypeForm.isActive ? '#16a34a' : '#dc2626'">
+                    {{ leaveTypeForm.isActive ? 'Active & Discoverable' : 'Inactive / Hidden' }}
+                  </span>
+                  <small class="text-muted">Currently visible to employees</small>
+                </div>
+                <div class="form-check form-switch p-0 m-0">
+                  <input class="form-check-input ms-0" type="checkbox" [(ngModel)]="leaveTypeForm.isActive"
+                    name="isActive" id="statusToggle" style="width: 50px; height: 26px;">
                 </div>
               </div>
             </div>
-            <div class="col-12">
-              <div class="d-flex align-items-center justify-content-center gap-3 mt-24">
-                <button type="button" (click)="closeModal()"
-                  class="btn btn-outline-danger text-md px-40 py-11 radius-8">Cancel</button>
-                <button type="submit" class="btn btn-primary text-md px-48 py-12 radius-8">{{ isEditMode ? 'Update' :
-                  'Save' }}</button>
+
+            <div class="col-12 text-center mt-30">
+              <div class="d-flex align-items-center justify-content-center gap-3">
+                <button type="button" (click)="closeModal()" class="cancel-btn-premium">Discard Changes</button>
+                <button type="submit" class="save-btn-premium">
+                  {{ isEditMode ? 'Update Configuration' : 'Save & Publish' }}
+                </button>
               </div>
             </div>
           </div>

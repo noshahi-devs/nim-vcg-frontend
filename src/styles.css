@@ -13,7 +13,6 @@ body {
   font-family: 'Inter', sans-serif !important;
   background: var(--bg-gradient);
 }
-
 .outstanding-card {
   background: var(--glass-bg);
   backdrop-filter: blur(12px);
