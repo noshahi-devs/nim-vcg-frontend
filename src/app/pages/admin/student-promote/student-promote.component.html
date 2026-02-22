@@ -155,7 +155,8 @@
 
           <div class="col-md-4">
             <label class="form-label fw-bold text-primary-700">Next Class</label>
-            <select class="form-select radius-8 h-45-px border-0 shadow-sm" [(ngModel)]="nextClassId">
+            <select class="form-select radius-8 h-45-px border-0 shadow-sm" [(ngModel)]="nextClassId"
+              (change)="onNextClassChange()">
               <option [value]="0">Select Class</option>
               <option *ngFor="let c of classes" [value]="c.standardId">{{ c.standardName }}</option>
             </select>
@@ -165,7 +166,7 @@
             <label class="form-label fw-bold text-primary-700">Next Section</label>
             <select class="form-select radius-8 h-45-px border-0 shadow-sm" [(ngModel)]="nextSectionId">
               <option [value]="0">Select Section</option>
-              <option *ngFor="let s of sections" [value]="s.sectionId">{{ s.sectionName }}</option>
+              <option *ngFor="let s of filteredNextSections" [value]="s.sectionId">{{ s.sectionName }}</option>
             </select>
           </div>
 

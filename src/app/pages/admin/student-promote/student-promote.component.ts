@@ -1,4 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
@@ -29,6 +30,7 @@ export class StudentPromoteComponent implements OnInit {
 
   classes: Standard[] = [];
   sections: Section[] = [];
+  filteredNextSections: Section[] = [];
 
   searchTerm: string = '';
   selectedClassId: number = 0;
@@ -43,6 +45,7 @@ export class StudentPromoteComponent implements OnInit {
   loading = false;
 
   constructor(
+    private router: Router,
     private studentService: StudentService,
     private standardService: StandardService,
     private sectionService: SectionService
@@ -127,6 +130,37 @@ export class StudentPromoteComponent implements OnInit {
     return visibleIds.length > 0 && visibleIds.every(id => this.selectedStudents.includes(id));
   }
 
+  onNextClassChange(): void {
+    const selectedClass = this.classes.find(c => c.standardId === Number(this.nextClassId));
+    if (selectedClass) {
+      this.filteredNextSections = this.sections.filter(s => s.className === selectedClass.standardName);
+
+      if (this.filteredNextSections.length === 0) {
+        Swal.fire({
+          title: 'Section Required',
+          text: `There are no sections created for ${selectedClass.standardName}. Please create a section for this class before promoting students.`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Create Section',
+          cancelButtonText: 'OK',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.router.navigate(['/section-add'], { queryParams: { className: selectedClass.standardName } });
+          }
+        });
+        this.nextSectionId = 0;
+      } else {
+        // Auto-select first section if available
+        this.nextSectionId = this.filteredNextSections[0].sectionId;
+      }
+    } else {
+      this.filteredNextSections = [];
+      this.nextSectionId = 0;
+    }
+  }
+
   promoteSelected(): void {
     if (!this.nextClassId || !this.nextSectionId) {
       Swal.fire('Warning', 'Please select destination class and section before promoting.', 'warning');
@@ -137,8 +171,8 @@ export class StudentPromoteComponent implements OnInit {
       return;
     }
 
-    const nextClass = this.classes.find(c => c.standardId === this.nextClassId)?.standardName;
-    const nextSection = this.sections.find(s => s.sectionId === this.nextSectionId)?.sectionName;
+    const nextClass = this.classes.find(c => c.standardId === Number(this.nextClassId))?.standardName;
+    const nextSection = this.sections.find(s => s.sectionId === Number(this.nextSectionId))?.sectionName;
 
     Swal.fire({
       title: 'Confirm Promotion',

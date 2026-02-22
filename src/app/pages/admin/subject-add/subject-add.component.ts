@@ -2,7 +2,7 @@ import { MarksService } from '../../../services/marks.service';
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { SubjectService } from '../../../services/subject.service';
@@ -34,12 +34,19 @@ export class SubjectAddComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private subjectService: SubjectService,
     private standardService: StandardService
   ) { }
 
   ngOnInit(): void {
     this.loadClasses();
+    // Check if a classId was passed via query params (e.g., from class-list quick action)
+    this.route.queryParams.subscribe(params => {
+      if (params['classId']) {
+        this.selectedClassId = Number(params['classId']);
+      }
+    });
   }
 
   loadClasses() {

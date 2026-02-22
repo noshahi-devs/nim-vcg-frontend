@@ -80,7 +80,7 @@
                   {{ staff.staffName }}
                 </h6>
                 <span class="text-secondary-light text-xs d-block mb-12">
-                  {{ staff.department?.departmentName || 'N/A' }}
+                  {{ getDesignationName(staff.designation) }}
                 </span>
 
                 <a [routerLink]="['/staff-view-profile', staff.staffId]"

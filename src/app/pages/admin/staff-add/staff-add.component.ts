@@ -26,6 +26,10 @@ export class StaffAddComponent implements AfterViewInit {
   formSubmitted = false;
   selectedFile!: File;
 
+  // String properties for date input binding
+  dobStr: string = '';
+  joiningDateStr: string = '';
+
   newStaff = {
     id: 0,
     staffName: '',
@@ -46,12 +50,20 @@ export class StaffAddComponent implements AfterViewInit {
     status: '',
     permanentAddress: '',
     section: '',
+    uniqueStaffAttendanceNumber: 0,
     bg: 'assets/images/user-grid/user-grid-bg1.png',
     imageUpload: new ImageUpload()
   };
 
   constructor(private staffService: StaffService, private router: Router) {
     this.setDefaultValues();
+  }
+
+  ngOnInit(): void {
+    // Initialize date strings (YYYY-MM-DD)
+    const today = new Date().toISOString().split('T')[0];
+    this.dobStr = today;
+    this.joiningDateStr = today;
   }
 
   setDefaultValues(): void {
@@ -141,16 +153,16 @@ export class StaffAddComponent implements AfterViewInit {
         const staffData: Staff = {
           staffId: 0,
           staffName: this.newStaff.staffName,
-          uniqueStaffAttendanceNumber: 1235, // Generate dynamically if needed
+          uniqueStaffAttendanceNumber: this.newStaff.uniqueStaffAttendanceNumber,
           gender: genderMap[this.newStaff.gender] ?? Gender.Male,
-          dob: this.newStaff.dob,
+          dob: this.dobStr,
           contactNumber1: this.newStaff.contactNumber1,
-          email: this.newStaff.email,
-          qualifications: this.newStaff.qualifications,
-          joiningDate: this.newStaff.joiningDate ? new Date(this.newStaff.joiningDate) : undefined,
+          email: this.newStaff.email || null,
+          qualifications: this.newStaff.qualifications || null,
+          joiningDate: this.joiningDateStr ? new Date(this.joiningDateStr) : undefined,
           designation: designationMap[this.newStaff.designation] ?? Designation.Other,
-          permanentAddress: this.newStaff.permanentAddress,
-          status: this.newStaff.status,
+          permanentAddress: this.newStaff.permanentAddress || null,
+          status: this.newStaff.status || null,
           imagePath: this.newStaff.profile,
           imageUpload: this.newStaff.imageUpload, // Correct type
           staffExperiences: []

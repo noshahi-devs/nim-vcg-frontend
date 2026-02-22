@@ -3,12 +3,7 @@
 
   <div class="card h-100 p-0 radius-12">
     <div class="card-header border-bottom bg-base py-16 px-24">
-      <form
-        #StudentForm="ngForm"
-        (ngSubmit)="onSubmit(StudentForm)"
-        novalidate
-        class="Student-form"
-      >
+      <form #StudentForm="ngForm" (ngSubmit)="onSubmit(StudentForm)" novalidate class="Student-form">
 
         <!-- Section ① – Basic Info -->
         <div class="form-section mb-4">
@@ -24,37 +19,10 @@
               <label class="form-label">
                 Student Name <span class="text-danger">*</span>
               </label>
-              <input
-                type="text"
-                class="form-control radius-8"
-                name="studentName"
-                placeholder="Enter Student Name"
-                [(ngModel)]="newStudent.studentName"
-                #studentName="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': studentName.invalid && studentName.touched }"
-              />
+              <input type="text" class="form-control radius-8" name="studentName" placeholder="Enter Student Name"
+                [(ngModel)]="newStudent.studentName" #studentName="ngModel" required
+                [ngClass]="{ 'is-invalid': studentName.invalid && studentName.touched }" />
               <small *ngIf="studentName.invalid && studentName.touched" class="text-danger">
-                This field is required
-              </small>
-            </div>
-
-            <!-- Roll No -->
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">
-                Roll No <span class="text-danger">*</span>
-              </label>
-              <input
-                type="number"
-                class="form-control radius-8"
-                name="uniqueStudentAttendanceNumber"
-                placeholder="Enter Roll Number"
-                [(ngModel)]="newStudent.uniqueStudentAttendanceNumber"
-                #uniqueStudentAttendanceNumber="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': uniqueStudentAttendanceNumber.invalid && uniqueStudentAttendanceNumber.touched }"
-              />
-              <small *ngIf="uniqueStudentAttendanceNumber.invalid && uniqueStudentAttendanceNumber.touched" class="text-danger">
                 This field is required
               </small>
             </div>
@@ -64,14 +32,9 @@
               <label class="form-label">
                 Gender <span class="text-danger">*</span>
               </label>
-              <select
-                class="form-control radius-8 form-select"
-                name="studentGender"
-                [(ngModel)]="newStudent.studentGender"
-                #studentGender="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': studentGender.invalid && studentGender.touched }"
-              >
+              <select class="form-control radius-8 form-select" name="studentGender"
+                [(ngModel)]="newStudent.studentGender" #studentGender="ngModel" required
+                [ngClass]="{ 'is-invalid': studentGender.invalid && studentGender.touched }">
                 <option value="">Select Gender</option>
                 <option [value]="GenderList.Male">Male</option>
                 <option [value]="GenderList.Female">Female</option>
@@ -87,15 +50,8 @@
               <label class="form-label">
                 Date of Birth <span class="text-danger">*</span>
               </label>
-              <input
-                type="date"
-                class="form-control radius-8"
-                name="studentDOB"
-                [(ngModel)]="newStudent.studentDOB"
-                #studentDOB="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': studentDOB.invalid && studentDOB.touched }"
-              />
+              <input type="date" class="form-control radius-8" name="studentDOB" [(ngModel)]="studentDOBStr"
+                #studentDOB="ngModel" required [ngClass]="{ 'is-invalid': studentDOB.invalid && studentDOB.touched }" />
               <small *ngIf="studentDOB.invalid && studentDOB.touched" class="text-danger">
                 This field is required
               </small>
@@ -106,25 +62,10 @@
               <label class="form-label">
                 Class <span class="text-danger">*</span>
               </label>
-              <select
-                class="form-control radius-8 form-select"
-                name="class"
-                [(ngModel)]="newStudent.standardId"
-                #standardId="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': standardId.invalid && standardId.touched }"
-              >
+              <select class="form-control radius-8 form-select" name="class" [(ngModel)]="newStudent.standardId"
+                #standardId="ngModel" required [ngClass]="{ 'is-invalid': standardId.invalid && standardId.touched }">
                 <option [ngValue]="null">Select Class</option>
-                <option [value]="1">Class 1</option>
-                <option [value]="2">Class 2</option>
-                <option [value]="3">Class 3</option>
-                <option [value]="4">Class 4</option>
-                <option [value]="5">Class 5</option>
-                <option [value]="6">Class 6</option>
-                <option [value]="7">Class 7</option>
-                <option [value]="8">Class 8</option>
-                <option [value]="9">Class 9</option>
-                <option [value]="10">Class 10</option>
+                <option *ngFor="let c of classes" [ngValue]="c.standardId">{{ c.standardName }}</option>
               </select>
               <small *ngIf="standardId.invalid && standardId.touched" class="text-danger">
                 This field is required
@@ -136,14 +77,8 @@
               <label class="form-label">
                 Section <span class="text-danger">*</span>
               </label>
-              <select
-                class="form-control radius-8 form-select"
-                name="section"
-                [(ngModel)]="newStudent.section"
-                #section="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': section.invalid && section.touched }"
-              >
+              <select class="form-control radius-8 form-select" name="section" [(ngModel)]="newStudent.section"
+                #section="ngModel" required [ngClass]="{ 'is-invalid': section.invalid && section.touched }">
                 <option value="">Select Section</option>
                 <option value="A">Section A</option>
                 <option value="B">Section B</option>
@@ -158,13 +93,8 @@
             <!-- Profile Picture -->
             <div class="col-12 col-sm-6 col-md-4">
               <label class="form-label">Profile Picture</label>
-              <input
-                type="file"
-                class="form-control radius-8"
-                id="imageUpload"
-                (change)="onImageSelected($event)"
-                accept=".png, .jpg, .jpeg"
-              />
+              <input type="file" class="form-control radius-8" id="imageUpload" (change)="onImageSelected($event)"
+                accept=".png, .jpg, .jpeg" />
             </div>
           </div>
         </div>
@@ -182,15 +112,9 @@
               <label class="form-label">
                 Admission Date <span class="text-danger">*</span>
               </label>
-              <input
-                type="date"
-                class="form-control radius-8"
-                name="admissionDate"
-                [(ngModel)]="newStudent.admissionDate"
-                #admissionDate="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': admissionDate.invalid && admissionDate.touched }"
-              />
+              <input type="date" class="form-control radius-8" name="admissionDate" [(ngModel)]="admissionDateStr"
+                #admissionDate="ngModel" required
+                [ngClass]="{ 'is-invalid': admissionDate.invalid && admissionDate.touched }" />
               <small *ngIf="admissionDate.invalid && admissionDate.touched" class="text-danger">
                 This field is required
               </small>
@@ -199,14 +123,9 @@
             <!-- Previous School -->
             <div class="col-12 col-sm-6 col-md-4">
               <label class="form-label">Previous School</label>
-              <input
-                type="text"
-                class="form-control radius-8"
-                name="previousSchool"
-                placeholder="Enter Previous School Name"
-                [(ngModel)]="newStudent.previousSchool"
-                #previousSchool="ngModel"
-              />
+              <input type="text" class="form-control radius-8" name="previousSchool"
+                placeholder="Enter Previous School Name" [(ngModel)]="newStudent.previousSchool"
+                #previousSchool="ngModel" />
             </div>
 
             <!-- Status -->
@@ -214,14 +133,8 @@
               <label class="form-label">
                 Status <span class="text-danger">*</span>
               </label>
-              <select
-                class="form-control radius-8 form-select"
-                name="status"
-                [(ngModel)]="newStudent.status"
-                #status="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': status.invalid && status.touched }"
-              >
+              <select class="form-control radius-8 form-select" name="status" [(ngModel)]="newStudent.status"
+                #status="ngModel" required [ngClass]="{ 'is-invalid': status.invalid && status.touched }">
                 <option value="">Select Status</option>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -247,21 +160,16 @@
               <label class="form-label">
                 Phone <span class="text-danger">*</span>
               </label>
-              <input
-                type="text"
-                class="form-control radius-8"
-                name="studentContactNumber1"
-                placeholder="0300-1234567"
-                [(ngModel)]="newStudent.studentContactNumber1"
-                pattern="^03\d{2}-\d{7}$"
-                #studentContactNumber1="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': studentContactNumber1.invalid && studentContactNumber1.touched }"
-              />
-              <small *ngIf="studentContactNumber1.errors?.['required'] && studentContactNumber1.touched" class="text-danger">
+              <input type="text" class="form-control radius-8" name="studentContactNumber1" placeholder="0300-1234567"
+                [(ngModel)]="newStudent.studentContactNumber1" pattern="^03\d{2}-\d{7}$"
+                #studentContactNumber1="ngModel" required
+                [ngClass]="{ 'is-invalid': studentContactNumber1.invalid && studentContactNumber1.touched }" />
+              <small *ngIf="studentContactNumber1.errors?.['required'] && studentContactNumber1.touched"
+                class="text-danger">
                 This field is required
               </small>
-              <small *ngIf="studentContactNumber1.errors?.['pattern'] && studentContactNumber1.touched" class="text-danger">
+              <small *ngIf="studentContactNumber1.errors?.['pattern'] && studentContactNumber1.touched"
+                class="text-danger">
                 Invalid format
               </small>
             </div>
@@ -271,16 +179,9 @@
               <label class="form-label">
                 Guardian Name <span class="text-danger">*</span>
               </label>
-              <input
-                type="text"
-                class="form-control radius-8"
-                name="guardianName"
-                placeholder="Enter Guardian Name"
-                [(ngModel)]="newStudent.fatherName"
-                #guardianName="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': guardianName.invalid && guardianName.touched }"
-              />
+              <input type="text" class="form-control radius-8" name="guardianName" placeholder="Enter Guardian Name"
+                [(ngModel)]="newStudent.fatherName" #guardianName="ngModel" required
+                [ngClass]="{ 'is-invalid': guardianName.invalid && guardianName.touched }" />
               <small *ngIf="guardianName.invalid && guardianName.touched" class="text-danger">
                 This field is required
               </small>
@@ -291,17 +192,9 @@
               <label class="form-label">
                 Guardian Phone <span class="text-danger">*</span>
               </label>
-              <input
-                type="text"
-                class="form-control radius-8"
-                name="guardianPhone"
-                placeholder="0300-1234567"
-                [(ngModel)]="newStudent.guardianPhone"
-                pattern="^03\d{2}-\d{7}$"
-                #guardianPhone="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': guardianPhone.invalid && guardianPhone.touched }"
-              />
+              <input type="text" class="form-control radius-8" name="guardianPhone" placeholder="0300-1234567"
+                [(ngModel)]="newStudent.guardianPhone" pattern="^03\d{2}-\d{7}$" #guardianPhone="ngModel" required
+                [ngClass]="{ 'is-invalid': guardianPhone.invalid && guardianPhone.touched }" />
               <small *ngIf="guardianPhone.errors?.['required'] && guardianPhone.touched" class="text-danger">
                 This field is required
               </small>
@@ -315,16 +208,10 @@
               <label class="form-label">
                 Address <span class="text-danger">*</span>
               </label>
-              <textarea
-                class="form-control radius-8"
-                rows="3"
-                name="permanentAddress"
-                placeholder="Enter complete permanentAddress"
-                [(ngModel)]="newStudent.permanentAddress"
-                #permanentAddress="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': permanentAddress.invalid && permanentAddress.touched }"
-              ></textarea>
+              <textarea class="form-control radius-8" rows="3" name="permanentAddress"
+                placeholder="Enter complete permanentAddress" [(ngModel)]="newStudent.permanentAddress"
+                #permanentAddress="ngModel" required
+                [ngClass]="{ 'is-invalid': permanentAddress.invalid && permanentAddress.touched }"></textarea>
               <small *ngIf="permanentAddress.invalid && permanentAddress.touched" class="text-danger">
                 This field is required
               </small>
@@ -335,18 +222,12 @@
 
         <!-- Submit & Cancel -->
         <div class="d-flex align-items-center justify-content-center gap-3 mt-4">
-          <button
-            type="button"
-            (click)="cancel()"
-            class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
-          >
+          <button type="button" (click)="cancel()"
+            class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
             Cancel
           </button>
 
-          <button
-            type="submit"
-            class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
-          >
+          <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
             Save
           </button>
         </div>
@@ -389,5 +270,4 @@
       </div>
     </div>
   </div>
-
 </div>

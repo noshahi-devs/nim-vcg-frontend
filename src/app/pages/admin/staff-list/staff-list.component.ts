@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { StaffService } from '../../../services/staff.service';
+import { Designation } from '../../../Models/staff';
 import { finalize } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -83,6 +84,15 @@ export class StaffListComponent implements OnInit, AfterViewInit {
       staff.department?.departmentName?.toLowerCase().includes(search) ||
       staff.contactNumber1?.includes(search)
     );
+  }
+
+  getDesignationName(designation: any): string {
+    if (designation === null || designation === undefined) return 'N/A';
+    // If it's a number (enum value), convert to string name
+    if (typeof designation === 'number') {
+      return Designation[designation] || 'N/A';
+    }
+    return designation;
   }
 
   ngAfterViewInit() {

@@ -76,12 +76,24 @@
                 {{ classItem.standardName }}
               </h6>
 
-              <span class="text-secondary-light text-xs d-block mb-8">
+              <!-- Subjects Count with Quick Add -->
+              <span class="text-secondary-light text-xs d-flex align-items-center justify-content-center gap-1 mb-8">
+                <iconify-icon icon="solar:book-bold-duotone" class="text-sm"></iconify-icon>
                 Subjects: {{ classItem.subjects?.length || 0 }}
+                <a [routerLink]="['/subject-add']" [queryParams]="{ classId: classItem.standardId }"
+                  class="btn btn-sm btn-outline-primary py-0 px-6 ms-4" style="font-size:10px; border-radius:6px;">
+                  + Add
+                </a>
               </span>
 
-              <span class="text-secondary-light text-xs d-block">
+              <!-- Students Count with Quick Add -->
+              <span class="text-secondary-light text-xs d-flex align-items-center justify-content-center gap-1">
+                <iconify-icon icon="solar:users-group-two-rounded-bold-duotone" class="text-sm"></iconify-icon>
                 Students: {{ classItem.students?.length || 0 }}
+                <a [routerLink]="['/student-add']" [queryParams]="{ classId: classItem.standardId }"
+                  class="btn btn-sm btn-outline-success py-0 px-6 ms-4" style="font-size:10px; border-radius:6px;">
+                  + Add
+                </a>
               </span>
             </div>
           </div>

@@ -4,8 +4,8 @@ import { Standard } from './standard';
 
 export class Student {
   studentId!: number;
-  admissionNo!: number;
-  enrollmentNo!: number;
+  admissionNo!: number | null;
+  enrollmentNo!: number | null;
   uniqueStudentAttendanceNumber!: number;
   studentName!: string;
   imagePath?: string = '';
@@ -29,7 +29,7 @@ export class Student {
   motherContactNumber?: string | null;
   localGuardianName?: string | null;
   localGuardianContactNumber?: string | null;
-  standardId!: number;
+  standardId!: number | null;
   standard?: Standard;
   guardianPhone: string = '';
   admissionDate: Date | string = new Date(); // ✅ allow string for API

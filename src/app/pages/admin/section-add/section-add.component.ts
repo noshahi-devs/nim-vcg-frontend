@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { SectionService } from '../../../services/section.service';
@@ -35,6 +35,7 @@ export class SectionAddComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private sectionService: SectionService,
     private staffService: StaffService,
     private standardService: StandardService
@@ -49,6 +50,13 @@ export class SectionAddComponent implements OnInit {
 
     this.standardService.getStandards().subscribe(data => {
       this.classes = data;
+
+      // Check for pre-filled class from query params
+      this.route.queryParams.subscribe(params => {
+        if (params['className']) {
+          this.newSection.className = params['className'];
+        }
+      });
     });
   }
 

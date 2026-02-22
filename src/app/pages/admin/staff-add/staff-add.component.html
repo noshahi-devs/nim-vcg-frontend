@@ -3,12 +3,7 @@
 
   <div class="card h-100 p-0 radius-12">
     <div class="card-header border-bottom bg-base py-16 px-24">
-      <form
-        #staffForm="ngForm"
-        (ngSubmit)="onSubmit(staffForm)"
-        novalidate
-        class="staff-form"
-      >
+      <form #staffForm="ngForm" (ngSubmit)="onSubmit(staffForm)" novalidate class="staff-form">
         <!-- Basic Information -->
         <div class="form-section mb-4">
           <h5 class="section-title fw-semibold mb-2">
@@ -21,16 +16,9 @@
               <label class="form-label">
                 Staff Name <span class="text-danger">*</span>
               </label>
-              <input
-                type="text"
-                class="form-control radius-8"
-                name="staffName"
-                placeholder="Enter Name"
-                [(ngModel)]="newStaff.staffName"
-                #staffName="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': staffName.invalid && staffName.touched }"
-              />
+              <input type="text" class="form-control radius-8" name="staffName" placeholder="Enter Name"
+                [(ngModel)]="newStaff.staffName" #staffName="ngModel" required
+                [ngClass]="{ 'is-invalid': staffName.invalid && staffName.touched }" />
               <small *ngIf="staffName.invalid && staffName.touched" class="text-danger">
                 This field is required
               </small>
@@ -40,17 +28,9 @@
               <label class="form-label">
                 Mobile No <span class="text-danger">*</span>
               </label>
-              <input
-                type="text"
-                class="form-control radius-8"
-                name="contactNumber1"
-                placeholder="0300-1234567"
-                [(ngModel)]="newStaff.contactNumber1"
-                pattern="^03\d{2}-\d{7}$"
-                #contactNumber1="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': contactNumber1.invalid && contactNumber1.touched }"
-              />
+              <input type="text" class="form-control radius-8" name="contactNumber1" placeholder="0300-1234567"
+                [(ngModel)]="newStaff.contactNumber1" pattern="^03\d{2}-\d{7}$" #contactNumber1="ngModel" required
+                [ngClass]="{ 'is-invalid': contactNumber1.invalid && contactNumber1.touched }" />
               <small *ngIf="contactNumber1.errors?.['required'] && contactNumber1.touched" class="text-danger">
                 This field is required
               </small>
@@ -61,28 +41,17 @@
 
             <div class="col-12 col-sm-6 col-md-4">
               <label class="form-label">Add Picture</label>
-              <input
-                type="file"
-                class="form-control radius-8"
-                id="imageUpload"
-                accept=".png, .jpg, .jpeg"
-                (change)="onImageSelected($event)"
-              />
+              <input type="file" class="form-control radius-8" id="imageUpload" accept=".png, .jpg, .jpeg"
+                (change)="onImageSelected($event)" />
             </div>
 
             <div class="col-12 col-sm-6 col-md-4">
               <label class="form-label">
                 Joining Date <span class="text-danger">*</span>
               </label>
-              <input
-                type="date"
-                class="form-control radius-8"
-                name="joiningDate"
-                [(ngModel)]="newStaff.joiningDate"
-                #joiningDate="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': joiningDate.invalid && joiningDate.touched }"
-              />
+              <input type="date" class="form-control radius-8" name="joiningDate" [(ngModel)]="joiningDateStr"
+                #joiningDate="ngModel" required
+                [ngClass]="{ 'is-invalid': joiningDate.invalid && joiningDate.touched }" />
               <small *ngIf="joiningDate.invalid && joiningDate.touched" class="text-danger">
                 This field is required
               </small>
@@ -90,16 +59,9 @@
 
             <div class="col-12 col-sm-6 col-md-4">
               <label class="form-label">CNIC</label>
-              <input
-                type="text"
-                class="form-control radius-8"
-                name="cnic"
-                placeholder="33301-1234567-1"
-                [(ngModel)]="newStaff.cnic"
-                pattern="^\d{5}-\d{7}-\d{1}$"
-                #cnic="ngModel"
-                [ngClass]="{ 'is-invalid': cnic.invalid && cnic.touched }"
-              />
+              <input type="text" class="form-control radius-8" name="cnic" placeholder="33301-1234567-1"
+                [(ngModel)]="newStaff.cnic" pattern="^\d{5}-\d{7}-\d{1}$" #cnic="ngModel"
+                [ngClass]="{ 'is-invalid': cnic.invalid && cnic.touched }" />
               <small *ngIf="cnic.invalid && cnic.touched" class="text-danger">
                 Invalid format
               </small>
@@ -109,14 +71,9 @@
               <label class="form-label">
                 Role <span class="text-danger">*</span>
               </label>
-              <select
-                class="form-control radius-8 form-select"
-                name="designation"
-                [(ngModel)]="newStaff.designation"
-                #designation="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': designation.invalid && designation.touched }"
-              >
+              <select class="form-control radius-8 form-select" name="designation" [(ngModel)]="newStaff.designation"
+                #designation="ngModel" required
+                [ngClass]="{ 'is-invalid': designation.invalid && designation.touched }">
                 <option value="">Select Role</option>
                 <option value="Instructor">Teacher</option>
                 <option value="Professor">Professor</option>
@@ -142,11 +99,7 @@
           <div class="row g-3 p-12">
             <div class="col-12 col-sm-6 col-md-4">
               <label class="form-label">Experience</label>
-              <select
-                class="form-control radius-8 form-select"
-                [(ngModel)]="newStaff.experience"
-                name="experience"
-              >
+              <select class="form-control radius-8 form-select" [(ngModel)]="newStaff.experience" name="experience">
                 <option value="">Select Experience</option>
                 <option value="Fresh">Fresh</option>
                 <option value="1+">1+ Year</option>
@@ -158,28 +111,17 @@
                 <option value="Other">Other</option>
               </select>
 
-              <input
-                *ngIf="newStaff.experience === 'Other'"
-                type="text"
-                class="form-control mt-2 radius-8"
-                placeholder="Enter experience in years/months"
-                [(ngModel)]="newStaff.customExperience"
-                name="customExperience"
-              />
+              <input *ngIf="newStaff.experience === 'Other'" type="text" class="form-control mt-2 radius-8"
+                placeholder="Enter experience in years/months" [(ngModel)]="newStaff.customExperience"
+                name="customExperience" />
             </div>
 
             <div class="col-12 col-sm-6 col-md-4">
               <label class="form-label">
                 Gender <span class="text-danger">*</span>
               </label>
-              <select
-                class="form-control radius-8 form-select"
-                name="gender"
-                [(ngModel)]="newStaff.gender"
-                #gender="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': gender.invalid && gender.touched }"
-              >
+              <select class="form-control radius-8 form-select" name="gender" [(ngModel)]="newStaff.gender"
+                #gender="ngModel" required [ngClass]="{ 'is-invalid': gender.invalid && gender.touched }">
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -193,15 +135,8 @@
               <label class="form-label">
                 Date of Birth <span class="text-danger">*</span>
               </label>
-              <input
-                type="date"
-                class="form-control radius-8"
-                name="dob"
-                [(ngModel)]="newStaff.dob"
-                #dob="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': dob.invalid && dob.touched }"
-              />
+              <input type="date" class="form-control radius-8" name="dob" [(ngModel)]="dobStr" #dob="ngModel" required
+                [ngClass]="{ 'is-invalid': dob.invalid && dob.touched }" />
               <small *ngIf="dob.invalid && dob.touched" class="text-danger">
                 This field is required
               </small>
@@ -212,14 +147,9 @@
               <label class="form-label">
                 Qualification <span class="text-danger">*</span>
               </label>
-              <select
-                class="form-control radius-8 form-select"
-                name="qualifications"
-                [(ngModel)]="newStaff.qualifications"
-                #qualifications="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': qualifications.invalid && qualifications.touched }"
-              >
+              <select class="form-control radius-8 form-select" name="qualifications"
+                [(ngModel)]="newStaff.qualifications" #qualifications="ngModel" required
+                [ngClass]="{ 'is-invalid': qualifications.invalid && qualifications.touched }">
                 <option value="">Select Qualification</option>
                 <option value="masters">Masters</option>
                 <option value="bachelors">Bachelors</option>
@@ -237,21 +167,13 @@
             </div>
 
             <!-- Program Duration & Subject handled correctly -->
-            <div
-              class="col-12 col-sm-6 col-md-4"
-              *ngIf="newStaff.qualifications === 'associateDegree'"
-            >
+            <div class="col-12 col-sm-6 col-md-4" *ngIf="newStaff.qualifications === 'associateDegree'">
               <label class="form-label">
                 Program Duration <span class="text-danger">*</span>
               </label>
-              <select
-                class="form-control radius-8 form-select"
-                [(ngModel)]="newStaff.programDuration"
-                name="programDuration"
-                #programDuration="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': programDuration.invalid && programDuration.touched }"
-              >
+              <select class="form-control radius-8 form-select" [(ngModel)]="newStaff.programDuration"
+                name="programDuration" #programDuration="ngModel" required
+                [ngClass]="{ 'is-invalid': programDuration.invalid && programDuration.touched }">
                 <option value="">Select Duration</option>
                 <option value="2-year">2-Year Program</option>
                 <option value="4-year">4-Year Program</option>
@@ -262,35 +184,30 @@
             </div>
 
             <!-- Subject -->
-            <div
-              class="col-12 col-sm-6 col-md-4"
-              *ngIf="newStaff.qualifications === 'bachelors' || newStaff.qualifications === 'associateDegree'"
-            >
+            <div class="col-12 col-sm-6 col-md-4"
+              *ngIf="newStaff.qualifications === 'bachelors' || newStaff.qualifications === 'associateDegree'">
               <label class="form-label">
                 Subject <span class="text-danger">*</span>
               </label>
-              <select
-                class="form-control radius-8 form-select"
-                [(ngModel)]="newStaff.subject"
-                name="subject"
-                #subject="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': subject.invalid && subject.touched }"
-              >
+              <select class="form-control radius-8 form-select" [(ngModel)]="newStaff.subject" name="subject"
+                #subject="ngModel" required [ngClass]="{ 'is-invalid': subject.invalid && subject.touched }">
                 <option value="">Select Subject</option>
                 <option *ngIf="newStaff.qualifications === 'associateDegree'" value="arts">Arts</option>
                 <option *ngIf="newStaff.qualifications === 'associateDegree'" value="science">Science</option>
                 <option *ngIf="newStaff.qualifications === 'associateDegree'" value="commerce">Commerce</option>
-                <option *ngIf="newStaff.qualifications === 'associateDegree'" value="computerScience">Computer Science</option>
+                <option *ngIf="newStaff.qualifications === 'associateDegree'" value="computerScience">Computer Science
+                </option>
 
-                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsComputerScience">BS Computer Science</option>
+                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsComputerScience">BS Computer Science
+                </option>
                 <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsEnglish">BS English</option>
                 <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsMath">BS Mathematics</option>
                 <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsPhysics">BS Physics</option>
                 <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsChemistry">BS Chemistry</option>
                 <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsEconomics">BS Economics</option>
                 <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsEducation">BS Education</option>
-                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsIslamicStudies">BS Islamic Studies</option>
+                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsIslamicStudies">BS Islamic Studies
+                </option>
 
                 <option value="other">Other</option>
               </select>
@@ -301,16 +218,9 @@
 
             <div class="col-12 col-sm-6 col-md-4" *ngIf="newStaff.subject === 'other'">
               <label class="form-label">Other Subject <span class="text-danger">*</span></label>
-              <input
-                type="text"
-                class="form-control radius-8"
-                name="customSubject"
-                placeholder="Enter subject name"
-                [(ngModel)]="newStaff.customSubject"
-                #customSubject="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': customSubject.invalid && customSubject.touched }"
-              />
+              <input type="text" class="form-control radius-8" name="customSubject" placeholder="Enter subject name"
+                [(ngModel)]="newStaff.customSubject" #customSubject="ngModel" required
+                [ngClass]="{ 'is-invalid': customSubject.invalid && customSubject.touched }" />
               <small *ngIf="customSubject.invalid && customSubject.touched" class="text-danger">
                 This field is required
               </small>
@@ -319,24 +229,13 @@
             <!-- Email & Status -->
             <div class="col-12 col-sm-6 col-md-4">
               <label class="form-label">Email</label>
-              <input
-                type="email"
-                class="form-control radius-8"
-                name="email"
-                [(ngModel)]="newStaff.email"
-              />
+              <input type="email" class="form-control radius-8" name="email" [(ngModel)]="newStaff.email" />
             </div>
 
             <div class="col-12 col-sm-6 col-md-4">
               <label class="form-label">Status <span class="text-danger">*</span></label>
-              <select
-                class="form-control radius-8 form-select"
-                name="status"
-                [(ngModel)]="newStaff.status"
-                #status="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': status.invalid && status.touched }"
-              >
+              <select class="form-control radius-8 form-select" name="status" [(ngModel)]="newStaff.status"
+                #status="ngModel" required [ngClass]="{ 'is-invalid': status.invalid && status.touched }">
                 <option value="">Select Status</option>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -348,16 +247,10 @@
 
             <div class="col-12">
               <label class="form-label">Address <span class="text-danger">*</span></label>
-              <textarea
-                class="form-control radius-8"
-                rows="3"
-                name="permanentAddress"
-                placeholder="Village 97 JB, Gojra, Toba Tek Singh"
-                [(ngModel)]="newStaff.permanentAddress"
-                #permanentAddress="ngModel"
-                required
-                [ngClass]="{ 'is-invalid': permanentAddress.invalid && permanentAddress.touched }"
-              ></textarea>
+              <textarea class="form-control radius-8" rows="3" name="permanentAddress"
+                placeholder="Village 97 JB, Gojra, Toba Tek Singh" [(ngModel)]="newStaff.permanentAddress"
+                #permanentAddress="ngModel" required
+                [ngClass]="{ 'is-invalid': permanentAddress.invalid && permanentAddress.touched }"></textarea>
               <small *ngIf="permanentAddress.invalid && permanentAddress.touched" class="text-danger">
                 This field is required
               </small>
@@ -367,18 +260,12 @@
 
         <!-- Buttons -->
         <div class="d-flex align-items-center justify-content-center gap-3 mt-4">
-          <button
-            type="button"
-            (click)="cancel()"
-            class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
-          >
+          <button type="button" (click)="cancel()"
+            class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
             Cancel
           </button>
 
-          <button
-            type="submit"
-            class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
-          >
+          <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
             Save
           </button>
         </div>
