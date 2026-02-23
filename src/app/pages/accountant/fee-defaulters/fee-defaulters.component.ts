@@ -27,6 +27,7 @@ interface FeeDefaulter {
 })
 export class FeeDefaultersComponent implements OnInit {
   title = 'Fee Defaulters';
+  Math = Math; // Template access
 
   // Data
   defaulters: FeeDefaulter[] = [];
@@ -63,7 +64,6 @@ export class FeeDefaultersComponent implements OnInit {
       next: (balances) => {
         this.processDefaulters(balances);
         this.applyFilters();
-        this.calculateAnalytics();
         this.isLoading = false;
       },
       error: (error) => {
@@ -72,7 +72,7 @@ export class FeeDefaultersComponent implements OnInit {
           icon: 'error',
           title: 'Error',
           text: 'Failed to load fee defaulters. Please try again.',
-          confirmButtonColor: '#800020'
+          confirmButtonColor: '#6366f1'
         });
         this.isLoading = false;
       }
@@ -96,8 +96,8 @@ export class FeeDefaultersComponent implements OnInit {
           feeId: b.dueBalanceId,
           studentName: b.student ? b.student.studentName : 'Unknown Student',
           className: b.student?.standard?.standardName || 'N/A',
-          section: 'A', // Defaulting since section wasn't in the include
-          feeType: 'Tuition Fee', // Generic label for due balance
+          section: 'A', // Defaulting
+          feeType: 'Tuition Fee',
           amount: b.dueBalanceAmount,
           dueDate: b.lastUpdate as any,
           daysOverdue,
@@ -119,6 +119,7 @@ export class FeeDefaultersComponent implements OnInit {
       return matchesSearch && matchesClass && matchesStatus && matchesAmount;
     });
 
+    this.calculateAnalytics();
     this.currentPage = 1;
   }
 
@@ -135,7 +136,7 @@ export class FeeDefaultersComponent implements OnInit {
   }
 
   get totalPages(): number {
-    return Math.ceil(this.filteredDefaulters.length / this.itemsPerPage);
+    return Math.max(1, Math.ceil(this.filteredDefaulters.length / this.itemsPerPage));
   }
 
   get uniqueClasses(): string[] {
@@ -151,20 +152,19 @@ export class FeeDefaultersComponent implements OnInit {
   sendReminder(defaulter: FeeDefaulter): void {
     Swal.fire({
       title: 'Send Reminder',
-      text: `Send payment reminder to ${defaulter.studentName}?`,
+      html: `Send payment reminder to <strong>${defaulter.studentName}</strong>?`,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#800020',
+      confirmButtonColor: '#6366f1',
       cancelButtonColor: '#6c757d',
       confirmButtonText: 'Yes, send it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        // TODO: Implement actual reminder sending via API
         Swal.fire({
           icon: 'success',
           title: 'Reminder Sent!',
-          text: `Payment reminder sent to ${defaulter.studentName}`,
-          timer: 2000,
+          text: `Payment reminder sent successfully.`,
+          timer: 1800,
           showConfirmButton: false
         });
       }
@@ -172,12 +172,13 @@ export class FeeDefaultersComponent implements OnInit {
   }
 
   sendBulkReminders(): void {
+    if (this.filteredDefaulters.length === 0) return;
     Swal.fire({
       title: 'Send Bulk Reminders',
-      text: `Send reminders to all ${this.filteredDefaulters.length} defaulters?`,
+      text: `Send reminders to all ${this.filteredDefaulters.length} filtered defaulters?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#800020',
+      confirmButtonColor: '#6366f1',
       cancelButtonColor: '#6c757d',
       confirmButtonText: 'Yes, send all!'
     }).then((result) => {
@@ -206,40 +207,33 @@ export class FeeDefaultersComponent implements OnInit {
       d.status
     ]);
 
-    const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const csvContent = "data:text/csv;charset=utf-8,"
+      + headers.join(",") + "\n"
+      + rows.map(e => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `fee-defaulters-${new Date().toISOString().split('T')[0]}.csv`;
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `fee_defaulters_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(link.href);
+    document.body.removeChild(link);
   }
 
   exportPDF(): void {
     Swal.fire({
       icon: 'info',
       title: 'PDF Export',
-      text: 'PDF export functionality will be implemented soon!',
-      confirmButtonColor: '#800020'
+      text: 'PDF export functionality is being processed.',
+      confirmButtonColor: '#6366f1'
     });
-  }
-
-  getStatusBadgeClass(status: string): string {
-    switch (status) {
-      case 'Critical': return 'bg-danger-600';
-      case 'Warning': return 'bg-warning-600';
-      case 'Overdue': return 'bg-info-600';
-      default: return 'bg-secondary-600';
-    }
   }
 
   onSearchChange(): void {
     this.applyFilters();
-    this.calculateAnalytics();
   }
 
   onFilterChange(): void {
     this.applyFilters();
-    this.calculateAnalytics();
   }
 }

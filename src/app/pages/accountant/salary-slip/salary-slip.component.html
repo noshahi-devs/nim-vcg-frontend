@@ -2,163 +2,154 @@
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
   <!-- Search Staff Section -->
-  <div class="card radius-12 mb-4">
-    <div class="card-body p-24">
-      <div class="row g-3">
-        <div class="col-md-12">
-          <label class="form-label fw-semibold">Search Staff</label>
-          <div class="position-relative">
-            <input type="text" class="form-control radius-8 ps-5" [(ngModel)]="searchQuery"
-              placeholder="Search by staff name, ID, or role..." />
-            <iconify-icon icon="mdi:magnify"
-              class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary-light"></iconify-icon>
-          </div>
-        </div>
+  <div class="search-card-premium mb-4">
+    <div class="card-body p-4">
+      <div class="search-input-wrapper">
+        <input type="text" class="form-control-premium" [(ngModel)]="searchQuery"
+          placeholder="Search by staff name, ID, or role..." />
+        <iconify-icon icon="mdi:magnify" class="search-icon-float"></iconify-icon>
       </div>
     </div>
   </div>
 
-  <!-- Salary Slips Cards -->
+  <!-- Salary Slips Cards Grid -->
   <div class="row g-4 mb-4">
     <div class="col-xxl-4 col-md-6" *ngFor="let slip of paginatedRecords">
-      <div class="card radius-12 shadow-sm h-100 salary-card">
-        <div class="card-body p-24">
-          <div class="d-flex align-items-center gap-3 mb-20 pb-20 border-bottom">
-            <div
-              class="w-64-px h-64-px bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-              <span class="text-white fw-bold" style="font-size: 24px;">{{ getProfileInitials(slip.staffName) }}</span>
-            </div>
-            <div class="flex-grow-1">
-              <h5 class="fw-bold mb-1">{{ slip.staffName }}</h5>
-              <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-                <span class="badge bg-neutral-200 text-neutral-900 px-2 py-1">{{ slip.staffId }}</span>
-              </div>
-              <span class="text-secondary-light">{{ slip.role }}</span>
+      <div class="salary-card-glass">
+        <div class="card-accent-bar"></div>
+
+        <!-- Profile Header -->
+        <div class="profile-section">
+          <div class="avatar-glass">
+            {{ getProfileInitials(slip.staffName) }}
+          </div>
+          <div class="staff-info-text">
+            <h5 class="staff-name">{{ slip.staffName }}</h5>
+            <div class="d-flex align-items-center">
+              <span class="staff-id-badge">{{ slip.staffId }}</span>
+              <span class="staff-role">{{ slip.role }}</span>
             </div>
           </div>
+        </div>
 
-          <!-- Salary Details -->
-          <div class="mb-20">
-            <div class="d-flex align-items-center justify-content-between mb-12 pb-12 border-bottom">
-              <span class="text-secondary-light fw-medium">Salary Month:</span>
-              <span class="fw-bold">{{ getMonthName(slip.month) }}</span>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-12 pb-12 border-bottom">
-              <span class="text-secondary-light fw-medium">Payment Date:</span>
-              <span class="fw-bold">{{ slip.date | date:'mediumDate' }}</span>
-            </div>
-
-            <!-- Earnings Section -->
-            <div class="mt-3 mb-2">
-              <h6 class="fw-bold text-success-600 mb-2">
-                <iconify-icon icon="mdi:cash-plus" class="me-1"></iconify-icon>Earnings
-              </h6>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-8">
-              <span class="text-secondary-light">Basic Salary:</span>
-              <span class="fw-semibold">PKR {{ slip.basicSalary | number }}</span>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-8" *ngIf="slip.festivalBonus > 0">
-              <span class="text-secondary-light">Festival Bonus:</span>
-              <span class="fw-semibold text-success-600">PKR {{ slip.festivalBonus | number }}</span>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-8" *ngIf="slip.allowance > 0">
-              <span class="text-secondary-light">General Allowance:</span>
-              <span class="fw-semibold text-success-600">PKR {{ slip.allowance | number }}</span>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-8" *ngIf="slip.medicalAllowance > 0">
-              <span class="text-secondary-light">Medical Allowance:</span>
-              <span class="fw-semibold text-success-600">PKR {{ slip.medicalAllowance | number }}</span>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-8" *ngIf="slip.housingAllowance > 0">
-              <span class="text-secondary-light">Housing Allowance:</span>
-              <span class="fw-semibold text-success-600">PKR {{ slip.housingAllowance | number }}</span>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-12 pb-12 border-bottom"
-              *ngIf="slip.transportationAllowance > 0">
-              <span class="text-secondary-light">Transportation:</span>
-              <span class="fw-semibold text-success-600">PKR {{ slip.transportationAllowance | number }}</span>
-            </div>
-
-            <!-- Deductions Section -->
-            <div class="mt-3 mb-2" *ngIf="slip.savingFund > 0 || slip.taxes > 0">
-              <h6 class="fw-bold text-danger-600 mb-2">
-                <iconify-icon icon="mdi:cash-minus" class="me-1"></iconify-icon>Deductions
-              </h6>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-8" *ngIf="slip.savingFund > 0">
-              <span class="text-secondary-light">Saving Fund:</span>
-              <span class="fw-semibold text-danger-600">PKR {{ slip.savingFund | number }}</span>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-12 pb-12 border-bottom"
-              *ngIf="slip.taxes > 0">
-              <span class="text-secondary-light">Taxes:</span>
-              <span class="fw-semibold text-danger-600">PKR {{ slip.taxes | number }}</span>
-            </div>
-
-            <!-- Net Salary -->
-            <div class="d-flex align-items-center justify-content-between mt-3 p-3 bg-primary-50 rounded">
-              <span class="fw-bold text-primary-600">Net Salary:</span>
-              <span class="text-primary-600 fw-bold" style="font-size: 22px;">PKR {{ slip.netSalary | number }}</span>
-            </div>
+        <!-- Details -->
+        <div class="details-section">
+          <div class="detail-row">
+            <span class="detail-label">Month</span>
+            <span class="detail-value text-primary">{{ getMonthName(slip.month) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Payment Date</span>
+            <span class="detail-value">{{ slip.date | date:'mediumDate' }}</span>
           </div>
 
-          <div class="mb-20">
-            <span class="badge bg-success-600 text-white px-3 py-2 radius-8 w-100 text-center">
-              <iconify-icon icon="mdi:check-circle" class="me-1"></iconify-icon>{{ slip.status }}
-            </span>
+          <!-- Earnings -->
+          <div class="section-header earnings">
+            <iconify-icon icon="mdi:cash-plus"></iconify-icon>
+            Earnings
+          </div>
+          <div class="sub-detail">
+            <span>Basic Salary</span>
+            <span class="fw-bold">PKR {{ slip.basicSalary | number }}</span>
+          </div>
+          <div class="sub-detail" *ngIf="slip.festivalBonus > 0">
+            <span>Festival Bonus</span>
+            <span class="value-positive">PKR {{ slip.festivalBonus | number }}</span>
+          </div>
+          <div class="sub-detail" *ngIf="slip.allowance > 0">
+            <span>Allowances</span>
+            <span class="value-positive">PKR {{ (slip.allowance + slip.medicalAllowance + slip.housingAllowance +
+              slip.transportationAllowance) | number }}</span>
           </div>
 
-          <div class="d-flex gap-2">
-            <button type="button" class="btn btn-outline-primary flex-fill radius-8 py-2"
-              (click)="printDetailedReceipt(slip)">
-              <iconify-icon icon="mdi:printer" class="me-1"></iconify-icon>Print Slip
-            </button>
-            <button type="button" class="btn btn-outline-secondary flex-fill radius-8 py-2"
-              (click)="printThermalReceipt(slip)">
-              <iconify-icon icon="mdi:receipt" class="me-1"></iconify-icon>Thermal
-            </button>
-            <button type="button" class="btn btn-success flex-shrink-0 radius-8 py-2 px-3" title="Paid">
-              <iconify-icon icon="mdi:check-circle" style="font-size: 20px;"></iconify-icon>
-            </button>
+          <!-- Deductions -->
+          <div class="section-header deductions" *ngIf="slip.savingFund > 0 || slip.taxes > 0">
+            <iconify-icon icon="mdi:cash-minus"></iconify-icon>
+            Deductions
+          </div>
+          <div class="sub-detail" *ngIf="slip.savingFund > 0">
+            <span>Saving Fund</span>
+            <span class="value-negative">-PKR {{ slip.savingFund | number }}</span>
+          </div>
+          <div class="sub-detail" *ngIf="slip.taxes > 0">
+            <span>Taxes</span>
+            <span class="value-negative">-PKR {{ slip.taxes | number }}</span>
+          </div>
+
+          <!-- Net Salary -->
+          <div class="net-salary-block">
+            <span class="net-salary-label">Net Amount Paid</span>
+            <div class="net-salary-value">PKR {{ slip.netSalary | number }}</div>
+          </div>
+
+          <!-- Status -->
+          <div class="print-status">
+            <div class="status-check">
+              <iconify-icon icon="mdi:check-decagram"></iconify-icon>
+              Payment Successful
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="btn-group-premium">
+          <button class="btn-premium-outline" (click)="printDetailedReceipt(slip)">
+            <iconify-icon icon="mdi:printer-eye" style="font-size: 18px;"></iconify-icon>
+            Slip
+          </button>
+          <button class="btn-premium-outline" (click)="printThermalReceipt(slip)">
+            <iconify-icon icon="mdi:receipt-text-outline" style="font-size: 18px;"></iconify-icon>
+            Thermal
+          </button>
+          <div class="btn-success-check" title="Transaction Verified">
+            <iconify-icon icon="mdi:shield-check"></iconify-icon>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Empty State -->
     <div class="col-12" *ngIf="filteredRecords.length === 0">
-      <div class="card radius-12">
-        <div class="card-body p-24 text-center py-5">
-          <iconify-icon icon="mdi:account-search" class="text-secondary-light" style="font-size: 80px;"></iconify-icon>
-          <h5 class="mt-3 text-secondary-light fw-semibold">Search for Staff Member</h5>
-          <p class="text-secondary-light mb-0">Enter staff name, ID, or role in the search box above to view salary
-            slips</p>
-        </div>
+      <div class="empty-state-card">
+        <iconify-icon icon="mdi:account-search-outline" class="empty-icon"></iconify-icon>
+        <h4 class="fw-bold text-dark">Find Staff Salary Slips</h4>
+        <p class="text-secondary mx-auto" style="max-width: 400px;">
+          Enter a staff name or ID in the search box above to view their payment history and generate salary slips.
+        </p>
       </div>
     </div>
   </div>
-  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2" *ngIf="filteredRecords.length > 0">
-    <span class="text-secondary-light text-sm">Showing {{ paginationStart }} to {{ paginationEnd }} of {{
-      filteredRecords.length }} slips</span>
-    <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
-      <li class="page-item">
-        <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-          [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
-          <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
-        </a>
-      </li>
-      <li class="page-item" *ngFor="let page of totalPagesArray">
-        <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-          [class.bg-primary-600]="currentPage === page" [class.text-white]="currentPage === page"
-          [class.bg-neutral-200]="currentPage !== page" [class.text-secondary-light]="currentPage !== page"
-          (click)="changePage(page)" href="javascript:void(0)">{{ page }}</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-          [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)" href="javascript:void(0)">
-          <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
-        </a>
-      </li>
-    </ul>
+
+  <!-- Pagination -->
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mt-5"
+    *ngIf="filteredRecords.length > 0">
+    <span class="text-secondary fw-medium">
+      Showing <strong>{{ paginationStart }}</strong> to <strong>{{ paginationEnd }}</strong> of {{
+      filteredRecords.length }} records
+    </span>
+    <nav>
+      <ul class="pagination mb-0 gap-2">
+        <li class="page-item">
+          <button class="btn-premium-outline px-3" [class.disabled]="currentPage === 1"
+            (click)="changePage(currentPage - 1)">
+            <iconify-icon icon="mdi:chevron-left"></iconify-icon>
+          </button>
+        </li>
+        <li class="page-item" *ngFor="let page of totalPagesArray">
+          <button class="btn-premium-outline px-3" [class.bg-primary]="currentPage === page"
+            [class.text-white]="currentPage === page" [class.border-primary]="currentPage === page"
+            (click)="changePage(page)">
+            {{ page }}
+          </button>
+        </li>
+        <li class="page-item">
+          <button class="btn-premium-outline px-3" [class.disabled]="currentPage === totalPages"
+            (click)="changePage(currentPage + 1)">
+            <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+          </button>
+        </li>
+      </ul>
+    </nav>
   </div>
 </div>
 

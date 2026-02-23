@@ -1,126 +1,206 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
+  <!-- STATS ROW -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper blue">
+        <iconify-icon icon="mdi:account-group"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Staff</span>
+        <span class="stat-value">{{ totalStaff }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrapper green">
+        <iconify-icon icon="mdi:cash-multiple"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Paid</span>
+        <span class="stat-value">PKR {{ totalSalaryPaid | number }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrapper orange">
+        <iconify-icon icon="mdi:calculator"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Avg Salary</span>
+        <span class="stat-value">PKR {{ averageSalary | number:'1.0-0' }}</span>
+      </div>
+    </div>
+  </div>
+
   <!-- ADD SALARY -->
-  <div class="card radius-12 mb-4">
-    <div class="card-header">
+  <div class="premium-card">
+    <div class="card-header-premium">
+      <div class="header-icon">
+        <iconify-icon icon="mdi:cash-plus"></iconify-icon>
+      </div>
       <h6>Add Staff Salary</h6>
     </div>
 
-    <div class="card-body row g-3">
+    <div class="premium-card-body">
+      <div class="row g-4">
+        <!-- STAFF DROPDOWN -->
+        <div class="col-md-6">
+          <label class="form-label-premium">Staff Name *</label>
+          <select class="form-select-premium" [(ngModel)]="salary.staffName">
+            <option value="" disabled selected>Select Staff</option>
+            <option *ngFor="let staff of staffList" [value]="staff.staffName">
+              {{ staff.staffName }}
+            </option>
+          </select>
+        </div>
 
-      <!-- STAFF DROPDOWN -->
-      <div class="col-md-6">
-        <label>Staff Name *</label>
-        <select class="form-select"
-                [(ngModel)]="salary.staffName">
-          <option value="" disabled selected>Select Staff</option>
-          <option *ngFor="let staff of staffList"
-                  [value]="staff.staffName">
-            {{ staff.staffName }}
-          </option>
-        </select>
-      </div>
+        <div class="col-md-3">
+          <label class="form-label-premium">Basic Salary *</label>
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.basicSalary" placeholder="0">
+        </div>
 
-      <div class="col-md-3">
-        <label>Basic Salary *</label>
-        <input type="number" class="form-control"
-               [(ngModel)]="salary.basicSalary">
-      </div>
+        <div class="col-md-3">
+          <label class="form-label-premium">Festival Bonus</label>
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.festivalBonus" placeholder="0">
+        </div>
 
-      <div class="col-md-3">
-        <label>Festival Bonus</label>
-        <input type="number" class="form-control"
-               [(ngModel)]="salary.festivalBonus">
-      </div>
+        <div class="col-md-3">
+          <label class="form-label-premium">Allowance</label>
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.allowance" placeholder="0">
+        </div>
 
-      <div class="col-md-3">
-        <label>Allowance</label>
-        <input type="number" class="form-control"
-               [(ngModel)]="salary.allowance">
-      </div>
+        <div class="col-md-3">
+          <label class="form-label-premium">Medical</label>
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.medicalAllowance" placeholder="0">
+        </div>
 
-      <div class="col-md-3">
-        <label>Medical Allowance</label>
-        <input type="number" class="form-control"
-               [(ngModel)]="salary.medicalAllowance">
-      </div>
+        <div class="col-md-3">
+          <label class="form-label-premium">Housing</label>
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.housingAllowance" placeholder="0">
+        </div>
 
-      <div class="col-md-3">
-        <label>Housing Allowance</label>
-        <input type="number" class="form-control"
-               [(ngModel)]="salary.housingAllowance">
-      </div>
+        <div class="col-md-3">
+          <label class="form-label-premium">Transport</label>
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.transportationAllowance"
+            placeholder="0">
+        </div>
 
-      <div class="col-md-3">
-        <label>Transport Allowance</label>
-        <input type="number" class="form-control"
-               [(ngModel)]="salary.transportationAllowance">
-      </div>
+        <div class="col-md-3">
+          <label class="form-label-premium">Saving Fund</label>
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.savingFund" placeholder="0">
+        </div>
 
-      <div class="col-md-3">
-        <label>Saving Fund</label>
-        <input type="number" class="form-control"
-               [(ngModel)]="salary.savingFund">
-      </div>
+        <div class="col-md-3">
+          <label class="form-label-premium">Taxes</label>
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.taxes" placeholder="0">
+        </div>
 
-      <div class="col-md-3">
-        <label>Taxes</label>
-        <input type="number" class="form-control"
-               [(ngModel)]="salary.taxes">
-      </div>
+        <div class="col-md-6">
+          <div class="net-salary-group">
+            <span>Calculated Net Salary</span>
+            <div class="net-val">PKR {{ calculatedNetSalary | number }}</div>
+          </div>
+        </div>
 
-      <div class="col-md-3">
-        <label>Net Salary</label>
-        <input class="form-control fw-bold"
-               [value]="calculatedNetSalary"
-               readonly>
-      </div>
-
-      <div class="col-md-12">
-        <button class="btn btn-primary" (click)="saveSalary()">Save</button>
-        <button class="btn btn-secondary ms-2" (click)="resetForm()">Reset</button>
+        <div class="col-md-12 d-flex gap-3 mt-4">
+          <button class="btn-premium-save" (click)="saveSalary()">
+            <iconify-icon icon="mdi:check-circle"></iconify-icon>
+            Save Salary Record
+          </button>
+          <button class="btn-premium-reset" (click)="resetForm()">
+            Reset
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- SALARY LIST -->
-  <div class="card radius-12">
-    <div class="card-header d-flex justify-content-between">
-      <h6>Salary Records</h6>
-      <input class="form-control w-25"
-             placeholder="Search..."
-             [(ngModel)]="searchQuery">
+  <div class="table-card">
+    <div class="card-header-premium d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2">
+        <div class="header-icon" style="background: #1e293b;">
+          <iconify-icon icon="mdi:format-list-bulleted"></iconify-icon>
+        </div>
+        <h6>Salary Records</h6>
+      </div>
+
+      <div class="search-wrapper-premium w-25">
+        <iconify-icon icon="mdi:magnify" class="search-icon-premium"></iconify-icon>
+        <input class="form-control-premium search-input-premium" placeholder="Search staff..."
+          [(ngModel)]="searchQuery">
+      </div>
     </div>
 
-    <div class="card-body table-responsive">
-      <table class="table">
+    <div class="table-responsive">
+      <table class="table-premium">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Staff</th>
-            <th>Basic</th>
+            <th style="width: 80px;">#</th>
+            <th>Staff Member</th>
+            <th>Basic Salary</th>
             <th>Bonus</th>
-            <th>Net</th>
-            <th>Action</th>
+            <th>Net Salary</th>
+            <th style="width: 100px; text-align: center;">Action</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let s of paginatedSalaries; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td>{{ s.staffName }}</td>
-            <td>{{ s.basicSalary }}</td>
-            <td>{{ s.festivalBonus }}</td>
-            <td class="fw-bold">{{ s.netSalary }}</td>
             <td>
-              <button class="btn btn-danger btn-sm"
-                      (click)="deleteSalary(s.staffSalaryId)">
-                Delete
+              <span class="row-num"
+                style="background: #f1f5f9; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 12px; color: #64748b;">
+                {{ (currentPage - 1) * itemsPerPage + i + 1 }}
+              </span>
+            </td>
+            <td>
+              <div class="staff-info">
+                <div class="staff-avatar">{{ getInitials(s.staffName) }}</div>
+                <span class="fw-bold">{{ s.staffName }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge-amount basic">PKR {{ s.basicSalary | number }}</span>
+            </td>
+            <td>
+              <span class="text-success fw-semibold" *ngIf="s.festivalBonus > 0">+{{ s.festivalBonus | number }}</span>
+              <span class="text-muted" *ngIf="!s.festivalBonus">0</span>
+            </td>
+            <td>
+              <span class="badge-amount net">PKR {{ s.netSalary | number }}</span>
+            </td>
+            <td class="text-center">
+              <button class="action-btn delete" (click)="deleteSalary(s.staffSalaryId)" title="Delete Record">
+                <iconify-icon icon="mdi:delete-outline"></iconify-icon>
               </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredSalaries.length === 0">
+            <td colspan="6" class="text-center py-5 text-muted">
+              <iconify-icon icon="mdi:account-alert-outline" style="font-size: 48px; opacity: 0.2;"></iconify-icon>
+              <p class="mt-2">No salary records found matching your search.</p>
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="card-footer-premium p-3 border-top d-flex justify-content-between align-items-center"
+      *ngIf="totalPages > 1">
+      <span class="text-muted small">Showing page {{ currentPage }} of {{ totalPages }}</span>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-secondary" [disabled]="currentPage === 1"
+          (click)="changePage(currentPage - 1)">Previous</button>
+        <button class="btn btn-sm" [class.btn-primary]="currentPage === page"
+          [class.btn-outline-secondary]="currentPage !== page"
+          *ngFor="let page of [].constructor(totalPages); let i = index" (click)="changePage(i + 1)">
+          {{ i + 1 }}
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" [disabled]="currentPage === totalPages"
+          (click)="changePage(currentPage + 1)">Next</button>
+      </div>
     </div>
   </div>
 </div>

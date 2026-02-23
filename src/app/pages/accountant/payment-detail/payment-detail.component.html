@@ -1,162 +1,315 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <div class="card h-100 p-0 radius-12">
+  <!-- ===================== STATS ROWS ===================== -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="8.5" cy="7" r="4" />
+          <polyline points="17 11 19 13 23 9" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Transactions</span>
+        <h3 class="stat-value">{{ totalTransactions }}</h3>
+      </div>
+    </div>
 
-    <!-- Row 1: Page Filter + Search + Add Buttons -->
-    <div class="card-header border-bottom bg-base py-16 px-24 d-flex flex-wrap align-items-center gap-3 justify-content-between">
-      <div class="d-flex align-items-center flex-wrap gap-3">
-        <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
-        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="rowsPerPage" (change)="currentPage=1; updatePagination()">
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
-        </select>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23" />
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Monthly Collected</span>
+        <h3 class="stat-value">Rs. {{ totalMonthlyCollected | number }}</h3>
+      </div>
+    </div>
 
-        <form class="navbar-search ms-3">
-          <input type="text" class="bg-base h-40-px w-auto" [(ngModel)]="searchTerm" (input)="searchPayments()" name="search" placeholder="Search Student / Payment ID..." />
-        </form>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper indigo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Other Collected</span>
+        <h3 class="stat-value">Rs. {{ totalOtherCollected | number }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrapper orange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Overall Pending</span>
+        <h3 class="stat-value pending">Rs. {{ totalPending | number }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== FILTER & TAB CARD ===================== -->
+  <div class="fee-card">
+
+    <!-- Unified Filter Bar -->
+    <div class="fee-card-header premium-header">
+      <div class="header-filters">
+        <!-- Search -->
+        <div class="search-wrapper-premium">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input class="search-input-premium" [(ngModel)]="searchTerm" (input)="searchPayments()"
+            placeholder="Search by ID or student name..." />
+        </div>
+
+        <!-- Standard Dropdown -->
+        <div class="filter-group">
+          <label class="filter-label">Standard</label>
+          <div class="select-wrapper-premium">
+            <select class="field-select-premium" [(ngModel)]="selectedStandardId" (ngModelChange)="onStandardChange()">
+              <option value="">All Standards</option>
+              <option *ngFor="let s of standards" [value]="s.standardId">{{ s.standardName }}</option>
+            </select>
+            <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Student Dropdown -->
+        <div class="filter-group">
+          <label class="filter-label">Student</label>
+          <div class="select-wrapper-premium">
+            <select class="field-select-premium" [(ngModel)]="studentId" (change)="onSubmit()">
+              <option value="">Select Student</option>
+              <option *ngFor="let s of filteredStudents" [value]="s.studentId">{{ s.studentName }}</option>
+            </select>
+            <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </div>
       </div>
 
-      <div class="d-flex gap-2 flex-wrap">
-        <button type="button" class="btn btn-primary btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-1" [routerLink]="['/monthly-payment']">
-          <i class="bi bi-plus-circle"></i> Add Monthly Payment
+      <!-- Action Buttons -->
+      <div class="header-actions">
+        <button class="btn-secondary-premium" (click)="printPayments()" title="Print List">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9" />
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+            <rect x="6" y="14" width="12" height="8" />
+          </svg>
+          Print
         </button>
-
-        <button type="button" class="btn btn-primary btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-1" [routerLink]="['/other-payment']">
-          <i class="bi bi-plus-circle"></i> Add Other Payment
+        <button class="btn-secondary-premium" (click)="downloadPayments()" title="Export CSV">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Export
         </button>
       </div>
     </div>
 
-    <!-- Row 2: Standard + Student Filter + Print & Download -->
-    <div class="card-header border-bottom bg-base py-16 px-24 d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div class="d-flex flex-wrap align-items-center gap-3">
-        <div class="d-flex align-items-center gap-2">
-          <span class="text-md fw-medium text-secondary-light">Standard:</span>
-          <select class="form-select form-select-sm radius-12 h-40-px" [(ngModel)]="selectedStandardId" (ngModelChange)="onStandardChange()">
-            <option value="">All</option>
-            <option *ngFor="let s of standards" [value]="s.standardId">{{ s.standardName }}</option>
-          </select>
-        </div>
-
-        <div class="d-flex align-items-center gap-2">
-          <span class="text-md fw-medium text-secondary-light">Student:</span>
-          <select class="form-select form-select-sm radius-12 h-40-px" [(ngModel)]="studentId" (change)="onSubmit()">
-            <option value="">All</option>
-            <option *ngFor="let s of filteredStudents" [value]="s.studentId">{{ s.studentName }}</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="d-flex gap-2">
-        <button type="button" class="btn btn-secondary btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-1" (click)="printPayments()">
-          <i class="bi bi-printer-fill"></i> Print
-        </button>
-
-        <button type="button" class="btn btn-secondary btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-1" (click)="downloadPayments()">
-          <i class="bi bi-download"></i> Download
-        </button>
-      </div>
+    <!-- Tabbed Navigation -->
+    <div class="tabs-container">
+      <button class="tab-btn" [class.active]="activeTab === 'monthly'" (click)="setTab('monthly')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+        Monthly Payments
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'other'" (click)="setTab('other')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" />
+          <path d="M4 6v12c0 1.1.9 2 2 2h14v-4" />
+          <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z" />
+        </svg>
+        Other Payments
+      </button>
+      <div class="active-line" [style.left]="activeTab === 'monthly' ? '0' : '50%'"></div>
     </div>
 
-    <!-- Card Body: Monthly Payments Table -->
-    <div class="card-body p-24">
-      <h5>Monthly Payments</h5>
-      <div class="table-responsive scroll-sm mb-12">
-        <table class="table bordered-table sm-table mb-0">
+    <!-- Table Body -->
+    <div class="fee-card-body p-0">
+      <div class="table-wrapper">
+        <table class="fee-table">
           <thead>
             <tr>
-              <th>Payment ID</th>
-              <th>Student Name</th>
+              <th>ID</th>
+              <th>Student</th>
               <th>Enrollment #</th>
               <th>Total Amount</th>
-              <th>Amount Paid</th>
-              <th>Amount Remaining</th>
-              <th>Payment Date</th>
+              <th>Paid</th>
+              <th>Remaining</th>
+              <th>Date</th>
+              <th class="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let p of paginatedPayments">
-              <td>{{ p.monthlyPaymentId }}</td>
-              <td>{{ p.student?.studentName }}</td>
-              <td>{{ p.student?.enrollmentNo }}</td>
-              <td>{{ p.totalAmount }}</td>
-              <td>{{ p.amountPaid }}</td>
-              <td>{{ p.amountRemaining }}</td>
-              <td>{{ p.paymentDate | date:'shortDate' }}</td>
+            <tr class="table-row" *ngFor="let p of paginatedData">
+              <td><span class="row-num">#{{ activeTab === 'monthly' ? p.monthlyPaymentId : p.othersPaymentId }}</span>
+              </td>
+              <td>
+                <div class="student-info">
+                  <span class="student-name">{{ p.student?.studentName }}</span>
+                </div>
+              </td>
+              <td><span class="enrollment-badge">{{ p.student?.enrollmentNo }}</span></td>
+              <td><span class="amount-val">Rs. {{ p.totalAmount | number }}</span></td>
+              <td><span class="amount-paid">Rs. {{ p.amountPaid | number }}</span></td>
+              <td>
+                <span class="amount-chip" [class.paid]="p.amountRemaining === 0"
+                  [class.pending]="p.amountRemaining > 0">
+                  Rs. {{ p.amountRemaining | number }}
+                </span>
+              </td>
+              <td><span class="date-val">{{ p.paymentDate | date:'mediumDate' }}</span></td>
+              <td class="text-center">
+                <button class="icon-btn view-btn" (click)="openViewDialog(p)" title="View Details">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </button>
+              </td>
             </tr>
-            <tr *ngIf="paginatedPayments.length===0">
-              <td colspan="7" class="text-center py-24 text-secondary-light">No payments found</td>
+            <tr *ngIf="paginatedData.length === 0">
+              <td colspan="8" class="empty-state">
+                <div class="empty-content">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M8 12h8" />
+                  </svg>
+                  <p>{{ studentId ? 'No payment records found for this student.' : 'Please select a student to view
+                    payments.' }}</p>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Pagination -->
-      <!-- <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-12">
-        <span>Showing {{ (currentPage-1)*rowsPerPage + 1 }} to {{ toEntry }} of {{ payments.length }} entries</span>
-        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
-          <li class="page-item">
-            <a class="page-link" [class.disabled]="currentPage===1" (click)="changePage(currentPage-1)" href="javascript:void(0)">Prev</a>
-          </li>
-          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i=index">
-            <a class="page-link" [class.active]="currentPage===i+1" (click)="changePage(i+1)" href="javascript:void(0)">{{ i+1 }}</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" [class.disabled]="currentPage===totalPages" (click)="changePage(currentPage+1)" href="javascript:void(0)">Next</a>
-          </li>
-        </ul>
-      </div> -->
+      <!-- Pagination Footer -->
+      <div class="pagination-footer-premium">
+        <div class="show-entries">
+          <span>Show</span>
+          <select class="entries-select-premium" [(ngModel)]="rowsPerPage" (change)="currentPage=1; updatePagination()">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+          <span>entries</span>
+        </div>
 
-      <!-- Other Payments Table -->
-      <h5 class="mt-32">Other Payments</h5>
-      <div class="table-responsive scroll-sm mb-12">
-        <table class="table bordered-table sm-table mb-0">
-          <thead>
-            <tr>
-              <th>Payment ID</th>
-              <th>Student Name</th>
-              <th>Enrollment #</th>
-              <th>Total Amount</th>
-              <th>Amount Paid</th>
-              <th>Amount Remaining</th>
-              <th>Payment Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let p of otherPayments">
-              <td>{{ p.othersPaymentId }}</td>
-              <td>{{ p.student?.studentName }}</td>
-              <td>{{ p.student?.enrollmentNo }}</td>
-              <td>{{ p.totalAmount }}</td>
-              <td>{{ p.amountPaid }}</td>
-              <td>{{ p.amountRemaining }}</td>
-              <td>{{ p.paymentDate | date:'shortDate' }}</td>
-            </tr>
-            <tr *ngIf="otherPayments.length===0">
-              <td colspan="7" class="text-center py-24 text-secondary-light">No payments found</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="pagination-info-premium">
+          Showing {{ Math.min((currentPage-1)*rowsPerPage + 1, (activeTab === 'monthly' ? filteredMonthly.length :
+          filteredOther.length)) }} to {{ toEntry }} of {{ activeTab === 'monthly' ? filteredMonthly.length :
+          filteredOther.length }} entries
+        </div>
+
+        <div class="pagination-controls-premium">
+          <button class="page-btn-premium" [disabled]="currentPage===1" (click)="changePage(currentPage-1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <button class="page-btn-premium" *ngFor="let page of [].constructor(totalPages); let i=index"
+            [class.active]="currentPage===i+1" (click)="changePage(i+1)">{{ i+1 }}</button>
+          <button class="page-btn-premium" [disabled]="currentPage===totalPages" (click)="changePage(currentPage+1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <!-- Pagination -->
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-12">
-        <span>Showing {{ (currentPage-1)*rowsPerPage + 1 }} to {{ toEntry }} of {{ otherPayments.length }} entries</span>
-        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
-          <li class="page-item">
-            <a class="page-link" [class.disabled]="currentPage===1" (click)="changePage(currentPage-1)" href="javascript:void(0)">Prev</a>
-          </li>
-          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i=index">
-            <a class="page-link" [class.active]="currentPage===i+1" (click)="changePage(i+1)" href="javascript:void(0)">{{ i+1 }}</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" [class.disabled]="currentPage===totalPages" (click)="changePage(currentPage+1)" href="javascript:void(0)">Next</a>
-          </li>
-        </ul>
+<!-- ===================== VIEW MODAL ===================== -->
+<div *ngIf="showViewDialog" class="modal-overlay" (click)="closeDialog()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-header-premium">
+      <div class="header-gradient" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);"></div>
+      <div class="header-content">
+        <div class="modal-icon-premium" style="background: linear-gradient(135deg, #0ea5e9, #0284c7);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </div>
+        <div>
+          <h4 class="modal-title-premium">Transaction Details</h4>
+          <p class="modal-subtitle-premium">Viewing {{ activeTab }} payment record</p>
+        </div>
       </div>
+      <button class="modal-close-premium" (click)="closeDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
 
+    <div class="modal-body-premium">
+      <div class="detail-grid">
+        <div class="detail-row">
+          <span class="detail-label">Student</span>
+          <span class="detail-value">{{ selectedPayment?.student?.studentName }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Enrollment #</span>
+          <span class="detail-value">{{ selectedPayment?.student?.enrollmentNo }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Class / Standard</span>
+          <span class="detail-value">{{ selectedPayment?.student?.standard?.standardName }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Total Amount</span>
+          <span class="detail-value amount-val">Rs. {{ selectedPayment?.totalAmount | number }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Amount Paid</span>
+          <span class="detail-value amount-paid">Rs. {{ selectedPayment?.amountPaid | number }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Remaining</span>
+          <span class="detail-value" [class.amount-paid]="selectedPayment?.amountRemaining === 0"
+            [class.amount-pending]="selectedPayment?.amountRemaining > 0">
+            Rs. {{ selectedPayment?.amountRemaining | number }}
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Payment Date</span>
+          <span class="detail-value">{{ selectedPayment?.paymentDate | date:'mediumDate' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer-premium">
+      <button class="btn-primary-gradient" style="background: linear-gradient(135deg,#0ea5e9,#0284c7)"
+        (click)="closeDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+        Close
+      </button>
     </div>
   </div>
 </div>

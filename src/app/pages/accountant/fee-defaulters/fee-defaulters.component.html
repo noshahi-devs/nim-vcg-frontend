@@ -1,257 +1,251 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- Analytics Cards -->
-  <div class="row g-4 mb-4">
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card radius-12 shadow-sm h-100 gradient-card-1">
-        <div class="card-body p-24">
-          <div class="d-flex align-items-center justify-content-between mb-16">
-            <div
-              class="icon-box w-64-px h-64-px bg-white bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
-              <iconify-icon icon="mdi:account-alert" class="text-white" style="font-size: 32px;"></iconify-icon>
-            </div>
-            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2">Total</span>
-          </div>
-          <h2 class="fw-bold text-white mb-8">{{ totalDefaulters }}</h2>
-          <p class="text-white text-opacity-75 mb-0">Total Defaulters</p>
-        </div>
+  <!-- ===================== STATS ROWS ===================== -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper indigo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="8.5" cy="7" r="4" />
+          <polyline points="17 11 19 13 23 9" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Defaulters</span>
+        <h3 class="stat-value">{{ totalDefaulters }}</h3>
       </div>
     </div>
 
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card radius-12 shadow-sm h-100 gradient-card-2">
-        <div class="card-body p-24">
-          <div class="d-flex align-items-center justify-content-between mb-16">
-            <div
-              class="icon-box w-64-px h-64-px bg-white bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
-              <iconify-icon icon="mdi:cash-multiple" class="text-white" style="font-size: 32px;"></iconify-icon>
-            </div>
-            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2">PKR</span>
-          </div>
-          <h2 class="fw-bold text-white mb-8">{{ totalOutstanding | number }}</h2>
-          <p class="text-white text-opacity-75 mb-0">Outstanding Amount</p>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper orange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23" />
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Outstanding Amount</span>
+        <h3 class="stat-value pending">Rs. {{ totalOutstanding | number }}</h3>
       </div>
     </div>
 
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card radius-12 shadow-sm h-100 gradient-card-3">
-        <div class="card-body p-24">
-          <div class="d-flex align-items-center justify-content-between mb-16">
-            <div
-              class="icon-box w-64-px h-64-px bg-white bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
-              <iconify-icon icon="mdi:alert-circle" class="text-white" style="font-size: 32px;"></iconify-icon>
-            </div>
-            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2">Critical</span>
-          </div>
-          <h2 class="fw-bold text-white mb-8">{{ criticalCount }}</h2>
-          <p class="text-white text-opacity-75 mb-0">Critical Cases (30+ days)</p>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper red">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Critical Cases</span>
+        <h3 class="stat-value text-danger">{{ criticalCount }}</h3>
       </div>
     </div>
 
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card radius-12 shadow-sm h-100 gradient-card-4">
-        <div class="card-body p-24">
-          <div class="d-flex align-items-center justify-content-between mb-16">
-            <div
-              class="icon-box w-64-px h-64-px bg-white bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
-              <iconify-icon icon="mdi:alert" class="text-white" style="font-size: 32px;"></iconify-icon>
-            </div>
-            <span class="badge bg-white bg-opacity-20 text-white px-3 py-2">Warning</span>
-          </div>
-          <h2 class="fw-bold text-white mb-8">{{ warningCount }}</h2>
-          <p class="text-white text-opacity-75 mb-0">Warning Cases (15+ days)</p>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper warning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Warning Cases</span>
+        <h3 class="stat-value text-warning">{{ warningCount }}</h3>
       </div>
     </div>
   </div>
 
-  <!-- Filters and Actions -->
-  <div class="card radius-12 shadow-sm mb-4">
-    <div class="card-body p-24">
-      <div class="row g-3 mb-3">
+  <!-- ===================== FILTER & ACTION CARD ===================== -->
+  <div class="fee-card">
+
+    <div class="fee-card-header premium-header">
+      <div class="header-filters">
         <!-- Search -->
-        <div class="col-lg-4">
-          <label class="form-label fw-semibold">Search</label>
-          <div class="position-relative">
-            <input type="text" class="form-control radius-8 ps-5" [(ngModel)]="searchQuery"
-              (ngModelChange)="onSearchChange()" placeholder="Search by student name or class..." />
-            <iconify-icon icon="mdi:magnify"
-              class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary-light"></iconify-icon>
-          </div>
+        <div class="search-wrapper-premium">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input class="search-input-premium" [(ngModel)]="searchQuery" (input)="onSearchChange()"
+            placeholder="Search by student name or class..." />
         </div>
 
         <!-- Class Filter -->
-        <div class="col-lg-2">
-          <label class="form-label fw-semibold">Class</label>
-          <select class="form-select radius-8" [(ngModel)]="selectedClass" (ngModelChange)="onFilterChange()">
-            <option value="all">All Classes</option>
-            <option *ngFor="let cls of uniqueClasses" [value]="cls">{{ cls }}</option>
-          </select>
+        <div class="filter-group">
+          <label class="filter-label">Class</label>
+          <div class="select-wrapper-premium">
+            <select class="field-select-premium" [(ngModel)]="selectedClass" (change)="onFilterChange()">
+              <option value="all">All Classes</option>
+              <option *ngFor="let cls of uniqueClasses" [value]="cls">{{ cls }}</option>
+            </select>
+            <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
         </div>
 
         <!-- Status Filter -->
-        <div class="col-lg-2">
-          <label class="form-label fw-semibold">Status</label>
-          <select class="form-select radius-8" [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()">
-            <option value="all">All Status</option>
-            <option value="Critical">Critical</option>
-            <option value="Warning">Warning</option>
-            <option value="Overdue">Overdue</option>
-          </select>
+        <div class="filter-group">
+          <label class="filter-label">Status</label>
+          <div class="select-wrapper-premium">
+            <select class="field-select-premium" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+              <option value="all">All Status</option>
+              <option value="Critical">Critical</option>
+              <option value="Warning">Warning</option>
+              <option value="Overdue">Overdue</option>
+            </select>
+            <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
         </div>
 
         <!-- Min Amount -->
-        <div class="col-lg-2">
-          <label class="form-label fw-semibold">Min Amount</label>
-          <input type="number" class="form-control radius-8" [(ngModel)]="minAmount" (ngModelChange)="onFilterChange()"
-            placeholder="0" />
-        </div>
-
-        <!-- Items Per Page -->
-        <div class="col-lg-2">
-          <label class="form-label fw-semibold">Show</label>
-          <select class="form-select radius-8" [(ngModel)]="itemsPerPage" (ngModelChange)="onFilterChange()">
-            <option [value]="10">10 per page</option>
-            <option [value]="25">25 per page</option>
-            <option [value]="50">50 per page</option>
-            <option [value]="100">100 per page</option>
-          </select>
+        <div class="filter-group">
+          <label class="filter-label">Min Amount</label>
+          <div class="input-wrapper-premium">
+            <input type="number" class="field-input-premium" [(ngModel)]="minAmount" (input)="onFilterChange()"
+              placeholder="0" />
+          </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="d-flex gap-2 flex-wrap">
-        <button class="btn btn-primary radius-8" (click)="loadDefaulters()">
-          <iconify-icon icon="mdi:refresh" class="me-1"></iconify-icon>Refresh
+      <div class="header-actions">
+        <button class="btn-primary-premium" (click)="loadDefaulters()" title="Refresh Data">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+          </svg>
+          Refresh
         </button>
-        <button class="btn btn-success radius-8" (click)="sendBulkReminders()"
-          [disabled]="filteredDefaulters.length === 0">
-          <iconify-icon icon="mdi:email-multiple" class="me-1"></iconify-icon>Send Bulk Reminders
+        <button class="btn-success-premium" (click)="sendBulkReminders()" [disabled]="filteredDefaulters.length === 0"
+          title="Send Bulk Reminders">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+          </svg>
+          Bulk Reminders
         </button>
-        <button class="btn btn-outline-primary radius-8" (click)="exportCSV()"
-          [disabled]="filteredDefaulters.length === 0">
-          <iconify-icon icon="mdi:file-excel" class="me-1"></iconify-icon>Export CSV
-        </button>
-        <button class="btn btn-outline-danger radius-8" (click)="exportPDF()"
-          [disabled]="filteredDefaulters.length === 0">
-          <iconify-icon icon="mdi:file-pdf" class="me-1"></iconify-icon>Export PDF
+        <div class="action-divider"></div>
+        <button class="btn-secondary-premium" (click)="exportCSV()" [disabled]="filteredDefaulters.length === 0"
+          title="Export CSV">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Export
         </button>
       </div>
     </div>
-  </div>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="text-center py-5">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner-premium"></div>
+      <p>Fetching defaulters data...</p>
     </div>
-    <p class="mt-3 text-secondary-light">Loading defaulters...</p>
-  </div>
 
-  <!-- Defaulters Table -->
-  <div *ngIf="!isLoading" class="card radius-12 shadow-sm">
-    <div class="card-body p-0">
-      <div class="table-responsive" *ngIf="filteredDefaulters.length > 0; else noData">
-        <table class="table table-hover mb-0">
-          <thead class="bg-neutral-100">
+    <!-- Table Body -->
+    <div *ngIf="!isLoading" class="fee-card-body p-0">
+      <div class="table-wrapper">
+        <table class="fee-table">
+          <thead>
             <tr>
-              <th class="px-24 py-16 fw-semibold">#</th>
-              <th class="px-24 py-16 fw-semibold">Student</th>
-              <th class="px-24 py-16 fw-semibold">Class</th>
-              <th class="px-24 py-16 fw-semibold">Fee Type</th>
-              <th class="px-24 py-16 fw-semibold">Amount</th>
-              <th class="px-24 py-16 fw-semibold">Due Date</th>
-              <th class="px-24 py-16 fw-semibold">Days Overdue</th>
-              <th class="px-24 py-16 fw-semibold">Status</th>
-              <th class="px-24 py-16 fw-semibold text-center">Actions</th>
+              <th>#</th>
+              <th>Student</th>
+              <th>Class</th>
+              <th>Fee Type</th>
+              <th>Amount</th>
+              <th>Due Date</th>
+              <th>Overdue</th>
+              <th>Status</th>
+              <th class="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let defaulter of paginatedDefaulters; let i = index" class="border-bottom">
-              <td class="px-24 py-16">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-              <td class="px-24 py-16">
-                <div class="d-flex align-items-center gap-2">
-                  <div
-                    class="w-40-px h-40-px bg-primary-600 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
-                    <span class="text-white fw-bold">{{ defaulter.studentName.charAt(0) }}</span>
+            <tr class="table-row" *ngFor="let d of paginatedDefaulters; let i = index">
+              <td><span class="row-num">#{{ (currentPage - 1) * itemsPerPage + i + 1 }}</span></td>
+              <td>
+                <div class="student-info-premium">
+                  <div class="student-avatar" [style.background]="'linear-gradient(135deg, #6366f1, #4f46e5)'">
+                    {{ d.studentName.charAt(0) }}
                   </div>
-                  <span class="fw-semibold">{{ defaulter.studentName }}</span>
+                  <span class="student-name-premium">{{ d.studentName }}</span>
                 </div>
               </td>
-              <td class="px-24 py-16">
-                <span class="badge bg-neutral-200 text-neutral-900 px-3 py-2">{{ defaulter.className }} - {{
-                  defaulter.section }}</span>
-              </td>
-              <td class="px-24 py-16">{{ defaulter.feeType }}</td>
-              <td class="px-24 py-16">
-                <span class="fw-bold text-primary-600">PKR {{ defaulter.amount | number }}</span>
-              </td>
-              <td class="px-24 py-16">{{ defaulter.dueDate | date:'mediumDate' }}</td>
-              <td class="px-24 py-16">
-                <span class="badge bg-danger-100 text-danger-600 px-3 py-2">{{ defaulter.daysOverdue }} days</span>
-              </td>
-              <td class="px-24 py-16">
-                <span class="badge text-white px-3 py-2" [ngClass]="getStatusBadgeClass(defaulter.status)">
-                  {{ defaulter.status }}
+              <td><span class="enrollment-badge">{{ d.className }} - {{ d.section }}</span></td>
+              <td><span class="fee-type-val">{{ d.feeType }}</span></td>
+              <td><span class="amount-val-def">Rs. {{ d.amount | number }}</span></td>
+              <td><span class="date-val-def">{{ d.dueDate | date:'mediumDate' }}</span></td>
+              <td>
+                <span class="overdue-badge">
+                  {{ d.daysOverdue }} Days
                 </span>
               </td>
-              <td class="px-24 py-16 text-center">
-                <button class="btn btn-sm btn-outline-primary radius-8" (click)="sendReminder(defaulter)"
-                  title="Send Reminder">
-                  <iconify-icon icon="mdi:email-send"></iconify-icon>
+              <td>
+                <span class="status-chip" [class.critical]="d.status === 'Critical'"
+                  [class.warning]="d.status === 'Warning'" [class.overdue]="d.status === 'Overdue'">
+                  {{ d.status }}
+                </span>
+              </td>
+              <td class="text-center">
+                <button class="icon-btn-premium send-btn" (click)="sendReminder(d)" title="Send Reminder">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                  </svg>
                 </button>
+              </td>
+            </tr>
+            <tr *ngIf="paginatedDefaulters.length === 0">
+              <td colspan="9" class="empty-state-premium">
+                <div class="empty-content-premium">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M8 12h8" />
+                  </svg>
+                  <p>No defaulters match the current filters.</p>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <ng-template #noData>
-        <div class="text-center py-5">
-          <iconify-icon icon="mdi:alert-circle-outline" class="text-secondary-light"
-            style="font-size: 80px;"></iconify-icon>
-          <h5 class="mt-3 text-secondary-light fw-semibold">No Fee Defaulters Found</h5>
-          <p class="text-secondary-light mb-0">All fees are up to date or try adjusting your filters</p>
+      <!-- Pagination Footer -->
+      <div class="pagination-footer-premium" *ngIf="filteredDefaulters.length > 0">
+        <div class="show-entries">
+          <span>Show</span>
+          <select class="entries-select-premium" [(ngModel)]="itemsPerPage" (change)="currentPage=1; applyFilters()">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+          </select>
+          <span>entries</span>
         </div>
-      </ng-template>
-    </div>
 
-    <!-- Pagination -->
-    <div class="card-footer bg-white border-top p-24" *ngIf="filteredDefaulters.length > 0">
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-        <span class="text-secondary-light">
-          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
-          {{ currentPage * itemsPerPage > filteredDefaulters.length ? filteredDefaulters.length : currentPage *
-          itemsPerPage }} of
-          {{ filteredDefaulters.length }} entries
-        </span>
+        <div class="pagination-info-premium">
+          Showing {{ Math.min((currentPage-1)*itemsPerPage + 1, filteredDefaulters.length) }} to {{
+          Math.min(currentPage*itemsPerPage, filteredDefaulters.length) }} of {{ filteredDefaulters.length }} entries
+        </div>
 
-        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
-          <li class="page-item">
-            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
-              [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
-              <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
-            </a>
-          </li>
-
-          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
-            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
-              [class.bg-primary-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
-              [class.bg-neutral-200]="currentPage !== i + 1" [class.text-secondary-light]="currentPage !== i + 1"
-              (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
-          </li>
-
-          <li class="page-item">
-            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
-              [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
-              href="javascript:void(0)">
-              <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
-            </a>
-          </li>
-        </ul>
+        <div class="pagination-controls-premium">
+          <button class="page-btn-premium" [disabled]="currentPage===1" (click)="changePage(currentPage-1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <button class="page-btn-premium" *ngFor="let page of [].constructor(totalPages); let i=index"
+            [class.active]="currentPage===i+1" (click)="changePage(i+1)">{{ i+1 }}</button>
+          <button class="page-btn-premium" [disabled]="currentPage===totalPages" (click)="changePage(currentPage+1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>

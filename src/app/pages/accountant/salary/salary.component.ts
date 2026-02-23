@@ -46,6 +46,25 @@ export class SalaryComponent implements OnInit {
     this.loadStaff();
   }
 
+  /* ================= GETTERS FOR STATS ================= */
+  get totalStaff(): number {
+    return this.salaries.length;
+  }
+
+  get totalSalaryPaid(): number {
+    return this.salaries.reduce((acc, s) => acc + (s.netSalary || 0), 0);
+  }
+
+  get averageSalary(): number {
+    return this.totalStaff > 0 ? this.totalSalaryPaid / this.totalStaff : 0;
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '??';
+    const names = name.split(' ');
+    return names.map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  }
+
   /* ================= LOAD STAFF ================= */
   loadStaff(): void {
     this.staffService.getAllStaffs().subscribe({
