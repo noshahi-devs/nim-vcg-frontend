@@ -119,6 +119,19 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     this.updatePagination();
   }
 
+  /* ---------- DASHBOARD STATS ---------- */
+  get totalRecords() {
+    return this.fees.length;
+  }
+
+  get totalAmount() {
+    return this.fees.reduce((acc, curr) => acc + (curr.amount || 0), 0);
+  }
+
+  get uniqueStandardsCount() {
+    return new Set(this.fees.map(f => f.standardId)).size;
+  }
+
   /* ---------- ADD / EDIT ---------- */
   openAddFee() {
     this.isEditMode = false;
