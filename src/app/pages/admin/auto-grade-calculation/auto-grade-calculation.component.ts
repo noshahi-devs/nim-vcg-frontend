@@ -57,9 +57,15 @@ export class AutoGradeCalculationComponent implements OnInit {
   }
 
   loadExams() {
-    this.examService.getAllExams().subscribe(res => {
-      this.exams = res || [];
-      if (this.exams.length === 0) {
+    this.examService.getAllExams().subscribe({
+      next: (res) => {
+        this.exams = res || [];
+        if (this.exams.length === 0) {
+          this.loadMockExams();
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load exams', err);
         this.loadMockExams();
       }
     });

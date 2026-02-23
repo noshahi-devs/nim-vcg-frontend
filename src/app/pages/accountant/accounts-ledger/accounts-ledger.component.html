@@ -1,147 +1,203 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- Filters -->
-  <div class="card h-100 p-0 radius-12 mb-24">
-    <div class="card-header border-bottom bg-base py-16 px-24">
-      <div class="row gy-3 align-items-end">
-        <div class="col-md-3">
-          <label class="form-label fw-semibold mb-2">Transaction Type</label>
-          <select class="form-select" [(ngModel)]="filterType" (change)="applyFilters()">
+  <!-- Ledger Table Card -->
+  <div class="fee-card">
+    <div class="fee-card-header flex-wrap gap-16">
+
+      <!-- Filters Group -->
+      <div class="d-flex align-items-center flex-wrap gap-16 w-100">
+        <div class="show-entries">
+          <span>Type</span>
+          <select class="entries-select" [(ngModel)]="filterType" (change)="applyFilters()">
             <option value="">All Types</option>
             <option value="Income">Income</option>
             <option value="Expense">Expense</option>
           </select>
         </div>
-        <div class="col-md-3">
-          <label class="form-label fw-semibold mb-2">From Date</label>
-          <input type="date" class="form-control" [(ngModel)]="filterDateFrom" (change)="applyFilters()">
+
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <input type="date" class="search-input" [(ngModel)]="filterDateFrom" (change)="applyFilters()"
+            style="width: 140px; padding-left: 32px;" title="From Date">
         </div>
-        <div class="col-md-3">
-          <label class="form-label fw-semibold mb-2">To Date</label>
-          <input type="date" class="form-control" [(ngModel)]="filterDateTo" (change)="applyFilters()">
+
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <input type="date" class="search-input" [(ngModel)]="filterDateTo" (change)="applyFilters()"
+            style="width: 140px; padding-left: 32px;" title="To Date">
         </div>
-        <div class="col-md-3">
-          <button type="button" (click)="clearFilters()" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2">
-            <iconify-icon icon="solar:refresh-linear" class="icon text-xl"></iconify-icon>
-            Clear Filters
+
+        <button type="button" (click)="clearFilters()" class="btn-ghost" style="padding: 8px 16px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <polyline points="23 4 23 10 17 10" />
+            <polyline points="1 20 1 14 7 14" />
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+          </svg>
+          Clear
+        </button>
+      </div>
+
+      <!-- Action Group -->
+      <div class="d-flex align-items-center gap-12 w-100 justify-content-between mt-8 border-top pt-16"
+        style="border-color: #f1f5f9;">
+        <h6 class="text-lg fw-semibold mb-0 text-secondary-dark d-flex align-items-center gap-2">
+          <svg viewBox="0 0 24 24" fill="none" class="text-primary-main" stroke="currentColor" stroke-width="2"
+            width="20" height="20">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+          Transaction Ledger
+        </h6>
+
+        <div class="d-flex gap-2">
+          <button type="button" (click)="loadLedger()" class="btn-ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <polyline points="23 4 23 10 17 10" />
+              <polyline points="1 20 1 14 7 14" />
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+            </svg>
+            Refresh
+          </button>
+          <button type="button" (click)="exportLedger()" class="btn-add"
+            style="background: linear-gradient(135deg, #10b981, #059669);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Export PDF
           </button>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Ledger Table -->
-  <div class="card h-100 p-0 radius-12">
-    <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-      <h6 class="text-lg fw-semibold mb-0">Transaction Ledger</h6>
-      <div class="d-flex align-items-center gap-2">
-        <button type="button" (click)="loadLedger()" class="btn btn-outline-primary text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
-          <iconify-icon icon="solar:refresh-linear" class="icon text-xl"></iconify-icon>
-          Refresh
-        </button>
-        <button type="button" (click)="exportLedger()" class="btn btn-outline-success text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
-          <iconify-icon icon="solar:export-linear" class="icon text-xl"></iconify-icon>
-          Export PDF
-        </button>
-      </div>
     </div>
 
-    <div class="card-body p-24">
-      <div class="table-responsive scroll-sm">
-        <table class="table bordered-table sm-table mb-0">
-          <thead class="bg-neutral-50">
+    <div class="fee-card-body">
+      <div class="table-wrapper">
+        <table class="fee-table">
+          <thead>
             <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Transaction ID</th>
-              <th scope="col">Type</th>
-              <th scope="col">Category</th>
-              <th scope="col">Description</th>
-              <th scope="col" class="text-end">Debit</th>
-              <th scope="col" class="text-end">Credit</th>
-              <th scope="col" class="text-end">Balance</th>
-              <th scope="col" class="text-center">Action</th>
+              <th>Date</th>
+              <th>Transaction ID</th>
+              <th>Type</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th class="text-end">Debit</th>
+              <th class="text-end">Credit</th>
+              <th class="text-end">Balance</th>
+              <th class="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let transaction of filteredTransactions">
-              <td>{{ transaction.date }}</td>
-              <td><span class="fw-medium text-primary-600">{{ transaction.transactionId }}</span></td>
-              <td><span [ngClass]="getTypeBadgeClass(transaction.type)">{{ transaction.type }}</span></td>
-              <td><span class="badge bg-neutral-200 text-neutral-600 px-8 py-4 radius-4 fw-medium text-xs">{{ transaction.category }}</span></td>
+            <tr class="table-row" *ngFor="let transaction of filteredTransactions">
+              <td><span class="date-val">{{ transaction.date | date:'mediumDate' }}</span></td>
+              <td><span class="enrollment-badge text-primary-main">{{ transaction.transactionId }}</span></td>
+              <td>
+                <span class="amount-chip" [ngClass]="transaction.type === 'Income' ? 'paid' : 'due'">
+                  {{ transaction.type }}
+                </span>
+              </td>
+              <td><span class="student-name text-sm">{{ transaction.category }}</span></td>
               <td>{{ transaction.description }}</td>
-              <td class="text-end fw-semibold" [class.text-danger-main]="transaction.debit > 0">
+              <td class="text-end fw-semibold text-danger-main">
                 {{ transaction.debit > 0 ? formatCurrency(transaction.debit) : '-' }}
               </td>
-              <td class="text-end fw-semibold" [class.text-success-main]="transaction.credit > 0">
+              <td class="text-end fw-semibold text-success-main">
                 {{ transaction.credit > 0 ? formatCurrency(transaction.credit) : '-' }}
               </td>
               <td class="text-end fw-bold" [ngClass]="getBalanceClass(transaction.balance)">
                 {{ formatCurrency(transaction.balance) }}
               </td>
               <td class="text-center">
-                <button type="button" (click)="viewDetails(transaction)" 
-                        class="bg-info-focus text-info-600 bg-hover-info-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" 
-                        title="View Details">
-                  <iconify-icon icon="solar:eye-linear" class="icon text-xl"></iconify-icon>
-                </button>
+                <div class="action-group">
+                  <button type="button" class="icon-btn edit-btn" (click)="viewDetails(transaction)"
+                    title="View Details" style="color: #0ea5e9; background: #e0f2fe;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </button>
+                </div>
               </td>
             </tr>
             <tr *ngIf="filteredTransactions.length === 0">
-              <td colspan="9" class="text-center py-24 text-secondary-light">No transactions found</td>
+              <td colspan="9" class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                  <polyline points="13 2 13 9 20 9" />
+                </svg>
+                <p>No transactions found</p>
+              </td>
             </tr>
           </tbody>
-          <tfoot class="bg-neutral-100" *ngIf="filteredTransactions.length > 0">
-            <tr>
-              <td colspan="5" class="fw-bold text-end">TOTALS:</td>
-              <td class="text-end fw-bold text-danger-main">{{ formatCurrency(totalDebit) }}</td>
-              <td class="text-end fw-bold text-success-main">{{ formatCurrency(totalCredit) }}</td>
-              <td class="text-end fw-bold" [ngClass]="getBalanceClass(finalBalance)">{{ formatCurrency(finalBalance) }}</td>
-              <td></td>
-            </tr>
-          </tfoot>
+          <!-- Tfoot omitted since summary stats are in a cleaner layout below! -->
         </table>
       </div>
 
-      <!-- Summary Info -->
-      <div class="row gy-3 mt-24 pt-24 border-top" *ngIf="filteredTransactions.length > 0">
-        <div class="col-md-4">
-          <div class="d-flex align-items-center gap-3">
-            <div class="w-48-px h-48-px bg-danger-focus rounded-circle d-flex justify-content-center align-items-center">
-              <iconify-icon icon="mdi:arrow-down" class="text-danger-main text-xl"></iconify-icon>
-            </div>
-            <div>
-              <p class="mb-1 text-secondary-light text-sm">Total Debit</p>
-              <h6 class="mb-0 text-danger-main">{{ formatCurrency(totalDebit) }}</h6>
-            </div>
+      <!-- Modern Summary Info Bottom Bar -->
+      <div class="stats-row mt-24 pt-24 border-top" *ngIf="filteredTransactions.length > 0"
+        style="border-color: #f1f5f9;">
+        <div class="stat-card" style="padding: 16px;">
+          <div class="stat-icon-wrapper orange" style="width: 40px; height: 40px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <polyline points="19 12 12 19 5 12" />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label" style="font-size: 13px;">Total Debit</span>
+            <h4 class="stat-value text-danger-main" style="font-size: 18px;">{{ formatCurrency(totalDebit) }}</h4>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="d-flex align-items-center gap-3">
-            <div class="w-48-px h-48-px bg-success-focus rounded-circle d-flex justify-content-center align-items-center">
-              <iconify-icon icon="mdi:arrow-up" class="text-success-main text-xl"></iconify-icon>
-            </div>
-            <div>
-              <p class="mb-1 text-secondary-light text-sm">Total Credit</p>
-              <h6 class="mb-0 text-success-main">{{ formatCurrency(totalCredit) }}</h6>
-            </div>
+        <div class="stat-card" style="padding: 16px;">
+          <div class="stat-icon-wrapper green" style="width: 40px; height: 40px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
+              <line x1="12" y1="19" x2="12" y2="5" />
+              <polyline points="5 12 12 5 19 12" />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label" style="font-size: 13px;">Total Credit</span>
+            <h4 class="stat-value text-success-main" style="font-size: 18px;">{{ formatCurrency(totalCredit) }}</h4>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="d-flex align-items-center gap-3">
-            <div class="w-48-px h-48-px rounded-circle d-flex justify-content-center align-items-center"
-                 [ngClass]="finalBalance >= 0 ? 'bg-success-focus' : 'bg-danger-focus'">
-              <iconify-icon [icon]="finalBalance >= 0 ? 'mdi:check-circle' : 'mdi:alert-circle'" 
-                            [class]="finalBalance >= 0 ? 'text-success-main' : 'text-danger-main'" 
-                            class="text-xl"></iconify-icon>
-            </div>
-            <div>
-              <p class="mb-1 text-secondary-light text-sm">Current Balance</p>
-              <h6 class="mb-0" [ngClass]="getBalanceClass(finalBalance)">{{ formatCurrency(finalBalance) }}</h6>
-            </div>
+        <div class="stat-card" style="padding: 16px;">
+          <div class="stat-icon-wrapper" style="width: 40px; height: 40px;"
+            [ngClass]="finalBalance >= 0 ? 'green' : 'orange'">
+            <svg *ngIf="finalBalance >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              width="20" height="20">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            <svg *ngIf="finalBalance < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              width="20" height="20">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label" style="font-size: 13px;">Current Balance</span>
+            <h4 class="stat-value" style="font-size: 18px;" [ngClass]="getBalanceClass(finalBalance)">{{
+              formatCurrency(finalBalance) }}</h4>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </div>

@@ -2,90 +2,82 @@
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
   <!-- Summary Cards -->
-  <div class="row row-cols-xxxl-3 row-cols-lg-3 row-cols-sm-2 row-cols-1 gy-4 mb-24">
-    <div class="col">
-      <div class="card shadow-none border bg-gradient-start-3 h-100">
-        <div class="card-body p-20">
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div>
-              <p class="fw-medium text-primary-light mb-1">Total Bank Balance</p>
-              <h4 class="mb-0 text-info-main">{{ formatCurrency(totalBankBalance) }}</h4>
-            </div>
-            <div class="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
-              <iconify-icon icon="mdi:bank" class="text-white text-2xl mb-0"></iconify-icon>
-            </div>
-          </div>
-        </div>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <path d="M8 21h8M12 17v4" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Bank Balance</span>
+        <h3 class="stat-value text-info-main">{{ formatCurrency(totalBankBalance) }}</h3>
       </div>
     </div>
 
-    <div class="col">
-      <div class="card shadow-none border bg-gradient-start-4 h-100">
-        <div class="card-body p-20">
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div>
-              <p class="fw-medium text-primary-light mb-1">Total Cash Balance</p>
-              <h4 class="mb-0 text-success-main">{{ formatCurrency(totalCashBalance) }}</h4>
-            </div>
-            <div
-              class="w-50-px h-50-px bg-success-main rounded-circle d-flex justify-content-center align-items-center">
-              <iconify-icon icon="mdi:cash-multiple" class="text-white text-2xl mb-0"></iconify-icon>
-            </div>
-          </div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23" />
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Cash Balance</span>
+        <h3 class="stat-value text-success-main">{{ formatCurrency(totalCashBalance) }}</h3>
       </div>
     </div>
 
-    <div class="col">
-      <div class="card shadow-none border bg-gradient-start-1 h-100">
-        <div class="card-body p-20">
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div>
-              <p class="fw-medium text-primary-light mb-1">Total Balance</p>
-              <h4 class="mb-0 text-primary-600">{{ formatCurrency(totalBalance) }}</h4>
-            </div>
-            <div class="w-50-px h-50-px bg-primary-600 rounded-circle d-flex justify-content-center align-items-center">
-              <iconify-icon icon="mdi:wallet" class="text-white text-2xl mb-0"></iconify-icon>
-            </div>
-          </div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper orange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Balance</span>
+        <h3 class="stat-value text-primary-600">{{ formatCurrency(totalBalance) }}</h3>
       </div>
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="card h-100 p-0 radius-12">
-    <div class="card-header border-bottom bg-base py-16 px-24">
-      <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" [class.active]="activeTab === 'bank'" (click)="activeTab = 'bank'" type="button">Bank
-            Accounts</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" [class.active]="activeTab === 'cash'" (click)="activeTab = 'cash'" type="button">Cash
-            Accounts</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" [class.active]="activeTab === 'gateway'" (click)="activeTab = 'gateway'"
-            type="button">Payment Gateways</button>
-        </li>
-      </ul>
+  <!-- Tabs & Data Table -->
+  <div class="fee-card">
+    <div class="fee-card-header"
+      style="justify-content: flex-start; gap: 24px; border-bottom: none; padding-bottom: 0;">
+      <!-- Styled Nav Links masquerading as Buttons -->
+      <button class="btn-ghost" [class.btn-primary-gradient]="activeTab === 'bank'" (click)="activeTab = 'bank'"
+        style="margin-bottom: -1px; border-radius: 8px 8px 0 0; padding: 12px 24px;">
+        Bank Accounts
+      </button>
+      <button class="btn-ghost" [class.btn-primary-gradient]="activeTab === 'cash'" (click)="activeTab = 'cash'"
+        style="margin-bottom: -1px; border-radius: 8px 8px 0 0; padding: 12px 24px;">
+        Cash Accounts
+      </button>
+      <button class="btn-ghost" [class.btn-primary-gradient]="activeTab === 'gateway'" (click)="activeTab = 'gateway'"
+        style="margin-bottom: -1px; border-radius: 8px 8px 0 0; padding: 12px 24px;">
+        Payment Gateways
+      </button>
     </div>
 
-    <div class="card-body p-24">
+    <div class="fee-card-body" style="padding-top: 18px;">
+
       <!-- Bank Accounts Tab -->
       <div *ngIf="activeTab === 'bank'">
-        <div class="d-flex align-items-center justify-content-between mb-16">
-          <h6 class="text-lg fw-semibold mb-0">Bank Accounts</h6>
-          <button type="button" (click)="openAddBankModal()"
-            class="btn btn-primary text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
-            <iconify-icon icon="solar:add-circle-bold" class="icon text-xl"></iconify-icon>
+        <div class="d-flex align-items-center justify-content-between mb-16 px-18">
+          <h6 class="text-lg fw-semibold mb-0 text-secondary-dark">Registered Banks</h6>
+          <button type="button" (click)="openAddBankModal()" class="btn-add">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
             Add Bank Account
           </button>
         </div>
 
-        <div class="table-responsive scroll-sm">
-          <table class="table bordered-table sm-table mb-0">
+        <div class="table-wrapper">
+          <table class="fee-table">
             <thead>
               <tr>
                 <th>Account Name</th>
@@ -97,34 +89,44 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let account of bankAccounts">
-                <td><span class="fw-semibold">{{ account.accountName }}</span></td>
-                <td>{{ account.accountNumber }}</td>
+              <tr class="table-row" *ngFor="let account of bankAccounts">
+                <td><span class="student-name">{{ account.accountName }}</span></td>
+                <td><span class="enrollment-badge">{{ account.accountNumber }}</span></td>
                 <td>{{ account.bankName }}</td>
                 <td class="text-end fw-bold text-info-main">{{ formatCurrency(account.balance) }}</td>
                 <td>
-                  <span class="badge px-8 py-4 radius-4 fw-medium text-xs"
-                    [ngClass]="account.isActive ? 'bg-success-focus text-success-main' : 'bg-danger-focus text-danger-main'">
+                  <span class="amount-chip" [ngClass]="account.isActive ? 'paid' : 'pending'">
                     {{ account.isActive ? 'Active' : 'Inactive' }}
                   </span>
                 </td>
                 <td class="text-center">
-                  <div class="d-flex align-items-center justify-content-center gap-2">
-                    <button type="button" (click)="openEditBankModal(account)"
-                      class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                      title="Edit">
-                      <iconify-icon icon="lucide:edit" class="icon text-xl"></iconify-icon>
+                  <div class="action-group">
+                    <button type="button" class="icon-btn edit-btn" (click)="openEditBankModal(account)" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
                     </button>
-                    <button type="button" (click)="deleteBankAccount(account)"
-                      class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                    <button type="button" class="icon-btn delete-btn" (click)="deleteBankAccount(account)"
                       title="Delete">
-                      <iconify-icon icon="fluent:delete-24-regular" class="icon text-xl"></iconify-icon>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1-1v2" />
+                      </svg>
                     </button>
                   </div>
                 </td>
               </tr>
               <tr *ngIf="bankAccounts.length === 0">
-                <td colspan="6" class="text-center py-24 text-secondary-light">No bank accounts found</td>
+                <td colspan="6" class="empty-state">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                    <polyline points="13 2 13 9 20 9" />
+                  </svg>
+                  <p>No bank accounts found</p>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -133,17 +135,19 @@
 
       <!-- Cash Accounts Tab -->
       <div *ngIf="activeTab === 'cash'">
-        <div class="d-flex align-items-center justify-content-between mb-16">
-          <h6 class="text-lg fw-semibold mb-0">Cash Accounts</h6>
-          <button type="button" (click)="openAddCashModal()"
-            class="btn btn-success text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
-            <iconify-icon icon="solar:add-circle-bold" class="icon text-xl"></iconify-icon>
+        <div class="d-flex align-items-center justify-content-between mb-16 px-18">
+          <h6 class="text-lg fw-semibold mb-0 text-secondary-dark">Cash Accounts</h6>
+          <button type="button" (click)="openAddCashModal()" class="btn-add"
+            style="background: linear-gradient(135deg, #10b981, #059669);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
             Add Cash Account
           </button>
         </div>
 
-        <div class="table-responsive scroll-sm">
-          <table class="table bordered-table sm-table mb-0">
+        <div class="table-wrapper">
+          <table class="fee-table">
             <thead>
               <tr>
                 <th>Account Name</th>
@@ -154,33 +158,43 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let account of cashAccounts">
-                <td><span class="fw-semibold">{{ account.accountName }}</span></td>
-                <td>{{ account.bankName }}</td> <!-- Using bankName for Location/Ref -->
+              <tr class="table-row" *ngFor="let account of cashAccounts">
+                <td><span class="student-name">{{ account.accountName }}</span></td>
+                <td>{{ account.bankName }}</td>
                 <td class="text-end fw-bold text-success-main">{{ formatCurrency(account.balance) }}</td>
                 <td>
-                  <span class="badge px-8 py-4 radius-4 fw-medium text-xs"
-                    [ngClass]="account.isActive ? 'bg-success-focus text-success-main' : 'bg-danger-focus text-danger-main'">
+                  <span class="amount-chip" [ngClass]="account.isActive ? 'paid' : 'pending'">
                     {{ account.isActive ? 'Active' : 'Inactive' }}
                   </span>
                 </td>
                 <td class="text-center">
-                  <div class="d-flex align-items-center justify-content-center gap-2">
-                    <button type="button" (click)="openEditCashModal(account)"
-                      class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                      title="Edit">
-                      <iconify-icon icon="lucide:edit" class="icon text-xl"></iconify-icon>
+                  <div class="action-group">
+                    <button type="button" class="icon-btn edit-btn" (click)="openEditCashModal(account)" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
                     </button>
-                    <button type="button" (click)="deleteCashAccount(account)"
-                      class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                    <button type="button" class="icon-btn delete-btn" (click)="deleteCashAccount(account)"
                       title="Delete">
-                      <iconify-icon icon="fluent:delete-24-regular" class="icon text-xl"></iconify-icon>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1-1v2" />
+                      </svg>
                     </button>
                   </div>
                 </td>
               </tr>
               <tr *ngIf="cashAccounts.length === 0">
-                <td colspan="5" class="text-center py-24 text-secondary-light">No cash accounts found</td>
+                <td colspan="5" class="empty-state">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                    <polyline points="13 2 13 9 20 9" />
+                  </svg>
+                  <p>No cash accounts found</p>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -189,17 +203,19 @@
 
       <!-- Payment Gateways Tab -->
       <div *ngIf="activeTab === 'gateway'">
-        <div class="d-flex align-items-center justify-content-between mb-16">
-          <h6 class="text-lg fw-semibold mb-0">Payment Gateways</h6>
-          <button type="button" (click)="openAddGatewayModal()"
-            class="btn btn-warning text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
-            <iconify-icon icon="solar:add-circle-bold" class="icon text-xl"></iconify-icon>
+        <div class="d-flex align-items-center justify-content-between mb-16 px-18">
+          <h6 class="text-lg fw-semibold mb-0 text-secondary-dark">Payment Gateways</h6>
+          <button type="button" (click)="openAddGatewayModal()" class="btn-add"
+            style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
             Add Gateway
           </button>
         </div>
 
-        <div class="table-responsive scroll-sm">
-          <table class="table bordered-table sm-table mb-0">
+        <div class="table-wrapper">
+          <table class="fee-table">
             <thead>
               <tr>
                 <th>Gateway Name</th>
@@ -211,34 +227,46 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let gateway of paymentGateways">
-                <td><span class="fw-semibold">{{ gateway.gatewayName }}</span></td>
-                <td><code class="text-xs">{{ gateway.apiKey }}</code></td>
-                <td><code class="text-xs">******</code></td>
+              <tr class="table-row" *ngFor="let gateway of paymentGateways">
+                <td><span class="student-name">{{ gateway.gatewayName }}</span></td>
+                <td><code class="text-xs"
+                    style="background: #f1f5f9; padding: 4px 8px; border-radius: 6px;">{{ gateway.apiKey }}</code></td>
+                <td><code class="text-xs"
+                    style="background: #f1f5f9; padding: 4px 8px; border-radius: 6px;">******</code></td>
                 <td class="text-end fw-bold">{{ gateway.transactionFee }}%</td>
                 <td>
-                  <span class="badge px-8 py-4 radius-4 fw-medium text-xs"
-                    [ngClass]="gateway.isActive ? 'bg-success-focus text-success-main' : 'bg-danger-focus text-danger-main'">
+                  <span class="amount-chip" [ngClass]="gateway.isActive ? 'paid' : 'pending'">
                     {{ gateway.isActive ? 'Active' : 'Inactive' }}
                   </span>
                 </td>
                 <td class="text-center">
-                  <div class="d-flex align-items-center justify-content-center gap-2">
-                    <button type="button" (click)="openEditGatewayModal(gateway)"
-                      class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                  <div class="action-group">
+                    <button type="button" class="icon-btn edit-btn" (click)="openEditGatewayModal(gateway)"
                       title="Edit">
-                      <iconify-icon icon="lucide:edit" class="icon text-xl"></iconify-icon>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
                     </button>
-                    <button type="button" (click)="deleteGateway(gateway)"
-                      class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                      title="Delete">
-                      <iconify-icon icon="fluent:delete-24-regular" class="icon text-xl"></iconify-icon>
+                    <button type="button" class="icon-btn delete-btn" (click)="deleteGateway(gateway)" title="Delete">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1-1v2" />
+                      </svg>
                     </button>
                   </div>
                 </td>
               </tr>
               <tr *ngIf="paymentGateways.length === 0">
-                <td colspan="6" class="text-center py-24 text-secondary-light">No payment gateways found</td>
+                <td colspan="6" class="empty-state">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                    <polyline points="13 2 13 9 20 9" />
+                  </svg>
+                  <p>No payment gateways found</p>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -248,151 +276,272 @@
   </div>
 </div>
 
-<!-- Bank Modal -->
-<div class="modal fade" [class.show]="showBankModal" [style.display]="showBankModal ? 'block' : 'none'" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h6 class="modal-title">{{ isEditBankMode ? 'Edit Bank Account' : 'Add Bank Account' }}</h6>
-        <button type="button" class="btn-close" (click)="closeBankModal()"></button>
+<!-- ===================== BANK MODAL ===================== -->
+<div *ngIf="showBankModal" class="modal-overlay" (click)="closeBankModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <!-- Gradient Header -->
+    <div class="modal-header-premium">
+      <div class="header-gradient" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); opacity: 0.1;">
       </div>
-      <div class="modal-body">
-        <form>
-          <div class="row gy-3">
-            <div class="col-md-6">
-              <label class="form-label">Account Name *</label>
-              <input type="text" class="form-control" [(ngModel)]="currentBankAccount.accountName" name="accountName">
+      <div class="header-content">
+        <div class="modal-icon-premium" [class.edit-mode]="isEditBankMode"
+          [style.background]="isEditBankMode ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #3b82f6, #2563eb)'"
+          [style.boxShadow]="isEditBankMode ? '0 4px 14px rgba(16, 185, 129, 0.4)' : '0 4px 14px rgba(59, 130, 246, 0.4)'">
+          <svg *ngIf="!isEditBankMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <svg *ngIf="isEditBankMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+        </div>
+        <div>
+          <h4 class="modal-title-premium">{{ isEditBankMode ? 'Edit Bank Account' : 'Add Bank Account' }}</h4>
+          <p class="modal-subtitle-premium">{{ isEditBankMode ? 'Update account info' : 'Register a new banking channel'
+            }}</p>
+        </div>
+      </div>
+      <button class="modal-close-premium" (click)="closeBankModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body-premium">
+      <form>
+        <div class="form-card">
+          <div class="form-card-label">
+            <span class="card-dot blue"></span> Account Details
+          </div>
+          <div class="form-row-2 mb-14">
+            <div class="form-group-premium">
+              <label class="field-label">Account Name</label>
+              <input type="text" class="field-input" [(ngModel)]="currentBankAccount.accountName" name="accountName">
             </div>
-            <div class="col-md-6">
-              <label class="form-label">Account Number *</label>
-              <input type="text" class="form-control" [(ngModel)]="currentBankAccount.accountNumber"
+            <div class="form-group-premium">
+              <label class="field-label">Account Number</label>
+              <input type="text" class="field-input" [(ngModel)]="currentBankAccount.accountNumber"
                 name="accountNumber">
             </div>
-            <div class="col-md-6">
-              <label class="form-label">Bank Name *</label>
-              <input type="text" class="form-control" [(ngModel)]="currentBankAccount.bankName" name="bankName">
+          </div>
+          <div class="form-group-premium mb-14">
+            <label class="field-label">Bank Name</label>
+            <input type="text" class="field-input" [(ngModel)]="currentBankAccount.bankName" name="bankName">
+          </div>
+          <div class="form-row-2">
+            <div class="form-group-premium">
+              <label class="field-label">Initial Balance</label>
+              <input type="number" class="field-input accent-green" [(ngModel)]="currentBankAccount.balance"
+                name="balance">
             </div>
-            <div class="col-md-6">
-              <label class="form-label">Balance *</label>
-              <input type="number" class="form-control" [(ngModel)]="currentBankAccount.balance" name="balance">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Status *</label>
-              <select class="form-select" [(ngModel)]="currentBankAccount.isActive" name="isActive">
-                <option [ngValue]="true">Active</option>
-                <option [ngValue]="false">Inactive</option>
-              </select>
+            <div class="form-group-premium">
+              <label class="field-label">Status</label>
+              <div class="select-wrapper-premium">
+                <select class="field-select" [(ngModel)]="currentBankAccount.isActive" name="isActive">
+                  <option [ngValue]="true">Active</option>
+                  <option [ngValue]="false">Inactive</option>
+                </select>
+                <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
             </div>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeBankModal()">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="saveBankAccount()">{{ isEditBankMode ? 'Update' : 'Save'
-          }}</button>
-      </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer-premium">
+      <button class="btn-ghost" (click)="closeBankModal()">Cancel</button>
+      <button class="btn-primary-gradient"
+        [style.background]="isEditBankMode ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #3b82f6, #2563eb)'"
+        (click)="saveBankAccount()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        {{ isEditBankMode ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
 </div>
-<div class="modal-backdrop fade" [class.show]="showBankModal" *ngIf="showBankModal"></div>
 
-<!-- Cash Modal -->
-<div class="modal fade" [class.show]="showCashModal" [style.display]="showCashModal ? 'block' : 'none'" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h6 class="modal-title">{{ isEditCashMode ? 'Edit Cash Account' : 'Add Cash Account' }}</h6>
-        <button type="button" class="btn-close" (click)="closeCashModal()"></button>
+<!-- ===================== CASH MODAL ===================== -->
+<div *ngIf="showCashModal" class="modal-overlay" (click)="closeCashModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <!-- Gradient Header -->
+    <div class="modal-header-premium">
+      <div class="header-gradient" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); opacity: 0.1;">
       </div>
-      <div class="modal-body">
-        <form>
-          <div class="row gy-3">
-            <div class="col-12">
-              <label class="form-label">Account Name *</label>
-              <input type="text" class="form-control" [(ngModel)]="currentCashAccount.accountName" name="accountName">
+      <div class="header-content">
+        <div class="modal-icon-premium"
+          style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
+          <svg *ngIf="!isEditCashMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <svg *ngIf="isEditCashMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+        </div>
+        <div>
+          <h4 class="modal-title-premium">{{ isEditCashMode ? 'Edit Cash Account' : 'Add Cash Account' }}</h4>
+          <p class="modal-subtitle-premium">Manage physical vault or location cash</p>
+        </div>
+      </div>
+      <button class="modal-close-premium" (click)="closeCashModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body-premium">
+      <form>
+        <div class="form-card">
+          <div class="form-card-label">
+            <span class="card-dot green"></span> Cash Details
+          </div>
+          <div class="form-group-premium mb-14">
+            <label class="field-label">Account Name</label>
+            <input type="text" class="field-input" [(ngModel)]="currentCashAccount.accountName" name="accountName">
+          </div>
+          <div class="form-group-premium mb-14">
+            <label class="field-label">Location / Ref</label>
+            <input type="text" class="field-input" [(ngModel)]="currentCashAccount.bankName" name="bankName">
+          </div>
+          <div class="form-row-2">
+            <div class="form-group-premium">
+              <label class="field-label">Initial Balance</label>
+              <input type="number" class="field-input accent-green" [(ngModel)]="currentCashAccount.balance"
+                name="balance">
             </div>
-            <div class="col-12">
-              <label class="form-label">Location / Ref *</label>
-              <input type="text" class="form-control" [(ngModel)]="currentCashAccount.bankName" name="bankName">
-            </div>
-            <div class="col-12">
-              <label class="form-label">Balance *</label>
-              <input type="number" class="form-control" [(ngModel)]="currentCashAccount.balance" name="balance">
-            </div>
-            <div class="col-12">
-              <label class="form-label">Status *</label>
-              <select class="form-select" [(ngModel)]="currentCashAccount.isActive" name="isActive">
-                <option [ngValue]="true">Active</option>
-                <option [ngValue]="false">Inactive</option>
-              </select>
+            <div class="form-group-premium">
+              <label class="field-label">Status</label>
+              <div class="select-wrapper-premium">
+                <select class="field-select" [(ngModel)]="currentCashAccount.isActive" name="isActive">
+                  <option [ngValue]="true">Active</option>
+                  <option [ngValue]="false">Inactive</option>
+                </select>
+                <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
             </div>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeCashModal()">Cancel</button>
-        <button type="button" class="btn btn-success" (click)="saveCashAccount()">{{ isEditCashMode ? 'Update' : 'Save'
-          }}</button>
-      </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer-premium">
+      <button class="btn-ghost" (click)="closeCashModal()">Cancel</button>
+      <button class="btn-primary-gradient" style="background: linear-gradient(135deg, #10b981, #059669);"
+        (click)="saveCashAccount()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        {{ isEditCashMode ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
 </div>
-<div class="modal-backdrop fade" [class.show]="showCashModal" *ngIf="showCashModal"></div>
 
-<!-- Gateway Modal -->
-<div class="modal fade" [class.show]="showGatewayModal" [style.display]="showGatewayModal ? 'block' : 'none'"
-  tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h6 class="modal-title">{{ isEditGatewayMode ? 'Edit Payment Gateway' : 'Add Payment Gateway' }}</h6>
-        <button type="button" class="btn-close" (click)="closeGatewayModal()"></button>
+<!-- ===================== GATEWAY MODAL ===================== -->
+<div *ngIf="showGatewayModal" class="modal-overlay" (click)="closeGatewayModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <!-- Gradient Header -->
+    <div class="modal-header-premium">
+      <div class="header-gradient" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); opacity: 0.1;">
       </div>
-      <div class="modal-body">
-        <form>
-          <div class="row gy-3">
-            <div class="col-md-6">
-              <label class="form-label">Gateway Name *</label>
-              <input type="text" class="form-control" [(ngModel)]="currentGateway.gatewayName" name="gatewayName">
+      <div class="header-content">
+        <div class="modal-icon-premium"
+          style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
+          <svg *ngIf="!isEditGatewayMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <svg *ngIf="isEditGatewayMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+        </div>
+        <div>
+          <h4 class="modal-title-premium">{{ isEditGatewayMode ? 'Edit Gateway' : 'Add Gateway' }}</h4>
+          <p class="modal-subtitle-premium">Configure a digital payment processor</p>
+        </div>
+      </div>
+      <button class="modal-close-premium" (click)="closeGatewayModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body-premium">
+      <form>
+        <div class="form-card">
+          <div class="form-card-label">
+            <span class="card-dot orange"></span> Gateway Settings
+          </div>
+          <div class="form-row-2 mb-14">
+            <div class="form-group-premium">
+              <label class="field-label">Gateway Name</label>
+              <input type="text" class="field-input" [(ngModel)]="currentGateway.gatewayName" name="gatewayName">
             </div>
-            <div class="col-md-6">
-              <label class="form-label">Transaction Fee (%) *</label>
-              <input type="number" step="0.1" class="form-control" [(ngModel)]="currentGateway.transactionFee"
+            <div class="form-group-premium">
+              <label class="field-label">Transaction Fee (%)</label>
+              <input type="number" step="0.1" class="field-input" [(ngModel)]="currentGateway.transactionFee"
                 name="transactionFee">
             </div>
-            <div class="col-md-6">
-              <label class="form-label">API Key *</label>
-              <input type="text" class="form-control" [(ngModel)]="currentGateway.apiKey" name="apiKey">
+          </div>
+          <div class="form-group-premium mb-14">
+            <label class="field-label">API Key</label>
+            <input type="text" class="field-input" [(ngModel)]="currentGateway.apiKey" name="apiKey"
+              style="font-family: monospace;">
+          </div>
+          <div class="form-group-premium mb-14">
+            <label class="field-label">Secret Key</label>
+            <input type="password" class="field-input" [(ngModel)]="currentGateway.secretKey" name="secretKey"
+              style="font-family: monospace;">
+          </div>
+          <div class="form-row-2">
+            <div class="form-group-premium">
+              <label class="field-label">Status</label>
+              <div class="select-wrapper-premium">
+                <select class="field-select" [(ngModel)]="currentGateway.isActive" name="isActive">
+                  <option [ngValue]="true">Active</option>
+                  <option [ngValue]="false">Inactive</option>
+                </select>
+                <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
             </div>
-            <div class="col-md-6">
-              <label class="form-label">Secret Key *</label>
-              <input type="password" class="form-control" [(ngModel)]="currentGateway.secretKey" name="secretKey">
-            </div>
-            <div class="col-12">
-              <label class="form-label">Status *</label>
-              <select class="form-select" [(ngModel)]="currentGateway.isActive" name="isActive">
-                <option [ngValue]="true">Active</option>
-                <option [ngValue]="false">Inactive</option>
-              </select>
-            </div>
-            <div class="col-12">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" [(ngModel)]="currentGateway.isTestMode"
-                  name="isTestMode" id="testModeCheck">
-                <label class="form-check-label" for="testModeCheck">
-                  Test Mode (Sandbox)
+            <div class="form-group-premium" style="justify-content: center; padding-top: 20px;">
+              <div class="toggles-bar" style="margin-top: 0; padding: 0;">
+                <label class="toggle-pill">
+                  <div class="pill-switch">
+                    <input type="checkbox" [(ngModel)]="currentGateway.isTestMode" name="isTestMode" />
+                    <span class="pill-track"></span>
+                  </div>
+                  <span class="pill-label">Test Mode (Sandbox)</span>
                 </label>
               </div>
             </div>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeGatewayModal()">Cancel</button>
-        <button type="button" class="btn btn-warning" (click)="saveGateway()">{{ isEditGatewayMode ? 'Update' : 'Save'
-          }}</button>
-      </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer-premium">
+      <button class="btn-ghost" (click)="closeGatewayModal()">Cancel</button>
+      <button class="btn-primary-gradient" style="background: linear-gradient(135deg, #f59e0b, #d97706);"
+        (click)="saveGateway()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        {{ isEditGatewayMode ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
 </div>
-<div class="modal-backdrop fade" [class.show]="showGatewayModal" *ngIf="showGatewayModal"></div>

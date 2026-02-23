@@ -1,85 +1,136 @@
 <div class="dashboard-main-body">
-  <!-- Header Card -->
-  <div class="report-header-card d-flex align-items-center justify-content-between flex-wrap gap-3">
-    <div>
-      <h3 class="fw-bold mb-8">Staff Attendance Report</h3>
-      <p class="mb-0 opacity-75">Employee performance and regularity tracking</p>
-    </div>
-    <div class="d-flex gap-2">
-      <button class="export-btn" (click)="getReport()" *ngIf="selectedStaffId">
-        <iconify-icon icon="solar:printer-bold-duotone" class="me-8"></iconify-icon> Print Report
-      </button>
-    </div>
-  </div>
+  <app-breadcrumb [title]="'Staff Attendance Report'"></app-breadcrumb>
 
   <!-- Search Card -->
-  <div class="search-glass-card">
-    <div class="row g-4 align-items-end">
-      <div class="col-md-3">
-        <label class="form-label fw-bold text-dark">Staff Member</label>
-        <div class="input-group">
-          <span class="input-group-text bg-white border-end-0"><iconify-icon icon="solar:user-speak-bold-duotone"
-              class="text-primary"></iconify-icon></span>
-          <select class="form-select border-start-0 py-12 radius-8" [(ngModel)]="selectedStaffId">
+  <div class="fee-card mb-24">
+    <div class="fee-card-header flex-wrap" style="border-bottom: none;">
+      <div class="d-flex align-items-center flex-wrap gap-16 w-100">
+
+        <div class="show-entries" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+          <select class="entries-select w-100" [(ngModel)]="selectedStaffId">
             <option [ngValue]="null">-- Choose Staff --</option>
             <option *ngFor="let s of staffList" [value]="s.staffId">{{ s.staffName }}</option>
           </select>
         </div>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label fw-bold text-dark">Start Date</label>
-        <input type="date" class="form-control py-12 radius-8" [(ngModel)]="startDate">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label fw-bold text-dark">End Date</label>
-        <input type="date" class="form-control py-12 radius-8" [(ngModel)]="endDate">
-      </div>
-      <div class="col-md-3">
-        <button class="btn btn-primary w-100 py-12 radius-12 fw-bold" (click)="getReport()">
-          Generate Staff Summary
+
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <input type="date" class="search-input" [(ngModel)]="startDate" style="width: 140px; padding-left: 32px;"
+            title="Start Date">
+        </div>
+
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <input type="date" class="search-input" [(ngModel)]="endDate" style="width: 140px; padding-left: 32px;"
+            title="End Date">
+        </div>
+
+        <button class="btn-primary-gradient" (click)="getReport()" style="padding: 10px 24px;">
+          <svg viewBox="0 0 24 24" fill="none" class="text-white" stroke="currentColor" stroke-width="2" width="20"
+            height="20">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+          <span class="text-white">Generate Staff Summary</span>
         </button>
       </div>
     </div>
   </div>
 
   <!-- Report Data -->
-  <div class="report-table-premium animate__animated animate__fadeIn" *ngIf="report.length">
-    <div class="p-24 border-bottom bg-white d-flex justify-content-between align-items-center">
-      <h5 class="fw-bold mb-0">Record Details</h5>
-      <span class="badge bg-primary-100 text-primary-600 px-16 py-8 radius-8">Summary Collected</span>
+  <div class="fee-card animate__animated animate__fadeIn" *ngIf="report.length">
+    <div class="fee-card-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-12">
+        <h5 class="fw-bold mb-0 text-secondary-dark">Record Details</h5>
+        <span class="enrollment-badge text-primary-main">Summary Collected</span>
+      </div>
+      <button class="btn-add" (click)="getReport()" *ngIf="selectedStaffId"
+        style="background: linear-gradient(135deg, #10b981, #059669);">
+        <svg viewBox="0 0 24 24" fill="none" class="text-white" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 6 2 18 2 18 9" />
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+          <rect x="6" y="14" width="12" height="8" />
+        </svg>
+        <span>Print Report</span>
+      </button>
     </div>
-    <div class="table-responsive">
-      <table class="table-glass">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Shift start</th>
-            <th>Shift end</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of report">
-            <td class="fw-bold text-dark">{{ row.date | date:'mediumDate' }}</td>
-            <td>
-              <span class="status-pill" [ngClass]="row.status === 'Present' ? 'present' : 'absent'">
-                {{ row.status }}
-              </span>
-            </td>
-            <td><iconify-icon icon="solar:login-2-linear" class="me-8 text-primary"></iconify-icon>{{ row.checkIn ||
-              '--:--' }}</td>
-            <td><iconify-icon icon="solar:logout-2-linear" class="me-8 text-danger"></iconify-icon>{{ row.checkOut ||
-              '--:--' }}</td>
-          </tr>
-        </tbody>
-      </table>
+
+    <div class="fee-card-body p-0">
+      <div class="table-wrapper m-24">
+        <table class="fee-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Shift start</th>
+              <th>Shift end</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-row" *ngFor="let row of report">
+              <td><span class="date-val fw-bold text-secondary-dark">{{ row.date | date:'mediumDate' }}</span></td>
+              <td>
+                <span class="amount-chip" [ngClass]="row.status === 'Present' ? 'paid' : 'due'">
+                  {{ row.status }}
+                </span>
+              </td>
+              <td class="text-secondary-light">
+                <div class="d-flex align-items-center gap-8">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"
+                    class="text-primary-main">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                    <polyline points="10 17 15 12 10 7" />
+                    <line x1="15" y1="12" x2="3" y2="12" />
+                  </svg>
+                  <span>{{ row.checkIn || '--:--' }}</span>
+                </div>
+              </td>
+              <td class="text-secondary-light">
+                <div class="d-flex align-items-center gap-8">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"
+                    class="text-danger-main">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                  <span>{{ row.checkOut || '--:--' }}</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <!-- Empty State -->
-  <div *ngIf="!report.length && selectedStaffId" class="card p-60 text-center radius-24 border-0 shadow-sm mt-32">
-    <iconify-icon icon="solar:user-block-bold-duotone" class="text-6xl text-secondary-light mb-16"></iconify-icon>
-    <h4 class="fw-bold">No Records Found</h4>
-    <p class="text-secondary-light">This staff member has no attendance records for the selected period.</p>
+  <div *ngIf="!report.length && selectedStaffId" class="fee-card p-0 mt-32">
+    <div class="fee-card-body py-60 text-center">
+      <div class="w-80-px h-80-px mx-auto rounded-circle d-flex align-items-center justify-content-center mb-24"
+        style="background: #f1f5f9; color: #64748b;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5c-1.1 0-2 .9-2 2v2" />
+          <circle cx="8.5" cy="7" r="4" />
+          <line x1="18" y1="8" x2="23" y2="13" />
+          <line x1="23" y1="8" x2="18" y2="13" />
+        </svg>
+      </div>
+      <h4 class="fw-bold text-secondary-dark">No Records Found</h4>
+      <p class="text-secondary-light max-w-sm mx-auto mb-0">This staff member has no attendance records for the selected
+        period.</p>
+    </div>
   </div>
 </div>

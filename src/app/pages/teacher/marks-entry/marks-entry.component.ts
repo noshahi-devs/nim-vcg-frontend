@@ -96,14 +96,25 @@ export class MarksEntryComponent implements OnInit {
       //return;
       this.markEntryService.createMarkEntry(this.markEntry).subscribe(
         (response) => {
-          console.log('Mark Entry created successfully:', response);
-
-          this.entryForm.resetForm();
-          this.router.navigate(['/marksentrynewList']);
-
+          Swal.fire({
+            title: 'Submitted!',
+            text: 'Student grades have been successfully recorded.',
+            icon: 'success',
+            confirmButtonColor: '#487FFF',
+            confirmButtonText: 'Okay'
+          }).then(() => {
+            this.entryForm.resetForm();
+            this.router.navigate(['/marksentrynewList']);
+          });
         },
         (error) => {
           console.error('Error creating Mark Entry:', error);
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to save student grades. Please try again.',
+            icon: 'error',
+            confirmButtonColor: '#ef4444'
+          });
         }
       );
     }

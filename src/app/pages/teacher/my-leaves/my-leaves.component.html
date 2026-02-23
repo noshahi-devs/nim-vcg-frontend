@@ -1,195 +1,200 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- Color Legend -->
-  <div class="card radius-12 mb-24">
-    <div class="card-body p-20">
-      <div class="d-flex align-items-center justify-content-center flex-wrap gap-4">
-        <div class="d-flex align-items-center gap-2">
-          <span class="w-12-px h-12-px rounded-circle bg-success-600"></span>
-          <span class="text-sm fw-medium">Approved</span>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-          <span class="w-12-px h-12-px rounded-circle bg-warning-600"></span>
-          <span class="text-sm fw-medium">Pending</span>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-          <span class="w-12-px h-12-px rounded-circle bg-danger-600"></span>
-          <span class="text-sm fw-medium">Rejected</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Quick Stats -->
-  <div class="row gy-4 mb-24">
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card p-3 shadow-sm radius-12 h-100">
-        <div class="card-body p-16">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-secondary-light fw-medium mb-4 d-block">Total Applications</span>
-              <h4 class="fw-bold mb-0">{{ totalLeaves }}</h4>
-            </div>
-            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-primary-100">
-              <iconify-icon icon="solar:document-text-bold-duotone" class="text-primary-600 text-xxxl"></iconify-icon>
-            </div>
-          </div>
-        </div>
+  <div class="stats-row mb-24">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper text-primary-main bg-primary-100">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+          <polyline points="10 9 9 9 8 9" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Applications</span>
+        <h3 class="stat-value text-primary-main">{{ totalLeaves }}</h3>
       </div>
     </div>
 
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card p-3 shadow-sm radius-12 h-100">
-        <div class="card-body p-16">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-secondary-light fw-medium mb-4 d-block">Pending</span>
-              <h4 class="fw-bold mb-0">{{ pendingLeaves }}</h4>
-            </div>
-            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-warning-100">
-              <iconify-icon icon="solar:clock-circle-bold-duotone" class="text-warning-600 text-xxxl"></iconify-icon>
-            </div>
-          </div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper orange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Pending</span>
+        <h3 class="stat-value text-warning-main">{{ pendingLeaves }}</h3>
       </div>
     </div>
 
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card p-3 shadow-sm radius-12 h-100">
-        <div class="card-body p-16">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-secondary-light fw-medium mb-4 d-block">Approved</span>
-              <h4 class="fw-bold mb-0">{{ approvedLeaves }}</h4>
-            </div>
-            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-success-100">
-              <iconify-icon icon="solar:check-circle-bold-duotone" class="text-success-600 text-xxxl"></iconify-icon>
-            </div>
-          </div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper green">
+        <svg viewBox="0 0 24 24" fill="none" class="text-white" stroke="currentColor" stroke-width="2" width="24"
+          height="24">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+          <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Approved</span>
+        <h3 class="stat-value text-success-main">{{ approvedLeaves }}</h3>
       </div>
     </div>
 
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card p-3 shadow-sm radius-12 h-100">
-        <div class="card-body p-16">
-          <div class="d-flex align-items-center justify-content-between">
-            <div>
-              <span class="text-secondary-light fw-medium mb-4 d-block">Rejected</span>
-              <h4 class="fw-bold mb-0">{{ rejectedLeaves }}</h4>
-            </div>
-            <div class="w-64-px h-64-px radius-12 d-flex justify-content-center align-items-center bg-danger-100">
-              <iconify-icon icon="solar:close-circle-bold-duotone" class="text-danger-600 text-xxxl"></iconify-icon>
-            </div>
-          </div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper" style="background: #fee2e2; color: #e11d48;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="15" y1="9" x2="9" y2="15" />
+          <line x1="9" y1="9" x2="15" y2="15" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Rejected</span>
+        <h3 class="stat-value text-danger-main">{{ rejectedLeaves }}</h3>
       </div>
     </div>
   </div>
 
   <!-- Main Table Card -->
-  <div class="card h-100 p-0 radius-12">
-    <div class="card-header border-bottom bg-base py-16 px-24">
-      <h6 class="text-lg fw-semibold mb-0">My Leave Applications</h6>
-    </div>
+  <div class="fee-card h-100 p-0 mb-24">
+    <div class="fee-card-header flex-wrap" style="border-bottom: none;">
+      <div class="d-flex align-items-center flex-wrap gap-16 w-100">
 
-    <!-- Filters -->
-    <div class="card-body p-24 border-bottom">
-      <div class="row g-3">
-        <div class="col-md-4">
-          <label class="form-label fw-semibold text-sm mb-8">Filter by Status</label>
-          <select class="form-select radius-8" [(ngModel)]="statusFilter" (change)="applyFilters()">
-            <option value="All">All Status</option>
+        <div class="show-entries" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+          <select class="entries-select w-100" [(ngModel)]="statusFilter" (change)="applyFilters()">
+            <option value="All">All Statuses</option>
             <option value="Pending">Pending</option>
             <option value="Approved">Approved</option>
             <option value="Rejected">Rejected</option>
           </select>
         </div>
 
-        <div class="col-md-8">
-          <label class="form-label fw-semibold text-sm mb-8">Search</label>
-          <div class="position-relative">
-            <input type="text" class="form-control radius-8 ps-5" [ngModel]="searchQuery"
-              (ngModelChange)="searchQuery = $event; applyFilters()" placeholder="Search by leave type or reason..." />
-            <iconify-icon icon="mdi:magnify"
-              class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary-light"></iconify-icon>
-          </div>
+        <div class="search-wrapper" style="flex: 2;">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" class="search-input w-100" [ngModel]="searchQuery"
+            (ngModelChange)="searchQuery = $event; applyFilters()" placeholder="Search by leave type or reason..." />
         </div>
+
+        <button class="btn-primary-gradient" style="padding: 10px 24px;">
+          <svg viewBox="0 0 24 24" fill="none" class="text-white" stroke="currentColor" stroke-width="2" width="20"
+            height="20">
+            <polyline points="21 8 21 21 3 21 3 8" />
+            <rect x="1" y="3" width="22" height="5" />
+            <line x1="10" y1="12" x2="14" y2="12" />
+          </svg>
+          <span class="text-white">New Request</span>
+        </button>
       </div>
     </div>
 
     <!-- Table -->
-    <div class="card-body p-24">
-      <div class="table-responsive scroll-sm">
-        <table class="table bordered-table sm-table mb-0">
+    <div class="fee-card-body p-0">
+      <div class="table-wrapper m-24">
+        <table class="fee-table">
           <thead>
             <tr>
-              <th scope="col">S.L</th>
+              <th scope="col" style="width: 50px;">SL</th>
               <th scope="col" (click)="sortBy('leaveType')" style="cursor: pointer;">
                 Leave Type
-                <iconify-icon *ngIf="sortColumn === 'leaveType'"
-                  [icon]="sortDirection === 'asc' ? 'solar:alt-arrow-up-linear' : 'solar:alt-arrow-down-linear'"
-                  class="text-sm ms-1"></iconify-icon>
+                <svg *ngIf="sortColumn === 'leaveType'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" width="14" height="14" class="ms-4">
+                  <polyline [attr.points]="sortDirection === 'asc' ? '18 15 12 9 6 15' : '6 9 12 15 18 9'" />
+                </svg>
               </th>
               <th scope="col" (click)="sortBy('fromDate')" style="cursor: pointer;">
                 From Date
-                <iconify-icon *ngIf="sortColumn === 'fromDate'"
-                  [icon]="sortDirection === 'asc' ? 'solar:alt-arrow-up-linear' : 'solar:alt-arrow-down-linear'"
-                  class="text-sm ms-1"></iconify-icon>
+                <svg *ngIf="sortColumn === 'fromDate'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" width="14" height="14" class="ms-4">
+                  <polyline [attr.points]="sortDirection === 'asc' ? '18 15 12 9 6 15' : '6 9 12 15 18 9'" />
+                </svg>
               </th>
               <th scope="col">To Date</th>
               <th scope="col" class="text-center">Total Days</th>
               <th scope="col">Reason</th>
               <th scope="col" class="text-center" (click)="sortBy('status')" style="cursor: pointer;">
                 Status
-                <iconify-icon *ngIf="sortColumn === 'status'"
-                  [icon]="sortDirection === 'asc' ? 'solar:alt-arrow-up-linear' : 'solar:alt-arrow-down-linear'"
-                  class="text-sm ms-1"></iconify-icon>
+                <svg *ngIf="sortColumn === 'status'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" width="14" height="14" class="ms-4">
+                  <polyline [attr.points]="sortDirection === 'asc' ? '18 15 12 9 6 15' : '6 9 12 15 18 9'" />
+                </svg>
               </th>
               <th scope="col">Remarks</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let leave of paginatedLeaves; let i = index">
-              <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
+            <tr class="table-row" *ngFor="let leave of paginatedLeaves; let i = index">
+              <td><span class="text-secondary-light">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</span></td>
               <td>
-                <span class="badge bg-primary-50 text-primary-600 px-12 py-4 radius-4 fw-medium text-sm">
+                <span class="amount-chip" style="background: #eff6ff; color: #3b82f6;">
                   {{ getLeaveTypeName(leave.leaveType) }}
                 </span>
               </td>
-              <td>{{ leave.startDate | date:'dd MMM yyyy' }}</td>
-              <td>{{ leave.endDate | date:'dd MMM yyyy' }}</td>
-              <td class="text-center">
-                <span class="fw-bold">{{ getDurationDays(leave.startDate, leave.endDate) }}</span>
+              <td><span class="date-val fw-bold text-secondary-dark">{{ leave.startDate | date:'mediumDate' }}</span>
               </td>
-              <td>
-                <span class="text-sm" [title]="leave.reason">
-                  {{ leave.reason.length > 50 ? leave.reason.substring(0, 50) + '...' : leave.reason }}
+              <td><span class="date-val text-secondary-dark">{{ leave.endDate | date:'mediumDate' }}</span></td>
+              <td class="text-center">
+                <span class="fw-bold student-name text-sm">{{ getDurationDays(leave.startDate, leave.endDate) }}</span>
+              </td>
+              <td style="max-width: 250px;">
+                <span class="text-sm text-secondary-light d-inline-block text-truncate w-100" [title]="leave.reason">
+                  {{ leave.reason }}
                 </span>
               </td>
               <td class="text-center">
-                <span [ngClass]="getStatusClass(leave.status)">
-                  <iconify-icon [icon]="getStatusIcon(leave.status)" class="me-1"></iconify-icon>
+                <span class="amount-chip"
+                  [ngClass]="{'paid': leave.status === 2, 'due': leave.status === 1, 'pending': leave.status === 0}"
+                  [style.background]="leave.status === 3 ? '#fee2e2' : ''"
+                  [style.color]="leave.status === 3 ? '#e11d48' : ''">
+                  <svg *ngIf="leave.status === 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    width="14" height="14" class="me-4">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  <svg *ngIf="leave.status === 2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                    width="14" height="14" class="me-4">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <svg *ngIf="leave.status === 3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                    width="14" height="14" class="me-4">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
                   {{ getLeaveStatusName(leave.status) }}
                 </span>
               </td>
               <td>
-                <span class="text-sm text-secondary-light">
-                  {{ leave.adminRemarks || 'N/A' }}
+                <span class="text-sm font-italic text-secondary-light">
+                  {{ leave.adminRemarks || 'No remarks provided' }}
                 </span>
               </td>
             </tr>
             <tr *ngIf="paginatedLeaves.length === 0 && !loading">
-              <td colspan="8" class="text-center py-24 text-secondary-light">
-                <iconify-icon icon="solar:inbox-line-bold-duotone" class="text-xxxl mb-2"></iconify-icon>
-                <p class="mb-0">No leave applications found</p>
+              <td colspan="8" class="text-center py-48">
+                <div
+                  class="w-64-px h-64-px mx-auto rounded-circle d-flex align-items-center justify-content-center mb-16"
+                  style="background: #f1f5f9; color: #64748b;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                  </svg>
+                </div>
+                <h6 class="fw-bold text-secondary-dark mb-4">No leave applications found</h6>
+                <p class="text-secondary-light mb-0">You don't have any leave requests matching the current filters.</p>
               </td>
             </tr>
             <tr *ngIf="loading">
-              <td colspan="8" class="text-center py-24 text-primary-600">
-                <div class="spinner-border spinner-border-sm" role="status"></div>
-                <span class="ms-8">Loading your leave history...</span>
+              <td colspan="8" class="text-center py-48 text-primary-main fw-medium">
+                <div class="spinner-border spinner-border-sm me-8" role="status"></div>
+                Loading your leave history...
               </td>
             </tr>
           </tbody>
@@ -197,34 +202,38 @@
       </div>
 
       <!-- Pagination -->
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24"
-        *ngIf="filteredLeaves.length > 0">
-        <span>Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to {{ Math.min(currentPage * rowsPerPage,
-          filteredLeaves.length) }} of {{ filteredLeaves.length }} entries</span>
-        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
-          <li class="page-item">
-            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
-              <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 m-24 mt-0 pt-24 border-top"
+        *ngIf="filteredLeaves.length > 0" style="border-color: #f1f5f9;">
+        <span class="text-secondary-light">Showing <span class="fw-bold">{{ (currentPage - 1) * rowsPerPage + 1
+            }}</span> to <span class="fw-bold">{{ Math.min(currentPage * rowsPerPage, filteredLeaves.length) }}</span>
+          of <span class="fw-bold">{{ filteredLeaves.length }}</span> entries</span>
+        <ul class="pagination mb-0 d-flex flex-wrap align-items-center gap-8 justify-content-center">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="changePage(currentPage - 1)" href="javascript:void(0)"
+              style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid #e2e8f0; color: #64748b;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
             </a>
           </li>
           <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
-            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.bg-primary-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
-              [class.bg-neutral-200]="currentPage !== i + 1" [class.text-secondary-light]="currentPage !== i + 1"
-              (click)="changePage(i + 1)" href="javascript:void(0)">
+            <a class="page-link" (click)="changePage(i + 1)" href="javascript:void(0)"
+              style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid #e2e8f0; font-weight: 600;"
+              [ngStyle]="currentPage === i + 1 ? {'background': '#487FFF', 'color': '#fff', 'border-color': '#487FFF'} : {'background': '#fff', 'color': '#64748b'}">
               {{ i + 1 }}
             </a>
           </li>
-          <li class="page-item">
-            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
-              href="javascript:void(0)">
-              <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="changePage(currentPage + 1)" href="javascript:void(0)"
+              style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid #e2e8f0; color: #64748b;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
             </a>
           </li>
         </ul>
       </div>
+
     </div>
   </div>
 </div>

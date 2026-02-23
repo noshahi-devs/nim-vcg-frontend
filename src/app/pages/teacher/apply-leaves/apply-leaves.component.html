@@ -1,141 +1,179 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
+  <!-- Centered Hero Form Container -->
   <div class="row justify-content-center">
-    <div class="col-xxl-8 col-xl-10">
-      <div class="card radius-12">
-        <div class="card-header border-bottom bg-base py-16 px-24">
-          <h6 class="text-lg fw-semibold mb-0">Leave Application Form</h6>
+    <div class="col-xxl-8 col-lg-10">
+
+      <!-- Premium Form Container -->
+      <div class="card mb-24 radius-12 shadow-sm border-0 bg-base overflow-hidden">
+
+        <!-- Header Section -->
+        <div class="card-header border-bottom bg-base px-32 py-24 d-flex align-items-center gap-16">
+          <div
+            class="w-48-px h-48-px rounded-circle bg-primary-50 d-flex justify-content-center align-items-center text-primary-600 flex-shrink-0">
+            <iconify-icon icon="solar:document-add-bold-duotone" class="text-xxl"></iconify-icon>
+          </div>
+          <div>
+            <h5 class="fw-bold mb-4 text-primary-light">New Leave Application</h5>
+            <p class="text-secondary-light mb-0 text-sm">Fill out the details below to submit a time-off request.</p>
+          </div>
         </div>
 
-        <div class="card-body p-24">
+        <div class="card-body p-32">
           <form (ngSubmit)="submitLeave()">
-            <div class="row gy-3">
-              <!-- Employee Name (Auto-filled, Disabled) -->
-              <div class="col-md-6">
-                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
-                  Employee Name <span class="text-danger-600">*</span>
-                </label>
-                <input type="text" class="form-control radius-8 bg-neutral-50" [(ngModel)]="employeeName"
-                  name="employeeName" disabled readonly />
-              </div>
 
-              <!-- Designation (Auto-filled, Disabled) -->
-              <div class="col-md-6">
-                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
-                  Designation <span class="text-danger-600">*</span>
-                </label>
-                <input type="text" class="form-control radius-8 bg-neutral-50" [(ngModel)]="designation"
-                  name="designation" disabled readonly />
+            <!-- Employee Info Block -->
+            <div class="bg-neutral-50 radius-12 p-24 mb-32 border border-neutral-200 dashed-border">
+              <h6 class="text-sm fw-semibold text-secondary-light mb-16 text-uppercase">Applicant Details</h6>
+              <div class="row gy-3">
+                <!-- Employee Name -->
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center gap-12 bg-base px-16 py-12 radius-8 border border-neutral-200">
+                    <div
+                      class="w-32-px h-32-px rounded-circle bg-primary-100 d-flex justify-content-center align-items-center text-primary-600 fw-bold">
+                      {{ employeeName.charAt(0) }}
+                    </div>
+                    <div>
+                      <span class="d-block text-xs text-secondary-light fw-medium mb-2">Full Name</span>
+                      <span class="d-block text-sm fw-bold text-primary-light">{{ employeeName }}</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Designation -->
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center gap-12 bg-base px-16 py-12 radius-8 border border-neutral-200">
+                    <div
+                      class="w-32-px h-32-px rounded-circle bg-success-100 d-flex justify-content-center align-items-center text-success-600">
+                      <iconify-icon icon="solar:user-id-bold-duotone"></iconify-icon>
+                    </div>
+                    <div>
+                      <span class="d-block text-xs text-secondary-light fw-medium mb-2">Role / Designation</span>
+                      <span class="d-block text-sm fw-bold text-primary-light">{{ designation }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
+            </div>
+
+            <div class="row gy-4">
 
               <!-- Leave Type Dropdown -->
-              <div class="col-md-6">
-                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
-                  Leave Type <span class="text-danger-600">*</span>
+              <div class="col-12">
+                <label class="form-label fw-semibold text-primary-light mb-8">
+                  What type of leave are you applying for? <span class="text-danger-600">*</span>
                 </label>
-                <select class="form-select radius-8" [(ngModel)]="leaveTypeStr" name="leaveType" required>
-                  <option value="" disabled selected>Select Leave Type</option>
-                  <option *ngFor="let type of leaveTypes" [value]="type">
-                    {{ type }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- From Date -->
-              <div class="col-md-3">
-                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
-                  From Date <span class="text-danger-600">*</span>
-                </label>
-                <input type="date" class="form-control radius-8" [ngModel]="fromDate"
-                  (ngModelChange)="fromDate = $event; onDateChange()" name="fromDate" required />
-              </div>
-
-              <!-- To Date -->
-              <div class="col-md-3">
-                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
-                  To Date <span class="text-danger-600">*</span>
-                </label>
-                <input type="date" class="form-control radius-8" [ngModel]="toDate"
-                  (ngModelChange)="toDate = $event; onDateChange()" name="toDate" required />
-              </div>
-
-              <!-- Total Days (Calculated, Read-only) -->
-              <div class="col-12" *ngIf="totalDays > 0">
-                <div class="alert alert-info d-flex align-items-center gap-2 radius-8" role="alert">
-                  <iconify-icon icon="solar:info-circle-bold" class="text-info-600 text-xl"></iconify-icon>
-                  <span><strong>Total Days:</strong> {{ totalDays }} day(s)</span>
+                <div class="position-relative">
+                  <select class="form-select radius-8 bg-base border-neutral-200 form-control-lg text-secondary-light"
+                    [(ngModel)]="leaveTypeStr" name="leaveType" required style="padding-left: 48px;">
+                    <option value="" disabled selected>-- Select an option --</option>
+                    <option *ngFor="let type of leaveTypes" [value]="type">{{ type }}</option>
+                  </select>
+                  <iconify-icon icon="solar:tag-bold-duotone" class="position-absolute text-secondary-light text-xl"
+                    style="left: 16px; top: 14px; pointer-events: none;"></iconify-icon>
                 </div>
               </div>
 
-              <!-- Reason Textarea -->
+              <!-- Date Selection -->
               <div class="col-12">
-                <label class="form-label fw-semibold text-primary-light text-sm mb-8">
-                  Reason for Leave <span class="text-danger-600">*</span>
+                <label class="form-label fw-semibold text-primary-light mb-8">
+                  Select Dates <span class="text-danger-600">*</span>
                 </label>
-                <textarea class="form-control radius-8" [(ngModel)]="reason" name="reason" rows="4"
-                  placeholder="Please provide a detailed reason for your leave application..." required></textarea>
-              </div>
+                <div class="row align-items-center gy-3">
+                  <div class="col-lg-5 col-md-12">
+                    <div class="position-relative">
+                      <input type="date" class="form-control form-control-lg radius-8 bg-base border-neutral-200"
+                        [ngModel]="fromDate" (ngModelChange)="fromDate = $event; onDateChange()" name="fromDate"
+                        required />
+                      <span class="position-absolute text-xs fw-semibold text-secondary-light bg-base px-1"
+                        style="top: -8px; left: 12px;">Start Date</span>
+                    </div>
+                  </div>
 
-              <!-- Info Box -->
-              <div class="col-12">
-                <div
-                  class="alert alert-warning-100 border border-warning-600 text-warning-600 radius-8 px-24 py-13 mb-0"
-                  role="alert">
-                  <div class="d-flex align-items-start gap-2">
-                    <iconify-icon icon="solar:info-circle-bold-duotone" class="text-xl mt-1"></iconify-icon>
-                    <div>
-                      <h6 class="fw-semibold mb-8">Important Information</h6>
-                      <ul class="mb-0 ps-3">
-                        <li>Your leave application will be submitted with <strong>Pending</strong> status</li>
-                        <li>You will be notified once your leave is approved or rejected</li>
-                        <li>Please ensure all information is correct before submitting</li>
-                      </ul>
+                  <div class="col-lg-2 d-none d-lg-flex justify-content-center">
+                    <iconify-icon icon="solar:arrow-right-line-duotone"
+                      class="text-secondary-light text-xxl"></iconify-icon>
+                  </div>
+
+                  <!-- Mobile Arrow -->
+                  <div class="col-12 d-lg-none text-center">
+                    <iconify-icon icon="solar:arrow-down-line-duotone"
+                      class="text-secondary-light text-xl"></iconify-icon>
+                  </div>
+
+                  <div class="col-lg-5 col-md-12">
+                    <div class="position-relative">
+                      <input type="date" class="form-control form-control-lg radius-8 bg-base border-neutral-200"
+                        [ngModel]="toDate" (ngModelChange)="toDate = $event; onDateChange()" name="toDate" required />
+                      <span class="position-absolute text-xs fw-semibold text-secondary-light bg-base px-1"
+                        style="top: -8px; left: 12px;">End Date</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Action Buttons -->
-              <div class="col-12">
-                <div class="d-flex align-items-center justify-content-center gap-3 mt-24">
-                  <button type="button" (click)="resetForm()"
-                    class="btn btn-outline-danger text-md px-40 py-12 radius-8">
-                    <iconify-icon icon="solar:restart-bold" class="icon text-xl me-1"></iconify-icon>
-                    Reset
-                  </button>
-                  <button type="submit" class="btn btn-primary text-md px-48 py-12 radius-8" [disabled]="submitting">
-                    <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                    <iconify-icon *ngIf="!submitting" icon="solar:check-circle-bold"
-                      class="icon text-xl me-1"></iconify-icon>
-                    Submit Application
-                  </button>
+              <!-- Calculated Total Days Banner -->
+              <div class="col-12" *ngIf="totalDays > 0">
+                <div
+                  class="alert alert-success d-flex align-items-center gap-3 radius-8 border-success-200 bg-success-50"
+                  role="alert">
+                  <div
+                    class="w-40-px h-40-px rounded-circle bg-white d-flex justify-content-center align-items-center shadow-sm">
+                    <iconify-icon icon="solar:check-circle-bold-duotone"
+                      class="text-success-600 text-xl"></iconify-icon>
+                  </div>
+                  <div>
+                    <h6 class="mb-0 text-success-600 fw-bold">{{ totalDays }} Day(s) Selected</h6>
+                    <span class="text-sm text-success-600 opacity-75">This is the total duration of your requested time
+                      off.</span>
+                  </div>
                 </div>
               </div>
+
+              <!-- Reason Textarea -->
+              <div class="col-12">
+                <label class="form-label fw-semibold text-primary-light mb-8">
+                  Reason for Request <span class="text-danger-600">*</span>
+                </label>
+                <textarea class="form-control radius-8 bg-base border-neutral-200" [(ngModel)]="reason" name="reason"
+                  rows="4" placeholder="Provide a detailed explanation for your leave..." required
+                  style="resize: vertical; line-height: 1.6;"></textarea>
+              </div>
+
             </div>
+
+            <!-- Bottom Action Bar -->
+            <div
+              class="mt-40 pt-24 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-4 border-top border-neutral-200">
+
+              <!-- Legal / Policy Info -->
+              <div class="d-flex align-items-center gap-2 text-secondary-light" style="max-width: 380px;">
+                <iconify-icon icon="solar:info-circle-line-duotone" class="text-xl flex-shrink-0"></iconify-icon>
+                <span class="text-xs lh-base">By submitting, you agree to the institution's attendance policy. Approval
+                  depends on administrative review.</span>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="d-flex align-items-center gap-3">
+                <button type="button" (click)="resetForm()"
+                  class="btn btn-outline-danger d-flex align-items-center gap-2 radius-8 px-24 py-10 fw-semibold">
+                  <iconify-icon icon="solar:restart-bold"></iconify-icon>
+                  Reset Fields
+                </button>
+                <button type="submit"
+                  class="btn btn-primary d-flex align-items-center gap-2 radius-8 px-32 py-10 fw-semibold"
+                  [disabled]="submitting">
+                  <span *ngIf="submitting" class="spinner-border spinner-border-sm" role="status"></span>
+                  <iconify-icon *ngIf="!submitting" icon="solar:check-circle-bold" class="text-lg"></iconify-icon>
+                  <span>Confirm Submit</span>
+                </button>
+              </div>
+            </div>
+
           </form>
         </div>
       </div>
 
-      <!-- Quick Stats Card -->
-      <div class="card radius-12 mt-24">
-        <div class="card-body p-24">
-          <h6 class="text-md fw-semibold mb-16">Available Leave Types</h6>
-          <div class="row g-3">
-            <div class="col-md-4 col-sm-6" *ngFor="let type of leaveTypes">
-              <div class="d-flex align-items-center gap-2 p-12 radius-8 border border-neutral-200">
-                <div
-                  class="w-40-px h-40-px rounded-circle d-flex justify-content-center align-items-center bg-primary-100 flex-shrink-0">
-                  <iconify-icon icon="solar:calendar-mark-bold-duotone" class="text-primary-600 text-xl"></iconify-icon>
-                </div>
-                <div class="flex-grow-1">
-                  <h6 class="text-sm fw-semibold mb-0">{{ type }}</h6>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>

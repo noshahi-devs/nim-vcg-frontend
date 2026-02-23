@@ -1,87 +1,258 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <div class="card h-100 p-0 radius-12">
+  <div class="fee-card h-100 p-0 mb-24">
 
     <!-- Row 1: Standard & Student Filter -->
-    <div
-      class="card-header border-bottom bg-base py-16 px-24 d-flex flex-wrap gap-3 align-items-center justify-content-between">
-      <div class="d-flex gap-3 flex-wrap align-items-center">
-        <div class="d-flex align-items-center gap-2">
-          <span class="text-md fw-medium text-secondary-light">Standard:</span>
-          <select class="form-select form-select-sm radius-12 h-40-px" [(ngModel)]="selectedStandardId"
-            (change)="filterStudents()">
-            <option value="">All</option>
+    <div class="fee-card-header flex-wrap gap-16"
+      style="border-bottom: 1px solid #e2e8f0; border-top-left-radius: 12px; border-top-right-radius: 12px;">
+
+      <div class="d-flex align-items-center flex-wrap gap-16 w-100">
+        <!-- Standard Filter -->
+        <div class="show-entries" style="margin-bottom: 0;">
+          <span class="fw-semibold text-secondary-dark me-8">Standard:</span>
+          <select class="entries-select" [(ngModel)]="selectedStandardId" (change)="filterStudents()"
+            style="min-width: 140px;">
+            <option value="">All Standards</option>
             <option *ngFor="let s of standards" [value]="s.standardId">{{ s.standardName }}</option>
           </select>
         </div>
 
-        <div class="d-flex align-items-center gap-2">
-          <span class="text-md fw-medium text-secondary-light">Student:</span>
-          <select class="form-select form-select-sm radius-12 h-40-px" [(ngModel)]="studentId" (change)="loadFeeInfo()">
-            <option value="">All</option>
+        <!-- Student Filter -->
+        <div class="show-entries" style="margin-bottom: 0; flex: 1; max-width: 400px;">
+          <span class="fw-semibold text-secondary-dark me-8">Student:</span>
+          <select class="entries-select w-100" [(ngModel)]="studentId" (change)="loadFeeInfo()">
+            <option value="">Select a Student...</option>
             <option *ngFor="let s of filteredStudents" [value]="s.studentId">{{ s.studentName }}</option>
           </select>
         </div>
-      </div>
 
-      <div class="d-flex gap-2">
-        <button class="btn btn-secondary btn-sm px-12 py-8 radius-8" (click)="printReceipt()"><i
-            class="bi bi-printer-fill"></i> Print</button>
-        <button class="btn btn-secondary btn-sm px-12 py-8 radius-8" (click)="downloadReceipt()"><i
-            class="bi bi-download"></i> Download</button>
+        <!-- Action Buttons -->
+        <div class="d-flex align-items-center gap-12 ms-auto mt-16 mt-md-0">
+          <button class="btn-ghost d-flex align-items-center gap-8" (click)="printReceipt()"
+            [disabled]="!selectedStudent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
+            </svg>
+            Print
+          </button>
+          <button class="btn-ghost d-flex align-items-center gap-8" style="background: #f1f5f9; color: #475569;"
+            (click)="downloadReceipt()" [disabled]="!selectedStudent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Download CSV
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Fee Info & Form -->
-    <div class="card-body p-24">
-      <div *ngIf="selectedStudent">
-        <h5>Fee Details for {{ selectedStudent.studentName }}</h5>
-        <p>Total Fee: {{ totalFee }} | Paid: {{ paidAmount }} | Remaining: {{ remainingAmount }}</p>
+    <div class="fee-card-body p-24">
+      <div *ngIf="selectedStudent" class="animate__animated animate__fadeIn">
 
-        <form [formGroup]="paymentForm" (ngSubmit)="submitPayment()" *ngIf="hasRole('Accountant')">
-          <div class="d-flex flex-wrap gap-3 align-items-center mb-12">
-            <input type="number" formControlName="amountPaid" class="form-control w-auto" placeholder="Amount Paid">
-            <select formControlName="paymentType" class="form-select w-auto">
-              <option value="Cash">Cash</option>
-              <option value="Bank">Bank</option>
-              <option value="Other">Other</option>
-            </select>
-            <input type="date" formControlName="paymentDate" class="form-control w-auto">
-            <input type="text" formControlName="notes" class="form-control w-auto" placeholder="Notes">
-            <button type="submit" class="btn btn-primary btn-sm px-12 py-8">Collect Fee</button>
+        <!-- Student Identity Header -->
+        <div class="d-flex align-items-center justify-content-between mb-24 pb-16 border-bottom"
+          style="border-color: #f1f5f9 !important;">
+          <div class="d-flex align-items-center gap-12">
+            <div
+              class="w-48-px h-48-px rounded-circle bg-primary-100 d-flex justify-content-center align-items-center text-primary-600 fw-bold text-xl">
+              {{ selectedStudent.studentName.charAt(0) }}
+            </div>
+            <div>
+              <h5 class="fw-bold mb-4 text-secondary-dark">{{ selectedStudent.studentName }}</h5>
+              <span class="text-sm text-secondary-light">Viewing Fee Details & Transactions</span>
+            </div>
           </div>
-        </form>
+        </div>
+
+        <!-- Unified Stats Row for Finances -->
+        <div class="stats-row mb-32">
+          <div class="stat-card">
+            <div class="stat-icon-wrapper text-primary-main bg-primary-100">
+              <svg viewBox="0 0 24 24" fill="none" class="text-primary-main" stroke="currentColor" stroke-width="2"
+                width="24" height="24">
+                <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
+                <line x1="2" y1="10" x2="22" y2="10" />
+              </svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Total Fee Target</span>
+              <h3 class="stat-value text-primary-main">{{ totalFee | currency:'USD':'symbol':'1.2-2' }}</h3>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper green">
+              <svg viewBox="0 0 24 24" fill="none" class="text-white" stroke="currentColor" stroke-width="2" width="24"
+                height="24">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Amount Paid</span>
+              <h3 class="stat-value text-success-main">{{ paidAmount | currency:'USD':'symbol':'1.2-2' }}</h3>
+            </div>
+          </div>
+
+          <div class="stat-card" [style.border]="remainingAmount > 0 ? '1px solid #fed7aa' : '1px solid #e2e8f0'">
+            <div class="stat-icon-wrapper"
+              [ngClass]="remainingAmount > 0 ? 'orange' : 'bg-neutral-200 text-neutral-500'">
+              <svg viewBox="0 0 24 24" fill="none" class="text-white" stroke="currentColor" stroke-width="2" width="24"
+                height="24">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Remaining Dues</span>
+              <h3 class="stat-value" [ngClass]="remainingAmount > 0 ? 'text-warning-main' : 'text-secondary-dark'">{{
+                remainingAmount | currency:'USD':'symbol':'1.2-2' }}</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Collection Form Container -->
+        <div class="p-24 mb-32"
+          style="background: rgba(248, 250, 252, 0.5); border: 1px dashed #cbd5e1; border-radius: 16px;"
+          *ngIf="hasRole('Accountant')">
+          <h6 class="text-sm fw-bold text-secondary-dark mb-16 text-uppercase d-flex align-items-center gap-8">
+            <svg viewBox="0 0 24 24" fill="none" class="text-primary-main" stroke="currentColor" stroke-width="2"
+              width="16" height="16">
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+            Process New Payment
+          </h6>
+          <form [formGroup]="paymentForm" (ngSubmit)="submitPayment()">
+            <div class="row align-items-end gy-16">
+              <div class="col-md-3">
+                <label class="form-label fw-semibold text-secondary-dark text-sm mb-8">Amount Paid <span
+                    class="text-danger-main">*</span></label>
+                <div class="position-relative">
+                  <span class="position-absolute text-secondary-light fw-bold"
+                    style="left: 14px; top: 12px; font-size: 15px;">$</span>
+                  <input type="number" formControlName="amountPaid" class="form-control"
+                    style="background: #fff; border-color: #cbd5e1; border-radius: 8px; padding-left: 32px;"
+                    placeholder="0.00">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold text-secondary-dark text-sm mb-8">Payment Type</label>
+                <select formControlName="paymentType" class="form-select"
+                  style="background: #fff; border-color: #cbd5e1; border-radius: 8px;">
+                  <option value="Cash">Cash</option>
+                  <option value="Bank">Bank Deposit</option>
+                  <option value="Online">Online / Card</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold text-secondary-dark text-sm mb-8">Date Collected <span
+                    class="text-danger-main">*</span></label>
+                <input type="date" formControlName="paymentDate" class="form-control"
+                  style="background: #fff; border-color: #cbd5e1; border-radius: 8px;">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold text-secondary-dark text-sm mb-8">Notes (Optional)</label>
+                <input type="text" formControlName="notes" class="form-control" placeholder="Transaction ID, remarks..."
+                  style="background: #fff; border-color: #cbd5e1; border-radius: 8px;">
+              </div>
+              <div class="col-12 text-end mt-24">
+                <button type="submit" class="btn-primary-gradient d-flex align-items-center gap-8 ms-auto"
+                  [disabled]="paymentForm.invalid || paymentForm.value.amountPaid > remainingAmount || remainingAmount === 0"
+                  style="padding: 10px 24px; border-radius: 10px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Confirm Collection
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <div class="mt-16 alert alert-danger d-flex align-items-center gap-2 border-0 radius-8 p-12 text-sm"
+            role="alert" *ngIf="paymentForm.value.amountPaid > remainingAmount">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            Amount requested exceeds the student's remaining dues!
+          </div>
+        </div>
 
         <!-- Previous Payments Table -->
-        <h6>Previous Payments</h6>
-        <div class="table-responsive scroll-sm">
-          <table class="table bordered-table sm-table mb-0">
+        <h6 class="text-md fw-bold text-secondary-dark mb-16">Transaction History</h6>
+        <div class="table-wrapper">
+          <table class="fee-table">
             <thead>
               <tr>
-                <th>Payment ID</th>
-                <th>Amount Paid</th>
-                <th>Remaining Amount</th>
-                <th>Payment Date</th>
+                <th scope="col" style="width: 80px;">Trans ID</th>
+                <th scope="col">Payment Date</th>
+                <th scope="col">Description</th>
+                <th scope="col" class="text-end">Amount Paid</th>
+                <th scope="col" class="text-end">Closing Balance</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let p of previousPayments">
-                <td>{{ p.monthlyPaymentId }}</td>
-                <td>{{ p.amountPaid }}</td>
-                <td>{{ p.amountRemaining }}</td>
-                <td>{{ p.paymentDate | date:'shortDate' }}</td>
+              <tr class="table-row" *ngFor="let p of previousPayments">
+                <td><span class="text-secondary-light fw-bold">#{{ p.monthlyPaymentId }}</span></td>
+                <td><span class="date-val fw-bold text-secondary-dark">{{ p.paymentDate | date:'mediumDate' }}</span>
+                </td>
+                <td>
+                  <span class="amount-chip" style="background: #eff6ff; color: #3b82f6;">Manual Collection</span>
+                </td>
+                <td class="text-end fw-bold text-success-main">+{{ p.amountPaid | currency:'USD':'symbol':'1.2-2' }}
+                </td>
+                <td class="text-end fw-semibold text-secondary-dark">{{ p.amountRemaining |
+                  currency:'USD':'symbol':'1.2-2' }}</td>
               </tr>
               <tr *ngIf="previousPayments.length === 0">
-                <td colspan="4" class="text-center py-12 text-secondary-light">No payments found</td>
+                <td colspan="5" class="text-center py-48">
+                  <div
+                    class="w-64-px h-64-px mx-auto rounded-circle d-flex align-items-center justify-content-center mb-16"
+                    style="background: #f1f5f9; color: #64748b;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32"
+                      height="32">
+                      <polyline points="20 12 20 22 4 22 4 12" />
+                      <rect x="2" y="7" width="20" height="5" />
+                      <line x1="12" y1="22" x2="12" y2="7" />
+                      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+                      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+                    </svg>
+                  </div>
+                  <h6 class="fw-bold text-secondary-dark mb-4">No Transactions Found</h6>
+                  <p class="text-secondary-light mb-0">This student has not made any payments yet.</p>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-      <div *ngIf="!selectedStudent" class="text-center py-24 text-secondary-light">
-        Select a student to view fee details and collect payment.
+
+      <!-- Empty State: No Student Selected -->
+      <div *ngIf="!selectedStudent" class="text-center py-60">
+        <div class="w-80-px h-80-px mx-auto rounded-circle d-flex align-items-center justify-content-center mb-24"
+          style="background: #f1f5f9; color: #64748b;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5c-1.1 0-2 .9-2 2v2" />
+            <circle cx="9" cy="7" r="4" />
+            <line x1="17" y1="8" x2="23" y2="13" />
+            <line x1="23" y1="8" x2="17" y2="13" />
+          </svg>
+        </div>
+        <h4 class="fw-bold text-secondary-dark border-0 bg-transparent">Select a Student Target</h4>
+        <p class="text-secondary-light max-w-sm mx-auto mb-0">Please use the filters above to select a specific student
+          from a standard to view fee details and process collections.</p>
       </div>
+
     </div>
   </div>
 </div>

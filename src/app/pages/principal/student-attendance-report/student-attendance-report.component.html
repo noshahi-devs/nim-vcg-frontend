@@ -1,84 +1,116 @@
 <div class="dashboard-main-body">
-  <!-- Header Card -->
-  <div class="report-header-card d-flex align-items-center justify-content-between flex-wrap gap-3">
-    <div>
-      <h3 class="fw-bold mb-8">Student Attendance Report</h3>
-      <p class="mb-0 opacity-75">Detailed monthly and weekly attendance analysis</p>
-    </div>
-    <div class="d-flex gap-2">
-      <button class="export-btn" (click)="getReport()" *ngIf="studentId">
-        <iconify-icon icon="solar:download-bold-duotone" class="me-8"></iconify-icon> Export PDF
-      </button>
-    </div>
-  </div>
+  <app-breadcrumb [title]="'Student Attendance Report'"></app-breadcrumb>
 
   <!-- Search Card -->
-  <div class="search-glass-card">
-    <div class="row g-4 align-items-end">
-      <div class="col-md-3">
-        <label class="form-label fw-bold text-dark">Student ID / Roll No</label>
-        <div class="input-group">
-          <span class="input-group-text bg-white border-end-0"><iconify-icon icon="solar:user-id-bold-duotone"
-              class="text-primary"></iconify-icon></span>
-          <input type="number" class="form-control border-start-0 py-12 radius-8" [(ngModel)]="studentId"
-            placeholder="Enter ID">
+  <div class="fee-card mb-24">
+    <div class="fee-card-header flex-wrap" style="border-bottom: none;">
+      <div class="d-flex align-items-center flex-wrap gap-16 w-100">
+
+        <div class="search-wrapper" style="flex: 1; min-width: 200px;">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <input type="number" class="search-input w-100" [(ngModel)]="studentId" placeholder="Student ID / Roll No"
+            style="padding-left: 36px;">
         </div>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label fw-bold text-dark">Start Date</label>
-        <input type="date" class="form-control py-12 radius-8" [(ngModel)]="startDate">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label fw-bold text-dark">End Date</label>
-        <input type="date" class="form-control py-12 radius-8" [(ngModel)]="endDate">
-      </div>
-      <div class="col-md-3">
-        <button class="btn btn-primary w-100 py-12 radius-12 fw-bold" (click)="getReport()">
-          <iconify-icon icon="solar:tuning-bold-duotone" class="me-8"></iconify-icon> Generate Analytic Report
+
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <input type="date" class="search-input" [(ngModel)]="startDate" style="width: 140px; padding-left: 32px;"
+            title="Start Date">
+        </div>
+
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <input type="date" class="search-input" [(ngModel)]="endDate" style="width: 140px; padding-left: 32px;"
+            title="End Date">
+        </div>
+
+        <button class="btn-primary-gradient" (click)="getReport()" style="padding: 10px 24px;">
+          <svg viewBox="0 0 24 24" fill="none" class="text-white" stroke="currentColor" stroke-width="2" width="20"
+            height="20">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <span class="text-white">Generate Analytic Report</span>
         </button>
       </div>
     </div>
   </div>
 
   <!-- Report Data -->
-  <div class="report-table-premium animate__animated animate__fadeIn" *ngIf="report.length">
-    <div class="p-24 border-bottom bg-white d-flex justify-content-between align-items-center">
-      <h5 class="fw-bold mb-0">Record Details</h5>
-      <span class="badge bg-primary-100 text-primary-600 px-16 py-8 radius-8">Found {{ report.length }} Records</span>
+  <div class="fee-card animate__animated animate__fadeIn" *ngIf="report.length">
+    <div class="fee-card-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-12">
+        <h5 class="fw-bold mb-0 text-secondary-dark">Record Details</h5>
+        <span class="enrollment-badge text-primary-main">Found {{ report.length }} Records</span>
+      </div>
+      <button class="btn-add" (click)="getReport()" *ngIf="studentId"
+        style="background: linear-gradient(135deg, #10b981, #059669);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        Export PDF
+      </button>
     </div>
-    <div class="table-responsive">
-      <table class="table-glass">
-        <thead>
-          <tr>
-            <th>Date of record</th>
-            <th>Week Day</th>
-            <th>Attendance Status</th>
-            <th>Instructor Remarks</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of report">
-            <td class="fw-bold text-dark">{{ row.date | date:'mediumDate' }}</td>
-            <td class="text-secondary-light">{{ row.date | date:'EEEE' }}</td>
-            <td>
-              <span class="status-pill" [ngClass]="row.status === 'Present' ? 'present' : 'absent'">
-                {{ row.status }}
-              </span>
-            </td>
-            <td class="text-secondary-light italic">{{ row.remarks || 'No remarks provided' }}</td>
-          </tr>
-        </tbody>
-      </table>
+
+    <div class="fee-card-body p-0">
+      <div class="table-wrapper m-24">
+        <table class="fee-table">
+          <thead>
+            <tr>
+              <th>Date of record</th>
+              <th>Week Day</th>
+              <th>Attendance Status</th>
+              <th>Instructor Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-row" *ngFor="let row of report">
+              <td><span class="date-val fw-bold text-secondary-dark">{{ row.date | date:'mediumDate' }}</span></td>
+              <td class="text-secondary-light">{{ row.date | date:'EEEE' }}</td>
+              <td>
+                <span class="amount-chip" [ngClass]="row.status === 'Present' ? 'paid' : 'due'">
+                  {{ row.status }}
+                </span>
+              </td>
+              <td class="text-secondary-light font-italic">{{ row.remarks || 'No remarks provided' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <!-- Empty State -->
-  <div *ngIf="!report.length && studentId" class="card p-60 text-center radius-24 border-0 shadow-sm mt-32">
-    <div
-      class="w-120-px h-120-px bg-light mx-auto rounded-circle d-flex align-items-center justify-content-center mb-24">
-      <iconify-icon icon="solar:clipboard-list-bold-duotone" class="text-6xl text-secondary-light"></iconify-icon>
+  <div *ngIf="!report.length && studentId" class="fee-card p-0 mt-32">
+    <div class="fee-card-body py-60 text-center">
+      <div class="w-80-px h-80-px mx-auto rounded-circle d-flex align-items-center justify-content-center mb-24"
+        style="background: #f1f5f9; color: #64748b;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+          <polyline points="10 9 9 9 8 9" />
+        </svg>
+      </div>
+      <h4 class="fw-bold text-secondary-dark">No Data for Selected Range</h4>
+      <p class="text-secondary-light max-w-sm mx-auto mb-0">Please try adjusting your date range or selecting a
+        different student ID to view attendance records.</p>
     </div>
-    <h4 class="fw-bold">No Data for Selected Range</h4>
-    <p class="text-secondary-light">Please try adjusting your date range or student ID.</p>
   </div>
 </div>

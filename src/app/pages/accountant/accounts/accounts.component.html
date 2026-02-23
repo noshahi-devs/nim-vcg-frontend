@@ -1,184 +1,177 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- Stats Cards -->
-  <div class="row row-cols-xxxl-4 row-cols-lg-2 row-cols-sm-2 row-cols-1 gy-4 mb-24" *ngIf="dashboardData">
-    <div class="col">
-      <div class="card shadow-none border bg-gradient-start-4 h-100">
-        <div class="card-body p-20">
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div>
-              <p class="fw-medium text-primary-light mb-1">Total Income</p>
-              <h6 class="mb-0">{{ formatCurrency(dashboardData.totalIncome) }}</h6>
-            </div>
-            <div class="w-50-px h-50-px bg-success-main rounded-circle d-flex justify-content-center align-items-center">
-              <iconify-icon icon="mdi:cash-plus" class="text-white text-2xl mb-0"></iconify-icon>
-            </div>
-          </div>
-          <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
-            <span class="d-inline-flex align-items-center gap-1 text-success-main">
-              <iconify-icon icon="bxs:up-arrow" class="text-xs"></iconify-icon>
-              Revenue
-            </span>
-            All income sources
-          </p>
-        </div>
+  <!-- ===================== STATS CARDS ===================== -->
+  <div class="stats-row" *ngIf="dashboardData">
+    <!-- Total Income -->
+    <div class="stat-card">
+      <div class="stat-icon-wrapper green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23" />
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Income</span>
+        <h3 class="stat-value">{{ formatCurrency(dashboardData.totalIncome) }}</h3>
       </div>
     </div>
 
-    <div class="col">
-      <div class="card shadow-none border bg-gradient-start-5 h-100">
-        <div class="card-body p-20">
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div>
-              <p class="fw-medium text-primary-light mb-1">Total Expenses</p>
-              <h6 class="mb-0">{{ formatCurrency(dashboardData.totalExpenses) }}</h6>
-            </div>
-            <div class="w-50-px h-50-px bg-red rounded-circle d-flex justify-content-center align-items-center">
-              <iconify-icon icon="mdi:cash-minus" class="text-white text-2xl mb-0"></iconify-icon>
-            </div>
-          </div>
-          <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
-            <span class="d-inline-flex align-items-center gap-1 text-danger-main">
-              <iconify-icon icon="bxs:up-arrow" class="text-xs"></iconify-icon>
-              Outgoing
-            </span>
-            All expense categories
-          </p>
-        </div>
+    <!-- Total Expenses -->
+    <div class="stat-card">
+      <div class="stat-icon-wrapper orange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M8 12h8" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Expenses</span>
+        <h3 class="stat-value">{{ formatCurrency(dashboardData.totalExpenses) }}</h3>
       </div>
     </div>
 
-    <div class="col">
-      <div class="card shadow-none border h-100" [ngClass]="dashboardData.profitLoss >= 0 ? 'bg-gradient-start-1' : 'bg-gradient-start-5'">
-        <div class="card-body p-20">
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div>
-              <p class="fw-medium text-primary-light mb-1">Profit / Loss</p>
-              <h6 class="mb-0" [ngClass]="dashboardData.profitLoss >= 0 ? 'text-success-main' : 'text-danger-main'">
-                {{ formatCurrency(dashboardData.profitLoss) }}
-              </h6>
-            </div>
-            <div class="w-50-px h-50-px rounded-circle d-flex justify-content-center align-items-center"
-                 [ngClass]="dashboardData.profitLoss >= 0 ? 'bg-success-main' : 'bg-red'">
-              <iconify-icon [icon]="dashboardData.profitLoss >= 0 ? 'mdi:trending-up' : 'mdi:trending-down'" 
-                            class="text-white text-2xl mb-0"></iconify-icon>
-            </div>
-          </div>
-          <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
-            <span class="d-inline-flex align-items-center gap-1" 
-                  [ngClass]="dashboardData.profitLoss >= 0 ? 'text-success-main' : 'text-danger-main'">
-              {{ dashboardData.profitLoss >= 0 ? 'Profit' : 'Loss' }}
-            </span>
-            Net financial status
-          </p>
-        </div>
+    <!-- Profit / Loss -->
+    <div class="stat-card">
+      <div class="stat-icon-wrapper" [ngClass]="dashboardData.profitLoss >= 0 ? 'blue' : 'orange'">
+        <svg *ngIf="dashboardData.profitLoss >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+          <polyline points="17 6 23 6 23 12" />
+        </svg>
+        <svg *ngIf="dashboardData.profitLoss < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
+          <polyline points="17 18 23 18 23 12" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Profit / Loss</span>
+        <h3 class="stat-value">{{ formatCurrency(dashboardData.profitLoss) }}</h3>
       </div>
     </div>
 
-    <div class="col">
-      <div class="card shadow-none border bg-gradient-start-3 h-100">
-        <div class="card-body p-20">
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div>
-              <p class="fw-medium text-primary-light mb-1">Cash / Bank Balance</p>
-              <h6 class="mb-0">{{ formatCurrency(dashboardData.cashBankBalance) }}</h6>
-            </div>
-            <div class="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
-              <iconify-icon icon="mdi:bank" class="text-white text-2xl mb-0"></iconify-icon>
-            </div>
-          </div>
-          <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
-            <span class="d-inline-flex align-items-center gap-1 text-info-main">
-              Available
-            </span>
-            Current balance
-          </p>
-        </div>
+    <!-- Cash / Bank Balance -->
+    <div class="stat-card">
+      <div class="stat-icon-wrapper blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <path d="M8 21h8M12 17v4" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Cash / Bank Balance</span>
+        <h3 class="stat-value">{{ formatCurrency(dashboardData.cashBankBalance) }}</h3>
       </div>
     </div>
   </div>
 
-  <!-- Chart Section -->
   <div class="row gy-4 mb-24" *ngIf="dashboardData">
+    <!-- Chart Section -->
     <div class="col-12">
-      <div class="card h-100 p-0 radius-12">
-        <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-          <h6 class="text-lg fw-semibold mb-0">Monthly Income vs Expenses</h6>
+      <div class="fee-card">
+        <div class="fee-card-header">
+          <div class="header-left">
+            <h6 class="text-lg fw-semibold mb-0 text-secondary-dark">Monthly Income vs Expenses</h6>
+          </div>
           <div class="d-flex align-items-center gap-2">
-            <button type="button" (click)="loadDashboardData()" class="btn btn-outline-primary text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
-              <iconify-icon icon="solar:refresh-linear" class="icon text-xl"></iconify-icon>
+            <button type="button" (click)="loadDashboardData()" class="btn-add"
+              style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <polyline points="23 20 23 14 17 14"></polyline>
+                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+              </svg>
               Refresh
             </button>
-            <button type="button" (click)="exportData()" class="btn btn-outline-success text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
-              <iconify-icon icon="solar:export-linear" class="icon text-xl"></iconify-icon>
+            <button type="button" (click)="exportData()" class="btn-add"
+              style="background: linear-gradient(135deg, #10b981, #059669);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
               Export
             </button>
           </div>
         </div>
-        <div class="card-body p-24">
-          <apx-chart
-            [series]="chartOptions.series"
-            [chart]="chartOptions.chart"
-            [plotOptions]="chartOptions.plotOptions"
-            [dataLabels]="chartOptions.dataLabels"
-            [stroke]="chartOptions.stroke"
-            [xaxis]="chartOptions.xaxis"
-            [yaxis]="chartOptions.yaxis"
-            [fill]="chartOptions.fill"
-            [colors]="chartOptions.colors"
-            [legend]="chartOptions.legend"
-            [grid]="chartOptions.grid"
-          ></apx-chart>
+        <div class="fee-card-body p-24">
+          <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart"
+            [plotOptions]="chartOptions.plotOptions" [dataLabels]="chartOptions.dataLabels"
+            [stroke]="chartOptions.stroke" [xaxis]="chartOptions.xaxis" [yaxis]="chartOptions.yaxis"
+            [fill]="chartOptions.fill" [colors]="chartOptions.colors" [legend]="chartOptions.legend"
+            [grid]="chartOptions.grid"></apx-chart>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Recent Transactions Table -->
-  <div class="card h-100 p-0 radius-12" *ngIf="dashboardData">
-    <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-      <h6 class="text-lg fw-semibold mb-0">Recent Transactions</h6>
-      <a routerLink="/accounts-ledger" class="btn btn-primary text-sm btn-sm px-12 py-8 radius-8 d-flex align-items-center gap-2">
-        <iconify-icon icon="solar:list-bold" class="icon text-xl"></iconify-icon>
+  <div class="fee-card" *ngIf="dashboardData">
+    <div class="fee-card-header">
+      <div class="header-left">
+        <h6 class="text-lg fw-semibold mb-0 text-secondary-dark">Recent Transactions</h6>
+      </div>
+      <a routerLink="/accounts-ledger" class="btn-add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="8" y1="6" x2="21" y2="6"></line>
+          <line x1="8" y1="12" x2="21" y2="12"></line>
+          <line x1="8" y1="18" x2="21" y2="18"></line>
+          <line x1="3" y1="6" x2="3.01" y2="6"></line>
+          <line x1="3" y1="12" x2="3.01" y2="12"></line>
+          <line x1="3" y1="18" x2="3.01" y2="18"></line>
+        </svg>
         View All
       </a>
     </div>
 
-    <div class="card-body p-24">
-      <div class="table-responsive scroll-sm">
-        <table class="table bordered-table sm-table mb-0">
+    <div class="fee-card-body">
+      <div class="table-wrapper">
+        <table class="fee-table">
           <thead>
             <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Transaction ID</th>
-              <th scope="col">Type</th>
-              <th scope="col">Description</th>
-              <th scope="col" class="text-end">Amount</th>
-              <th scope="col" class="text-center">Action</th>
+              <th>Date</th>
+              <th>Transaction ID</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th class="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let transaction of dashboardData.recentTransactions">
-              <td>{{ transaction.date }}</td>
-              <td><span class="fw-medium">{{ transaction.transactionId }}</span></td>
+            <tr class="table-row" *ngFor="let transaction of dashboardData.recentTransactions">
+              <td><span class="date-val">{{ transaction.date | date:'mediumDate' }}</span></td>
+              <td><span class="student-name">{{ transaction.transactionId }}</span></td>
               <td>
-                <span [ngClass]="getStatusClass(transaction.type)">{{ transaction.type }}</span>
+                <span class="amount-chip" [ngClass]="transaction.type === 'Income' ? 'paid' : 'pending'">{{
+                  transaction.type }}</span>
               </td>
               <td>{{ transaction.description }}</td>
-              <td class="text-end fw-bold" [ngClass]="transaction.type === 'Income' ? 'text-success-main' : 'text-danger-main'">
-                {{ formatCurrency(transaction.type === 'Income' ? transaction.credit : transaction.debit) }}
+              <td>
+                <span class="amount-val" [ngClass]="transaction.type === 'Income' ? 'amount-paid' : 'text-danger-main'">
+                  {{ formatCurrency(transaction.type === 'Income' ? transaction.credit : transaction.debit) }}
+                </span>
               </td>
               <td class="text-center">
-                <button type="button" (click)="viewTransaction(transaction)" 
-                        class="bg-info-focus text-info-600 bg-hover-info-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" 
-                        title="View Details">
-                  <iconify-icon icon="solar:eye-linear" class="icon text-xl"></iconify-icon>
-                </button>
+                <div class="action-group">
+                  <button type="button" class="icon-btn view-btn" (click)="viewTransaction(transaction)"
+                    title="View Details">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </button>
+                </div>
               </td>
             </tr>
             <tr *ngIf="dashboardData.recentTransactions.length === 0">
-              <td colspan="6" class="text-center py-24 text-secondary-light">No transactions found</td>
+              <td colspan="6" class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                  <polyline points="13 2 13 9 20 9" />
+                </svg>
+                <p>No transactions found</p>
+              </td>
             </tr>
           </tbody>
         </table>
