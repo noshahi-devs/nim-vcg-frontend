@@ -37,6 +37,14 @@ export class FeeComponent implements OnInit {
   selectedFeeType!: FeeType;
   feeTypeToDelete!: FeeType;
 
+  /** Toast notification state */
+  toast: { show: boolean; type: 'success' | 'error' | 'info'; message: string } = {
+    show: false,
+    type: 'success',
+    message: ''
+  };
+  private toastTimer: any;
+
   constructor(private feeTypeService: FeeTypeService) { }
 
   ngOnInit(): void {
@@ -62,6 +70,7 @@ export class FeeComponent implements OnInit {
         this.feeTypes = [];
         this.filteredFeeTypes = [];
         this.paginatedFeeTypes = [];
+        this.showToast('error', 'Failed to load fee types. Please try again.');
       }
     });
   }
@@ -76,6 +85,7 @@ export class FeeComponent implements OnInit {
 
   updatePagination() {
     this.totalPages = Math.ceil(this.filteredFeeTypes.length / this.rowsPerPage);
+    if (this.totalPages === 0) this.totalPages = 1;
     const start = (this.currentPage - 1) * this.rowsPerPage;
     this.paginatedFeeTypes = this.filteredFeeTypes.slice(start, start + this.rowsPerPage);
   }
@@ -115,14 +125,26 @@ export class FeeComponent implements OnInit {
     const payload = this.form.value;
 
     if (this.isEditMode) {
-      this.feeTypeService.updateFeeType(payload).subscribe(() => {
-        this.closeDialog();
-        this.loadFeeTypes();
+      this.feeTypeService.updateFeeType(payload).subscribe({
+        next: () => {
+          this.closeDialog();
+          this.loadFeeTypes();
+          this.showToast('success', `Fee type updated successfully!`);
+        },
+        error: () => {
+          this.showToast('error', 'Failed to update fee type. Please try again.');
+        }
       });
     } else {
-      this.feeTypeService.createFeeType(payload).subscribe(() => {
-        this.closeDialog();
-        this.loadFeeTypes();
+      this.feeTypeService.createFeeType(payload).subscribe({
+        next: () => {
+          this.closeDialog();
+          this.loadFeeTypes();
+          this.showToast('success', `Fee type added successfully!`);
+        },
+        error: () => {
+          this.showToast('error', 'Failed to add fee type. Please try again.');
+        }
       });
     }
   }
@@ -133,9 +155,16 @@ export class FeeComponent implements OnInit {
   }
 
   deleteFeeType() {
-    this.feeTypeService.deleteFeeType(this.feeTypeToDelete.feeTypeId).subscribe(() => {
-      this.showDeleteDialog = false;
-      this.loadFeeTypes();
+    this.feeTypeService.deleteFeeType(this.feeTypeToDelete.feeTypeId).subscribe({
+      next: () => {
+        this.showDeleteDialog = false;
+        this.loadFeeTypes();
+        this.showToast('success', `"${this.feeTypeToDelete.typeName}" deleted successfully.`);
+      },
+      error: () => {
+        this.showDeleteDialog = false;
+        this.showToast('error', 'Failed to delete fee type. Please try again.');
+      }
     });
   }
 
@@ -144,5 +173,14 @@ export class FeeComponent implements OnInit {
     this.showViewDialog = false;
     this.showDeleteDialog = false;
     this.form.reset();
+  }
+
+  /** Shows a toast and auto-hides after 3.5 seconds */
+  showToast(type: 'success' | 'error' | 'info', message: string) {
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    this.toast = { show: true, type, message };
+    this.toastTimer = setTimeout(() => {
+      this.toast.show = false;
+    }, 3500);
   }
 }

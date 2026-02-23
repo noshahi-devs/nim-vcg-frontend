@@ -20,6 +20,7 @@ import { Standard } from '../../../Models/standard';
 export class GenerateFeeInvoiceComponent implements OnInit {
 
   title = 'Generate Fee Invoice';
+  Math = Math;
 
   // ===== DATA =====
   fees: Fee[] = [];
@@ -37,7 +38,6 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   rowsPerPage = 10;
   currentPage = 1;
   totalPages = 1;
-  Math = Math;
 
   // ===== MODALS =====
   showFeeDialog = false;
@@ -48,6 +48,12 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   feeForm!: FormGroup;
   feeToDelete!: Fee;
 
+  // ===== TOAST =====
+  toast: { show: boolean; type: 'success' | 'error'; message: string } = {
+    show: false, type: 'success', message: ''
+  };
+  private toastTimer: any;
+
   constructor(
     private feeService: FeeService,
     private feeTypeService: FeeTypeService,
@@ -55,15 +61,12 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
-    /* ---------- FILTER FORM ---------- */
     this.filterForm = new FormGroup({
       standardId: new FormControl(''),
       feeTypeId: new FormControl(''),
       minAmount: new FormControl('')
     });
 
-    /* ---------- ADD / EDIT FORM ---------- */
     this.feeForm = new FormGroup({
       feeId: new FormControl(0),
       standardId: new FormControl('', Validators.required),
@@ -84,9 +87,12 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   }
 
   loadFees() {
-    this.feeService.getAllFees().subscribe(res => {
-      this.fees = res;
-      this.applyFilters();
+    this.feeService.getAllFees().subscribe({
+      next: res => {
+        this.fees = res;
+        this.applyFilters();
+      },
+      error: () => this.showToast('error', 'Failed to load fee records.')
     });
   }
 
@@ -99,11 +105,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
       (!standardId || f.standardId == standardId) &&
       (!feeTypeId || f.feeTypeId == feeTypeId) &&
       (!minAmount || f.amount >= minAmount) &&
-      (
-        !term ||
-        f.standard?.standardName?.toLowerCase().includes(term) ||
-        f.feeType?.typeName?.toLowerCase().includes(term)
-      )
+      (!term || f.standard?.standardName?.toLowerCase().includes(term) || f.feeType?.typeName?.toLowerCase().includes(term))
     );
 
     this.currentPage = 1;
@@ -118,7 +120,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
 
   /* ---------- PAGINATION ---------- */
   updatePagination() {
-    this.totalPages = Math.ceil(this.filteredFees.length / this.rowsPerPage);
+    this.totalPages = Math.max(1, Math.ceil(this.filteredFees.length / this.rowsPerPage));
     const start = (this.currentPage - 1) * this.rowsPerPage;
     this.paginatedFees = this.filteredFees.slice(start, start + this.rowsPerPage);
   }
@@ -132,8 +134,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   /* ---------- ADD / EDIT ---------- */
   openAddFee() {
     this.isEditMode = false;
-    this.feeForm.reset();
-    this.feeForm.patchValue({ feeId: 0 });
+    this.feeForm.reset({ feeId: 0 });
     this.showFeeDialog = true;
   }
 
@@ -155,16 +156,22 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     const feeData = this.feeForm.value as Fee;
 
     if (this.isEditMode) {
-      this.feeService.updateFee(feeData).subscribe(() => {
-        alert('Fee updated successfully');
-        this.showFeeDialog = false;
-        this.loadFees();
+      this.feeService.updateFee(feeData).subscribe({
+        next: () => {
+          this.showFeeDialog = false;
+          this.loadFees();
+          this.showToast('success', 'Fee updated successfully!');
+        },
+        error: () => this.showToast('error', 'Failed to update fee. Please try again.')
       });
     } else {
-      this.feeService.createFee(feeData).subscribe(() => {
-        alert('Fee created successfully');
-        this.showFeeDialog = false;
-        this.loadFees();
+      this.feeService.createFee(feeData).subscribe({
+        next: () => {
+          this.showFeeDialog = false;
+          this.loadFees();
+          this.showToast('success', 'Fee created successfully!');
+        },
+        error: () => this.showToast('error', 'Failed to create fee. Please try again.')
       });
     }
   }
@@ -176,10 +183,23 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   }
 
   deleteFee() {
-    this.feeService.deleteFee(this.feeToDelete.feeId).subscribe(() => {
-      alert('Fee deleted successfully');
-      this.showDeleteDialog = false;
-      this.loadFees();
+    this.feeService.deleteFee(this.feeToDelete.feeId).subscribe({
+      next: () => {
+        this.showDeleteDialog = false;
+        this.loadFees();
+        this.showToast('success', 'Fee deleted successfully!');
+      },
+      error: () => {
+        this.showDeleteDialog = false;
+        this.showToast('error', 'Failed to delete fee. Please try again.');
+      }
     });
+  }
+
+  /* ---------- TOAST ---------- */
+  showToast(type: 'success' | 'error', message: string) {
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    this.toast = { show: true, type, message };
+    this.toastTimer = setTimeout(() => { this.toast.show = false; }, 3500);
   }
 }

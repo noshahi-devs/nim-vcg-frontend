@@ -1,181 +1,341 @@
 <div class="dashboard-main-body">
-
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- ================= FILTERS ================= -->
-  <div class="card radius-12 p-24 mb-24">
-    <form [formGroup]="filterForm" class="row g-3">
-
-      <div class="col-md-3">
-        <label>Standard</label>
-        <select class="form-control" formControlName="standardId" (change)="applyFilters()">
-          <option value="">All</option>
-          <option *ngFor="let s of standards" [value]="s.standardId">
-            {{ s.standardName }}
-          </option>
-        </select>
+  <!-- ===================== FILTER PANEL ===================== -->
+  <div class="filter-card">
+    <div class="filter-header">
+      <div class="filter-header-row">
+        <div class="filter-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+            <line x1="11" y1="18" x2="13" y2="18" />
+          </svg>
+        </div>
+        <span class="filter-title">Filters</span>
       </div>
-
-      <div class="col-md-3">
-        <label>Fee Type</label>
-        <select class="form-control" formControlName="feeTypeId" (change)="applyFilters()">
-          <option value="">All</option>
-          <option *ngFor="let f of feeTypes" [value]="f.feeTypeId">
-            {{ f.typeName }}
-          </option>
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label>Min Amount</label>
-        <input type="number" class="form-control"
-               formControlName="minAmount"
-               (input)="applyFilters()">
-      </div>
-
-      <div class="col-md-3 d-flex align-items-end">
-        <button type="button" class="btn btn-secondary w-100" (click)="resetFilters()">
-          Reset
-        </button>
-      </div>
-
-    </form>
-  </div>
-
-  <!-- ================= TABLE ================= -->
-  <div class="card radius-12">
-
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center gap-3">
-        <span>Show</span>
-        <select class="form-select form-select-sm w-auto"
-                [(ngModel)]="rowsPerPage"
-                (change)="currentPage = 1; updatePagination()">
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
-        </select>
-
-        <input type="text"
-               class="form-control ms-3"
-               placeholder="Search..."
-               [(ngModel)]="searchTerm"
-               (input)="applyFilters()">
-      </div>
-
-      <button class="btn btn-primary btn-sm" (click)="openAddFee()">+ Add Fee</button>
-    </div>
-
-    <div class="table-responsive p-24">
-      <table class="table bordered-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Standard</th>
-            <th>Fee Type</th>
-            <th>Frequency</th>
-            <th>Amount</th>
-            <th>Due Date</th>
-            <th class="text-center">Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr *ngFor="let fee of paginatedFees; let i = index">
-            <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
-            <td>{{ fee.standard?.standardName }}</td>
-            <td>{{ fee.feeType?.typeName }}</td>
-            <td>{{ fee.paymentFrequency }}</td>
-            <td>Rs. {{ fee.amount }}</td>
-            <td>{{ fee.dueDate | date }}</td>
-            <td class="text-center">
-              <button class="btn btn-success btn-sm me-1" (click)="openEditFee(fee)">Edit</button>
-              <button class="btn btn-danger btn-sm" (click)="confirmDelete(fee)">Delete</button>
-            </td>
-          </tr>
-
-          <tr *ngIf="paginatedFees.length === 0">
-            <td colspan="7" class="text-center text-muted py-4">
-              No records found
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- ================= PAGINATION ================= -->
-    <div class="p-24 d-flex justify-content-between">
-      <span>
-        Showing {{ (currentPage - 1) * rowsPerPage + 1 }}
-        to {{ Math.min(currentPage * rowsPerPage, filteredFees.length) }}
-        of {{ filteredFees.length }}
-      </span>
-
-      <div>
-        <button class="btn btn-sm btn-light me-1"
-                (click)="changePage(currentPage - 1)"
-                [disabled]="currentPage === 1">Prev</button>
-
-        <button class="btn btn-sm btn-light"
-                (click)="changePage(currentPage + 1)"
-                [disabled]="currentPage === totalPages">Next</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ================= ADD / EDIT MODAL ================= -->
-<div *ngIf="showFeeDialog" class="modal-backdrop">
-  <div class="modal-box">
-    <h5>{{ isEditMode ? 'Edit Fee' : 'Add Fee' }}</h5>
-
-    <form [formGroup]="feeForm">
-
-      <label>Standard</label>
-      <select class="form-control mb-2" formControlName="standardId">
-        <option value="">Select Standard</option>
-        <option *ngFor="let s of standards" [value]="s.standardId">{{ s.standardName }}</option>
-      </select>
-
-      <label>Fee Type</label>
-      <select class="form-control mb-2" formControlName="feeTypeId">
-        <option value="">Select Fee Type</option>
-        <option *ngFor="let f of feeTypes" [value]="f.feeTypeId">{{ f.typeName }}</option>
-      </select>
-
-      <label>Payment Frequency</label>
-      <select class="form-control mb-2" formControlName="paymentFrequency">
-        <option value="">Select Frequency</option>
-        <option value="Monthly">Monthly</option>
-        <option value="Quarterly">Quarterly</option>
-        <option value="Yearly">Yearly</option>
-      </select>
-
-      <label>Amount</label>
-      <input type="number" class="form-control mb-2" formControlName="amount">
-
-      <label>Due Date</label>
-      <input type="date" class="form-control mb-3" formControlName="dueDate">
-
-    </form>
-
-    <div class="text-end">
-      <button class="btn btn-success me-2"
-              (click)="saveFee()"
-              [disabled]="feeForm.invalid">
-        {{ isEditMode ? 'Update' : 'Create' }}
+      <button class="btn-reset" (click)="resetFilters()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 4v6h6" />
+          <path d="M3.51 15a9 9 0 1 0 .49-4.77" />
+        </svg>
+        Reset
       </button>
-      <button class="btn btn-secondary" (click)="showFeeDialog=false">Cancel</button>
+    </div>
+    <div class="filter-body">
+      <form [formGroup]="filterForm" class="filter-grid">
+        <div class="filter-group">
+          <label class="filter-label">Standard</label>
+          <div class="select-wrapper">
+            <select class="filter-select" formControlName="standardId" (change)="applyFilters()">
+              <option value="">All Standards</option>
+              <option *ngFor="let s of standards" [value]="s.standardId">{{ s.standardName }}</option>
+            </select>
+            <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Fee Type</label>
+          <div class="select-wrapper">
+            <select class="filter-select" formControlName="feeTypeId" (change)="applyFilters()">
+              <option value="">All Fee Types</option>
+              <option *ngFor="let f of feeTypes" [value]="f.feeTypeId">{{ f.typeName }}</option>
+            </select>
+            <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Min Amount (Rs.)</label>
+          <input type="number" class="filter-input" formControlName="minAmount" (input)="applyFilters()"
+            placeholder="e.g. 500">
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== TABLE CARD ===================== -->
+  <div class="fee-card">
+    <div class="fee-card-header">
+      <div class="header-left">
+        <div class="show-entries">
+          <span class="entries-label">Show</span>
+          <select class="entries-select" [(ngModel)]="rowsPerPage" (change)="currentPage=1;updatePagination()">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+          <span class="entries-label">entries</span>
+        </div>
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <input type="text" class="search-input" placeholder="Search fees..." [(ngModel)]="searchTerm"
+            (input)="applyFilters()">
+        </div>
+      </div>
+      <button class="btn-add" (click)="openAddFee()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        Add Fee
+      </button>
+    </div>
+
+    <div class="fee-card-body">
+      <div class="table-wrapper">
+        <table class="fee-table">
+          <thead>
+            <tr>
+              <th style="width:55px">#</th>
+              <th>Standard</th>
+              <th>Fee Type</th>
+              <th>Frequency</th>
+              <th>Amount</th>
+              <th>Due Date</th>
+              <th style="width:120px" class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let fee of paginatedFees; let i = index" class="table-row">
+              <td><span class="row-num">{{ (currentPage-1)*rowsPerPage + i + 1 }}</span></td>
+              <td>
+                <span class="standard-badge">{{ fee.standard?.standardName }}</span>
+              </td>
+              <td>
+                <span class="fee-type-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="5" width="20" height="14" rx="2" />
+                    <path d="M2 10h20" />
+                  </svg>
+                  {{ fee.feeType?.typeName }}
+                </span>
+              </td>
+              <td>
+                <span class="freq-chip" [class.monthly]="fee.paymentFrequency==='Monthly'"
+                  [class.quarterly]="fee.paymentFrequency==='Quarterly'"
+                  [class.yearly]="fee.paymentFrequency==='Yearly'">
+                  {{ fee.paymentFrequency }}
+                </span>
+              </td>
+              <td>
+                <span class="amount-val">Rs. {{ fee.amount | number }}</span>
+              </td>
+              <td>
+                <span class="date-val">{{ fee.dueDate | date:'mediumDate' }}</span>
+              </td>
+              <td class="text-center">
+                <div class="action-group">
+                  <button class="icon-btn edit-btn" (click)="openEditFee(fee)" title="Edit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </button>
+                  <button class="icon-btn delete-btn" (click)="confirmDelete(fee)" title="Delete">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                      <path d="M10 11v6M14 11v6" />
+                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="paginatedFees.length === 0">
+              <td colspan="7" class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                <p>No fee records found</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-bar">
+        <span class="pagination-info">
+          Showing <strong>{{ filteredFees.length === 0 ? 0 : (currentPage-1)*rowsPerPage + 1 }}</strong>
+          to <strong>{{ Math.min(currentPage*rowsPerPage, filteredFees.length) }}</strong>
+          of <strong>{{ filteredFees.length }}</strong> entries
+        </span>
+        <div class="pagination-controls">
+          <button class="page-btn" [disabled]="currentPage === 1" (click)="changePage(currentPage-1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <button *ngFor="let p of [].constructor(totalPages); let i=index" class="page-btn"
+            [class.active]="currentPage===i+1" (click)="changePage(i+1)">{{ i+1 }}</button>
+          <button class="page-btn" [disabled]="currentPage === totalPages" (click)="changePage(currentPage+1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ================= DELETE MODAL ================= -->
-<div *ngIf="showDeleteDialog" class="modal-backdrop">
-  <div class="modal-box">
-    <h5>Confirm Delete</h5>
-    <p>Are you sure?</p>
-    <button class="btn btn-secondary me-2" (click)="showDeleteDialog=false">Cancel</button>
-    <button class="btn btn-danger" (click)="deleteFee()">Delete</button>
+<!-- ===================== ADD / EDIT MODAL ===================== -->
+<div *ngIf="showFeeDialog" class="modal-overlay" (click)="showFeeDialog=false">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon" [class.edit-icon]="isEditMode">
+        <svg *ngIf="!isEditMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        <svg *ngIf="isEditMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+      </div>
+      <div>
+        <h4 class="modal-title">{{ isEditMode ? 'Edit Fee' : 'Add Fee' }}</h4>
+        <p class="modal-subtitle">{{ isEditMode ? 'Update fee details below' : 'Fill in details for the new fee entry'
+          }}</p>
+      </div>
+      <button class="modal-close" (click)="showFeeDialog=false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="feeForm" class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Standard</label>
+          <div class="select-wrapper">
+            <select class="form-select-field" formControlName="standardId">
+              <option value="">Select Standard</option>
+              <option *ngFor="let s of standards" [value]="s.standardId">{{ s.standardName }}</option>
+            </select>
+            <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fee Type</label>
+          <div class="select-wrapper">
+            <select class="form-select-field" formControlName="feeTypeId">
+              <option value="">Select Fee Type</option>
+              <option *ngFor="let f of feeTypes" [value]="f.feeTypeId">{{ f.typeName }}</option>
+            </select>
+            <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Payment Frequency</label>
+          <div class="select-wrapper">
+            <select class="form-select-field" formControlName="paymentFrequency">
+              <option value="">Select Frequency</option>
+              <option value="Monthly">Monthly</option>
+              <option value="Quarterly">Quarterly</option>
+              <option value="Yearly">Yearly</option>
+            </select>
+            <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Amount (Rs.)</label>
+          <input type="number" class="form-input" formControlName="amount" placeholder="Enter amount">
+        </div>
+        <div class="form-group span-full">
+          <label class="form-label">Due Date</label>
+          <input type="date" class="form-input" formControlName="dueDate">
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="showFeeDialog=false">Cancel</button>
+      <button class="btn-save" (click)="saveFee()" [disabled]="feeForm.invalid">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DELETE MODAL ===================== -->
+<div *ngIf="showDeleteDialog" class="modal-overlay" (click)="showDeleteDialog=false">
+  <div class="modal-box modal-small" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon danger-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+          <path d="M10 11v6M14 11v6" />
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+        </svg>
+      </div>
+      <div>
+        <h4 class="modal-title danger-title">Confirm Deletion</h4>
+        <p class="modal-subtitle">This action cannot be undone</p>
+      </div>
+      <button class="modal-close" (click)="showDeleteDialog=false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="delete-warning">
+        <p>Are you sure you want to delete this fee record for <strong>{{ feeToDelete?.standard?.standardName
+            }}</strong>?</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="showDeleteDialog=false">Cancel</button>
+      <button class="btn-danger" (click)="deleteFee()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TOAST ===================== -->
+<div class="toast-container" *ngIf="toast.show">
+  <div class="toast" [class.toast-success]="toast.type==='success'" [class.toast-error]="toast.type==='error'">
+    <div class="toast-icon">
+      <svg *ngIf="toast.type==='success'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+      <svg *ngIf="toast.type==='error'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M15 9l-6 6M9 9l6 6" />
+      </svg>
+    </div>
+    <div class="toast-body">
+      <span class="toast-message">{{ toast.message }}</span>
+    </div>
+    <button class="toast-close" (click)="toast.show=false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M18 6 6 18M6 6l12 12" />
+      </svg>
+    </button>
   </div>
 </div>

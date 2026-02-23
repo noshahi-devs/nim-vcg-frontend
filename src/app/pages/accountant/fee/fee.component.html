@@ -1,124 +1,277 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <div class="card h-100 p-0 radius-12">
-    <div class="card-header border-bottom bg-base py-16 px-24 d-flex justify-content-between">
-      <div class="d-flex gap-3 align-items-center">
-        <span>Show</span>
-        <select class="form-select form-select-sm w-auto"
-                [(ngModel)]="rowsPerPage"
-                (change)="currentPage=1;updatePagination()">
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
-        </select>
-
-        <input type="text"
-               class="form-control form-control-sm ms-3"
-               placeholder="Search fee types..."
-               [(ngModel)]="searchTerm"
-               (input)="searchFeeTypes()">
+  <div class="fee-card">
+    <!-- Card Header -->
+    <div class="fee-card-header">
+      <div class="header-left">
+        <div class="show-entries">
+          <span class="entries-label">Show</span>
+          <select class="entries-select" [(ngModel)]="rowsPerPage" (change)="currentPage=1;updatePagination()">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+          <span class="entries-label">entries</span>
+        </div>
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <input type="text" class="search-input" placeholder="Search fee types..." [(ngModel)]="searchTerm"
+            (input)="searchFeeTypes()">
+        </div>
       </div>
-
-      <button class="btn btn-primary btn-sm" (click)="openAddDialog()">
-        + Add New Fee Type
+      <button class="btn-add" (click)="openAddDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        Add Fee Type
       </button>
     </div>
 
-    <div class="card-body p-24">
-      <table class="table bordered-table sm-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Fee Type Name</th>
-            <th class="text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let ft of paginatedFeeTypes; let i=index">
-            <td>{{ (currentPage-1)*rowsPerPage + i + 1 }}</td>
-            <td>{{ ft.typeName }}</td>
-            <td class="text-center">
-              <button class="btn btn-info btn-sm me-1" (click)="openViewDialog(ft)">View</button>
-              <button class="btn btn-success btn-sm me-1" (click)="openEditDialog(ft)">Edit</button>
-              <button class="btn btn-danger btn-sm" (click)="confirmDelete(ft)">Delete</button>
-            </td>
-          </tr>
+    <!-- Table -->
+    <div class="fee-card-body">
+      <div class="table-wrapper">
+        <table class="fee-table">
+          <thead>
+            <tr>
+              <th style="width:60px">#</th>
+              <th>Fee Type Name</th>
+              <th style="width:160px" class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ft of paginatedFeeTypes; let i=index" class="table-row">
+              <td>
+                <span class="row-num">{{ (currentPage-1)*rowsPerPage + i + 1 }}</span>
+              </td>
+              <td>
+                <span class="fee-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="5" width="20" height="14" rx="2" />
+                    <path d="M2 10h20" />
+                  </svg>
+                  {{ ft.typeName }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="action-group">
+                  <button class="icon-btn view-btn" (click)="openViewDialog(ft)" title="View">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </button>
+                  <button class="icon-btn edit-btn" (click)="openEditDialog(ft)" title="Edit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </button>
+                  <button class="icon-btn delete-btn" (click)="confirmDelete(ft)" title="Delete">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                      <path d="M10 11v6M14 11v6" />
+                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
 
-          <tr *ngIf="paginatedFeeTypes.length === 0">
-            <td colspan="3" class="text-center">No fee types found</td>
-          </tr>
-        </tbody>
-      </table>
+            <tr *ngIf="paginatedFeeTypes.length === 0">
+              <td colspan="3" class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                <p>No fee types found</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <div class="d-flex justify-content-between mt-3">
-        <span>
-          Showing {{ (currentPage-1)*rowsPerPage + 1 }}
-          to {{ toEntry }} of {{ filteredFeeTypes.length }} entries
+      <!-- Pagination -->
+      <div class="pagination-bar">
+        <span class="pagination-info">
+          Showing <strong>{{ filteredFeeTypes.length === 0 ? 0 : (currentPage-1)*rowsPerPage + 1 }}</strong>
+          to <strong>{{ toEntry }}</strong> of <strong>{{ filteredFeeTypes.length }}</strong> entries
         </span>
-
-        <ul class="pagination">
-          <li class="page-item">
-            <a class="page-link" (click)="changePage(currentPage-1)">Prev</a>
-          </li>
-          <li class="page-item"
-              *ngFor="let p of [].constructor(totalPages); let i=index">
-            <a class="page-link"
-               [class.active]="currentPage===i+1"
-               (click)="changePage(i+1)">
-               {{ i+1 }}
-            </a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" (click)="changePage(currentPage+1)">Next</a>
-          </li>
-        </ul>
+        <div class="pagination-controls">
+          <button class="page-btn" [disabled]="currentPage === 1" (click)="changePage(currentPage-1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <button *ngFor="let p of [].constructor(totalPages); let i=index" class="page-btn"
+            [class.active]="currentPage === i+1" (click)="changePage(i+1)">{{ i+1 }}</button>
+          <button class="page-btn" [disabled]="currentPage === totalPages" (click)="changePage(currentPage+1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Add / Edit Modal -->
-<div *ngIf="showAddEditDialog" class="modal-backdrop d-flex align-items-center justify-content-center">
-  <div class="modal-content p-3">
-    <h5>{{ isEditMode ? 'Edit Fee Type' : 'Add Fee Type' }}</h5>
+<!-- ===================== ADD / EDIT MODAL ===================== -->
+<div *ngIf="showAddEditDialog" class="modal-overlay" (click)="closeDialog()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon" [class.edit-icon]="isEditMode">
+        <svg *ngIf="!isEditMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        <svg *ngIf="isEditMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+      </div>
+      <div>
+        <h4 class="modal-title">{{ isEditMode ? 'Edit Fee Type' : 'Add Fee Type' }}</h4>
+        <p class="modal-subtitle">{{ isEditMode ? 'Update the fee type name below' : 'Enter a name for the new fee type'
+          }}</p>
+      </div>
+      <button class="modal-close" (click)="closeDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
 
-    <form [formGroup]="form">
-      <label class="mt-2">Fee Type Name</label>
-      <input class="form-control"
-             formControlName="typeName"
-             placeholder="Enter fee type name">
-    </form>
+    <div class="modal-body">
+      <form [formGroup]="form">
+        <div class="form-group">
+          <label class="form-label">Fee Type Name</label>
+          <input class="form-input" formControlName="typeName" placeholder="e.g. Monthly Tuition, Exam Fee..."
+            [class.input-error]="form.get('typeName')?.invalid && form.get('typeName')?.touched">
+          <span class="input-hint" *ngIf="form.get('typeName')?.invalid && form.get('typeName')?.touched">
+            Fee type name is required.
+          </span>
+        </div>
+      </form>
+    </div>
 
-    <div class="mt-3 text-end">
-      <button class="btn btn-secondary me-2" (click)="closeDialog()">Cancel</button>
-      <button class="btn btn-primary"
-              (click)="saveFeeType()"
-              [disabled]="form.invalid">
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeDialog()">Cancel</button>
+      <button class="btn-save" (click)="saveFeeType()" [disabled]="form.invalid">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
         {{ isEditMode ? 'Update' : 'Save' }}
       </button>
     </div>
   </div>
 </div>
 
-<!-- View Modal -->
-<div *ngIf="showViewDialog" class="modal-backdrop d-flex align-items-center justify-content-center">
-  <div class="modal-content p-3">
-    <h5>Fee Type Details</h5>
-    <p><strong>Name:</strong> {{ selectedFeeType?.typeName }}</p>
-    <button class="btn btn-secondary" (click)="closeDialog()">Close</button>
+<!-- ===================== VIEW MODAL ===================== -->
+<div *ngIf="showViewDialog" class="modal-overlay" (click)="closeDialog()">
+  <div class="modal-box modal-small" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon view-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      </div>
+      <div>
+        <h4 class="modal-title">Fee Type Details</h4>
+        <p class="modal-subtitle">Viewing selected record</p>
+      </div>
+      <button class="modal-close" (click)="closeDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-row">
+        <span class="detail-label">Fee Type Name</span>
+        <span class="detail-value">{{ selectedFeeType?.typeName }}</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-save" style="background: linear-gradient(135deg,#0ea5e9,#0284c7)" (click)="closeDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+        Close
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- Delete Modal -->
-<div *ngIf="showDeleteDialog" class="modal-backdrop d-flex align-items-center justify-content-center">
-  <div class="modal-content p-3 text-center">
-    <h5 class="text-danger">Confirm Delete</h5>
-    <p>
-      Are you sure you want to delete
-      <strong>{{ feeTypeToDelete?.typeName }}</strong>?
-    </p>
-    <button class="btn btn-secondary me-2" (click)="closeDialog()">Cancel</button>
-    <button class="btn btn-danger" (click)="deleteFeeType()">Delete</button>
+<!-- ===================== DELETE MODAL ===================== -->
+<div *ngIf="showDeleteDialog" class="modal-overlay" (click)="closeDialog()">
+  <div class="modal-box modal-small" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon danger-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+          <path d="M10 11v6M14 11v6" />
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+        </svg>
+      </div>
+      <div>
+        <h4 class="modal-title danger-title">Confirm Deletion</h4>
+        <p class="modal-subtitle">This action cannot be undone</p>
+      </div>
+      <button class="modal-close" (click)="closeDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="delete-warning">
+        <p>Are you sure you want to delete <strong>{{ feeTypeToDelete?.typeName }}</strong>?</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeDialog()">Cancel</button>
+      <button class="btn-danger" (click)="deleteFeeType()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TOAST NOTIFICATION ===================== -->
+<div class="toast-container" *ngIf="toast.show">
+  <div class="toast" [class.toast-success]="toast.type==='success'" [class.toast-error]="toast.type==='error'"
+    [class.toast-info]="toast.type==='info'">
+    <div class="toast-icon">
+      <svg *ngIf="toast.type==='success'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+      <svg *ngIf="toast.type==='error'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M15 9l-6 6M9 9l6 6" />
+      </svg>
+      <svg *ngIf="toast.type==='info'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </svg>
+    </div>
+    <div class="toast-body">
+      <span class="toast-message">{{ toast.message }}</span>
+    </div>
+    <button class="toast-close" (click)="toast.show=false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M18 6 6 18M6 6l12 12" />
+      </svg>
+    </button>
   </div>
 </div>
