@@ -9,12 +9,27 @@
       </div>
     </div>
     <div class="fee-card-body p-24">
-      <div class="row align-items-center">
+      <div class="row align-items-center gy-4">
         <div class="col-md-4">
           <label class="field-label">Select Exam</label>
-          <select class="field-input" [(ngModel)]="selectedExamId" (change)="loadAnalytics()">
+          <select class="field-input" [(ngModel)]="selectedExamId" (change)="loadAnalytics()" name="exam">
             <option [ngValue]="null" disabled selected hidden>Select Exam</option>
-            <option *ngFor="let exam of exams" [value]="exam.examId">{{ exam.examName }}</option>
+            <option *ngFor="let exam of exams" [ngValue]="exam.examId">{{ exam.examName }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="field-label">Select Class</label>
+          <select class="field-input" [(ngModel)]="selectedClassId" (change)="onClassChange()" name="class">
+            <option [ngValue]="null">All Classes</option>
+            <option *ngFor="let cls of classes" [ngValue]="cls.standardId">{{ cls.standardName }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="field-label">Select Section</label>
+          <select class="field-input" [(ngModel)]="selectedSectionId" (change)="loadAnalytics()" name="section"
+            [disabled]="!selectedClassId">
+            <option [ngValue]="null">All Sections</option>
+            <option *ngFor="let sec of sections" [ngValue]="sec.sectionId">{{ sec.sectionName }}</option>
           </select>
         </div>
       </div>

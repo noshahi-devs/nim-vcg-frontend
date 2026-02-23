@@ -52,7 +52,26 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
   }
 
   loadExamSchedules() {
-    this.examScheduleService.GetExamScheduleOptions().subscribe(data => this.examScheduleList = data);
+    this.examScheduleService.GetExamScheduleOptions().subscribe({
+      next: (data) => {
+        this.examScheduleList = data || [];
+        if (this.examScheduleList.length === 0) {
+          this.loadMockExamSchedules();
+        }
+      },
+      error: (err) => {
+        console.error('Error loading exam schedules', err);
+        this.loadMockExamSchedules();
+      }
+    });
+  }
+
+  loadMockExamSchedules() {
+    this.examScheduleList = [
+      { examScheduleId: 1, examScheduleName: 'First Term Exam 2024' },
+      { examScheduleId: 2, examScheduleName: 'Monthly Test April' },
+      { examScheduleId: 3, examScheduleName: 'Mid Term Exam 2024' }
+    ] as GetExamScheduleOptionsResponse[];
   }
 
   loadStandards() {

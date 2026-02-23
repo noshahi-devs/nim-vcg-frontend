@@ -40,8 +40,8 @@
             <div class="form-group-premium">
               <label class="field-label">Exam Schedule <span class="text-danger">*</span></label>
               <select class="field-input" [(ngModel)]="model.examScheduleId" name="examScheduleId">
-                <option value="0" disabled selected hidden>Select Exam Schedule</option>
-                <option *ngFor="let examSchedule of examScheduleList" [value]="examSchedule.examScheduleId">{{
+                <option [ngValue]="0" disabled selected hidden>Select Exam Schedule</option>
+                <option *ngFor="let examSchedule of examScheduleList" [ngValue]="examSchedule.examScheduleId">{{
                   examSchedule.examScheduleName }}</option>
               </select>
             </div>
@@ -55,8 +55,9 @@
             <div class="form-group-premium">
               <label class="field-label">Standard <span class="text-danger">*</span></label>
               <select class="field-input" [(ngModel)]="model.standardId" name="standardId">
-                <option value="0" disabled selected hidden>Select Standard</option>
-                <option *ngFor="let standard of standardList" [value]="standard.standardId">{{ standard.standardName }}
+                <option [ngValue]="0" disabled selected hidden>Select Standard</option>
+                <option *ngFor="let standard of standardList" [ngValue]="standard.standardId">{{ standard.standardName
+                  }}
                 </option>
               </select>
             </div>
@@ -97,16 +98,17 @@
                   <td>
                     <select class="field-input accent-blue" style="padding: 8px 12px; height: 38px;"
                       [(ngModel)]="sub.subjectId" name="subject{{i}}">
-                      <option value="0" disabled selected hidden>Select Subject</option>
-                      <option *ngFor="let subject of subjectList" [value]="subject.subjectId">{{ subject.subjectName }}
+                      <option [ngValue]="0" disabled selected hidden>Select Subject</option>
+                      <option *ngFor="let subject of subjectList" [ngValue]="subject.subjectId">{{ subject.subjectName
+                        }}
                         ({{subject.subjectCode}})</option>
                     </select>
                   </td>
                   <td>
                     <select class="field-input accent-indigo" style="padding: 8px 12px; height: 38px;"
                       [(ngModel)]="sub.examTypeId" name="examType{{i}}">
-                      <option value="0" disabled selected hidden>Select Exam Type</option>
-                      <option *ngFor="let type of examTypeList" [value]="type.examTypeId">{{ type.examTypeName }}
+                      <option [ngValue]="0" disabled selected hidden>Select Exam Type</option>
+                      <option *ngFor="let type of examTypeList" [ngValue]="type.examTypeId">{{ type.examTypeName }}
                       </option>
                     </select>
                   </td>

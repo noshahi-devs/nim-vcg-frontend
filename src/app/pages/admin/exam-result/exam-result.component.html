@@ -18,33 +18,33 @@
       <div class="row gy-4">
         <div class="col-md-3">
           <label class="field-label">Select Exam <span class="text-danger">*</span></label>
-          <select class="field-input" [(ngModel)]="selectedExamId">
-            <option [value]="0" disabled selected hidden>Select Exam</option>
-            <option *ngFor="let exam of exams" [value]="exam.examId">{{ exam.examName }}</option>
+          <select class="field-input" [(ngModel)]="selectedExamId" name="exam">
+            <option [ngValue]="0" disabled selected hidden>Select Exam</option>
+            <option *ngFor="let exam of exams" [ngValue]="exam.examId">{{ exam.examName }}</option>
           </select>
         </div>
 
         <div class="col-md-3">
           <label class="field-label">Select Class (Required)</label>
-          <select class="field-input" [(ngModel)]="selectedClassId" (change)="onClassChange()">
-            <option [value]="0">All Classes</option>
-            <option *ngFor="let cls of classes" [value]="cls.standardId">{{ cls.standardName }}</option>
+          <select class="field-input" [(ngModel)]="selectedClassId" (change)="onClassChange()" name="class">
+            <option [ngValue]="0">All Classes</option>
+            <option *ngFor="let cls of classes" [ngValue]="cls.standardId">{{ cls.standardName }}</option>
           </select>
         </div>
 
         <div class="col-md-3">
           <label class="field-label">Select Section (Optional)</label>
-          <select class="field-input" [(ngModel)]="selectedSectionId" (change)="onSectionChange()">
-            <option [value]="0">All Sections</option>
-            <option *ngFor="let sec of sections" [value]="sec.sectionId">{{ sec.sectionName }}</option>
+          <select class="field-input" [(ngModel)]="selectedSectionId" (change)="onSectionChange()" name="section">
+            <option [ngValue]="0">All Sections</option>
+            <option *ngFor="let sec of sections" [ngValue]="sec.sectionId">{{ sec.sectionName }}</option>
           </select>
         </div>
 
         <div class="col-md-3">
           <label class="field-label">Select Student <span class="text-danger">*</span></label>
-          <select class="field-input" [(ngModel)]="selectedStudentId">
-            <option [value]="0" disabled selected hidden>Select Student</option>
-            <option *ngFor="let student of filteredStudents" [value]="student.studentId">
+          <select class="field-input" [(ngModel)]="selectedStudentId" name="student">
+            <option [ngValue]="0" disabled selected hidden>Select Student</option>
+            <option *ngFor="let student of filteredStudents" [ngValue]="student.studentId">
               {{ student.admissionNo }} - {{ student.studentName }}
             </option>
           </select>

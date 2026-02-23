@@ -16,6 +16,38 @@
       </div>
     </div>
   </div>
+  <!-- ===================== AUTO GRADE CARD ===================== -->
+  <div class="fee-card mb-24">
+    <div class="fee-card-header">
+      <div class="header-left">
+        <h4 class="mb-0 fw-600 d-flex align-items-center gap-2" style="color: #1e293b; font-size: 16px;">
+          <span class="card-dot blue" style="margin-right: 0px;"></span>
+          Auto Generate Exam Results
+        </h4>
+      </div>
+    </div>
+    <div class="fee-card-body p-24">
+      <div class="row align-items-end gy-4">
+        <div class="col-md-4">
+          <label class="field-label">Select Exam <span class="text-danger">*</span></label>
+          <select class="field-input" [(ngModel)]="selectedGenerateExamId" name="generateExam">
+            <option [ngValue]="0" disabled selected hidden>Select Exam</option>
+            <option *ngFor="let exam of exams" [ngValue]="exam.examId">{{ exam.examName }}</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <button class="btn-primary-gradient w-100" (click)="generateExamResults()" [disabled]="isGeneratingResult">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" *ngIf="!isGeneratingResult">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <span *ngIf="isGeneratingResult" class="spinner-border spinner-border-sm me-2" role="status"
+              aria-hidden="true"></span>
+            {{ isGeneratingResult ? 'Calculating...' : 'Calculate Grades' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ===================== TABLE CARD ===================== -->
   <div class="fee-card">
