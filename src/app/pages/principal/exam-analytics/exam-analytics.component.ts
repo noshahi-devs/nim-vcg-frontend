@@ -3,16 +3,18 @@ import { CommonModule } from '@angular/common';
 import { ExamService, ExamAnalytics, Exam } from '../../../services/exam.service';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-exam-analytics',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, BreadcrumbComponent],
   templateUrl: './exam-analytics.component.html',
-  styles: [`:host { display: block; }`]
+  styleUrls: ['./exam-analytics.component.css']
 })
 export class ExamAnalyticsComponent implements OnInit {
+  title = 'Exam Analytics';
   analytics: ExamAnalytics | null = null;
   exams: Exam[] = [];
   selectedExamId: number | null = null;

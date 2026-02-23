@@ -29,8 +29,10 @@ export class AutoGradeCalculationComponent implements OnInit {
 
   showAddEditDialog = false;
   showViewDialog = false;
+  showDeleteDialog = false;
   isEditMode = false;
   selectedGradeScale: GradeScale | null = null;
+  gradeScaleToDelete: GradeScale | null = null;
 
   gradeScaleForm: GradeScale = {
     grade: '',
@@ -246,40 +248,37 @@ export class AutoGradeCalculationComponent implements OnInit {
   }
 
   deleteGradeScale(gradeScale: GradeScale) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `Do you want to delete grade "${gradeScale.grade}"?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-      if (result.isConfirmed && gradeScale.gradeId) {
-        this.examService.deleteGradeScale(gradeScale.gradeId).subscribe({
-          next: () => {
-            this.gradeScales = this.gradeScales.filter(g => g.gradeId !== gradeScale.gradeId);
-            this.filteredGradeScales = [...this.gradeScales];
-            this.updatePagination();
-            Swal.fire({
-              icon: 'success',
-              title: 'Deleted!',
-              text: 'Grade scale has been deleted.',
-              showConfirmButton: false,
-              timer: 1500
-            });
-          },
-          error: (err) => {
-            console.error('Delete failed:', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Failed to Delete',
-              text: err.error?.message || 'Something went wrong!'
-            });
-          }
-        });
-      }
-    });
+    this.gradeScaleToDelete = gradeScale;
+    this.showDeleteDialog = true;
+  }
+
+  confirmDeleteGradeScale() {
+    if (this.gradeScaleToDelete?.gradeId) {
+      this.examService.deleteGradeScale(this.gradeScaleToDelete.gradeId).subscribe({
+        next: () => {
+          this.gradeScales = this.gradeScales.filter(g => g.gradeId !== this.gradeScaleToDelete!.gradeId);
+          this.filteredGradeScales = [...this.gradeScales];
+          this.updatePagination();
+          this.showDeleteDialog = false;
+          this.gradeScaleToDelete = null;
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'Grade scale has been deleted.',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error: (err) => {
+          console.error('Delete failed:', err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Failed to Delete',
+            text: err.error?.message || 'Something went wrong!'
+          });
+        }
+      });
+    }
   }
 
   refreshData() {

@@ -21,6 +21,7 @@ export class ExamComponent implements OnInit {
   examTypeToDelete!: Examtype;
 
   title = "Exam Types";
+  Math = Math;
 
   form!: FormGroup;
 

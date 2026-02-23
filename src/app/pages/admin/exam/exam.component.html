@@ -1,135 +1,259 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <div class="card h-100 p-0 radius-12">
-    <div
-      class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-      <div class="d-flex align-items-center flex-wrap gap-3">
-        <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
-        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="rowsPerPage"
-          (change)="currentPage = 1; updatePagination()">
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
-        </select>
-
-        <form class="navbar-search ms-3">
-          <input type="text" class="bg-base h-40-px w-auto" [(ngModel)]="searchTerm" (input)="searchExamTypes()"
-            name="search" placeholder="Search exam types..." />
-          <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
-        </form>
+  <!-- ===================== STATS CARDS ===================== -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
       </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Exam Types</span>
+        <h3 class="stat-value">{{ examTypes.length }}</h3>
+      </div>
+    </div>
+  </div>
 
-      <button *ngIf="hasRole('Principal')" type="button" (click)="openAddDialog()"
-        class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
-        <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-        Add New Exam Type
+  <!-- ===================== TABLE CARD ===================== -->
+  <div class="fee-card">
+    <div class="fee-card-header">
+      <div class="header-left">
+        <div class="show-entries">
+          <span>Show</span>
+          <select class="entries-select" [(ngModel)]="rowsPerPage" (change)="currentPage = 1; updatePagination()">
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+            <option [value]="50">50</option>
+          </select>
+          <span>entries</span>
+        </div>
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input class="search-input" [(ngModel)]="searchTerm" (input)="searchExamTypes()" name="search"
+            placeholder="Search exam types..." />
+        </div>
+      </div>
+      <button *ngIf="hasRole('Principal')" class="btn-add" (click)="openAddDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        Add Exam Type
       </button>
     </div>
 
-    <div class="card-body p-24">
-      <div class="table-responsive scroll-sm">
-        <table class="table bordered-table sm-table mb-0">
+    <div class="fee-card-body">
+      <div class="table-wrapper">
+        <table class="fee-table">
           <thead>
             <tr>
-              <th>S.L</th>
+              <th>#</th>
               <th>Exam Type Name</th>
               <th class="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let et of paginatedExamTypes; let i = index">
-              <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
-              <td>{{ et?.examTypeName }}</td>
+            <tr class="table-row" *ngFor="let et of paginatedExamTypes; let i = index">
+              <td><span class="row-num">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</span></td>
+              <td>
+                <div class="student-info">
+                  <span class="student-name">{{ et?.examTypeName }}</span>
+                </div>
+              </td>
               <td class="text-center">
-                <button (click)="openViewDialog(et)" class="btn btn-info btn-sm me-1">View</button>
-                <button *ngIf="hasRole('Principal')" (click)="openEditDialog(et)"
-                  class="btn btn-success btn-sm me-1">Edit</button>
-                <button *ngIf="hasRole('Principal')" (click)="confirmDelete(et)"
-                  class="btn btn-danger btn-sm">Delete</button>
+                <div class="action-group">
+                  <button class="icon-btn view-btn" (click)="openViewDialog(et)" title="View">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </button>
+                  <button *ngIf="hasRole('Principal')" class="icon-btn edit-btn" (click)="openEditDialog(et)"
+                    title="Edit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </button>
+                  <button *ngIf="hasRole('Principal')" class="icon-btn delete-btn" (click)="confirmDelete(et)"
+                    title="Delete">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                      <path d="M10 11v6M14 11v6" />
+                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1-1v2" />
+                    </svg>
+                  </button>
+                </div>
               </td>
             </tr>
 
             <tr *ngIf="paginatedExamTypes.length === 0">
-              <td colspan="3" class="text-center py-24 text-secondary-light">No exam types found</td>
+              <td colspan="3" class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                  <polyline points="13 2 13 9 20 9" />
+                </svg>
+                <p>No exam types found</p>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
-        <span>Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to {{ toEntry }} of {{ filteredExamTypes?.length || 0 }}
-          entries</span>
-        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center">
-          <li class="page-item">
-            <a class="page-link" [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)"
-              href="javascript:void(0)">Prev</a>
-          </li>
-          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
-            <a class="page-link" [class.active]="currentPage === i + 1" (click)="changePage(i + 1)"
-              href="javascript:void(0)">{{ i + 1 }}</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
-              href="javascript:void(0)">Next</a>
-          </li>
-        </ul>
+      <!-- Pagination -->
+      <div class="pagination-bar">
+        <span class="pagination-info">Showing {{ Math.min((currentPage-1)*rowsPerPage + 1, filteredExamTypes.length) }}
+          to {{ toEntry }} of {{ filteredExamTypes?.length || 0 }} entries</span>
+        <div class="pagination-controls">
+          <button class="page-btn" [disabled]="currentPage===1" (click)="changePage(currentPage-1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <ng-container *ngFor="let page of [].constructor(totalPages); let i=index">
+            <button class="page-btn" [class.active]="currentPage===i+1" (click)="changePage(i+1)">{{ i+1 }}</button>
+          </ng-container>
+          <button class="page-btn" [disabled]="currentPage===totalPages" (click)="changePage(currentPage+1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Add/Edit Modal -->
-<div *ngIf="showAddEditDialog" class="modal-backdrop d-flex justify-content-center align-items-center">
-  <div class="modal-content p-3">
-    <div class="modal-header">
-      <h5>{{ isEditMode ? 'Edit Exam Type' : 'Add New Exam Type' }}</h5>
-      <button type="button" class="btn-close" (click)="closeDialog()"></button>
+<!-- ===================== ADD / EDIT MODAL ===================== -->
+<div *ngIf="showAddEditDialog" class="modal-overlay" (click)="closeDialog()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+
+    <!-- Gradient Header -->
+    <div class="modal-header-premium">
+      <div class="header-gradient"></div>
+      <div class="header-content">
+        <div class="modal-icon-premium" [class.edit-mode]="isEditMode">
+          <svg *ngIf="!isEditMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <svg *ngIf="isEditMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+        </div>
+        <div>
+          <h4 class="modal-title-premium">{{ isEditMode ? 'Edit Exam Type' : 'New Exam Type' }}</h4>
+          <p class="modal-subtitle-premium">{{ isEditMode ? 'Update exam type details' : 'Create a new exam type' }}</p>
+        </div>
+      </div>
+      <button class="modal-close-premium" (click)="closeDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
     </div>
-    <div class="modal-body">
+
+    <!-- Modal Body -->
+    <div class="modal-body-premium">
       <form [formGroup]="form">
-        <label>Exam Type Name</label>
-        <input type="text" formControlName="examTypeName" class="form-control" />
+        <div class="form-card">
+          <div class="form-card-label">
+            <span class="card-dot blue"></span>
+            Exam Details
+          </div>
+          <div class="form-group-premium">
+            <label class="field-label">Exam Type Name</label>
+            <input type="text" class="field-input" formControlName="examTypeName"
+              placeholder="e.g. Mid Term, Final Term" />
+          </div>
+        </div>
       </form>
     </div>
+
+    <!-- Footer -->
+    <div class="modal-footer-premium">
+      <button class="btn-ghost" (click)="closeDialog()">Cancel</button>
+      <button class="btn-primary-gradient" (click)="saveExamType()" [disabled]="form.invalid">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        {{ isEditMode ? 'Update' : 'Save' }}
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== VIEW MODAL ===================== -->
+<div *ngIf="showViewDialog" class="modal-overlay" (click)="closeDialog()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon view-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      </div>
+      <div>
+        <h4 class="modal-title">Exam Type Details</h4>
+        <p class="modal-subtitle">Viewing exam type record</p>
+      </div>
+      <button class="modal-close" (click)="closeDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid">
+        <div class="detail-row">
+          <span class="detail-label">Name</span>
+          <span class="detail-value fw-600">{{ selectedExamType?.examTypeName }}</span>
+        </div>
+      </div>
+    </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeDialog()">Cancel</button>
-      <button class="btn btn-primary" (click)="saveExamType()" [disabled]="form.invalid">{{ isEditMode ? 'Update' :
-        'Save' }}</button>
+      <button class="btn-save" style="background: linear-gradient(135deg,#0ea5e9,#0284c7)" (click)="closeDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+        Close
+      </button>
     </div>
   </div>
 </div>
 
-<!-- View Modal -->
-<div *ngIf="showViewDialog" class="modal-backdrop d-flex justify-content-center align-items-center">
-  <div class="modal-content p-3">
-    <div class="modal-header">
-      <h5>Exam Type Details</h5>
-      <button type="button" class="btn-close" (click)="closeDialog()"></button>
+<!-- ===================== DELETE MODAL ===================== -->
+<div *ngIf="showDeleteDialog" class="modal-overlay" (click)="showDeleteDialog=false">
+  <div class="modal-box delete-box" (click)="$event.stopPropagation()">
+    <div class="delete-icon-wrapper">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        <line x1="12" y1="9" x2="12" y2="13" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
     </div>
-    <div class="modal-body">
-      <p><strong>Name:</strong> {{ selectedExamType?.examTypeName }}</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeDialog()">Close</button>
-    </div>
-  </div>
-</div>
-<!-- Delete Confirmation Modal -->
-<div *ngIf="showDeleteDialog" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content radius-12 p-3">
-      <div class="modal-header border-0">
-        <h5 class="modal-title text-warning fw-semibold">Confirm Delete</h5>
-        <button type="button" class="btn-close" (click)="showDeleteDialog=false"></button>
-      </div>
-      <div class="modal-body text-center">
-        Are you sure you want to delete "<strong>{{ examTypeToDelete?.examTypeName }}</strong>"?
-      </div>
-      <div class="modal-footer border-0 justify-content-center gap-2">
-        <button type="button" class="btn btn-secondary px-4" (click)="showDeleteDialog=false">Cancel</button>
-        <button type="button" class="btn btn-danger px-4" (click)="deleteExamType()">Delete</button>
-      </div>
+    <h3 class="delete-title">Confirm Delete</h3>
+    <p class="delete-message">
+      Are you sure you want to delete "<strong>{{ examTypeToDelete?.examTypeName }}</strong>"? This action cannot be
+      undone.
+    </p>
+    <div class="delete-actions">
+      <button class="btn-ghost" (click)="showDeleteDialog=false">Cancel</button>
+      <button class="btn-danger-gradient" (click)="deleteExamType()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+          <path d="M10 11v6M14 11v6" />
+        </svg>
+        Delete
+      </button>
     </div>
   </div>
 </div>

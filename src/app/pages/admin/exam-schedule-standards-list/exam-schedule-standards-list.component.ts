@@ -83,33 +83,43 @@ export class ExamScheduleStandardsListComponent implements OnInit {
     this.updatePagination();
   }
 
+  showViewDialog = false;
+  showEditDialog = false;
+  showDeleteDialog = false;
+  itemToDeleteId: number | null = null;
+  itemToDeleteName: string = '';
+
   /* ---------- VIEW ---------- */
   openViewModal(item: any) {
     this.selectedItem = item;
-    const modal = new bootstrap.Modal(document.getElementById('viewModal'));
-    modal.show();
+    this.showViewDialog = true;
   }
 
   /* ---------- EDIT ---------- */
   openEditModal(item: any) {
     this.editModel = JSON.parse(JSON.stringify(item));
-    const modal = new bootstrap.Modal(document.getElementById('editModal'));
-    modal.show();
+    this.showEditDialog = true;
+  }
+
+  /* ---------- COMMON ---------- */
+  closeDialog() {
+    this.showViewDialog = false;
+    this.showEditDialog = false;
+    this.showDeleteDialog = false;
+    this.selectedItem = null;
+    this.itemToDeleteId = null;
   }
 
   update() {
-    Swal.fire({
-      title: 'Updating...',
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading()
-    });
-
     this.service.updateExamScheduleStandards(this.editModel).subscribe({
       next: () => {
-        Swal.fire('Updated!', 'Schedule standard updated successfully', 'success');
-        const modalElement = document.getElementById('editModal');
-        const modal = bootstrap.Modal.getInstance(modalElement);
-        modal?.hide();
+        Swal.fire({
+          icon: 'success',
+          title: 'Updated Successfully!',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        this.closeDialog();
         this.loadData();
       },
       error: (err) => {
@@ -121,27 +131,29 @@ export class ExamScheduleStandardsListComponent implements OnInit {
 
   /* ---------- DELETE ---------- */
   confirmDelete(id: number, name: string) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `Do you want to delete the schedule standard for "${name}"?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.service.DeleteExamScheduleStandard(id).subscribe({
-          next: () => {
-            Swal.fire('Deleted!', 'Schedule standard has been deleted.', 'success');
-            this.loadData();
-          },
-          error: (err) => {
-            console.error(err);
-            Swal.fire('Error', 'Failed to delete entry.', 'error');
-          }
-        });
-      }
-    });
+    this.itemToDeleteId = id;
+    this.itemToDeleteName = name;
+    this.showDeleteDialog = true;
+  }
+
+  executeDelete() {
+    if (this.itemToDeleteId !== null) {
+      this.service.DeleteExamScheduleStandard(this.itemToDeleteId).subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            showConfirmButton: false,
+            timer: 1500
+          });
+          this.closeDialog();
+          this.loadData();
+        },
+        error: (err) => {
+          console.error(err);
+          Swal.fire('Error', 'Failed to delete entry.', 'error');
+        }
+      });
+    }
   }
 }
