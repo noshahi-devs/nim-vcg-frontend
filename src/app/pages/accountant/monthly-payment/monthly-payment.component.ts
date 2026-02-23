@@ -10,6 +10,7 @@ import { MonthlyPaymentService } from '../../../services/monthly-payment.service
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-monthly-payment',
@@ -21,6 +22,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 })
 export class MonthlyPaymentComponent implements OnInit {
   title = "Monthly Payments";
+  Math = Math;
 
   form!: FormGroup;
   payments: MonthlyPayment[] = [];
@@ -32,7 +34,7 @@ export class MonthlyPaymentComponent implements OnInit {
   fees: Fee[] = [];
   academicMonths: AcademicMonth[] = [];
 
-  searchTerm: string = "";
+  searchTerm = '';
   selectedStandardId: number | null = null;
 
   rowsPerPage = 10;
@@ -41,11 +43,9 @@ export class MonthlyPaymentComponent implements OnInit {
 
   showAddEditDialog = false;
   showViewDialog = false;
-  showDeleteDialog = false;
   isEditMode = false;
 
   selectedPayment!: MonthlyPayment;
-  paymentToDelete!: MonthlyPayment;
 
   // Dropdown state
   showFeesDropdown = false;
@@ -75,7 +75,6 @@ export class MonthlyPaymentComponent implements OnInit {
       dueBalance: new FormControl({ value: 0, disabled: true })
     });
 
-    // Recalculate amounts when relevant fields change
     this.form.get('fees')!.valueChanges.subscribe(_ => this.calculateAmounts());
     this.form.get('amountPaid')!.valueChanges.subscribe(_ => this.calculateAmounts());
     this.form.get('waver')!.valueChanges.subscribe(_ => this.calculateAmounts());
@@ -94,6 +93,7 @@ export class MonthlyPaymentComponent implements OnInit {
     this.form.get('dueBalance')!.setValue(due, { emitEvent: false });
   }
 
+  /* ---------- LOADERS ---------- */
   loadAll() {
     this.commonService.getAllStudents().subscribe(r => this.students = r);
     this.commonService.getAllStandards().subscribe(r => this.standards = r);
@@ -102,12 +102,18 @@ export class MonthlyPaymentComponent implements OnInit {
   }
 
   loadPayments() {
-    this.paymentService.getAllMonthlyPayments().subscribe(r => {
-      this.payments = r || [];
-      this.searchPayments();
+    this.paymentService.getAllMonthlyPayments().subscribe({
+      next: r => { this.payments = r || []; this.searchPayments(); },
+      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load payments.', confirmButtonColor: '#6366f1' })
     });
   }
 
+  /* ---------- STATS ---------- */
+  get totalRecords() { return this.payments.length; }
+  get totalCollected() { return this.payments.reduce((a, c) => a + (c.amountPaid || 0), 0); }
+  get totalPending() { return this.payments.reduce((a, c) => a + (c.amountRemaining || 0), 0); }
+
+  /* ---------- SEARCH & FILTER ---------- */
   searchPayments() {
     const term = this.searchTerm.toLowerCase();
     this.filteredPayments = this.payments.filter(p =>
@@ -118,8 +124,9 @@ export class MonthlyPaymentComponent implements OnInit {
     this.updatePagination();
   }
 
+  /* ---------- PAGINATION ---------- */
   updatePagination() {
-    this.totalPages = Math.ceil(this.filteredPayments.length / this.rowsPerPage);
+    this.totalPages = Math.max(1, Math.ceil(this.filteredPayments.length / this.rowsPerPage));
     const start = (this.currentPage - 1) * this.rowsPerPage;
     this.paginatedPayments = this.filteredPayments.slice(start, start + this.rowsPerPage);
   }
@@ -134,6 +141,7 @@ export class MonthlyPaymentComponent implements OnInit {
     return this.filteredPayments.length === 0 ? 0 : Math.min(this.currentPage * this.rowsPerPage, this.filteredPayments.length);
   }
 
+  /* ---------- ADD / EDIT ---------- */
   openAddDialog() {
     this.isEditMode = false;
     this.showAddEditDialog = true;
@@ -163,29 +171,48 @@ export class MonthlyPaymentComponent implements OnInit {
     payload.amountRemaining = payload.totalAmount - (payload.amountPaid || 0);
 
     if (this.isEditMode) {
-      this.paymentService.updateMonthlyPayment(payload).subscribe(() => {
-        this.closeDialog();
-        this.loadPayments();
+      this.paymentService.updateMonthlyPayment(payload).subscribe({
+        next: () => {
+          this.closeDialog();
+          this.loadPayments();
+          Swal.fire({ icon: 'success', title: 'Updated!', text: 'Payment updated successfully.', showConfirmButton: false, timer: 1800 });
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment.', confirmButtonColor: '#6366f1' })
       });
     } else {
-      this.paymentService.createMonthlyPayment(payload).subscribe(() => {
-        this.closeDialog();
-        this.loadPayments();
+      this.paymentService.createMonthlyPayment(payload).subscribe({
+        next: () => {
+          this.closeDialog();
+          this.loadPayments();
+          Swal.fire({ icon: 'success', title: 'Created!', text: 'Payment created successfully.', showConfirmButton: false, timer: 1800 });
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment.', confirmButtonColor: '#6366f1' })
       });
     }
   }
 
-  confirmDelete(p: MonthlyPayment) {
-    this.paymentToDelete = p;
-    this.showDeleteDialog = true;
-  }
-
-  deletePayment() {
-    if (!this.paymentToDelete) return;
-    this.paymentService.deleteMonthlyPayment(this.paymentToDelete.monthlyPaymentId).subscribe(() => {
-      this.showDeleteDialog = false;
-      this.loadPayments();
+  /* ---------- DELETE (SweetAlert2) ---------- */
+  async confirmDelete(p: MonthlyPayment) {
+    const result = await Swal.fire({
+      title: 'Delete Payment?',
+      html: `Are you sure you want to delete the payment for <strong>${p.student?.studentName}</strong>?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280'
     });
+
+    if (result.isConfirmed) {
+      this.paymentService.deleteMonthlyPayment(p.monthlyPaymentId).subscribe({
+        next: () => {
+          this.loadPayments();
+          Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Payment deleted successfully.', showConfirmButton: false, timer: 1800 });
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#6366f1' })
+      });
+    }
   }
 
   closeDialog() {
@@ -232,13 +259,12 @@ export class MonthlyPaymentComponent implements OnInit {
   getSelectedFeesNames(): string {
     const fees = this.form.value.fees || [];
     if (!fees.length) return 'Select Fees';
-    return fees.map(f => f.feeType?.typeName).join(', ');
+    return fees.map((f: any) => f.feeType?.typeName).join(', ');
   }
 
   getSelectedMonthsNames(): string {
     const months = this.form.value.academicMonths || [];
     if (!months.length) return 'Select Months';
-    return months.map(m => m.monthName).join(', ');
+    return months.map((m: any) => m.monthName).join(', ');
   }
-
 }
