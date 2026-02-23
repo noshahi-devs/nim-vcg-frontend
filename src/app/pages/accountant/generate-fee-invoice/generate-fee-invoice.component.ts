@@ -8,6 +8,7 @@ import { StandardService } from '../../../services/standard.service';
 import { Fee } from '../../../Models/fee';
 import { FeeType } from '../../../Models/feetype';
 import { Standard } from '../../../Models/standard';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-generate-fee-invoice',
@@ -39,20 +40,10 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
 
-  // ===== MODALS =====
+  // ===== MODAL =====
   showFeeDialog = false;
   isEditMode = false;
-  showDeleteDialog = false;
-
-  // ===== FORMS =====
   feeForm!: FormGroup;
-  feeToDelete!: Fee;
-
-  // ===== TOAST =====
-  toast: { show: boolean; type: 'success' | 'error'; message: string } = {
-    show: false, type: 'success', message: ''
-  };
-  private toastTimer: any;
 
   constructor(
     private feeService: FeeService,
@@ -88,11 +79,8 @@ export class GenerateFeeInvoiceComponent implements OnInit {
 
   loadFees() {
     this.feeService.getAllFees().subscribe({
-      next: res => {
-        this.fees = res;
-        this.applyFilters();
-      },
-      error: () => this.showToast('error', 'Failed to load fee records.')
+      next: res => { this.fees = res; this.applyFilters(); },
+      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load fee records.', confirmButtonColor: '#6366f1' })
     });
   }
 
@@ -160,46 +148,43 @@ export class GenerateFeeInvoiceComponent implements OnInit {
         next: () => {
           this.showFeeDialog = false;
           this.loadFees();
-          this.showToast('success', 'Fee updated successfully!');
+          Swal.fire({ icon: 'success', title: 'Updated!', text: 'Fee updated successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => this.showToast('error', 'Failed to update fee. Please try again.')
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee.', confirmButtonColor: '#6366f1' })
       });
     } else {
       this.feeService.createFee(feeData).subscribe({
         next: () => {
           this.showFeeDialog = false;
           this.loadFees();
-          this.showToast('success', 'Fee created successfully!');
+          Swal.fire({ icon: 'success', title: 'Created!', text: 'Fee created successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => this.showToast('error', 'Failed to create fee. Please try again.')
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create fee.', confirmButtonColor: '#6366f1' })
       });
     }
   }
 
   /* ---------- DELETE ---------- */
-  confirmDelete(fee: Fee) {
-    this.feeToDelete = fee;
-    this.showDeleteDialog = true;
-  }
-
-  deleteFee() {
-    this.feeService.deleteFee(this.feeToDelete.feeId).subscribe({
-      next: () => {
-        this.showDeleteDialog = false;
-        this.loadFees();
-        this.showToast('success', 'Fee deleted successfully!');
-      },
-      error: () => {
-        this.showDeleteDialog = false;
-        this.showToast('error', 'Failed to delete fee. Please try again.');
-      }
+  async confirmDelete(fee: Fee) {
+    const result = await Swal.fire({
+      title: 'Delete Fee Record?',
+      html: `Are you sure you want to delete the fee for <strong>${fee.standard?.standardName}</strong>?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280'
     });
-  }
 
-  /* ---------- TOAST ---------- */
-  showToast(type: 'success' | 'error', message: string) {
-    if (this.toastTimer) clearTimeout(this.toastTimer);
-    this.toast = { show: true, type, message };
-    this.toastTimer = setTimeout(() => { this.toast.show = false; }, 3500);
+    if (result.isConfirmed) {
+      this.feeService.deleteFee(fee.feeId).subscribe({
+        next: () => {
+          this.loadFees();
+          Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Fee record has been deleted.', showConfirmButton: false, timer: 1800 });
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee.', confirmButtonColor: '#6366f1' })
+      });
+    }
   }
 }

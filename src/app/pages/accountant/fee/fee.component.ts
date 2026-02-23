@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { FeeTypeService } from '../../../services/feetype.service';
 import { FeeType } from '../../../Models/feetype';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-fee',
@@ -29,21 +30,12 @@ export class FeeComponent implements OnInit {
   totalPages = 1;
   searchTerm = '';
 
+  // Dialog visibility (only Add/Edit + View still use custom modal)
   showAddEditDialog = false;
   showViewDialog = false;
-  showDeleteDialog = false;
   isEditMode = false;
 
   selectedFeeType!: FeeType;
-  feeTypeToDelete!: FeeType;
-
-  /** Toast notification state */
-  toast: { show: boolean; type: 'success' | 'error' | 'info'; message: string } = {
-    show: false,
-    type: 'success',
-    message: ''
-  };
-  private toastTimer: any;
 
   constructor(private feeTypeService: FeeTypeService) { }
 
@@ -70,7 +62,7 @@ export class FeeComponent implements OnInit {
         this.feeTypes = [];
         this.filteredFeeTypes = [];
         this.paginatedFeeTypes = [];
-        this.showToast('error', 'Failed to load fee types. Please try again.');
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load fee types.', confirmButtonColor: '#6366f1' });
       }
     });
   }
@@ -84,8 +76,7 @@ export class FeeComponent implements OnInit {
   }
 
   updatePagination() {
-    this.totalPages = Math.ceil(this.filteredFeeTypes.length / this.rowsPerPage);
-    if (this.totalPages === 0) this.totalPages = 1;
+    this.totalPages = Math.max(1, Math.ceil(this.filteredFeeTypes.length / this.rowsPerPage));
     const start = (this.currentPage - 1) * this.rowsPerPage;
     this.paginatedFeeTypes = this.filteredFeeTypes.slice(start, start + this.rowsPerPage);
   }
@@ -121,7 +112,6 @@ export class FeeComponent implements OnInit {
 
   saveFeeType() {
     if (this.form.invalid) return;
-
     const payload = this.form.value;
 
     if (this.isEditMode) {
@@ -129,58 +119,48 @@ export class FeeComponent implements OnInit {
         next: () => {
           this.closeDialog();
           this.loadFeeTypes();
-          this.showToast('success', `Fee type updated successfully!`);
+          Swal.fire({ icon: 'success', title: 'Updated!', text: 'Fee type updated successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => {
-          this.showToast('error', 'Failed to update fee type. Please try again.');
-        }
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee type.', confirmButtonColor: '#6366f1' })
       });
     } else {
       this.feeTypeService.createFeeType(payload).subscribe({
         next: () => {
           this.closeDialog();
           this.loadFeeTypes();
-          this.showToast('success', `Fee type added successfully!`);
+          Swal.fire({ icon: 'success', title: 'Added!', text: 'Fee type added successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => {
-          this.showToast('error', 'Failed to add fee type. Please try again.');
-        }
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to add fee type.', confirmButtonColor: '#6366f1' })
       });
     }
   }
 
-  confirmDelete(ft: FeeType) {
-    this.feeTypeToDelete = ft;
-    this.showDeleteDialog = true;
-  }
-
-  deleteFeeType() {
-    this.feeTypeService.deleteFeeType(this.feeTypeToDelete.feeTypeId).subscribe({
-      next: () => {
-        this.showDeleteDialog = false;
-        this.loadFeeTypes();
-        this.showToast('success', `"${this.feeTypeToDelete.typeName}" deleted successfully.`);
-      },
-      error: () => {
-        this.showDeleteDialog = false;
-        this.showToast('error', 'Failed to delete fee type. Please try again.');
-      }
+  async confirmDelete(ft: FeeType) {
+    const result = await Swal.fire({
+      title: 'Delete Fee Type?',
+      html: `Are you sure you want to delete <strong>${ft.typeName}</strong>?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280'
     });
+
+    if (result.isConfirmed) {
+      this.feeTypeService.deleteFeeType(ft.feeTypeId).subscribe({
+        next: () => {
+          this.loadFeeTypes();
+          Swal.fire({ icon: 'success', title: 'Deleted!', text: `"${ft.typeName}" has been deleted.`, showConfirmButton: false, timer: 1800 });
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee type.', confirmButtonColor: '#6366f1' })
+      });
+    }
   }
 
   closeDialog() {
     this.showAddEditDialog = false;
     this.showViewDialog = false;
-    this.showDeleteDialog = false;
     this.form.reset();
-  }
-
-  /** Shows a toast and auto-hides after 3.5 seconds */
-  showToast(type: 'success' | 'error' | 'info', message: string) {
-    if (this.toastTimer) clearTimeout(this.toastTimer);
-    this.toast = { show: true, type, message };
-    this.toastTimer = setTimeout(() => {
-      this.toast.show = false;
-    }, 3500);
   }
 }
