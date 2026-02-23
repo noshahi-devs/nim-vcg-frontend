@@ -47,9 +47,12 @@ export class MonthlyPaymentComponent implements OnInit {
 
   selectedPayment!: MonthlyPayment;
 
-  // Dropdown state
+  // Dropdown & Search state
   showFeesDropdown = false;
   showMonthsDropdown = false;
+  feeSearchTerm = '';
+  monthSearchTerm = '';
+  availableFees: Fee[] = [];
 
   constructor(
     private commonService: CommonServices,
@@ -62,6 +65,10 @@ export class MonthlyPaymentComponent implements OnInit {
     this.loadPayments();
   }
 
+  get todayDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
   initForm() {
     this.form = new FormGroup({
       monthlyPaymentId: new FormControl(0),
@@ -70,14 +77,34 @@ export class MonthlyPaymentComponent implements OnInit {
       academicMonths: new FormControl([], Validators.required),
       waver: new FormControl(0),
       amountPaid: new FormControl(0),
-      paymentDate: new FormControl('', Validators.required),
+      paymentDate: new FormControl(this.todayDate, Validators.required),
       totalAmount: new FormControl({ value: 0, disabled: true }),
-      dueBalance: new FormControl({ value: 0, disabled: true })
+      dueBalance: new FormControl({ value: 0, disabled: true }),
+      paymentMethod: new FormControl('Cash'),
+      transactionId: new FormControl(''),
+      sendSms: new FormControl(true),
+      printReceipt: new FormControl(true),
+      totalFeeAmount: new FormControl(0) // Added to match model
     });
 
+    // Student selection logic
+    this.form.get('studentId')!.valueChanges.subscribe(sid => this.onStudentSelect(sid));
+
+    // Recalculate amounts when relevant fields change
     this.form.get('fees')!.valueChanges.subscribe(_ => this.calculateAmounts());
     this.form.get('amountPaid')!.valueChanges.subscribe(_ => this.calculateAmounts());
     this.form.get('waver')!.valueChanges.subscribe(_ => this.calculateAmounts());
+  }
+
+  onStudentSelect(studentId: any) {
+    const student = this.students.find(s => s.studentId == studentId);
+    if (student && student.standardId) {
+      this.availableFees = this.fees.filter(f => f.standardId == student.standardId);
+    } else {
+      this.availableFees = [...this.fees];
+    }
+    // Clear selected fees if they are no longer available? 
+    // Usually better to just keep them if editing, but for new records we filter.
   }
 
   calculateAmounts() {
@@ -97,7 +124,10 @@ export class MonthlyPaymentComponent implements OnInit {
   loadAll() {
     this.commonService.getAllStudents().subscribe(r => this.students = r);
     this.commonService.getAllStandards().subscribe(r => this.standards = r);
-    this.commonService.getAllFees().subscribe(r => this.fees = r);
+    this.commonService.getAllFees().subscribe(r => {
+      this.fees = r;
+      this.availableFees = [...this.fees];
+    });
     this.commonService.getAllAcademicMonths().subscribe(r => this.academicMonths = r);
   }
 
@@ -124,6 +154,49 @@ export class MonthlyPaymentComponent implements OnInit {
     this.updatePagination();
   }
 
+  get filteredAvailableFees() {
+    const term = this.feeSearchTerm.toLowerCase();
+    return this.availableFees.filter(f =>
+      f.feeType?.typeName?.toLowerCase().includes(term) ||
+      f.amount?.toString().includes(term)
+    );
+  }
+
+  get filteredAcademicMonths() {
+    const term = this.monthSearchTerm.toLowerCase();
+    return this.academicMonths.filter(m => m.monthName?.toLowerCase().includes(term));
+  }
+
+  /* ---------- SELECT ALL HELPERS ---------- */
+  get isAllFeesSelected(): boolean {
+    const selected = this.form.get('fees')?.value || [];
+    return this.filteredAvailableFees.length > 0 && this.filteredAvailableFees.every(f => selected.some((s: any) => s.feeId === f.feeId));
+  }
+
+  toggleAllFees() {
+    if (this.isAllFeesSelected) {
+      this.form.get('fees')!.setValue([]);
+    } else {
+      const all = [...this.filteredAvailableFees];
+      this.form.get('fees')!.setValue(all);
+    }
+    this.calculateAmounts();
+  }
+
+  get isAllMonthsSelected(): boolean {
+    const selected = this.form.get('academicMonths')?.value || [];
+    return this.filteredAcademicMonths.length > 0 && this.filteredAcademicMonths.every(m => selected.some((s: any) => s.monthId === m.monthId));
+  }
+
+  toggleAllMonths() {
+    if (this.isAllMonthsSelected) {
+      this.form.get('academicMonths')!.setValue([]);
+    } else {
+      const all = [...this.filteredAcademicMonths];
+      this.form.get('academicMonths')!.setValue(all);
+    }
+  }
+
   /* ---------- PAGINATION ---------- */
   updatePagination() {
     this.totalPages = Math.max(1, Math.ceil(this.filteredPayments.length / this.rowsPerPage));
@@ -145,16 +218,31 @@ export class MonthlyPaymentComponent implements OnInit {
   openAddDialog() {
     this.isEditMode = false;
     this.showAddEditDialog = true;
-    this.form.reset({ monthlyPaymentId: 0, fees: [], academicMonths: [] });
+    this.availableFees = [...this.fees];
+    this.form.reset({
+      monthlyPaymentId: 0,
+      fees: [],
+      academicMonths: [],
+      waver: 0,
+      amountPaid: 0,
+      paymentDate: new Date().toISOString().split('T')[0],
+      paymentMethod: 'Cash',
+      sendSms: true,
+      printReceipt: true
+    });
   }
 
   openEditDialog(p: MonthlyPayment) {
     this.isEditMode = true;
     this.showAddEditDialog = true;
+    this.onStudentSelect(p.studentId); // Load student specific fees
     this.form.patchValue({
       ...p,
       fees: p.fees || [],
-      academicMonths: p.academicMonths || []
+      academicMonths: p.academicMonths || [],
+      paymentDate: p.paymentDate ? new Date(p.paymentDate).toISOString().split('T')[0] : '',
+      paymentMethod: p.paymentMethod || 'Cash',
+      transactionId: p.transactionId || ''
     });
   }
 
@@ -166,8 +254,8 @@ export class MonthlyPaymentComponent implements OnInit {
   savePayment() {
     if (this.form.invalid) return;
 
-    const payload = this.form.value;
-    payload.totalAmount = payload.fees.reduce((sum: any, f: any) => sum + f.amount, 0);
+    const payload = this.form.getRawValue(); // use getRawValue to include disabled fields if needed, simplified here
+    payload.totalAmount = this.form.get('totalAmount')?.value;
     payload.amountRemaining = payload.totalAmount - (payload.amountPaid || 0);
 
     if (this.isEditMode) {
@@ -218,12 +306,14 @@ export class MonthlyPaymentComponent implements OnInit {
   closeDialog() {
     this.showAddEditDialog = false;
     this.showViewDialog = false;
+    this.feeSearchTerm = '';
+    this.monthSearchTerm = '';
     this.form.reset();
   }
 
   // ----- Multi-select dropdown helpers -----
-  toggleFeesDropdown() { this.showFeesDropdown = !this.showFeesDropdown; }
-  toggleMonthsDropdown() { this.showMonthsDropdown = !this.showMonthsDropdown; }
+  toggleFeesDropdown() { this.showFeesDropdown = !this.showFeesDropdown; if (this.showFeesDropdown) this.showMonthsDropdown = false; }
+  toggleMonthsDropdown() { this.showMonthsDropdown = !this.showMonthsDropdown; if (this.showMonthsDropdown) this.showFeesDropdown = false; }
 
   isFeeSelected(fee: Fee) {
     return (this.form.value.fees || []).some((f: any) => f.feeId === fee.feeId);

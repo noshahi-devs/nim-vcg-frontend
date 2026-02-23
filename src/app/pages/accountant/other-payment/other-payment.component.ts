@@ -10,6 +10,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OthersPayment } from '../../../Models/other-payment';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-other-payment',
@@ -21,6 +22,7 @@ import { OthersPayment } from '../../../Models/other-payment';
 })
 export class OtherPaymentComponent implements OnInit {
   title = "Other Payments";
+  Math = Math;
 
   form!: FormGroup;
   payments: OthersPayment[] = [];
@@ -32,7 +34,7 @@ export class OtherPaymentComponent implements OnInit {
   fees: Fee[] = [];
   academicMonths: AcademicMonth[] = [];
 
-  searchTerm: string = "";
+  searchTerm = '';
   selectedStandardId: number | null = null;
 
   rowsPerPage = 10;
@@ -47,9 +49,11 @@ export class OtherPaymentComponent implements OnInit {
   selectedPayment!: OthersPayment;
   paymentToDelete!: OthersPayment;
 
-  // Dropdown state
+  // Dropdown & Search state
   showFeesDropdown = false;
   showMonthsDropdown = false;
+  feeSearchTerm = '';
+  monthSearchTerm = '';
 
   constructor(
     private commonService: CommonServices,
@@ -62,15 +66,19 @@ export class OtherPaymentComponent implements OnInit {
     this.loadPayments();
   }
 
+  get todayDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
   initForm() {
     this.form = new FormGroup({
-      OtherPaymentId: new FormControl(0),
+      othersPaymentId: new FormControl(0),
       studentId: new FormControl('', Validators.required),
       fees: new FormControl([], Validators.required),
       academicMonths: new FormControl([], Validators.required),
       waver: new FormControl(0),
       amountPaid: new FormControl(0),
-      paymentDate: new FormControl('', Validators.required),
+      paymentDate: new FormControl(this.todayDate, Validators.required),
       totalAmount: new FormControl({ value: 0, disabled: true }),
       dueBalance: new FormControl({ value: 0, disabled: true })
     });
@@ -94,6 +102,7 @@ export class OtherPaymentComponent implements OnInit {
     this.form.get('dueBalance')!.setValue(due, { emitEvent: false });
   }
 
+  /* ---------- LOADERS ---------- */
   loadAll() {
     this.commonService.getAllStudents().subscribe(r => this.students = r);
     this.commonService.getAllStandards().subscribe(r => this.standards = r);
@@ -102,12 +111,18 @@ export class OtherPaymentComponent implements OnInit {
   }
 
   loadPayments() {
-    this.paymentService.getOtherPayments().subscribe(r => {
-      this.payments = r || [];
-      this.searchPayments();
+    this.paymentService.getOtherPayments().subscribe({
+      next: r => { this.payments = r || []; this.searchPayments(); },
+      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load payments.', confirmButtonColor: '#6366f1' })
     });
   }
 
+  /* ---------- STATS ---------- */
+  get totalRecords() { return this.payments.length; }
+  get totalCollected() { return this.payments.reduce((a, c) => a + (c.amountPaid || 0), 0); }
+  get totalPending() { return this.payments.reduce((a, c) => a + (c.amountRemaining || 0), 0); }
+
+  /* ---------- SEARCH & FILTER ---------- */
   searchPayments() {
     const term = this.searchTerm.toLowerCase();
     this.filteredPayments = this.payments.filter(p =>
@@ -118,8 +133,52 @@ export class OtherPaymentComponent implements OnInit {
     this.updatePagination();
   }
 
+  get filteredFees() {
+    const term = this.feeSearchTerm.toLowerCase();
+    return this.fees.filter(f =>
+      f.feeType?.typeName?.toLowerCase().includes(term) ||
+      f.amount?.toString().includes(term)
+    );
+  }
+
+  get filteredMonths() {
+    const term = this.monthSearchTerm.toLowerCase();
+    return this.academicMonths.filter(m => m.monthName?.toLowerCase().includes(term));
+  }
+
+  /* ---------- SELECT ALL HELPERS ---------- */
+  get isAllFeesSelected(): boolean {
+    const selected = this.form.get('fees')?.value || [];
+    return this.filteredFees.length > 0 && this.filteredFees.every(f => selected.some((s: any) => s.feeId === f.feeId));
+  }
+
+  toggleAllFees() {
+    if (this.isAllFeesSelected) {
+      this.form.get('fees')!.setValue([]);
+    } else {
+      const all = [...this.filteredFees];
+      this.form.get('fees')!.setValue(all);
+    }
+    this.calculateAmounts();
+  }
+
+  get isAllMonthsSelected(): boolean {
+    const selected = this.form.get('academicMonths')?.value || [];
+    return this.filteredMonths.length > 0 && this.filteredMonths.every(m => selected.some((s: any) => s.monthId === m.monthId));
+  }
+
+  toggleAllMonths() {
+    if (this.isAllMonthsSelected) {
+      this.form.get('academicMonths')!.setValue([]);
+    } else {
+      const all = [...this.filteredMonths];
+      this.form.get('academicMonths')!.setValue(all);
+    }
+  }
+
+  /* ---------- PAGINATION ---------- */
   updatePagination() {
-    this.totalPages = Math.ceil(this.filteredPayments.length / this.rowsPerPage);
+    this.totalPages = Math.max(1, Math.ceil(this.filteredPayments.length / this.rowsPerPage));
     const start = (this.currentPage - 1) * this.rowsPerPage;
     this.paginatedPayments = this.filteredPayments.slice(start, start + this.rowsPerPage);
   }
@@ -134,10 +193,18 @@ export class OtherPaymentComponent implements OnInit {
     return this.filteredPayments.length === 0 ? 0 : Math.min(this.currentPage * this.rowsPerPage, this.filteredPayments.length);
   }
 
+  /* ---------- ADD / EDIT ---------- */
   openAddDialog() {
     this.isEditMode = false;
     this.showAddEditDialog = true;
-    this.form.reset({ OtherPaymentId: 0, fees: [], academicMonths: [] });
+    this.form.reset({
+      othersPaymentId: 0,
+      fees: [],
+      academicMonths: [],
+      waver: 0,
+      amountPaid: 0,
+      paymentDate: this.todayDate
+    });
   }
 
   openEditDialog(p: OthersPayment) {
@@ -146,7 +213,8 @@ export class OtherPaymentComponent implements OnInit {
     this.form.patchValue({
       ...p,
       fees: p.fees || [],
-      academicMonths: p.academicMonths || []
+      academicMonths: p.academicMonths || [],
+      paymentDate: p.paymentDate ? new Date(p.paymentDate).toISOString().split('T')[0] : ''
     });
   }
 
@@ -158,45 +226,66 @@ export class OtherPaymentComponent implements OnInit {
   savePayment() {
     if (this.form.invalid) return;
 
-    const payload = this.form.value;
-    payload.totalAmount = payload.fees.reduce((sum: any, f: any) => sum + f.amount, 0);
+    const payload = this.form.getRawValue();
+    payload.totalAmount = this.form.get('totalAmount')?.value;
     payload.amountRemaining = payload.totalAmount - (payload.amountPaid || 0);
 
     if (this.isEditMode) {
-      this.paymentService.updateOthersPayment(payload).subscribe(() => {
-        this.closeDialog();
-        this.loadPayments();
+      this.paymentService.updateOthersPayment(payload).subscribe({
+        next: () => {
+          this.closeDialog();
+          this.loadPayments();
+          Swal.fire({ icon: 'success', title: 'Updated!', text: 'Payment updated successfully.', showConfirmButton: false, timer: 1800 });
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment.', confirmButtonColor: '#6366f1' })
       });
     } else {
-      this.paymentService.createOthersPayment(payload).subscribe(() => {
-        this.closeDialog();
-        this.loadPayments();
+      this.paymentService.createOthersPayment(payload).subscribe({
+        next: () => {
+          this.closeDialog();
+          this.loadPayments();
+          Swal.fire({ icon: 'success', title: 'Created!', text: 'Payment created successfully.', showConfirmButton: false, timer: 1800 });
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment.', confirmButtonColor: '#6366f1' })
       });
     }
   }
 
-  confirmDelete(p: OthersPayment) {
-    this.paymentToDelete = p;
-    this.showDeleteDialog = true;
-  }
-
-  deletePayment() {
-    if (!this.paymentToDelete) return;
-    this.paymentService.deleteOthersPayment(this.paymentToDelete.othersPaymentId).subscribe(() => {
-      this.showDeleteDialog = false;
-      this.loadPayments();
+  /* ---------- DELETE (SweetAlert2) ---------- */
+  async confirmDelete(p: OthersPayment) {
+    const result = await Swal.fire({
+      title: 'Delete Payment?',
+      html: `Are you sure you want to delete the payment for <strong>${p.student?.studentName}</strong>?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280'
     });
+
+    if (result.isConfirmed) {
+      this.paymentService.deleteOthersPayment(p.othersPaymentId).subscribe({
+        next: () => {
+          this.loadPayments();
+          Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Payment deleted successfully.', showConfirmButton: false, timer: 1800 });
+        },
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#6366f1' })
+      });
+    }
   }
 
   closeDialog() {
     this.showAddEditDialog = false;
     this.showViewDialog = false;
+    this.feeSearchTerm = '';
+    this.monthSearchTerm = '';
     this.form.reset();
   }
 
   // ----- Multi-select dropdown helpers -----
-  toggleFeesDropdown() { this.showFeesDropdown = !this.showFeesDropdown; }
-  toggleMonthsDropdown() { this.showMonthsDropdown = !this.showMonthsDropdown; }
+  toggleFeesDropdown() { this.showFeesDropdown = !this.showFeesDropdown; if (this.showFeesDropdown) this.showMonthsDropdown = false; }
+  toggleMonthsDropdown() { this.showMonthsDropdown = !this.showMonthsDropdown; if (this.showMonthsDropdown) this.showFeesDropdown = false; }
 
   isFeeSelected(fee: Fee) {
     return (this.form.value.fees || []).some((f: any) => f.feeId === fee.feeId);
@@ -229,16 +318,16 @@ export class OtherPaymentComponent implements OnInit {
     if (!months || months.length === 0) return '';
     return months.map(m => m.monthName).join(', ');
   }
+
   getSelectedFeesNames(): string {
     const fees = this.form.value.fees || [];
     if (!fees.length) return 'Select Fees';
-    return fees.map(f => f.feeType?.typeName).join(', ');
+    return fees.map((f: any) => f.feeType?.typeName).join(', ');
   }
 
   getSelectedMonthsNames(): string {
     const months = this.form.value.academicMonths || [];
     if (!months.length) return 'Select Months';
-    return months.map(m => m.monthName).join(', ');
+    return months.map((m: any) => m.monthName).join(', ');
   }
-
 }

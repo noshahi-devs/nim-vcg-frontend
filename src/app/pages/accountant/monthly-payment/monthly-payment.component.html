@@ -125,7 +125,7 @@
                       <polyline points="3 6 5 6 21 6" />
                       <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
                       <path d="M10 11v6M14 11v6" />
-                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1-1v2" />
                     </svg>
                   </button>
                 </div>
@@ -171,119 +171,211 @@
 <!-- ===================== ADD / EDIT MODAL ===================== -->
 <div *ngIf="showAddEditDialog" class="modal-overlay" (click)="closeDialog()">
   <div class="modal-box" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <div class="modal-icon" [class.edit-icon]="isEditMode">
-        <svg *ngIf="!isEditMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 5v14M5 12h14" />
-        </svg>
-        <svg *ngIf="isEditMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-        </svg>
+
+    <!-- Gradient Header -->
+    <div class="modal-header-premium">
+      <div class="header-gradient"></div>
+      <div class="header-content">
+        <div class="modal-icon-premium" [class.edit-mode]="isEditMode">
+          <svg *ngIf="!isEditMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <svg *ngIf="isEditMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+        </div>
+        <div>
+          <h4 class="modal-title-premium">{{ isEditMode ? 'Edit Payment' : 'New Monthly Payment' }}</h4>
+          <p class="modal-subtitle-premium">{{ isEditMode ? 'Update payment record details' : 'Create a new payment
+            entry' }}</p>
+        </div>
       </div>
-      <div>
-        <h4 class="modal-title">{{ isEditMode ? 'Edit Payment' : 'Add Monthly Payment' }}</h4>
-        <p class="modal-subtitle">{{ isEditMode ? 'Update the payment details below' : 'Fill in the payment details' }}
-        </p>
-      </div>
-      <button class="modal-close" (click)="closeDialog()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <button class="modal-close-premium" (click)="closeDialog()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M18 6 6 18M6 6l12 12" />
         </svg>
       </button>
     </div>
 
-    <div class="modal-body">
-      <form [formGroup]="form" class="form-grid">
-        <!-- Student -->
-        <div class="form-group span-full">
-          <label class="form-label">Student</label>
-          <div class="select-wrapper">
-            <select class="form-select-field" formControlName="studentId">
-              <option value="">Select Student</option>
-              <option *ngFor="let s of students" [value]="s.studentId">{{ s.studentName }}</option>
-            </select>
-            <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </div>
-        </div>
+    <!-- Modal Body -->
+    <div class="modal-body-premium">
+      <form [formGroup]="form">
 
-        <!-- Fees Multi-Select -->
-        <div class="form-group span-full">
-          <label class="form-label">Fees</label>
-          <div class="multi-select-dropdown">
-            <div class="multi-select-trigger" (click)="toggleFeesDropdown()">
-              <span class="multi-select-text">{{ getSelectedFeesNames() }}</span>
-              <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <!-- ─── Section: Student ─── -->
+        <div class="form-card">
+          <div class="form-card-label">
+            <span class="card-dot blue"></span>
+            Student Selection
+          </div>
+          <div class="form-group-premium">
+            <label class="field-label">Student Name</label>
+            <div class="select-wrapper-premium">
+              <select class="field-select" formControlName="studentId">
+                <option value="">Choose a student...</option>
+                <option *ngFor="let s of students" [value]="s.studentId">{{ s.studentName }} — {{
+                  s.standard?.standardName }}</option>
+              </select>
+              <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="6 9 12 15 18 9" />
               </svg>
             </div>
-            <div class="multi-select-options" *ngIf="showFeesDropdown">
-              <label class="checkbox-item" *ngFor="let f of fees">
-                <input type="checkbox" [checked]="isFeeSelected(f)" (change)="toggleFee(f, $event)" />
-                <span class="checkbox-label">{{ f.feeType?.typeName }} — Rs. {{ f.amount }}</span>
-              </label>
+          </div>
+        </div>
+
+        <!-- ─── Section: Fee & Month Multi-Select ─── -->
+        <div class="form-card">
+          <div class="form-card-label">
+            <span class="card-dot indigo"></span>
+            Fees & Months
+          </div>
+          <div class="form-row-2">
+            <!-- Fees Multi-Select -->
+            <div class="form-group-premium">
+              <label class="field-label">Applicable Fees</label>
+              <div class="multi-select-wrap">
+                <div class="multi-select-btn" (click)="toggleFeesDropdown()">
+                  <span class="multi-select-val">{{ getSelectedFeesNames() }}</span>
+                  <svg class="field-chevron" [class.rotated]="showFeesDropdown" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
+                <div class="multi-select-panel" *ngIf="showFeesDropdown">
+                  <div class="panel-search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                    <input type="text" [(ngModel)]="feeSearchTerm" [ngModelOptions]="{standalone: true}"
+                      (click)="$event.stopPropagation()" placeholder="Search fees..." />
+                  </div>
+                  <label class="check-row all-row" (click)="$event.stopPropagation()">
+                    <input type="checkbox" class="sr-check" [checked]="isAllFeesSelected" (change)="toggleAllFees()" />
+                    <span class="styled-check"></span>
+                    <span class="check-text bold">Select All</span>
+                  </label>
+                  <div class="check-scroll">
+                    <label class="check-row" *ngFor="let f of filteredAvailableFees" (click)="$event.stopPropagation()">
+                      <input type="checkbox" class="sr-check" [checked]="isFeeSelected(f)"
+                        (change)="toggleFee(f, $event)" />
+                      <span class="styled-check"></span>
+                      <span class="check-text">{{ f.feeType?.typeName }} — Rs. {{ f.amount }}</span>
+                    </label>
+                    <div *ngIf="filteredAvailableFees.length === 0" class="empty-drop">No fees found</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Months Multi-Select -->
+            <div class="form-group-premium">
+              <label class="field-label">Academic Months</label>
+              <div class="multi-select-wrap">
+                <div class="multi-select-btn" (click)="toggleMonthsDropdown()">
+                  <span class="multi-select-val">{{ getSelectedMonthsNames() }}</span>
+                  <svg class="field-chevron" [class.rotated]="showMonthsDropdown" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
+                <div class="multi-select-panel" *ngIf="showMonthsDropdown">
+                  <div class="panel-search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                    <input type="text" [(ngModel)]="monthSearchTerm" [ngModelOptions]="{standalone: true}"
+                      (click)="$event.stopPropagation()" placeholder="Search months..." />
+                  </div>
+                  <label class="check-row all-row" (click)="$event.stopPropagation()">
+                    <input type="checkbox" class="sr-check" [checked]="isAllMonthsSelected"
+                      (change)="toggleAllMonths()" />
+                    <span class="styled-check"></span>
+                    <span class="check-text bold">Select All</span>
+                  </label>
+                  <div class="check-scroll">
+                    <label class="check-row" *ngFor="let m of filteredAcademicMonths"
+                      (click)="$event.stopPropagation()">
+                      <input type="checkbox" class="sr-check" [checked]="isMonthSelected(m)"
+                        (change)="toggleMonth(m, $event)" />
+                      <span class="styled-check"></span>
+                      <span class="check-text">{{ m.monthName }}</span>
+                    </label>
+                    <div *ngIf="filteredAcademicMonths.length === 0" class="empty-drop">No months found</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Academic Months Multi-Select -->
-        <div class="form-group span-full">
-          <label class="form-label">Academic Months</label>
-          <div class="multi-select-dropdown">
-            <div class="multi-select-trigger" (click)="toggleMonthsDropdown()">
-              <span class="multi-select-text">{{ getSelectedMonthsNames() }}</span>
-              <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
+        <!-- ─── Section: Payment Details (3 cols) ─── -->
+        <div class="form-card">
+          <div class="form-card-label">
+            <span class="card-dot green"></span>
+            Payment Details
+          </div>
+          <div class="form-row-3">
+            <div class="form-group-premium">
+              <label class="field-label">Waiver (%)</label>
+              <input type="number" class="field-input" formControlName="waver" placeholder="0" />
             </div>
-            <div class="multi-select-options" *ngIf="showMonthsDropdown">
-              <label class="checkbox-item" *ngFor="let m of academicMonths">
-                <input type="checkbox" [checked]="isMonthSelected(m)" (change)="toggleMonth(m, $event)" />
-                <span class="checkbox-label">{{ m.monthName }}</span>
-              </label>
+            <div class="form-group-premium">
+              <label class="field-label">Amount Paid (Rs.)</label>
+              <input type="number" class="field-input accent-green" formControlName="amountPaid" placeholder="0" />
+            </div>
+            <div class="form-group-premium">
+              <label class="field-label">Payment Date</label>
+              <input type="date" class="field-input" formControlName="paymentDate" />
             </div>
           </div>
         </div>
 
-        <!-- Waver & Amount Paid -->
-        <div class="form-group">
-          <label class="form-label">Waiver (%)</label>
-          <input type="number" class="form-input" formControlName="waver" placeholder="0" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Amount Paid (Rs.)</label>
-          <input type="number" class="form-input" formControlName="amountPaid" placeholder="0" />
-        </div>
-
-        <!-- Calculated fields -->
-        <div class="form-group">
-          <label class="form-label">Total Amount</label>
-          <input type="number" class="form-input computed" formControlName="totalAmount" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Due Balance</label>
-          <input type="number" class="form-input computed" formControlName="dueBalance" />
+        <!-- ─── Summary Cards ─── -->
+        <div class="summary-row">
+          <div class="summary-card total">
+            <span class="summary-label">Total Amount</span>
+            <span class="summary-value">Rs. {{ form.get('totalAmount')?.value | number:'1.0-0' }}</span>
+          </div>
+          <div class="summary-card due" [class.paid-up]="form.get('dueBalance')?.value <= 0">
+            <span class="summary-label">Due Balance</span>
+            <span class="summary-value">Rs. {{ form.get('dueBalance')?.value | number:'1.0-0' }}</span>
+          </div>
         </div>
 
-        <!-- Payment Date -->
-        <div class="form-group span-full">
-          <label class="form-label">Payment Date</label>
-          <input type="date" class="form-input" formControlName="paymentDate" />
+        <!-- ─── Toggles ─── -->
+        <div class="toggles-bar">
+          <label class="toggle-pill">
+            <div class="pill-switch">
+              <input type="checkbox" formControlName="sendSms" />
+              <span class="pill-track"></span>
+            </div>
+            <span class="pill-label">SMS Notification</span>
+          </label>
+          <label class="toggle-pill">
+            <div class="pill-switch">
+              <input type="checkbox" formControlName="printReceipt" />
+              <span class="pill-track"></span>
+            </div>
+            <span class="pill-label">Print Receipt</span>
+          </label>
         </div>
+
       </form>
     </div>
 
-    <div class="modal-footer">
-      <button class="btn-cancel" (click)="closeDialog()">Cancel</button>
-      <button class="btn-save" (click)="savePayment()" [disabled]="form.invalid">
+    <!-- Footer -->
+    <div class="modal-footer-premium">
+      <button class="btn-ghost" (click)="closeDialog()">Cancel</button>
+      <button class="btn-primary-gradient" (click)="savePayment()" [disabled]="form.invalid">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="20 6 9 17 4 12" />
         </svg>
-        {{ isEditMode ? 'Update' : 'Save' }}
+        {{ isEditMode ? 'Update Payment' : 'Save Payment' }}
       </button>
     </div>
+
   </div>
 </div>
 
@@ -318,6 +410,10 @@
           <span class="detail-value">{{ selectedPayment?.student?.enrollmentNo }}</span>
         </div>
         <div class="detail-row">
+          <span class="detail-label">Class / Standard</span>
+          <span class="detail-value">{{ selectedPayment?.student?.standard?.standardName }}</span>
+        </div>
+        <div class="detail-row">
           <span class="detail-label">Total Amount</span>
           <span class="detail-value amount-val">Rs. {{ selectedPayment?.totalAmount | number }}</span>
         </div>
@@ -331,6 +427,14 @@
             [class.amount-pending]="selectedPayment?.amountRemaining > 0">
             Rs. {{ selectedPayment?.amountRemaining | number }}
           </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Payment Method</span>
+          <span class="detail-value badge-method">{{ selectedPayment?.paymentMethod || 'Cash' }}</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedPayment?.transactionId">
+          <span class="detail-label">Transaction ID</span>
+          <span class="detail-value">{{ selectedPayment?.transactionId }}</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Payment Date</span>

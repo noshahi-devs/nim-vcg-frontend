@@ -16,12 +16,16 @@ export class MonthlyPayment {
   amountRemaining!: number;
   paymentDate: Date = new Date();
   student!: Student;
+  paymentMethod?: string;
+  transactionId?: string;
+  sendSms?: boolean;
+  printReceipt?: boolean;
 
   //feeStructures: { feeStructureId: number }[] = [];
 
   fees: {
-    amount: number; feeId: number 
-}[] = [];
+    amount: number; feeId: number
+  }[] = [];
   academicMonths: { monthId: number }[] = [];
 
 
