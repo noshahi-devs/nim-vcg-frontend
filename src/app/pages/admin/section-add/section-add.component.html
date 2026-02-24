@@ -1,78 +1,115 @@
 <div class="dashboard-main-body">
-  <app-breadcrumb [title]="title"></app-breadcrumb>
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+    <app-breadcrumb [title]="title"></app-breadcrumb>
+  </div>
 
   <div class="row justify-content-center">
-    <div class="col-md-8 border-20">
-      <div class="card shadow-sm radius-12 mt-4">
-        <div class="card-header bg-base py-16 px-24 border-bottom text-center">
-          <h5 class="fw-semibold mb-0 text-primary-600">Create New Section</h5>
+    <div class="col-md-10 col-lg-8">
+      <div class="card basic-data-table radius-12 border-0 shadow-sm overflow-hidden">
+        <div class="card-header bg-gradient-primary py-20 px-24 border-bottom-0 d-flex align-items-center gap-2">
+          <div class="header-icon-box bg-white-20 radius-8">
+            <i class="ri-add-box-line text-white fs-4"></i>
+          </div>
+          <h5 class="fw-bold mb-0 text-white">Configure New Section</h5>
         </div>
 
-        <div class="card-body px-24 py-16">
-          <form #sectionForm="ngForm" (ngSubmit)="onSubmit(sectionForm)" novalidate>
+        <div class="card-body p-32">
+          <form #sectionForm="ngForm" (ngSubmit)="onSubmit(sectionForm)" novalidate class="premium-form">
+            <div class="row g-4">
+              <!-- Select Class -->
+              <div class="col-md-6">
+                <div class="form-group-premium">
+                  <label class="form-label-premium">
+                    <i class="ri-community-line me-2 text-primary-500"></i>Academic Class
+                  </label>
+                  <div class="input-wrapper-premium">
+                    <select class="form-select-premium" name="className" [(ngModel)]="newSection.className" required
+                      #classSelect="ngModel" [ngClass]="{ 'is-invalid': classSelect.invalid && classSelect.touched }">
+                      <option value="" disabled selected>Choose a Class</option>
+                      <option *ngFor="let c of classes" [value]="c.standardName">{{ c.standardName }}</option>
+                    </select>
+                  </div>
+                  <div *ngIf="classSelect.invalid && classSelect.touched" class="error-feedback">
+                    Required: selection is missing
+                  </div>
+                </div>
+              </div>
 
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Select Class <span class="text-danger">*</span></label>
-              <select class="form-select radius-8" name="className" [(ngModel)]="newSection.className" required
-                #classSelect="ngModel" [ngClass]="{ 'is-invalid': classSelect.invalid && classSelect.touched }">
-                <option value="" disabled selected>Select a Class</option>
-                <option *ngFor="let c of classes" [value]="c.standardName">{{ c.standardName }}</option>
-              </select>
-              <small *ngIf="classSelect.invalid && classSelect.touched" class="text-danger">
-                Please select a class
-              </small>
+              <!-- Section Code -->
+              <div class="col-md-6">
+                <div class="form-group-premium">
+                  <label class="form-label-premium">
+                    <i class="ri-hashtag me-2 text-primary-500"></i>Section Identifier
+                  </label>
+                  <div class="input-wrapper-premium">
+                    <input type="text" class="form-control-premium" name="sectionCode"
+                      [(ngModel)]="newSection.sectionCode" required #sectionCode="ngModel"
+                      [ngClass]="{ 'is-invalid': sectionCode.invalid && sectionCode.touched }"
+                      placeholder="e.g., A, B, C" />
+                  </div>
+                  <div *ngIf="sectionCode.invalid && sectionCode.touched" class="error-feedback">
+                    Required: enter a code
+                  </div>
+                </div>
+              </div>
+
+              <!-- Select Teacher -->
+              <div class="col-12">
+                <div class="form-group-premium">
+                  <label class="form-label-premium">
+                    <i class="ri-user-star-line me-2 text-primary-500"></i>Assigned Class Teacher
+                  </label>
+                  <div class="input-wrapper-premium">
+                    <select class="form-select-premium" name="staffId" [(ngModel)]="newSection.staffId" required
+                      #teacher="ngModel" [ngClass]="{ 'is-invalid': teacher.invalid && teacher.touched }">
+                      <option [value]="undefined" disabled selected>Assign a Staff Member</option>
+                      <option *ngFor="let t of teachers" [value]="t.staffId">{{ t.staffName }}</option>
+                    </select>
+                  </div>
+                  <div *ngIf="teacher.invalid && teacher.touched" class="error-feedback">
+                    Required: assign a teacher
+                  </div>
+                </div>
+              </div>
+
+              <!-- Room Number -->
+              <div class="col-md-6">
+                <div class="form-group-premium">
+                  <label class="form-label-premium">
+                    <i class="ri-door-open-line me-2 text-primary-500"></i>Room Allocation
+                  </label>
+                  <div class="input-wrapper-premium">
+                    <input type="text" class="form-control-premium" name="roomNo" [(ngModel)]="newSection.roomNo"
+                      required #roomNo="ngModel" [ngClass]="{ 'is-invalid': roomNo.invalid && roomNo.touched }"
+                      placeholder="e.g., R-101" />
+                  </div>
+                  <div *ngIf="roomNo.invalid && roomNo.touched" class="error-feedback">
+                    Required: specify room
+                  </div>
+                </div>
+              </div>
+
+              <!-- Capacity -->
+              <div class="col-md-6">
+                <div class="form-group-premium">
+                  <label class="form-label-premium">
+                    <i class="ri-team-line me-2 text-primary-500"></i>Student Capacity
+                  </label>
+                  <div class="input-wrapper-premium">
+                    <input type="number" class="form-control-premium" name="capacity" [(ngModel)]="newSection.capacity"
+                      required #capacity="ngModel" [ngClass]="{ 'is-invalid': capacity.invalid && capacity.touched }"
+                      placeholder="Max enrollment" />
+                  </div>
+                  <div *ngIf="capacity.invalid && capacity.touched" class="error-feedback">
+                    Required: enter capacity
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- Section Code -->
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Section Code <span class="text-danger">*</span></label>
-              <input type="text" class="form-control radius-8" name="sectionCode" [(ngModel)]="newSection.sectionCode"
-                required #sectionCode="ngModel" [ngClass]="{ 'is-invalid': sectionCode.invalid && sectionCode.touched }"
-                placeholder="e.g., A, B, C" />
-              <small *ngIf="sectionCode.invalid && sectionCode.touched" class="text-danger">
-                This field is required
-              </small>
-            </div>
-
-            <!-- Select Teacher -->
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Select Teacher <span class="text-danger">*</span></label>
-              <select class="form-select radius-8" name="staffId" [(ngModel)]="newSection.staffId" required
-                #teacher="ngModel" [ngClass]="{ 'is-invalid': teacher.invalid && teacher.touched }">
-                <option [value]="undefined" disabled selected>Select a Teacher</option>
-                <option *ngFor="let t of teachers" [value]="t.staffId">{{ t.staffName }}</option>
-              </select>
-              <small *ngIf="teacher.invalid && teacher.touched" class="text-danger">
-                Please select a teacher
-              </small>
-            </div>
-
-
-            <!-- Room Number -->
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Room Number <span class="text-danger">*</span></label>
-              <input type="text" class="form-control radius-8" name="roomNo" [(ngModel)]="newSection.roomNo" required
-                #roomNo="ngModel" [ngClass]="{ 'is-invalid': roomNo.invalid && roomNo.touched }"
-                placeholder="e.g., R-101" />
-              <small *ngIf="roomNo.invalid && roomNo.touched" class="text-danger">
-                This field is required
-              </small>
-            </div>
-
-            <!-- Capacity -->
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Capacity <span class="text-danger">*</span></label>
-              <input type="number" class="form-control radius-8" name="capacity" [(ngModel)]="newSection.capacity"
-                required #capacity="ngModel" [ngClass]="{ 'is-invalid': capacity.invalid && capacity.touched }"
-                placeholder="Enter Capacity" />
-              <small *ngIf="capacity.invalid && capacity.touched" class="text-danger">
-                This field is required
-              </small>
-            </div>
-
-            <div class="d-flex align-items-center justify-content-center gap-3 mt-4">
-              <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
-                Save Section
+            <div class="form-actions-premium mt-40">
+              <button type="submit" class="btn btn-premium-primary">
+                <i class="ri-save-3-line me-2"></i>Persist Configuration
               </button>
             </div>
           </form>

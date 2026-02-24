@@ -1,0 +1,107 @@
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+}
+
+.header-icon-box {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-white-20 {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.p-32 {
+    padding: 32px !important;
+}
+
+.form-group-premium {
+    margin-bottom: 0;
+}
+
+.form-label-premium {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4e5e71;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper-premium {
+    position: relative;
+}
+
+.form-control-premium,
+.form-select-premium {
+    border: 1.5px solid #e3e9ef;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    color: #2d3748;
+    transition: all 0.2s ease;
+    background-color: #f8fafc;
+    width: 100%;
+}
+
+.form-control-premium:focus,
+.form-select-premium:focus {
+    border-color: #4e73df;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.1);
+    outline: none;
+}
+
+.form-control-premium.is-invalid,
+.form-select-premium.is-invalid {
+    border-color: #e53e3e;
+    background-image: none;
+}
+
+.error-feedback {
+    color: #e53e3e;
+    font-size: 0.8rem;
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+.form-actions-premium {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-premium-primary {
+    background: #4e73df;
+    color: white;
+    padding: 14px 40px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(78, 115, 223, 0.25);
+    display: flex;
+    align-items: center;
+}
+
+.btn-premium-primary:hover {
+    background: #2e59d9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(78, 115, 223, 0.35);
+    color: white;
+}
+
+.btn-premium-primary:active {
+    transform: translateY(0);
+}
+
+.text-primary-500 {
+    color: #4e73df;
+}
+
+.mt-40 {
+    margin-top: 40px !important;
+}

@@ -1,272 +1,323 @@
 <div class="dashboard-main-body">
-  <app-breadcrumb [title]="title"></app-breadcrumb>
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+    <app-breadcrumb [title]="title"></app-breadcrumb>
+  </div>
 
-  <div class="card h-100 p-0 radius-12">
-    <div class="card-header border-bottom bg-base py-16 px-24">
-      <form #staffForm="ngForm" (ngSubmit)="onSubmit(staffForm)" novalidate class="staff-form">
-        <!-- Basic Information -->
-        <div class="form-section mb-4">
-          <h5 class="section-title fw-semibold mb-2">
-            <span class="number">①</span> Basic Information
-          </h5>
-          <hr />
+  <div class="card basic-data-table radius-12 border-0 shadow-sm overflow-hidden">
+    <div class="card-header bg-gradient-primary py-20 px-24 border-bottom-0 d-flex align-items-center gap-2">
+      <div class="header-icon-box bg-white-20 radius-8">
+        <i class="ri-user-add-line text-white fs-4"></i>
+      </div>
+      <h5 class="fw-bold mb-0 text-white">Onboard New Staff Member</h5>
+    </div>
 
-          <div class="row g-3 p-12">
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">
-                Staff Name <span class="text-danger">*</span>
-              </label>
-              <input type="text" class="form-control radius-8" name="staffName" placeholder="Enter Name"
-                [(ngModel)]="newStaff.staffName" #staffName="ngModel" required
-                [ngClass]="{ 'is-invalid': staffName.invalid && staffName.touched }" />
-              <small *ngIf="staffName.invalid && staffName.touched" class="text-danger">
-                This field is required
-              </small>
+    <div class="card-body p-32">
+      <form #staffForm="ngForm" (ngSubmit)="onSubmit(staffForm)" novalidate class="premium-form">
+
+        <!-- Section 1: Basic Information -->
+        <div class="form-section mb-40">
+          <div class="form-section-header">
+            <span class="section-number">1</span>
+            <h6 class="section-title-premium">Personal & Professional Identity</h6>
+          </div>
+
+          <div class="row g-4">
+            <!-- Staff Name -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-user-line me-2 text-primary-500"></i>Full Name
+                </label>
+                <div class="input-wrapper-premium">
+                  <input type="text" class="form-control-premium" name="staffName" placeholder="Enter full name"
+                    [(ngModel)]="newStaff.staffName" #staffName="ngModel" required
+                    [ngClass]="{ 'is-invalid': staffName.invalid && staffName.touched }" />
+                </div>
+                <div *ngIf="staffName.invalid && staffName.touched" class="error-feedback">
+                  Required: enter staff name
+                </div>
+              </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">
-                Mobile No <span class="text-danger">*</span>
-              </label>
-              <input type="text" class="form-control radius-8" name="contactNumber1" placeholder="0300-1234567"
-                [(ngModel)]="newStaff.contactNumber1" pattern="^03\d{2}-\d{7}$" #contactNumber1="ngModel" required
-                [ngClass]="{ 'is-invalid': contactNumber1.invalid && contactNumber1.touched }" />
-              <small *ngIf="contactNumber1.errors?.['required'] && contactNumber1.touched" class="text-danger">
-                This field is required
-              </small>
-              <small *ngIf="contactNumber1.errors?.['pattern'] && contactNumber1.touched" class="text-danger">
-                Invalid format
-              </small>
+            <!-- Mobile No -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-phone-line me-2 text-primary-500"></i>Active Mobile No
+                </label>
+                <div class="input-wrapper-premium">
+                  <input type="text" class="form-control-premium" name="contactNumber1" placeholder="0300-1234567"
+                    [(ngModel)]="newStaff.contactNumber1" pattern="^03\d{2}-\d{7}$" #contactNumber1="ngModel" required
+                    [ngClass]="{ 'is-invalid': contactNumber1.invalid && contactNumber1.touched }" />
+                </div>
+                <div *ngIf="contactNumber1.touched && contactNumber1.invalid" class="error-feedback">
+                  {{ contactNumber1.errors?.['required'] ? 'Required: enter mobile no' : 'Invalid: use 03XX-XXXXXXX' }}
+                </div>
+              </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">Add Picture</label>
-              <input type="file" class="form-control radius-8" id="imageUpload" accept=".png, .jpg, .jpeg"
-                (change)="onImageSelected($event)" />
+            <!-- Role/Designation -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-briefcase-line me-2 text-primary-500"></i>Staff Designation
+                </label>
+                <div class="input-wrapper-premium">
+                  <select class="form-select-premium" name="designation" [(ngModel)]="newStaff.designation"
+                    #designation="ngModel" required
+                    [ngClass]="{ 'is-invalid': designation.invalid && designation.touched }">
+                    <option value="" disabled selected>Select Designation</option>
+                    <option value="Instructor">Teacher</option>
+                    <option value="Professor">Professor</option>
+                    <option value="Principal">Principal</option>
+                    <option value="Counselor">Counselor</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Accountant">Accountant</option>
+                  </select>
+                </div>
+                <div *ngIf="designation.invalid && designation.touched" class="error-feedback">
+                  Required: select a role
+                </div>
+              </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">
-                Joining Date <span class="text-danger">*</span>
-              </label>
-              <input type="date" class="form-control radius-8" name="joiningDate" [(ngModel)]="joiningDateStr"
-                #joiningDate="ngModel" required
-                [ngClass]="{ 'is-invalid': joiningDate.invalid && joiningDate.touched }" />
-              <small *ngIf="joiningDate.invalid && joiningDate.touched" class="text-danger">
-                This field is required
-              </small>
+            <!-- Joining Date -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-calendar-check-line me-2 text-primary-500"></i>Joining Date
+                </label>
+                <div class="input-wrapper-premium">
+                  <input type="date" class="form-control-premium" name="joiningDate" [(ngModel)]="joiningDateStr"
+                    #joiningDate="ngModel" required
+                    [ngClass]="{ 'is-invalid': joiningDate.invalid && joiningDate.touched }" />
+                </div>
+                <div *ngIf="joiningDate.invalid && joiningDate.touched" class="error-feedback">
+                  Required: specify date
+                </div>
+              </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">CNIC</label>
-              <input type="text" class="form-control radius-8" name="cnic" placeholder="33301-1234567-1"
-                [(ngModel)]="newStaff.cnic" pattern="^\d{5}-\d{7}-\d{1}$" #cnic="ngModel"
-                [ngClass]="{ 'is-invalid': cnic.invalid && cnic.touched }" />
-              <small *ngIf="cnic.invalid && cnic.touched" class="text-danger">
-                Invalid format
-              </small>
+            <!-- CNIC -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-id-card-line me-2 text-primary-500"></i>National ID (CNIC)
+                </label>
+                <div class="input-wrapper-premium">
+                  <input type="text" class="form-control-premium" name="cnic" placeholder="33301-1234567-1"
+                    [(ngModel)]="newStaff.cnic" pattern="^\d{5}-\d{7}-\d{1}$" #cnic="ngModel"
+                    [ngClass]="{ 'is-invalid': cnic.invalid && cnic.touched }" />
+                </div>
+                <div *ngIf="cnic.invalid && cnic.touched" class="error-feedback">
+                  Invalid formatted CNIC
+                </div>
+              </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">
-                Role <span class="text-danger">*</span>
-              </label>
-              <select class="form-control radius-8 form-select" name="designation" [(ngModel)]="newStaff.designation"
-                #designation="ngModel" required
-                [ngClass]="{ 'is-invalid': designation.invalid && designation.touched }">
-                <option value="">Select Role</option>
-                <option value="Instructor">Teacher</option>
-                <option value="Professor">Professor</option>
-                <option value="Principal">Principal</option>
-                <option value="Counselor">Counselor</option>
-                <option value="Admin">Admin</option>
-                <option value="Accountant">Accountant</option>
-              </select>
-              <small *ngIf="designation.invalid && designation.touched" class="text-danger">
-                This field is required
-              </small>
+            <!-- Picture Upload -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-image-add-line me-2 text-primary-500"></i>Staff Photograph
+                </label>
+                <div class="input-wrapper-premium">
+                  <input type="file" class="form-control-premium" id="imageUpload" accept=".png, .jpg, .jpeg"
+                    (change)="onImageSelected($event)" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Other Information -->
+        <!-- Section 2: Other Information -->
         <div class="form-section">
-          <h5 class="section-title fw-semibold mb-2">
-            <span class="number">②</span> Other Information
-          </h5>
-          <hr />
+          <div class="form-section-header">
+            <span class="section-number">2</span>
+            <h6 class="section-title-premium">Academic & Bio Background</h6>
+          </div>
 
-          <div class="row g-3 p-12">
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">Experience</label>
-              <select class="form-control radius-8 form-select" [(ngModel)]="newStaff.experience" name="experience">
-                <option value="">Select Experience</option>
-                <option value="Fresh">Fresh</option>
-                <option value="1+">1+ Year</option>
-                <option value="2+">2+ Year</option>
-                <option value="3+">3+ Year</option>
-                <option value="4+">4+ Year</option>
-                <option value="5+">5+ Year</option>
-                <option value="10+">10+ Year</option>
-                <option value="Other">Other</option>
-              </select>
-
-              <input *ngIf="newStaff.experience === 'Other'" type="text" class="form-control mt-2 radius-8"
-                placeholder="Enter experience in years/months" [(ngModel)]="newStaff.customExperience"
-                name="customExperience" />
+          <div class="row g-4">
+            <!-- Gender -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-genderless-line me-2 text-primary-500"></i>Gender
+                </label>
+                <div class="input-wrapper-premium">
+                  <select class="form-select-premium" name="gender" [(ngModel)]="newStaff.gender" #gender="ngModel"
+                    required [ngClass]="{ 'is-invalid': gender.invalid && gender.touched }">
+                    <option value="" disabled selected>Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+                <div *ngIf="gender.invalid && gender.touched" class="error-feedback">
+                  Selection required
+                </div>
+              </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">
-                Gender <span class="text-danger">*</span>
-              </label>
-              <select class="form-control radius-8 form-select" name="gender" [(ngModel)]="newStaff.gender"
-                #gender="ngModel" required [ngClass]="{ 'is-invalid': gender.invalid && gender.touched }">
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-              <small *ngIf="gender.invalid && gender.touched" class="text-danger">
-                This field is required
-              </small>
+            <!-- Date of Birth -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-calendar-2-line me-2 text-primary-500"></i>Birth Date
+                </label>
+                <div class="input-wrapper-premium">
+                  <input type="date" class="form-control-premium" name="dob" [(ngModel)]="dobStr" #dob="ngModel"
+                    required [ngClass]="{ 'is-invalid': dob.invalid && dob.touched }" />
+                </div>
+                <div *ngIf="dob.invalid && dob.touched" class="error-feedback">
+                  Birth date is mandatory
+                </div>
+              </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">
-                Date of Birth <span class="text-danger">*</span>
-              </label>
-              <input type="date" class="form-control radius-8" name="dob" [(ngModel)]="dobStr" #dob="ngModel" required
-                [ngClass]="{ 'is-invalid': dob.invalid && dob.touched }" />
-              <small *ngIf="dob.invalid && dob.touched" class="text-danger">
-                This field is required
-              </small>
+            <!-- Experience -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-medal-line me-2 text-primary-500"></i>Experience Level
+                </label>
+                <div class="input-wrapper-premium">
+                  <select class="form-select-premium" [(ngModel)]="newStaff.experience" name="experience">
+                    <option value="" disabled selected>Select Experience</option>
+                    <option value="Fresh">Fresh</option>
+                    <option value="1+">1+ Year</option>
+                    <option value="2+">2+ Year</option>
+                    <option value="3+">3+ Year</option>
+                    <option value="5+">5+ Year</option>
+                    <option value="10+">10+ Year</option>
+                    <option value="Other">Other Custom</option>
+                  </select>
+                </div>
+                <input *ngIf="newStaff.experience === 'Other'" type="text" class="form-control-premium mt-2"
+                  placeholder="Enter details" [(ngModel)]="newStaff.customExperience" name="customExperience" />
+              </div>
             </div>
 
             <!-- Qualification -->
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">
-                Qualification <span class="text-danger">*</span>
-              </label>
-              <select class="form-control radius-8 form-select" name="qualifications"
-                [(ngModel)]="newStaff.qualifications" #qualifications="ngModel" required
-                [ngClass]="{ 'is-invalid': qualifications.invalid && qualifications.touched }">
-                <option value="">Select Qualification</option>
-                <option value="masters">Masters</option>
-                <option value="bachelors">Bachelors</option>
-                <option value="associateDegree">Associate Degree</option>
-                <option value="diploma">DAE</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="matriculation">Matriculation</option>
-                <option value="middle">Middle</option>
-                <option value="primary">Primary</option>
-                <option value="na">N/A</option>
-              </select>
-              <small *ngIf="qualifications.invalid && qualifications.touched" class="text-danger">
-                This field is required
-              </small>
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-award-line me-2 text-primary-500"></i>Highest Qualification
+                </label>
+                <div class="input-wrapper-premium">
+                  <select class="form-select-premium" name="qualifications" [(ngModel)]="newStaff.qualifications"
+                    #qualifications="ngModel" required
+                    [ngClass]="{ 'is-invalid': qualifications.invalid && qualifications.touched }">
+                    <option value="" disabled selected>Select Degree</option>
+                    <option value="masters">Masters</option>
+                    <option value="bachelors">Bachelors</option>
+                    <option value="associateDegree">Associate Degree</option>
+                    <option value="diploma">DAE / Diploma</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="matriculation">Matriculation</option>
+                    <option value="na">N/A</option>
+                  </select>
+                </div>
+                <div *ngIf="qualifications.invalid && qualifications.touched" class="error-feedback">
+                  Qualification required
+                </div>
+              </div>
             </div>
 
-            <!-- Program Duration & Subject handled correctly -->
-            <div class="col-12 col-sm-6 col-md-4" *ngIf="newStaff.qualifications === 'associateDegree'">
-              <label class="form-label">
-                Program Duration <span class="text-danger">*</span>
-              </label>
-              <select class="form-control radius-8 form-select" [(ngModel)]="newStaff.programDuration"
-                name="programDuration" #programDuration="ngModel" required
-                [ngClass]="{ 'is-invalid': programDuration.invalid && programDuration.touched }">
-                <option value="">Select Duration</option>
-                <option value="2-year">2-Year Program</option>
-                <option value="4-year">4-Year Program</option>
-              </select>
-              <small *ngIf="programDuration.invalid && programDuration.touched" class="text-danger">
-                This field is required
-              </small>
+            <!-- Program Duration (Conditional) -->
+            <div class="col-md-4" *ngIf="newStaff.qualifications === 'associateDegree'">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-time-line me-2 text-primary-500"></i>Program Duration
+                </label>
+                <div class="input-wrapper-premium">
+                  <select class="form-select-premium" [(ngModel)]="newStaff.programDuration" name="programDuration"
+                    #programDuration="ngModel" required
+                    [ngClass]="{ 'is-invalid': programDuration.invalid && programDuration.touched }">
+                    <option value="" disabled selected>Select Duration</option>
+                    <option value="2-year">2-Year</option>
+                    <option value="4-year">4-Year</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
-            <!-- Subject -->
-            <div class="col-12 col-sm-6 col-md-4"
-              *ngIf="newStaff.qualifications === 'bachelors' || newStaff.qualifications === 'associateDegree'">
-              <label class="form-label">
-                Subject <span class="text-danger">*</span>
-              </label>
-              <select class="form-control radius-8 form-select" [(ngModel)]="newStaff.subject" name="subject"
-                #subject="ngModel" required [ngClass]="{ 'is-invalid': subject.invalid && subject.touched }">
-                <option value="">Select Subject</option>
-                <option *ngIf="newStaff.qualifications === 'associateDegree'" value="arts">Arts</option>
-                <option *ngIf="newStaff.qualifications === 'associateDegree'" value="science">Science</option>
-                <option *ngIf="newStaff.qualifications === 'associateDegree'" value="commerce">Commerce</option>
-                <option *ngIf="newStaff.qualifications === 'associateDegree'" value="computerScience">Computer Science
-                </option>
-
-                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsComputerScience">BS Computer Science
-                </option>
-                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsEnglish">BS English</option>
-                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsMath">BS Mathematics</option>
-                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsPhysics">BS Physics</option>
-                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsChemistry">BS Chemistry</option>
-                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsEconomics">BS Economics</option>
-                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsEducation">BS Education</option>
-                <option *ngIf="newStaff.qualifications === 'bachelors'" value="bsIslamicStudies">BS Islamic Studies
-                </option>
-
-                <option value="other">Other</option>
-              </select>
-              <small *ngIf="subject.invalid && subject.touched" class="text-danger">
-                This field is required
-              </small>
+            <!-- Subject (Conditional) -->
+            <div class="col-md-4"
+              *ngIf="newStaff.qualifications === 'bachelors' || newStaff.qualifications === 'associateDegree' || newStaff.qualifications === 'masters'">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-book-open-line me-2 text-primary-500"></i>Specialization
+                </label>
+                <div class="input-wrapper-premium">
+                  <select class="form-select-premium" [(ngModel)]="newStaff.subject" name="subject" #subject="ngModel"
+                    required [ngClass]="{ 'is-invalid': subject.invalid && subject.touched }">
+                    <option value="" disabled selected>Choose Subject</option>
+                    <option value="arts">Arts</option>
+                    <option value="science">Science</option>
+                    <option value="commerce">Commerce</option>
+                    <option value="computerScience">Computer Science</option>
+                    <option value="other">Other Spec</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4" *ngIf="newStaff.subject === 'other'">
-              <label class="form-label">Other Subject <span class="text-danger">*</span></label>
-              <input type="text" class="form-control radius-8" name="customSubject" placeholder="Enter subject name"
-                [(ngModel)]="newStaff.customSubject" #customSubject="ngModel" required
-                [ngClass]="{ 'is-invalid': customSubject.invalid && customSubject.touched }" />
-              <small *ngIf="customSubject.invalid && customSubject.touched" class="text-danger">
-                This field is required
-              </small>
+            <!-- Email -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-mail-line me-2 text-primary-500"></i>Official Email
+                </label>
+                <div class="input-wrapper-premium">
+                  <input type="email" class="form-control-premium" name="email" placeholder="example@college.com"
+                    [(ngModel)]="newStaff.email" />
+                </div>
+              </div>
             </div>
 
-            <!-- Email & Status -->
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">Email</label>
-              <input type="email" class="form-control radius-8" name="email" [(ngModel)]="newStaff.email" />
+            <!-- Status -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-toggle-line me-2 text-primary-500"></i>Employment Status
+                </label>
+                <div class="input-wrapper-premium">
+                  <select class="form-select-premium" name="status" [(ngModel)]="newStaff.status" #status="ngModel"
+                    required [ngClass]="{ 'is-invalid': status.invalid && status.touched }">
+                    <option value="" disabled selected>Toggle Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4">
-              <label class="form-label">Status <span class="text-danger">*</span></label>
-              <select class="form-control radius-8 form-select" name="status" [(ngModel)]="newStaff.status"
-                #status="ngModel" required [ngClass]="{ 'is-invalid': status.invalid && status.touched }">
-                <option value="">Select Status</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-              <small *ngIf="status.invalid && status.touched" class="text-danger">
-                This field is required
-              </small>
-            </div>
-
+            <!-- Address -->
             <div class="col-12">
-              <label class="form-label">Address <span class="text-danger">*</span></label>
-              <textarea class="form-control radius-8" rows="3" name="permanentAddress"
-                placeholder="Village 97 JB, Gojra, Toba Tek Singh" [(ngModel)]="newStaff.permanentAddress"
-                #permanentAddress="ngModel" required
-                [ngClass]="{ 'is-invalid': permanentAddress.invalid && permanentAddress.touched }"></textarea>
-              <small *ngIf="permanentAddress.invalid && permanentAddress.touched" class="text-danger">
-                This field is required
-              </small>
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-map-pin-line me-2 text-primary-500"></i>Residential Address
+                </label>
+                <div class="input-wrapper-premium">
+                  <textarea class="textarea-premium" rows="3" name="permanentAddress"
+                    placeholder="Enter complete permanent residential address" [(ngModel)]="newStaff.permanentAddress"
+                    #permanentAddress="ngModel" required
+                    [ngClass]="{ 'is-invalid': permanentAddress.invalid && permanentAddress.touched }"></textarea>
+                </div>
+                <div *ngIf="permanentAddress.invalid && permanentAddress.touched" class="error-feedback">
+                  Address is required for verification
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Buttons -->
-        <div class="d-flex align-items-center justify-content-center gap-3 mt-4">
-          <button type="button" (click)="cancel()"
-            class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8">
-            Cancel
+        <div class="form-actions-premium mt-40">
+          <button type="button" (click)="cancel()" class="btn-premium-danger">
+            <i class="ri-close-line me-2"></i>Dismiss
           </button>
-
-          <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
-            Save
+          <button type="submit" class="btn-premium-primary">
+            <i class="ri-save-3-line me-2"></i>Commit Staff Data
           </button>
         </div>
       </form>
