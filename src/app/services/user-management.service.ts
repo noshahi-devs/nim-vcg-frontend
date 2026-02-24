@@ -24,7 +24,7 @@ export interface RegisterRequest {
     providedIn: 'root'
 })
 export class UserManagementService {
-    private apiUrl = 'https://localhost:7225/api/Users';
+    private apiUrl = 'http://localhost:5257/api/Users';
 
     constructor(private http: HttpClient) { }
 
@@ -36,7 +36,7 @@ export class UserManagementService {
     }
 
     getAllUsers(): Observable<User[]> {
-        return this.http.get<User[]>('https://localhost:7225/GetUsers', this.getAuthHeaders());
+        return this.http.get<User[]>('http://localhost:5257/GetUsers', this.getAuthHeaders());
     }
 
     registerUser(user: RegisterRequest): Observable<any> {
@@ -52,6 +52,6 @@ export class UserManagementService {
     }
 
     getAllRoles(): Observable<any[]> {
-        return this.http.get<any[]>('https://localhost:7225/GetRoles', this.getAuthHeaders());
+        return this.http.get<any[]>('http://localhost:5257/GetRoles', this.getAuthHeaders());
     }
 }

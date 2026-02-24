@@ -8,7 +8,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class StandardService {
 
-  private apiUrl = 'https://localhost:7225/api/Standards';
+  private apiUrl = 'http://localhost:5257/api/Standards';
 
   constructor(private http: HttpClient) { }
 

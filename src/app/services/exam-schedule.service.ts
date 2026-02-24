@@ -23,7 +23,7 @@ export class ExamScheduleService {
     };
   }
 
-  apiUrl: string = "https://localhost:7225/api/ExamSchedules";
+  apiUrl: string = "http://localhost:5257/api/ExamSchedules";
 
   public GetExamSchedules(): Observable<ExamScheduleVm[]> {
     return this.http.get<ExamScheduleVm[]>(this.apiUrl, this.getAuthHeaders());

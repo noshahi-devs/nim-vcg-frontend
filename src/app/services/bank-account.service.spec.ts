@@ -5,7 +5,7 @@ import { BankAccountService, BankAccount } from './bank-account.service';
 describe('BankAccountService', () => {
     let service: BankAccountService;
     let httpMock: HttpTestingController;
-    const apiUrl = 'https://localhost:7225/api/BankAccounts';
+    const apiUrl = 'http://localhost:5257/api/BankAccounts';
 
     beforeEach(() => {
         TestBed.configureTestingModule({

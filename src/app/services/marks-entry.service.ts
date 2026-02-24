@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class MarkEntryService {
 
-  private apiBaseUrl = 'https://localhost:7225/api/MarkEntry';
+  private apiBaseUrl = 'http://localhost:5257/api/MarkEntry';
 
   constructor(private http: HttpClient) { }
 

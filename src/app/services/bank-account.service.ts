@@ -17,7 +17,7 @@ export interface BankAccount {
     providedIn: 'root'
 })
 export class BankAccountService {
-    private apiUrl = 'https://localhost:7225/api/BankAccounts';
+    private apiUrl = 'http://localhost:5257/api/BankAccounts';
 
     constructor(private http: HttpClient) { }
 

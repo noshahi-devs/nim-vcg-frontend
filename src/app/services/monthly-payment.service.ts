@@ -7,7 +7,7 @@ import { MonthlyPayment } from '../Models/monthly-payment';
   providedIn: 'root'
 })
 export class MonthlyPaymentService {
-  private apiUrl = 'https://localhost:7225/api/MonthlyPayments';
+  private apiUrl = 'http://localhost:5257/api/MonthlyPayments';
 
   constructor(private http: HttpClient) { }
 

@@ -12,9 +12,9 @@ import { OthersPayment } from '../Models/other-payment';
   providedIn: 'root'
 })
 export class CommonServices {
-  private apiUrl = 'https://localhost:7225/api/';
-  private apiUrl3 = 'https://localhost:7225/api/Common';
-  private apiUrl2 = 'https://localhost:7225/api/Common/Frequency';
+  private apiUrl = 'http://localhost:5257/api/';
+  private apiUrl3 = 'http://localhost:5257/api/Common';
+  private apiUrl2 = 'http://localhost:5257/api/Common/Frequency';
   constructor(private http: HttpClient) { }
 
   // Helper function to add token header
@@ -55,7 +55,7 @@ export class CommonServices {
   }
 
   getDueBalance(studentId: number): Observable<DueBalance> {
-    return this.http.get<DueBalance>(`https://localhost:7225/api/Common/DueBalances/${studentId}`, this.getAuthHeaders());
+    return this.http.get<DueBalance>(`http://localhost:5257/api/Common/DueBalances/${studentId}`, this.getAuthHeaders());
   }
 
   getAllPaymentsByStudentId(studentId: number): Observable<MonthlyPayment[]> {

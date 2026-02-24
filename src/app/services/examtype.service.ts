@@ -32,7 +32,7 @@
 //   }
 
 
-//   apiUrl: string = "https://localhost:7225/api/ExamTypes";
+//   apiUrl: string = "http://localhost:5257/api/ExamTypes";
 
 
 //   public GetdbsExamType(): Observable<Examtype[]> {
@@ -74,7 +74,7 @@ export class ExamtypeService {
 
   constructor(private http: HttpClient) { }
 
-  apiUrl: string = 'https://localhost:7225/api/ExamTypes';
+  apiUrl: string = 'http://localhost:5257/api/ExamTypes';
 
   // Helper function to add token header
   private getAuthHeaders() {

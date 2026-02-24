@@ -16,7 +16,7 @@ export interface PaymentGatewaySetting {
     providedIn: 'root'
 })
 export class PaymentGatewayService {
-    private apiUrl = 'https://localhost:7225/api/PaymentGateways';
+    private apiUrl = 'http://localhost:5257/api/PaymentGateways';
 
     constructor(private http: HttpClient) { }
 

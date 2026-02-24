@@ -5,7 +5,7 @@ import { LeaveTypeService, LeaveTypeMaster } from './leave-type.service';
 describe('LeaveTypeService', () => {
     let service: LeaveTypeService;
     let httpMock: HttpTestingController;
-    const apiUrl = 'https://localhost:7225/api/LeaveTypes';
+    const apiUrl = 'http://localhost:5257/api/LeaveTypes';
 
     beforeEach(() => {
         TestBed.configureTestingModule({

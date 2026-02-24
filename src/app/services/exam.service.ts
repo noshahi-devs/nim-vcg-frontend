@@ -118,7 +118,7 @@ export interface SubjectAnalytics {
   providedIn: 'root'
 })
 export class ExamService {
-  private apiUrl = 'https://localhost:7225/api';
+  private apiUrl = 'http://localhost:5257/api';
 
   constructor(private http: HttpClient) { }
 

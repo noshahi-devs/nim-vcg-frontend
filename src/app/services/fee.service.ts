@@ -7,7 +7,7 @@ import { Fee } from '../Models/fee';
   providedIn: 'root'
 })
 export class FeeService {
-  private apiUrl = 'https://localhost:7225/api/Fees';
+  private apiUrl = 'http://localhost:5257/api/Fees';
 
   constructor(private http: HttpClient) { }
 

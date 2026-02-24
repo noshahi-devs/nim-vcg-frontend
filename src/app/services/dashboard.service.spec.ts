@@ -38,7 +38,7 @@ describe('DashboardService', () => {
             expect(stats.incomeThisMonth).toBe(5000);
         });
 
-        const req = httpMock.expectOne('https://localhost:7225/api/Dashboard/stats');
+        const req = httpMock.expectOne('http://localhost:5257/api/Dashboard/stats');
         expect(req.request.method).toBe('GET');
         req.flush(dummyStats);
     });

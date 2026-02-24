@@ -11,7 +11,7 @@ import { Mark } from '../Models/marks';
 
 export class MarksService {
 
-  private apiUrl = 'https://localhost:7225/api/Marks';
+  private apiUrl = 'http://localhost:5257/api/Marks';
 
   constructor(private http: HttpClient) { }
 

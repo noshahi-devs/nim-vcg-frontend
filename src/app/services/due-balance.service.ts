@@ -21,7 +21,7 @@ export interface DueBalance {
     providedIn: 'root'
 })
 export class DueBalanceService {
-    private apiUrl = 'https://localhost:7225/api/DueBalances';
+    private apiUrl = 'http://localhost:5257/api/DueBalances';
 
     constructor(private http: HttpClient) { }
 

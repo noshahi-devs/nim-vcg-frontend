@@ -5,7 +5,7 @@ import { BehaviorSubject, EMPTY, Observable, switchMap, tap, throwError } from "
 import { AuthRequest } from "./auth-request";
 import { AppRole, AppUser, AuthResponse } from "./auth-response";
 
-const API_URL = "https://localhost:7225/api/users/";
+const API_URL = "http://localhost:5257/api/users/";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

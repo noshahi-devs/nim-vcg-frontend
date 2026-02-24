@@ -67,7 +67,7 @@ export interface DashboardData {
 @Injectable({ providedIn: 'root' })
 export class AccountsService {
 
-  private apiUrl = 'https://localhost:7225/api';
+  private apiUrl = 'http://localhost:5257/api';
 
   constructor(private http: HttpClient) { }
 

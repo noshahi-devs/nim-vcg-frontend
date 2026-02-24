@@ -5,7 +5,7 @@ import { PaymentGatewayService, PaymentGatewaySetting } from './payment-gateway.
 describe('PaymentGatewayService', () => {
     let service: PaymentGatewayService;
     let httpMock: HttpTestingController;
-    const apiUrl = 'https://localhost:7225/api/PaymentGateways';
+    const apiUrl = 'http://localhost:5257/api/PaymentGateways';
 
     beforeEach(() => {
         TestBed.configureTestingModule({

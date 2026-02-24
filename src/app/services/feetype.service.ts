@@ -8,7 +8,7 @@ import { FeeType } from '../Models/feetype';
 })
 export class FeeTypeService {
 
-  private apiUrl = 'https://localhost:7225/api/FeeTypes';
+  private apiUrl = 'http://localhost:5257/api/FeeTypes';
 
   constructor(private http: HttpClient) { }
 

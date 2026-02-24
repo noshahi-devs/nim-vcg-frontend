@@ -7,7 +7,7 @@ import { Leave, LeaveStatusUpdate } from '../Models/leave';
     providedIn: 'root'
 })
 export class LeaveService {
-    private apiUrl = 'https://localhost:7225/api/Leaves';
+    private apiUrl = 'http://localhost:5257/api/Leaves';
 
     constructor(private http: HttpClient) { }
 

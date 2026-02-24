@@ -7,7 +7,7 @@ import { Section } from '../Models/section';
     providedIn: 'root'
 })
 export class SectionService {
-    private apiUrl = 'https://localhost:7225/api/Sections';
+    private apiUrl = 'http://localhost:5257/api/Sections';
 
     constructor(private http: HttpClient) { }
 

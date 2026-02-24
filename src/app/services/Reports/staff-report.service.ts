@@ -12,7 +12,7 @@ export class StaffReportService {
   }
   constructor(private http: HttpClient) { }
 
-  apiUrl: string = "https://localhost:7225/api/WebReports";
+  apiUrl: string = "http://localhost:5257/api/WebReports";
 
   public GetReport(): Observable<any> {
     return this.http.get<any>(this.apiUrl , this.options);

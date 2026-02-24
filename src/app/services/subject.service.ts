@@ -11,7 +11,7 @@ export class SubjectService {
     throw new Error('Method not implemented.');
   }
 
-  private apiUrl = 'https://localhost:7225/api/Subjects';
+  private apiUrl = 'http://localhost:5257/api/Subjects';
 
   constructor(private http: HttpClient) { }
 

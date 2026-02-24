@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class StaffSalaryService {
 
-  private apiUrl = 'https://localhost:7225/api/StaffSalaries';
+  private apiUrl = 'http://localhost:5257/api/StaffSalaries';
 
   constructor(private http: HttpClient) { }
 

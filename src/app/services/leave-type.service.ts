@@ -15,7 +15,7 @@ export interface LeaveTypeMaster {
     providedIn: 'root'
 })
 export class LeaveTypeService {
-    private apiUrl = 'https://localhost:7225/api/LeaveTypes';
+    private apiUrl = 'http://localhost:5257/api/LeaveTypes';
 
     constructor(private http: HttpClient) { }
 

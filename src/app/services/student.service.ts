@@ -10,7 +10,7 @@ export class StudentService {
 
   constructor(private http: HttpClient) { }
 
-  apiUrl: string = "https://localhost:7225/api/Students";
+  apiUrl: string = "http://localhost:5257/api/Students";
 
   // Helper function to add token header
   private getAuthHeaders() {

@@ -8,7 +8,7 @@ import { AttList } from '../Models/attlist';
   providedIn: 'root'
 })
 export class AttendanceService {
-  private apiUrl = 'https://localhost:7225/api/Attendances';
+  private apiUrl = 'http://localhost:5257/api/Attendances';
 
   constructor(private http: HttpClient) { }
 

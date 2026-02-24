@@ -3,13 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Staff } from '../Models/staff';
 
-/*const baseUrl: string = "https://localhost:7225/api/Staffs";*/
+/*const baseUrl: string = "http://localhost:5257/api/Staffs";*/
 
 @Injectable({
   providedIn: 'root'
 })
 export class StaffService {
-  private apiUrl = 'https://localhost:7225/api/Staffs';
+  private apiUrl = 'http://localhost:5257/api/Staffs';
   //getAllDepartments: any;
   //getStaffSalaries: any;
 
