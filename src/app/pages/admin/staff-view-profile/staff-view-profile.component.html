@@ -8,7 +8,8 @@
     </div>
   </div>
 
-  <div class="profile-container" *ngIf="!loading && staffData">
+  <div class="profile-container" *ngIf="!loading && staffData; else noProfile">
+
     <!-- Premium Header Area -->
     <div class="profile-header-card">
       <div class="profile-header-top">
@@ -283,4 +284,20 @@
       </div>
     </div>
   </div>
+
+  <ng-template #noProfile>
+    <div *ngIf="!loading"
+      class="d-flex flex-column align-items-center justify-content-center mt-5 card-premium p-5 text-center">
+      <iconify-icon icon="solar:user-block-bold-duotone" class="text-danger-500 mb-3"
+        style="font-size: 80px;"></iconify-icon>
+      <h3 class="mb-2">Staff Profile Not Found</h3>
+      <p class="text-slate-500 mb-4 max-w-400-px mx-auto">
+        We could not find a linked staff record for your account (<strong>{{ currentUserEmail }}</strong>).
+        You may need to be registered as a staff member in the system.
+      </p>
+      <button class="btn btn-primary-600 px-4 py-2 radius-8" (click)="goBack()">
+        Back to Dashboard
+      </button>
+    </div>
+  </ng-template>
 </div>

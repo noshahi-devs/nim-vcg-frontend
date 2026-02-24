@@ -42,7 +42,7 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
       gender: 'Female',
       dob: '1995-08-15',
       phone: '0312-1234567',
-      email: 'ayesha.khan@noshahi.edu.pk',
+      email: 'teacher@gmail.com',
       qualification: 'MBA',
       address: 'Lahore, Pakistan',
       joiningDate: '2021-02-12',
@@ -51,6 +51,7 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
       bg: 'assets/images/user-grid/user-grid-bg2.png',
       role: 'Teacher',
       experience: '2 years',
+
       attendance: {
         percentage: 92,
         presentDays: 21,
@@ -145,9 +146,14 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService,
+    public authService: AuthService,
     private staffService: StaffService
   ) { }
+
+  get currentUserEmail(): string {
+    return this.authService.userValue?.email || 'N/A';
+  }
+
 
   ngOnInit() {
     // Get staff ID from route
@@ -155,20 +161,53 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
       const idParam = params['id'];
       if (idParam) {
         this.staffId = +idParam;
+        this.loadStaffData();
       } else {
         // Handle "My Profile" case: no ID provided
+        this.loading = true;
         const currentUser = this.authService.userValue;
-        if (currentUser) {
-          // Look up staff ID by email
-          const currentStaff = this.staffList.find(s => s.email === currentUser.email);
-          if (currentStaff) {
-            this.staffId = +currentStaff.id;
-          }
+        if (currentUser && currentUser.email) {
+          // Fetch all staff to find the one matching the current user's email
+          this.staffService.getAllStaffs().subscribe({
+            next: (staffs) => {
+              console.log('Profile Lookup - Current User Email:', currentUser.email);
+              console.log('Profile Lookup - All Staff Emails:', staffs.map(s => s.email));
+
+              const currentStaff = staffs.find(s =>
+                s.email?.trim().toLowerCase() === currentUser.email?.trim().toLowerCase()
+              );
+
+              if (currentStaff) {
+                console.log('Profile Lookup - Found Staff ID:', currentStaff.staffId);
+                this.staffId = currentStaff.staffId;
+                this.loadStaffData();
+              } else {
+                console.warn('Profile Lookup - No staff record found for email:', currentUser.email);
+                this.loading = false;
+                this.loadStaffFromBackupByEmail(currentUser.email);
+              }
+            },
+
+            error: (err) => {
+              console.error('Error fetching staff list for profile lookup:', err);
+              this.loadStaffFromBackupByEmail(currentUser.email);
+              this.loading = false;
+            }
+          });
+        } else {
+          this.loading = false;
         }
       }
-      this.loadStaffData();
     });
   }
+
+  private loadStaffFromBackupByEmail(email: string) {
+    const currentStaff = this.staffList.find(s => s.email === email);
+    if (currentStaff) {
+      this.staffData = currentStaff;
+    }
+  }
+
 
   // Load staff data from localStorage
   loadStaffFromStorage(): any[] | null {
