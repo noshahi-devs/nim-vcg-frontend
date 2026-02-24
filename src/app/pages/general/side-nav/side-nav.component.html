@@ -333,22 +333,13 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:cog" class="menu-icon"></iconify-icon>
-          <span>Settings</span>
+          <span>Administration</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/settings"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> General</a>
           </li>
           <li><a routerLink="/settings"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i>
               Notifications</a></li>
-        </ul>
-      </li>
-
-      <li class="dropdown" *ngIf="hasAnyRole(['Admin'])">
-        <a href="javascript:void(0)">
-          <i class="ri-user-settings-line text-xl me-6 d-flex w-auto"></i>
-          <span>Role & Access</span>
-        </a>
-        <ul class="sidebar-submenu">
           <li>
             <a routerLink="/role-access"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Role &
               Access</a>
@@ -357,21 +348,12 @@
             <a routerLink="/assign-role"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Assign
               Role</a>
           </li>
+          <li><a routerLink="/theme"><i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Theme</a></li>
+          <li><a routerLink="/language"><i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Languages</a>
+
         </ul>
       </li>
 
-      <!-- Advanced Settings -->
-      <li class="dropdown" *ngIf="hasAnyRole(['Admin'])">
-        <a href="javascript:void(0)">
-          <iconify-icon icon="icon-park-outline:setting-two" class="menu-icon"></iconify-icon>
-          <span>Advanced Settings</span>
-        </a>
-        <ul class="sidebar-submenu">
-          <li><a routerLink="/theme"><i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Theme</a></li>
-          <li><a routerLink="/language"><i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Languages</a>
-          </li>
-        </ul>
-      </li>
     </ul>
   </div>
 

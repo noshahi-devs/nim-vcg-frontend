@@ -3,19 +3,34 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../SecurityModels/auth.service';
+import { StaffService } from '../../../services/staff.service';
+import { Designation } from '../../../Models/staff';
+import { animate, style, transition, trigger } from '@angular/animations';
+
 declare var $: any;
+
 @Component({
   selector: 'app-staff-view-profile',
   standalone: true,
   imports: [BreadcrumbComponent, CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './staff-view-profile.component.html',
-  styleUrl: './staff-view-profile.component.css'
+  styleUrl: './staff-view-profile.component.css',
+  animations: [
+    trigger('fadeAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class StaffViewProfileComponent implements OnInit, AfterViewInit {
   title = 'View Profile';
   staffId: number = 0;
   staffData: any = null;
+  loading: boolean = false;
+  activeTab: 'overview' | 'attendance' | 'performance' = 'overview';
   private readonly STORAGE_KEY = 'staffList';
 
   // Sample staff data - replace with actual service call
@@ -35,7 +50,25 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
       status: 'Active',
       bg: 'assets/images/user-grid/user-grid-bg2.png',
       role: 'Teacher',
-      experience: '2 years'
+      experience: '2 years',
+      attendance: {
+        percentage: 92,
+        presentDays: 21,
+        absentDays: 2,
+        lateDays: 1,
+        totalDays: 24,
+        history: [
+          { month: 'Jan', rate: 95 },
+          { month: 'Feb', rate: 92 }
+        ]
+      },
+      performance: {
+        rating: 4.8,
+        tasksCompleted: 45,
+        totalTasks: 50,
+        studentFeedback: 'Excellent teaching style and very punctual.',
+        skills: ['Curriculum Planning', 'Classroom Management', 'Student Counseling']
+      }
     },
     {
       id: 2,
@@ -52,7 +85,25 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
       status: 'Active',
       bg: 'assets/images/user-grid/user-grid-bg3.png',
       role: 'Principal',
-      experience: '2 years'
+      experience: '2 years',
+      attendance: {
+        percentage: 98,
+        presentDays: 23,
+        absentDays: 1,
+        lateDays: 0,
+        totalDays: 24,
+        history: [
+          { month: 'Jan', rate: 97 },
+          { month: 'Feb', rate: 98 }
+        ]
+      },
+      performance: {
+        rating: 4.9,
+        tasksCompleted: 58,
+        totalTasks: 60,
+        studentFeedback: 'Great leadership and very supportive.',
+        skills: ['Leadership', 'Strategic Planning', 'Administration']
+      }
     },
     {
       id: 3,
@@ -69,14 +120,33 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
       status: 'active',
       bg: 'assets/images/user-grid/user-grid-bg4.png',
       role: 'Accountant',
-      experience: '2 years'
+      experience: '2 years',
+      attendance: {
+        percentage: 95,
+        presentDays: 22,
+        absentDays: 1,
+        lateDays: 1,
+        totalDays: 24,
+        history: [
+          { month: 'Jan', rate: 94 },
+          { month: 'Feb', rate: 95 }
+        ]
+      },
+      performance: {
+        rating: 4.7,
+        tasksCompleted: 82,
+        totalTasks: 85,
+        studentFeedback: 'Very meticulous with accounts and reports.',
+        skills: ['Financial Accounting', 'Auditing', 'Excel Expert']
+      }
     }
   ];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private staffService: StaffService
   ) { }
 
   ngOnInit() {
@@ -107,30 +177,93 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
   }
 
   loadStaffData() {
-    // Reload from localStorage or default list
-    let loadedList = this.loadStaffFromStorage();
+    this.loading = true;
+    this.staffService.getStaffById(this.staffId).subscribe({
+      next: (staff: any) => {
+        this.staffData = this.mapStaffToUi(staff);
+        this.loading = false;
+        this.checkAuthorization();
+      },
+      error: (err) => {
+        console.error('Error loading staff from service:', err);
+        // Fallback to local storage or mock if service fails
+        this.loadStaffFromBackup();
+        this.loading = false;
+      }
+    });
+  }
 
-    // If localStorage data exists but doesn't have role field, clear it and use default
-    if (loadedList && loadedList.length > 0 && !loadedList[0].hasOwnProperty('role')) {
-      localStorage.removeItem(this.STORAGE_KEY);
-      loadedList = null;
+  private mapStaffToUi(staff: any) {
+    if (!staff) return null;
+
+    // Use default values for missing data to maintain UI quality
+    return {
+      id: staff.staffId,
+      name: staff.staffName,
+      cnic: staff.cnic || 'N/A', // Assuming CNIC might be missing in backend Staff model
+      gender: this.getGenderName(staff.gender),
+      dob: staff.dob ? new Date(staff.dob).toLocaleDateString() : 'N/A',
+      phone: staff.contactNumber1 || 'N/A',
+      email: staff.email || 'N/A',
+      qualification: staff.qualifications || 'N/A',
+      address: staff.permanentAddress || staff.temporaryAddress || 'N/A',
+      joiningDate: staff.joiningDate ? new Date(staff.joiningDate).toLocaleDateString() : 'N/A',
+      profile: staff.imagePath || 'assets/images/user-grid/user-grid-img2.png',
+      status: staff.status || 'Active',
+      role: this.getDesignationName(staff.designation),
+      experience: staff.staffExperiences?.length > 0 ? `${staff.staffExperiences.length} entries` : 'No data',
+      // Keep enhanced mock data for attendance/performance as per user requirement
+      attendance: staff.attendance || {
+        percentage: 92,
+        presentDays: 21,
+        absentDays: 2,
+        lateDays: 1,
+        totalDays: 24,
+        history: [
+          { month: 'Jan', rate: 95 },
+          { month: 'Feb', rate: 92 }
+        ]
+      },
+      performance: staff.performance || {
+        rating: 4.8,
+        tasksCompleted: 45,
+        totalTasks: 50,
+        studentFeedback: 'Excellent teaching style and very punctual.',
+        skills: ['Curriculum Planning', 'Classroom Management', 'Student Counseling']
+      }
+    };
+  }
+
+  private getGenderName(gender: any): string {
+    if (gender === null || gender === undefined) return 'N/A';
+    const Genders = ['Male', 'Female', 'Other'];
+    return Genders[gender] || gender;
+  }
+
+  private getDesignationName(designation: any): string {
+    if (designation === null || designation === undefined) return 'N/A';
+    if (typeof designation === 'number') {
+      return Designation[designation] || 'N/A';
     }
+    return designation;
+  }
 
-    this.staffList = loadedList || this.staffList;
-
-    // Convert to number and find matching staff
-    this.staffData = this.staffList.find(staff => +staff.id === +this.staffId);
-
-    // 🔐 Authorization Check: Prevent users from seeing other staff by searching route
+  private checkAuthorization() {
     const currentUser = this.authService.userValue;
     const isPrivileged = this.authService.hasAnyRole(['Admin', 'Principal']);
 
     if (this.staffData && !isPrivileged) {
-      // If not Admin/Principal, user can only see their own profile (matching by email)
       if (currentUser && this.staffData.email !== currentUser.email) {
         console.warn('Unauthorized access attempt to staff profile:', this.staffId);
         this.router.navigate(['/unauthorized']);
       }
+    }
+  }
+
+  private loadStaffFromBackup() {
+    let loadedList = this.loadStaffFromStorage();
+    if (loadedList) {
+      this.staffData = loadedList.find(staff => +staff.id === +this.staffId);
     }
   }
 
@@ -173,6 +306,6 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
     }
   }
   editStaff(id: number) {
-    this.router.navigate(['/staff-edit', id]);
+    this.router.navigate(['/staff-edit-profile', id]);
   }
 }

@@ -1,58 +1,250 @@
+/* Staff Edit Profile - Premium Enterprise Refinement 
+   Aligned with 'monthly-payment' style */
 
-
-/* Mobile Devices (Portrait) - 320px to 575px */
-@media (max-width: 575px) {
-
-  /* Buttons */
-  .d-flex.gap-3 {
-    flex-direction: row !important;
-    gap: 0.75rem !important;
-  }
-  
-  .d-flex.gap-3 button {
-    width: 100%;
-    padding: 0.75rem 1.5rem !important;
-    font-size: 0.875rem !important;
-  }
-  
-}
-/* Mobile Devices (Landscape) & Small Tablets - 576px to 767px */
-@media (min-width: 576px) and (max-width: 767px) {
-  /* Buttons */
-  .d-flex.gap-3 button {
-    padding: 0.75rem 2rem !important;
-  }
+:host {
+  --card-radius: 16px;
+  --brand-indigo: #6366f1;
+  --brand-dark: #4f46e5;
+  --border-color: #f1f5f9;
+  --input-border: #e2e8f0;
+  --text-slate: #64748b;
+  --text-dark: #1e293b;
+  --shadow-premium: 0 4px 24px rgba(0, 0, 0, 0.07);
 }
 
-/* Prevent horizontal scroll */
-body,
-html {
-  overflow-x: hidden;
+.edit-profile-card {
+  background: #ffffff;
+  border-radius: var(--card-radius);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-premium);
+  overflow: hidden;
+  margin-bottom: 2rem;
 }
 
-.dashboard-main-body {
-  overflow-x: hidden;
+.edit-profile-card .card-body {
+  padding: 3rem 4rem !important;
+  /* Increased padding for better breathing room */
 }
 
-/* Smooth transitions for all interactive elements */
-* {
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+/* Modern Horizontal Tab Navigation */
+.nav-pills.premium-tabs {
+  background: #f8fafc;
+  padding: 8px;
+  border-radius: 14px;
+  display: inline-flex;
+  gap: 8px;
+  border: 1px solid #edf2f7;
 }
 
-/* Focus styles for accessibility */
+.nav-pills .nav-link {
+  border-radius: 10px;
+  color: var(--text-slate);
+  font-weight: 700;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.nav-pills .nav-link iconify-icon {
+  font-size: 1.25rem;
+}
+
+.nav-pills .nav-link.active {
+  background: #ffffff !important;
+  color: var(--brand-indigo) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: #e2e8f0;
+}
+
+/* Avatar Upload UI */
+.avatar-section {
+  padding: 2rem;
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 1px solid #eef2f6;
+}
+
+.avatar-preview {
+  width: 140px;
+  height: 140px;
+  position: relative;
+  border-radius: 20px;
+  border: 5px solid #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.avatar-preview>div {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.avatar-edit {
+  position: absolute;
+  right: -12px;
+  bottom: -12px;
+  z-index: 1;
+}
+
+.avatar-edit label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  border: 3px solid #ffffff;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.avatar-edit label:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Modern Form Controls */
+.form-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 0.8rem;
+  display: block;
+}
+
+.form-control,
+.form-select {
+  padding: 0.85rem 1.1rem;
+  border: 1.5px solid var(--input-border);
+  border-radius: 12px;
+  background-color: #ffffff;
+  color: var(--text-dark);
+  font-size: 14px;
+  transition: all 0.22s ease;
+}
+
 .form-control:focus,
-.form-select:focus,
-.btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+.form-select:focus {
+  border-color: var(--brand-indigo);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
-/* Improve touch targets on mobile */
-@media (max-width: 767px) {
-  .nav-link,
-  .btn,
-  .form-check-input {
-    min-height: 44px;
-    min-width: 44px;
-  }
+/* Section Headlines */
+.section-headline {
+  font-size: 13px;
+  font-weight: 800;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-bottom: 12px;
+  border-bottom: 2.5px solid #f1f5f9;
+  margin-bottom: 25px;
+}
+
+/* Foot Buttons */
+.btn-premium-save {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 40px;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.3);
+  transition: all 0.25s;
+}
+
+.btn-premium-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.4);
+  color: #fff;
+}
+
+.btn-premium-cancel {
+  background: #f1f5f9;
+  color: #64748b;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 30px;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.btn-premium-cancel:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+/* Switch Styles */
+.form-switch .form-check-input {
+  width: 3.2em;
+  height: 1.6em;
+  cursor: pointer;
+  background-color: #cbd5e1;
+  border: none;
+}
+
+.form-switch .form-check-input:checked {
+  background-color: var(--brand-indigo);
+}
+
+/* Tab Container Refinements */
+.tab-pane {
+  padding: 2.5rem 2rem;
+  /* Increased padding */
+}
+
+#pills-general {
+  padding-right: 3rem;
+  /* Even more space on the right side */
+}
+
+.max-w-600-px {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.max-w-700-px {
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Security Field Specifics */
+.section-headline {
+  margin-bottom: 30px;
+}
+
+.mt-5.pt-4.border-top {
+  margin-right: 2rem;
+  /* More margin for buttons from the right edge */
+  padding-top: 2.5rem !important;
+}
+
+.notification-item {
+  margin-bottom: 24px !important;
+  padding: 1.5rem 2rem !important;
+  /* Increased internal padding */
+  border: 1px solid #f1f5f9;
+  /* Subtle border for better definition */
+}
+
+.mb-4,
+.mb-5 {
+  margin-bottom: 1.8rem !important;
+}
+
+/* Fix for Update Password Section */
+#pills-security .max-w-600-px {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
 }
