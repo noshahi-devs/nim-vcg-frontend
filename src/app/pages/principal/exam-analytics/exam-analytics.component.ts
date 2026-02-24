@@ -28,6 +28,7 @@ export class ExamAnalyticsComponent implements OnInit {
   selectedClassId: number | null = null;
   selectedSectionId: number | null = null;
 
+  allSections: any[] = [];
   isLoading: boolean = false;
 
   constructor(
@@ -39,12 +40,30 @@ export class ExamAnalyticsComponent implements OnInit {
   ngOnInit(): void {
     this.loadExams();
     this.loadClasses();
+    this.loadAllSections();
+  }
+
+  loadAllSections() {
+    this.sectionService.getSections().subscribe({
+      next: (res) => {
+        this.allSections = res || [];
+      },
+      error: (err) => {
+        console.error('Failed to load sections', err);
+      }
+    });
   }
 
   loadExams() {
     this.examService.getAllExams().subscribe({
-      next: (res) => {
-        this.exams = res || [];
+      next: (res: any[]) => {
+        // Map backend properties (examScheduleId/examScheduleName) to frontend model
+        this.exams = (res || []).map(e => ({
+          ...e,
+          examId: e.examScheduleId || e.id,
+          examName: e.examScheduleName || e.name || e.examName
+        }));
+
         if (this.exams.length === 0) {
           this.loadMockExams();
         }
@@ -108,9 +127,9 @@ export class ExamAnalyticsComponent implements OnInit {
 
   loadMockClasses() {
     this.classes = [
-      { standardId: 1, standardName: 'Class 1' },
-      { standardId: 2, standardName: 'Class 2' },
-      { standardId: 3, standardName: 'Class 3' }
+      { standardId: 1, standardName: 'Class One' },
+      { standardId: 2, standardName: 'Class Two' },
+      { standardId: 3, standardName: 'Class Three' }
     ] as any;
   }
 
@@ -120,24 +139,23 @@ export class ExamAnalyticsComponent implements OnInit {
     this.analytics = null; // reset analytics when class changes
 
     if (this.selectedClassId) {
-      this.sectionService.getSections().subscribe({
-        next: (res) => {
-          this.sections = res || [];
-          if (this.sections.length === 0) this.loadMockSections();
-        },
-        error: (err) => {
-          console.error('Failed to load sections', err);
-          this.loadMockSections();
-        }
-      });
+      // Find the class name to filter sections
+      const selectedClass = this.classes.find(c => c.standardId == this.selectedClassId);
+      if (selectedClass) {
+        this.sections = this.allSections.filter(s => s.className === selectedClass.standardName);
+      }
+
+      if (this.sections.length === 0) {
+        this.loadMockSections();
+      }
     }
     this.loadAnalytics();
   }
 
   loadMockSections() {
     this.sections = [
-      { sectionId: 1, sectionName: 'A' },
-      { sectionId: 2, sectionName: 'B' }
+      { sectionId: 1, sectionName: 'A', className: 'Class One' },
+      { sectionId: 2, sectionName: 'B', className: 'Class One' }
     ] as any;
   }
 
