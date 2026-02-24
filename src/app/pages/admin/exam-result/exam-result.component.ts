@@ -65,8 +65,14 @@ export class ExamResultComponent implements OnInit {
 
   loadExams() {
     this.examService.getAllExams().subscribe({
-      next: (res) => {
-        this.exams = res || [];
+      next: (res: any[]) => {
+        // Map backend properties (examScheduleId/examScheduleName) to frontend model
+        this.exams = (res || []).map(e => ({
+          ...e,
+          examId: e.examScheduleId || e.id,
+          examName: e.examScheduleName || e.name || e.examName
+        }));
+
         if (this.exams.length === 0) {
           this.loadMockExams();
         }
