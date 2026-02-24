@@ -4,7 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StudentService } from '../../../services/student.service';
+import { StandardService } from '../../../services/standard.service';
+import { SectionService } from '../../../services/section.service';
 import { Student } from '../../../Models/student';
+import { Standard } from '../../../Models/standard';
+import { Section } from '../../../Models/section';
 
 declare var bootstrap: any;
 
@@ -30,13 +34,22 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   defaultImage = 'assets/images/user-grid/user-grid-img2.png';
   studentToDelete: Student | null = null;
 
+  classList: Standard[] = [];
+  sectionList: Section[] = [];
+
   classes = ['Nursery', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
   sections = ['A', 'B', 'C', 'D'];
 
-  constructor(private studentService: StudentService) { }
+  constructor(
+    private studentService: StudentService,
+    private standardService: StandardService,
+    private sectionService: SectionService
+  ) { }
 
   ngOnInit(): void {
     this.loadStudents();
+    this.loadClasses();
+    this.loadSections();
   }
 
   // -------------------------------------------------------
@@ -54,6 +67,28 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     });
   }
 
+  loadClasses() {
+    this.standardService.getStandards().subscribe({
+      next: (res) => {
+        this.classList = res;
+      },
+      error: (err) => {
+        console.error("Error loading classes:", err);
+      }
+    });
+  }
+
+  loadSections() {
+    this.sectionService.getSections().subscribe({
+      next: (res) => {
+        this.sectionList = res;
+      },
+      error: (err) => {
+        console.error("Error loading sections:", err);
+      }
+    });
+  }
+
   // -------------------------------------------------------
   // Centralized Filtering
   // -------------------------------------------------------
@@ -65,7 +100,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     }
 
     if (this.filterSection) {
-      list = list.filter(s => s.section?.toLowerCase() === this.filterSection.toLowerCase());
+      list = list.filter(s => s.section?.toLowerCase() === this.filterSection.toLowerCase() ||
+        s.section === this.filterSection);
     }
 
     if (this.filterStatus) {
@@ -126,6 +162,16 @@ export class StudentListComponent implements OnInit, AfterViewInit {
       return student.imageUpload.imageData;
     }
     return 'assets/images/user-grid/user-grid-img2.png';
+  }
+
+
+  // -------------------------------------------------------
+  // Get Class Name by ID
+  // -------------------------------------------------------
+  getClassName(id: number | null): string {
+    if (!id) return 'N/A';
+    const standard = this.classList.find(c => c.standardId === id);
+    return standard ? standard.standardName : `Class ${id}`;
   }
 
 

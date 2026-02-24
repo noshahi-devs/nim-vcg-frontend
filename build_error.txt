@@ -1,0 +1,8 @@
+﻿
+> wowdash@0.0.0 build
+> ng build
+
+[33m❯[39m Building...
+[32m✔[39m Building...
+Application bundle generation failed. [20.036 seconds]
+

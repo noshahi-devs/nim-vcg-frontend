@@ -26,14 +26,14 @@
         <select class="form-select form-select-sm w-auto radius-12 h-40-px" [(ngModel)]="filterClass"
           (ngModelChange)="applyFilters()">
           <option value="">All Classes</option>
-          <option *ngFor="let c of classes" [value]="c">{{ c }}</option>
+          <option *ngFor="let c of classList" [value]="c.standardId">{{ c.standardName }}</option>
         </select>
 
         <!-- FILTER SECTION -->
         <select class="form-select form-select-sm w-auto radius-12 h-40-px" [(ngModel)]="filterSection"
           (ngModelChange)="applyFilters()">
           <option value="">All Sections</option>
-          <option *ngFor="let s of sections" [value]="s">{{ s }}</option>
+          <option *ngFor="let s of sectionList" [value]="s.sectionName">{{ s.sectionName }}</option>
         </select>
 
         <!-- FILTER STATUS -->
@@ -108,7 +108,7 @@
 
               <!-- Class & Section -->
               <span class="text-secondary-light text-xs d-block mb-8">
-                Class {{ student.standardId }} - {{ student.section }}
+                {{ getClassName(student.standardId) }} - {{ student.section }}
               </span>
 
               <!-- Enrollment No -->
@@ -163,4 +163,5 @@
           </div>
         </div>
       </div>
-    </div></div>
+    </div>
+  </div>

@@ -1,338 +1,284 @@
-/* Profile Header Styling */
-.profile-header-bg {
+/* PREMIUM HEADER STYLES */
+.profile-header-premium {
+  min-height: 280px;
+  background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
   position: relative;
   overflow: hidden;
 }
 
-.profile-header-bg::before {
-  content: '';
+.profile-cover-bg {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
+  width: 100%;
+  height: 100%;
+  background: url('https://www.transparenttextures.com/patterns/cubes.png');
+  opacity: 0.1;
+}
+
+.profile-header-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+}
+
+.profile-image-container {
+  position: relative;
+  margin-bottom: -10px;
+}
+
+.student-profile-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 24px;
+  border: 4px solid rgba(255, 255, 255, 0.4);
+  object-fit: cover;
+  background-color: #fff;
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 8px;
+  right: -4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+}
+
+/* TAB NAVIGATION */
+.profile-tabs-nav {
+  background: #fff;
+  padding-top: 12px;
+}
+
+.tab-item {
+  padding: 16px 8px;
+  border: none;
+  background: none;
+  color: #64748b;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-item iconify-icon {
+  font-size: 18px;
+}
+
+.tab-item:hover {
+  color: #4e54c8;
+}
+
+.tab-item.active {
+  color: #4e54c8;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-  background-size: cover;
-  opacity: 0.3;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #4e54c8;
+  border-radius: 3px 3px 0 0;
 }
 
-.profile-image-wrapper img {
+/* ACADEMIC CARDS */
+.academic-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.profile-image-wrapper:hover img {
-  transform: scale(1.05);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
+.academic-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Icon Box Styling */
-.icon-box {
-  transition: all 0.3s ease;
+/* ANIMATIONS */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
 }
 
-.icon-box:hover {
-  transform: translateY(-2px);
-}
-
-/* Info List Styling */
-.info-list .info-item {
-  transition: background-color 0.2s ease;
-}
-
-.info-list .info-item:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-  padding-left: 8px;
-}
-
-.info-list .info-item:last-child {
-  border-bottom: none !important;
-}
-
-/* Info Grid Field Styling */
-.info-grid .info-item {
-  transition: background-color 0.2s ease;
-  min-height: 70px;
-}
-
-.info-grid .info-item:hover {
-  background-color: rgba(102, 126, 234, 0.03);
-}
-
-.info-grid .field-label {
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #6c757d;
-}
-
-.info-grid .field-value {
-  font-size: 0.95rem;
-  color: #212529;
-  word-break: break-word;
-}
-
-/* Card Hover Effects */
-.card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-}
-
-/* Button Styling */
-.btn {
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-primary:hover {
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-/* Badge Styling */
-.badge {
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-/* Responsive Adjustments */
-
-/* Mobile Devices (Portrait) - 320px to 575px */
-@media (max-width: 575px) {
-  .profile-header-bg {
-    height: 120px !important;
-  }
-  
-  .profile-image-wrapper {
-    margin-bottom: -35px !important;
-  }
-  
-  .profile-image-wrapper img {
-    width: 80px !important;
-    height: 80px !important;
-  }
-  
-  .profile-image-wrapper .badge {
-    padding: 4px 8px !important;
-    font-size: 9px !important;
-  }
-  
-  .card-body {
-    padding: 1rem !important;
-    padding-top: 45px !important;
-  }
-  
-  .ms-4 {
-    margin-left: 0.75rem !important;
-  }
-  
-  .ms-4 h3 {
-    font-size: 1.25rem !important;
-  }
-  
-  .ms-4 .badge {
-    font-size: 0.7rem !important;
-    padding: 4px 8px !important;
-  }
-  
-  .ms-4 .text-white-50 {
-    font-size: 0.7rem !important;
-  }
-  
-  /* Quick Info Boxes - Stack Vertically */
-  .icon-box {
-    padding: 0.5rem !important;
-  }
-  
-  .icon-box iconify-icon {
-    font-size: 1.5rem !important;
-  }
-  
-  /* Info Grid - Full Width Fields */
-  .info-grid .col-md-6 {
-    width: 100% !important;
-  }
-  
-  .info-grid .border-end {
-    border-right: none !important;
-  }
-  
-  .info-grid .info-item {
-    padding: 0.75rem 1rem !important;
-    min-height: 60px;
-  }
-  
-  .info-grid .field-label {
-    font-size: 0.7rem !important;
-  }
-  
-  .info-grid .field-value {
-    font-size: 0.85rem !important;
-  }
-  
-  /* Buttons */
-  .btn {
-    padding: 0.5rem 1.5rem !important;
-    font-size: 0.85rem !important;
-  }
-  
-  /* Staff Information Title */
-  h5.fw-semibold {
-    font-size: 1rem !important;
-  }
-}
-
-/* Mobile Devices (Landscape) & Small Tablets - 576px to 767px */
-@media (min-width: 576px) and (max-width: 767px) {
-  .profile-header-bg {
-    height: 140px !important;
-  }
-  
-  .profile-image-wrapper {
-    margin-bottom: -40px !important;
-  }
-  
-  .profile-image-wrapper img {
-    width: 100px !important;
-    height: 100px !important;
-  }
-  
-  .card-body {
-    padding-top: 50px !important;
-  }
-  
-  /* Info Grid - Full Width Fields */
-  .info-grid .col-md-6 {
-    width: 100% !important;
-  }
-  
-  .info-grid .border-end {
-    border-right: none !important;
-  }
-  
-  .info-grid .info-item {
-    min-height: 65px;
-  }
-}
-
-/* Tablets - 768px to 991px */
-@media (min-width: 768px) and (max-width: 991px) {
-  .profile-header-bg {
-    height: 160px !important;
-  }
-  
-  .profile-image-wrapper {
-    margin-bottom: -45px !important;
-  }
-  
-  .profile-image-wrapper img {
-    width: 120px !important;
-    height: 120px !important;
-  }
-  
-  .card-body {
-    padding-top: 55px !important;
-  }
-  
-  /* Info Grid - 2 Columns */
-  .info-grid .info-item {
-    min-height: 68px;
-  }
-  
-  .info-grid .field-value {
-    font-size: 0.9rem;
-  }
-}
-
-/* Large Tablets & Small Desktops - 992px to 1199px */
-@media (min-width: 992px) and (max-width: 1199px) {
-  .profile-header-bg {
-    height: 170px !important;
-  }
-  
-  .container-fluid {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-}
-
-/* Extra Large Screens - 1200px and above */
-@media (min-width: 1200px) {
-  .container-fluid {
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-}
-
-/* Smooth Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.card {
-  animation: fadeIn 0.5s ease-out;
+/* INFO LIST */
+.info-item-row:last-child {
+  border-bottom: none !important;
 }
 
-.card:nth-child(1) {
-  animation-delay: 0.1s;
+.btn-white {
+  background: #fff;
+  color: #4e54c8;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
-.card:nth-child(2) {
-  animation-delay: 0.2s;
+.btn-white:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.card:nth-child(3) {
-  animation-delay: 0.3s;
+.btn-outline-white {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  font-weight: 500;
 }
 
-/* Icon Styling */
-iconify-icon {
+.btn-outline-white:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #fff;
+}
+
+/* TABLE STYLING */
+.basic-table th {
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  padding: 12px 16px;
+}
+
+.basic-table td {
+  padding: 16px;
   vertical-align: middle;
-  transition: transform 0.2s ease;
 }
 
-.info-item:hover iconify-icon {
-  transform: scale(1.1);
+/* PREMIUM PERSONAL INFO STYLES */
+.info-list-premium {
+  display: flex;
+  flex-direction: column;
 }
 
-/* Text Truncate for Long Content */
-.text-truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.info-item-row-new {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #f1f5f9 !important;
 }
 
-/* Ensure proper spacing on all devices */
-.row.g-3 {
-  margin-left: -0.5rem;
-  margin-right: -0.5rem;
+.info-item-row-new:hover {
+  background-color: #f8fafc;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 8px;
 }
 
-.row.g-3 > * {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+.icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Prevent horizontal scroll */
-body, html {
-  overflow-x: hidden;
+.icon-circle iconify-icon {
+  font-size: 18px;
 }
 
-.dashboard-main-body {
-  overflow-x: hidden;
+.max-w-250 {
+  max-width: 250px;
+}
+
+/* TILES FOR OTHER INFO */
+.personal-tile {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.personal-tile:hover {
+  transform: translateY(-5px);
+  border-color: #4e54c8 !important;
+  box-shadow: 0 10px 20px rgba(78, 84, 200, 0.1) !important;
+}
+
+.tile-icon {
+  transition: transform 0.3s ease;
+}
+
+.personal-tile:hover .tile-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.ls-1 {
+  letter-spacing: 1px;
+}
+
+/* FOCUS COLORS */
+.bg-primary-focus {
+  background-color: rgba(78, 84, 200, 0.1);
+}
+
+.bg-info-focus {
+  background-color: rgba(14, 165, 233, 0.1);
+}
+
+.bg-warning-focus {
+  background-color: rgba(245, 158, 11, 0.1);
+}
+
+.bg-success-focus {
+  background-color: rgba(34, 197, 94, 0.1);
+}
+
+.bg-danger-focus {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.bg-indigo-focus {
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+.bg-purple-focus {
+  background-color: rgba(168, 85, 247, 0.1);
+}
+
+.bg-pink-focus {
+  background-color: rgba(236, 72, 153, 0.1);
+}
+
+.bg-cyan-focus {
+  background-color: rgba(6, 182, 212, 0.1);
+}
+
+.bg-teal-focus {
+  background-color: rgba(20, 184, 166, 0.1);
+}
+
+/* TEXT COLORS FOR ICONS */
+.text-indigo {
+  color: #6362f1;
+}
+
+.text-purple {
+  color: #a855f7;
+}
+
+.text-pink {
+  color: #ec4899;
+}
+
+.text-cyan {
+  color: #06b6d4;
+}
+
+.text-teal {
+  color: #14b8a6;
 }

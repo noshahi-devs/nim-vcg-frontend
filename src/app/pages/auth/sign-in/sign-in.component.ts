@@ -63,6 +63,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { AuthResponse } from '../../../SecurityModels/auth-response';
 import { CommonModule, NgIf } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-sign-in',
@@ -112,8 +113,32 @@ export class SignInComponent {
         // Token will be saved by doLoginUser
         this.authService.doLoginUser(res);
 
+        // --- PREMIUM WELCOME POPUP ---
+        Swal.fire({
+          title: `Welcome back, ${res.username || 'User'}!`,
+          text: 'You have logged in successfully.',
+          icon: 'success',
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          background: '#ffffff',
+          color: '#1e293b',
+          iconColor: '#6366f1',
+          customClass: {
+            popup: 'premium-swal-popup',
+            title: 'premium-swal-title',
+            timerProgressBar: 'premium-swal-progress'
+          },
+          showClass: {
+            popup: 'animate__animated animate__fadeInUp animate__faster'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutDown animate__faster'
+          }
+        }).then(() => {
+          this.router.navigateByUrl(this.returnUrl);
+        });
 
-        this.router.navigateByUrl(this.returnUrl);
         this.isSubmitting = false;
       },
 

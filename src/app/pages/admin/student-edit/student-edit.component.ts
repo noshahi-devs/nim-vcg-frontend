@@ -1,11 +1,18 @@
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { StudentService } from '../../../services/student.service';
+import { StandardService } from '../../../services/standard.service';
+import { SectionService } from '../../../services/section.service';
+import { Student } from '../../../Models/student';
+import { Standard } from '../../../Models/standard';
+import { Section } from '../../../Models/section';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 declare var $: any;
-declare var bootstrap: any;
+
 @Component({
   selector: 'app-student-edit',
   standalone: true,
@@ -15,108 +22,72 @@ declare var bootstrap: any;
   styleUrl: './student-edit.component.css'
 })
 export class StudentEditComponent implements OnInit, AfterViewInit {
-  title = 'Edit Profile';
   studentId: number = 0;
-  studentData: any = null;
-  private readonly STORAGE_KEY = 'studentList';
+  studentData: Student = new Student();
+  classes: Standard[] = [];
+  sections: Section[] = [];
+  loading: boolean = false;
 
-  // Modal state
-  modalMessage: string = '';
-  modalType: 'success' | 'error' = 'success';
-
-  // Sample staff data - replace with actual service call
-  studentList = this.loadStudentFromStorage() || [
-    {
-      id: 1,
-      name: 'Ayesha Khan',
-      rollNo: '23',
-      class: '9',
-      section: 'A',
-      gender: 'Female',
-      dob: '2009-05-15',
-      phone: '0312-1234567',
-      guardianName: 'Khalid Khan',
-      guardianPhone: '0300-1112233',
-      address: 'Lahore, Pakistan',
-      admissionDate: '2024-04-10',
-      previousSchool: 'Allied School',
-      profile: 'assets/images/user-grid/user-grid-img2.png',
-      status: 'active'
-    },
-    {
-      id: 2,
-      name: 'Bilal Ahmad',
-      rollNo: '45',
-      class: '10',
-      section: 'B',
-      gender: 'Male',
-      dob: '2008-03-12',
-      phone: '0321-9876543',
-      guardianName: 'Tariq Ahmad',
-      guardianPhone: '0311-9998877',
-      address: 'Faisalabad, Pakistan',
-      admissionDate: '2023-05-01',
-      previousSchool: 'The Educators',
-      profile: 'assets/images/user-grid/user-grid-img3.png',
-      status: 'inactive'
-    }
-  ];
-
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private studentService: StudentService,
+    private standardService: StandardService,
+    private sectionService: SectionService
+  ) { }
 
   ngOnInit() {
-    // Get staff ID from route
     this.route.params.subscribe(params => {
-      this.studentId = +params['id']; // + converts string to number
-      this.loadStudentData();
+      this.studentId = +params['id'];
+      if (this.studentId) {
+        this.loadStudentData();
+        this.loadFilterData();
+      }
     });
   }
 
-  // Load staff data from localStorage
-  loadStudentFromStorage(): any[] | null {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : null;
-  }
-
-  // Save staff data to localStorage
-  saveStudentToStorage(): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.studentList));
-  }
-
-  // Show modal by ID
-  showModal(id: string) {
-    const modalEl = document.getElementById(id);
-    if (modalEl) {
-      const modal = new bootstrap.Modal(modalEl);
-      modal.show();
-    }
+  loadFilterData() {
+    this.standardService.getStandards().subscribe(res => this.classes = res);
+    this.sectionService.getSections().subscribe(res => this.sections = res);
   }
 
   loadStudentData() {
-    // Reload from localStorage to get latest data
-    this.studentList = this.loadStudentFromStorage() || this.studentList;
-    // Find staff by ID
-    this.studentData = this.studentList.find(student => student.id === this.studentId);
+    this.loading = true;
+    this.studentService.GetStudent(this.studentId).subscribe({
+      next: (res) => {
+        this.studentData = res;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error("Error loading student:", err);
+        Swal.fire('Error', 'Could not load student data', 'error');
+        this.loading = false;
+      }
+    });
   }
 
   saveStudent() {
     if (this.studentData) {
-      // Update the staff in the list
-      const index = this.studentList.findIndex(s => s.id === this.studentId);
-      if (index !== -1) {
-        this.studentList[index] = { ...this.studentData };
-      }
-
-      // Save to localStorage
-      this.saveStudentToStorage();
-
-      // Show success modal
-      this.modalMessage = 'Student information updated successfully!';
-      this.modalType = 'success';
-      this.showModal('messageModal');
-
-      // Navigate back to staff list after delay
-      setTimeout(() => this.router.navigate(['/student-list']), 1200);
+      this.loading = true;
+      this.studentService.UpdateStudent(this.studentData).subscribe({
+        next: () => {
+          this.loading = false;
+          Swal.fire({
+            title: 'Updated!',
+            text: 'Student information updated successfully.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          }).then(() => {
+            this.router.navigate(['/student-list']);
+          });
+        },
+        error: (err) => {
+          this.loading = false;
+          console.error("Update error:", err);
+          Swal.fire('Error', 'Failed to update student information', 'error');
+        }
+      });
     }
   }
 
@@ -127,8 +98,8 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
 
-    $("#imageUpload").change(function () {
-      this.readURL(this);
+    $("#imageUpload").on('change', (event: any) => {
+      this.readURL(event.target);
     });
 
     // ================== Password Show Hide Js Start ==========
@@ -167,10 +138,13 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
     // Example: Save to localStorage or API
     localStorage.setItem('studentNotificationSettings', JSON.stringify(this.notificationSettings));
 
-    this.modalType = 'success';
-    this.modalMessage = 'Notification settings saved successfully!';
-    const modal = new (window as any).bootstrap.Modal(document.getElementById('messageModal'));
-    modal.show();
+    Swal.fire({
+      title: 'Saved!',
+      text: 'Notification settings saved successfully.',
+      icon: 'success',
+      timer: 1500,
+      showConfirmButton: false
+    });
   }
 
 }

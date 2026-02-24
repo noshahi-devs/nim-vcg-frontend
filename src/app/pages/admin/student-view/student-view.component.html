@@ -1,179 +1,351 @@
 <div class="dashboard-main-body">
-  <app-breadcrumb [title]="title"></app-breadcrumb>
+  <app-breadcrumb [title]="title" [main-title]="'Management'"></app-breadcrumb>
 
-  <div class="container-fluid py-4">
-    <!-- Profile Header Card -->
-    <div class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden">
-      <div class="profile-header-bg position-relative" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 180px;">
-        <div class="position-absolute bottom-0 start-0 w-100 px-4 pb-3">
-          <div class="d-flex align-items-end">
-            <div class="profile-image-wrapper position-relative">
-              <img
-                [src]="studentData?.profile || 'assets/images/user-grid/user-grid-img1.png'"
-                [alt]="studentData?.name"
-                class="rounded-circle border border-4 border-white shadow-lg object-fit-cover my-8 mx-16"
-                width="140"
-                height="140"
-              />
-              <span 
-                class="position-absolute bottom-0 end-0 badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': studentData?.status === 'active',
-                  'bg-danger': studentData?.status === 'inactive'
-                }"
-                style="padding: 8px 12px; font-size: 11px;">
-                {{ studentData?.status }}
-              </span>
-            </div>
-            <div class="ms-24 mb-2 text-white">
-              <h3 class="fw-bold mb-1">{{ studentData?.name }}</h3>
-              <div class="d-flex align-items-center gap-28">
-                <span class="badge bg-white bg-opacity-0 text-black px-8 py-2">
-                  <iconify-icon icon="solar:case-bold-duotone" class="me-1"></iconify-icon>
-                  Roll No: {{ studentData?.rollNo }}
-                </span>
-                <span class="text-white-50 small">
-                  <iconify-icon icon="solar:calendar-bold-duotone" class="me-1"></iconify-icon>
-                  Joined {{ studentData?.admissionDate }}
-                </span>
-              </div>
-            </div>
+  <div class="card h-100 p-0 radius-12 overflow-hidden border-0 shadow-sm">
+    <!-- PREMIUM HEADER -->
+    <div class="profile-header-premium position-relative">
+      <div class="profile-cover-bg"></div>
+      <div class="profile-header-content p-24 d-flex align-items-end gap-24">
+        <div class="profile-image-container">
+          <img [src]="getStudentImage()" class="student-profile-img shadow-lg" alt="Student Profile">
+          <span class="status-indicator"
+            [ngClass]="studentData?.status === 'Active' ? 'bg-success' : 'bg-danger'"></span>
+        </div>
+        <div class="profile-basic-info flex-grow-1">
+          <div class="d-flex align-items-center gap-12 mb-4">
+            <h2 class="text-white mb-0 fw-bold">{{ studentData?.studentName }}</h2>
+            <span class="badge bg-white bg-opacity-20 text-white border-0 py-6 px-12 radius-pill text-xs">
+              ID: {{ studentData?.studentId }}
+            </span>
+          </div>
+          <p class="text-white text-opacity-80 mb-8 d-flex align-items-center gap-8">
+            <iconify-icon icon="solar:diploma-bold" class="text-lg"></iconify-icon>
+            {{ getClassName(studentData?.standardId) }} (Section {{ studentData?.section }})
+          </p>
+          <div class="d-flex align-items-center gap-24">
+            <span class="text-white text-opacity-70 text-xs d-flex align-items-center gap-4">
+              <iconify-icon icon="solar:calendar-bold"></iconify-icon>
+              Joined: {{ studentData?.admissionDate | date:'mediumDate' }}
+            </span>
+            <span class="text-white text-opacity-70 text-xs d-flex align-items-center gap-4">
+              <iconify-icon icon="solar:ticket-bold"></iconify-icon>
+              Roll No: {{ studentData?.admissionNo }}
+            </span>
           </div>
         </div>
-      </div>
-
-      <!-- Body -->
-      <div class="card-body" style="padding-top: 60px;">
-        <div class="row g-3 mb-24">
-          <div class="col-md-4">
-            <div class="d-flex align-items-center">
-              <div class="icon-box bg-primary bg-opacity-10 rounded-3 p-3 me-3">
-                <iconify-icon icon="solar:letter-bold-duotone" class="text-primary fs-4"></iconify-icon>
-              </div>
-              <div>
-                <p class="text-muted small mb-0">Guardian Name</p>
-                <p class="fw-semibold mb-2">{{ studentData?.guardianName }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="d-flex align-items-center">
-              <div class="icon-box bg-success bg-opacity-10 rounded-3 p-3 me-3">
-                <iconify-icon icon="solar:phone-bold-duotone" class="text-success fs-4"></iconify-icon>
-              </div>
-              <div>
-                <p class="text-muted small mb-0">Guardian Phone</p>
-                <p class="fw-semibold mb-0">{{ studentData?.guardianPhone }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="d-flex align-items-center">
-              <div class="icon-box bg-info bg-opacity-10 rounded-3 p-3 me-3">
-                <iconify-icon icon="solar:diploma-bold-duotone" class="text-info fs-4"></iconify-icon>
-              </div>
-              <div>
-                <p class="text-muted small mb-0">Previous School</p>
-                <p class="fw-semibold mb-0">{{ studentData?.previousSchool }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Student Information Grid -->
-        <div class="border-top pt-24">
-          <h5 class="fw-semibold mb-4 d-flex align-items-center">
-            <iconify-icon icon="solar:user-id-bold-duotone" class="me-2 text-primary fs-5"></iconify-icon>
-            Student Information
-          </h5>
-
-          <div class="info-grid">
-            <div class="row g-0">
-              <!-- Row 1 -->
-              <div class="col-md-6">
-                <div class="info-item py-3 px-4 border-bottom border-end">
-                  <div class="field-label text-muted small mb-1">Full Name</div>
-                  <div class="field-value fw-semibold text-dark">{{ studentData?.name }}</div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-item py-3 px-4 border-bottom">
-                  <div class="field-label text-muted small mb-1">Roll Number</div>
-                  <div class="field-value fw-semibold text-dark">{{ studentData?.rollNo }}</div>
-                </div>
-              </div>
-
-              <!-- Row 2 -->
-              <div class="col-md-6">
-                <div class="info-item py-3 px-4 border-bottom border-end">
-                  <div class="field-label text-muted small mb-1">Class</div>
-                  <div class="field-value fw-semibold text-dark">{{ studentData?.class }}</div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-item py-3 px-4 border-bottom">
-                  <div class="field-label text-muted small mb-1">Section</div>
-                  <div class="field-value fw-semibold text-dark">{{ studentData?.section }}</div>
-                </div>
-              </div>
-
-              <!-- Row 3 -->
-              <div class="col-md-6">
-                <div class="info-item py-3 px-4 border-bottom border-end">
-                  <div class="field-label text-muted small mb-1">Gender</div>
-                  <div class="field-value fw-semibold text-dark">{{ studentData?.gender }}</div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-item py-3 px-4 border-bottom">
-                  <div class="field-label text-muted small mb-1">Date of Birth</div>
-                  <div class="field-value fw-semibold text-dark">{{ studentData?.dob }}</div>
-                </div>
-              </div>
-
-              <!-- Row 4 -->
-              <div class="col-md-6">
-                <div class="info-item py-3 px-4 border-bottom border-end">
-                  <div class="field-label text-muted small mb-1">Phone Number</div>
-                  <div class="field-value fw-semibold text-dark">{{ studentData?.phone }}</div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-item py-3 px-4 border-bottom">
-                  <div class="field-label text-muted small mb-1">Address</div>
-                  <div class="field-value fw-semibold text-dark">{{ studentData?.address }}</div>
-                </div>
-              </div>
-
-              <!-- Row 5 -->
-              <div class="col-md-6">
-                <div class="info-item py-3 px-4 border-end">
-                  <div class="field-label text-muted small mb-1">Admission Date</div>
-                  <div class="field-value fw-semibold text-dark">{{ studentData?.admissionDate }}</div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-item py-3 px-4">
-                  <div class="field-label text-muted small mb-1">Status</div>
-                  <div class="field-value fw-semibold text-dark text-capitalize">{{ studentData?.status }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="profile-actions d-flex gap-8 mb-8">
+          <button (click)="editStudent()" class="btn btn-white btn-sm px-16 radius-8 d-flex align-items-center gap-8">
+            <iconify-icon icon="solar:pen-bold"></iconify-icon> Edit Profile
+          </button>
+          <button (click)="goBack()" class="btn btn-outline-white btn-sm px-16 radius-8">
+            Back to List
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="d-flex justify-content-center gap-3 mt-3">
-      <button (click)="goBack()" class="btn btn-outline-secondary px-5 py-2 rounded-3">
-        <iconify-icon icon="solar:arrow-left-linear" class="me-2"></iconify-icon>
-        Back to List
+    <!-- TAB NAVIGATION -->
+    <div class="profile-tabs-nav border-bottom px-24 d-flex gap-32">
+      <button class="tab-item" [class.active]="activeTab === 'personal'" (click)="setTab('personal')">
+        <iconify-icon icon="solar:user-bold-duotone"></iconify-icon> Personal
       </button>
-      <button (click)="editstudent(studentData?.id)" class="btn btn-primary px-5 py-2 rounded-3">
-        <iconify-icon icon="solar:pen-bold-duotone" class="me-2"></iconify-icon>
-        Edit Profile
+      <button class="tab-item" [class.active]="activeTab === 'attendance'" (click)="setTab('attendance')">
+        <iconify-icon icon="solar:calendar-minimalistic-bold-duotone"></iconify-icon> Attendance
       </button>
+      <button class="tab-item" [class.active]="activeTab === 'academic'" (click)="setTab('academic')">
+        <iconify-icon icon="solar:notebook-bold-duotone"></iconify-icon> Academic
+      </button>
+      <button class="tab-item" [class.active]="activeTab === 'fee'" (click)="setTab('fee')">
+        <iconify-icon icon="solar:card-2-bold-duotone"></iconify-icon> Fees & Payments
+      </button>
+    </div>
+
+    <div class="card-body p-24">
+      <!-- PERSONAL TAB -->
+      <div *ngIf="activeTab === 'personal'" class="animate-fade-in">
+        <div class="row gy-4">
+          <div class="col-lg-6">
+            <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8">
+              <iconify-icon icon="solar:phone-calling-bold-duotone" class="text-primary"></iconify-icon>
+              Contact Details
+            </h6>
+            <div class="info-list-premium">
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-primary-focus">
+                    <iconify-icon icon="solar:phone-bold" class="text-primary"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Phone Number</span>
+                </div>
+                <span class="fw-bold text-neutral-800">{{ studentData?.studentContactNumber1 || 'N/A' }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-info-focus">
+                    <iconify-icon icon="solar:outgoing-call-bold" class="text-info"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Secondary Phone</span>
+                </div>
+                <span class="fw-bold text-neutral-800">{{ studentData?.studentContactNumber2 || 'N/A' }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-warning-focus">
+                    <iconify-icon icon="solar:letter-bold" class="text-warning"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Email Address</span>
+                </div>
+                <span class="fw-bold text-neutral-800">{{ studentData?.studentEmail || 'N/A' }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-start py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-success-focus">
+                    <iconify-icon icon="solar:map-point-bold" class="text-success"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Current Address</span>
+                </div>
+                <span class="fw-bold text-neutral-800 text-end ps-24 max-w-250">{{ studentData?.temporaryAddress ||
+                  'N/A' }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-start py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-danger-focus">
+                    <iconify-icon icon="solar:home-2-bold" class="text-danger"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Permanent Address</span>
+                </div>
+                <span class="fw-bold text-neutral-800 text-end ps-24 max-w-250">{{ studentData?.permanentAddress ||
+                  'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8">
+              <iconify-icon icon="solar:user-speak-bold-duotone" class="text-primary"></iconify-icon>
+              Guardian Information
+            </h6>
+            <div class="info-list-premium">
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-indigo-focus">
+                    <iconify-icon icon="solar:users-group-two-rounded-bold" class="text-indigo"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Father's Name</span>
+                </div>
+                <span class="fw-bold text-neutral-800">{{ studentData?.fatherName || 'N/A' }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-purple-focus">
+                    <iconify-icon icon="solar:card-id-bold" class="text-purple"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Father's NID</span>
+                </div>
+                <span class="fw-bold text-neutral-800">{{ studentData?.fatherNID || 'N/A' }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-pink-focus">
+                    <iconify-icon icon="solar:user-hands-bold" class="text-pink"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Mother's Name</span>
+                </div>
+                <span class="fw-bold text-neutral-800">{{ studentData?.motherName || 'N/A' }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-cyan-focus">
+                    <iconify-icon icon="solar:shield-user-bold" class="text-cyan"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Local Guardian</span>
+                </div>
+                <span class="fw-bold text-neutral-800">{{ studentData?.localGuardianName || 'N/A' }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-teal-focus">
+                    <iconify-icon icon="solar:phone-bold-duotone" class="text-teal"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Guardian Phone</span>
+                </div>
+                <span class="fw-bold text-neutral-800">{{ studentData?.localGuardianContactNumber || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-32">
+            <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8">
+              <iconify-icon icon="solar:notification-lines-remove-bold-duotone" class="text-primary"></iconify-icon>
+              Other Personal Info
+            </h6>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 gy-4">
+              <div class="col">
+                <div
+                  class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
+                  <div class="tile-icon bg-primary-focus radius-12 p-12">
+                    <iconify-icon icon="solar:users-group-rounded-bold" class="text-2xl text-primary"></iconify-icon>
+                  </div>
+                  <div class="tile-content">
+                    <span class="text-xs text-secondary-light fw-bold uppercase ls-1">Gender</span>
+                    <h5 class="mb-0 text-lg fw-bold text-neutral-800 mt-4">{{ studentData?.studentGender }}</h5>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div
+                  class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
+                  <div class="tile-icon bg-success-focus radius-12 p-12">
+                    <iconify-icon icon="solar:calendar-bold" class="text-2xl text-success"></iconify-icon>
+                  </div>
+                  <div class="tile-content">
+                    <span class="text-xs text-secondary-light fw-bold uppercase ls-1">Date of Birth</span>
+                    <h5 class="mb-0 text-lg fw-bold text-neutral-800 mt-4">{{ (studentData?.studentDOB &&
+                      studentData?.studentDOB.toString() !== '0001-01-01T00:00:00') ? (studentData?.studentDOB |
+                      date:'mediumDate') : 'N/A' }}</h5>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div
+                  class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
+                  <div class="tile-icon bg-info-focus radius-12 p-12">
+                    <iconify-icon icon="solar:medal-star-bold" class="text-2xl text-info"></iconify-icon>
+                  </div>
+                  <div class="tile-content">
+                    <span class="text-xs text-secondary-light fw-bold uppercase ls-1">Religion</span>
+                    <h5 class="mb-0 text-lg fw-bold text-neutral-800 mt-4">{{ studentData?.studentReligion || 'N/A' }}
+                    </h5>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div
+                  class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
+                  <div class="tile-icon bg-danger-focus radius-12 p-12">
+                    <iconify-icon icon="solar:bomb-minimalistic-bold" class="text-2xl text-danger"></iconify-icon>
+                  </div>
+                  <div class="tile-content">
+                    <span class="text-xs text-secondary-light fw-bold uppercase ls-1">Blood Group</span>
+                    <h5 class="mb-0 text-lg fw-bold text-neutral-800 mt-4">{{ studentData?.studentBloodGroup || 'N/A' }}
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATTENDANCE TAB -->
+      <div *ngIf="activeTab === 'attendance'" class="animate-fade-in">
+        <div class="d-flex justify-content-between align-items-center mb-24">
+          <h6 class="mb-0 text-neutral-800 fw-semibold">Recent Attendance (Last 30 Days)</h6>
+          <div class="attendance-summary d-flex gap-16">
+            <span
+              class="badge bg-success-focus text-success-600 border-success-main border px-12 py-6 radius-8">Present:
+              85%</span>
+            <span class="badge bg-danger-focus text-danger-600 border-danger-main border px-12 py-6 radius-8">Absent:
+              10%</span>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table basic-table mb-0">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let record of attendanceHistory">
+                <td>{{ record.date | date:'mediumDate' }}</td>
+                <td>
+                  <span class="badge px-12 py-4 radius-pill"
+                    [ngClass]="(record.status === 'Present' || record.isPresent) ? 'bg-success-focus text-success' : 'bg-danger-focus text-danger'">
+                    {{ record.status || (record.isPresent ? 'Present' : 'Absent') }}
+                  </span>
+                </td>
+                <td>{{ record.remarks || record.description || '-' }}</td>
+              </tr>
+              <tr *ngIf="attendanceHistory.length === 0">
+                <td colspan="3" class="text-center py-24 text-secondary-light">No attendance records found for the
+                  recent period.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ACADEMIC TAB -->
+      <div *ngIf="activeTab === 'academic'" class="animate-fade-in">
+        <h6 class="mb-24 text-neutral-800 fw-semibold">Academic Performance & Marks</h6>
+        <div class="row gy-4">
+          <div class="col-lg-4" *ngFor="let mark of marksHistory">
+            <div class="academic-card p-20 radius-16 bg-base border shadow-sm h-100">
+              <div class="d-flex justify-content-between align-items-center mb-16">
+                <span class="fw-bold text-primary">{{ mark.subject?.subjectName }}</span>
+                <span class="badge px-12 py-4 radius-pill"
+                  [ngClass]="mark.passStatus === 'Passed' ? 'bg-success-focus text-success' : 'bg-danger-focus text-danger'">
+                  {{ mark.passStatus }}
+                </span>
+              </div>
+              <div class="progress-info mb-12">
+                <div class="d-flex justify-content-between text-xs mb-4">
+                  <span>Score: {{ mark.obtainedScore }}/{{ mark.totalMarks }}</span>
+                  <span class="fw-bold">{{ (mark.obtainedScore / mark.totalMarks * 100).toFixed(1) }}%</span>
+                </div>
+                <div class="progress h-8-px radius-pill">
+                  <div class="progress-bar radius-pill" role="progressbar"
+                    [style.width]="(mark.obtainedScore / mark.totalMarks * 100) + '%'"
+                    [class]="mark.obtainedScore / mark.totalMarks >= 0.5 ? 'bg-primary' : 'bg-danger'"></div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-xs text-secondary-light">Grade: <span class="fw-bold text-neutral-800">{{ mark.grade
+                    }}</span></span>
+                <span class="text-xs text-secondary-light">Pass Marks: {{ mark.passMarks }}</span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="marksHistory.length === 0" class="col-12 text-center py-40">
+            <iconify-icon icon="solar:document-text-bold-duotone" class="text-neutral-200"
+              style="font-size: 64px;"></iconify-icon>
+            <p class="mt-16 text-secondary-light">No academic marks recorded yet for this student.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEE TAB -->
+      <div *ngIf="activeTab === 'fee'" class="animate-fade-in">
+        <h6 class="mb-24 text-neutral-800 fw-semibold">Fee History & Payments</h6>
+        <div class="table-responsive">
+          <table class="table basic-table mb-0">
+            <thead>
+              <tr>
+                <th>Payment ID</th>
+                <th>Total Fee</th>
+                <th>Waver/Discount</th>
+                <th>Amount Paid</th>
+                <th>Remaining</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let payment of paymentHistory">
+                <td>#{{ payment.monthlyPaymentId }}</td>
+                <td>{{ payment.totalAmount }}</td>
+                <td>{{ payment.waver }}</td>
+                <td><span class="fw-bold text-success">{{ payment.amountPaid }}</span></td>
+                <td><span class="text-danger">{{ payment.amountRemaining }}</span></td>
+                <td>{{ payment.paymentDate | date:'mediumDate' }}</td>
+              </tr>
+              <tr *ngIf="paymentHistory.length === 0">
+                <td colspan="6" class="text-center py-24 text-secondary-light">No payment history available.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

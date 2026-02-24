@@ -1,104 +1,113 @@
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { StudentService } from '../../../services/student.service';
+import { StandardService } from '../../../services/standard.service';
+import { AttendanceService } from '../../../services/attendance.service';
+import { MarksService } from '../../../services/marks.service';
+import { MonthlyPaymentService } from '../../../services/monthly-payment.service';
+import { Student } from '../../../Models/student';
+import { Standard } from '../../../Models/standard';
+import { Attendance } from '../../../Models/attendance';
+import { Mark } from '../../../Models/marks';
+import { MonthlyPayment } from '../../../Models/monthly-payment';
+import { forkJoin } from 'rxjs';
 declare var $: any;
 @Component({
   selector: 'app-student-view',
   standalone: true,
-  imports: [BreadcrumbComponent, CommonModule],
+  imports: [BreadcrumbComponent, CommonModule, RouterLink],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './student-view.component.html',
   styleUrl: './student-view.component.css'
 })
 export class StudentViewComponent implements OnInit, AfterViewInit {
-  editstudent(arg0: any) {
-    throw new Error('Method not implemented.');
-  }
   title = 'View Profile';
   studentId: number = 0;
-  studentData: any = null;
-  private readonly STORAGE_KEY = 'studentList';
+  studentData: Student | null = null;
+  classList: Standard[] = [];
+  attendanceHistory: any[] = [];
+  marksHistory: Mark[] = [];
+  paymentHistory: MonthlyPayment[] = [];
+  activeTab: string = 'personal';
 
-  // Sample student data - replace with actual service call
-  studentList = this.loadStudentFromStorage() || [
-    {
-      id: 1,
-      name: 'Ayesha Khan',
-      rollNo: '23',
-      class: '9',
-      section: 'A',
-      gender: 'Female',
-      dob: '2009-05-15',
-      phone: '0312-1234567',
-      guardianName: 'Khalid Khan',
-      guardianPhone: '0300-1112233',
-      address: 'Lahore, Pakistan',
-      admissionDate: '2024-04-10',
-      previousSchool: 'Allied School',
-      profile: 'assets/images/user-grid/user-grid-img2.png',
-      status: 'active'
-    },
-    {
-      id: 2,
-      name: 'Bilal Ahmad',
-      rollNo: '45',
-      class: '10',
-      section: 'B',
-      gender: 'Male',
-      dob: '2008-03-12',
-      phone: '0321-9876543',
-      guardianName: 'Tariq Ahmad',
-      guardianPhone: '0311-9998877',
-      address: 'Faisalabad, Pakistan',
-      admissionDate: '2023-05-01',
-      previousSchool: 'The Educators',
-      profile: 'assets/images/user-grid/user-grid-img3.png',
-      status: 'inactive'
-    }
-  ];
-
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private studentService: StudentService,
+    private standardService: StandardService,
+    private attendanceService: AttendanceService,
+    private marksService: MarksService,
+    private paymentService: MonthlyPaymentService
+  ) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      this.studentId = +params['id']; // get ID
-      this.loadStudentData(); // ✅ now fetches properly
+      this.studentId = +params['id'];
+      this.loadAllData();
     });
   }
 
-  loadStudentData() {
-    const loadedList = this.loadStudentFromStorage();
-    this.studentList = loadedList || this.studentList;
-    this.studentData = this.studentList.find(student => +student.id === +this.studentId);
+  loadAllData() {
+    this.studentService.GetStudent(this.studentId).subscribe({
+      next: (res) => {
+        this.studentData = res;
+        this.loadSupplementalData();
+      },
+      error: (err) => console.error("Error loading student:", err)
+    });
   }
 
-  // Load student data from localStorage
-  loadStudentFromStorage(): any[] | null {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : null;
+  loadSupplementalData() {
+    // Load Classes
+    this.standardService.getStandards().subscribe(res => this.classList = res);
+
+    // Load Attendance (simplified for now, usually needs dates)
+    const today = new Date();
+    const lastMonth = new Date();
+    lastMonth.setMonth(today.getMonth() - 1);
+
+    this.attendanceService.getStudentAttendanceReport(
+      this.studentId,
+      lastMonth.toISOString().split('T')[0],
+      today.toISOString().split('T')[0]
+    ).subscribe(res => this.attendanceHistory = res);
+
+    // Load Marks
+    this.marksService.getAllMarks().subscribe(res => {
+      this.marksHistory = res.filter(m => m.studentId === this.studentId);
+    });
+
+    // Load Payments
+    this.paymentService.getAllMonthlyPayments().subscribe(res => {
+      this.paymentHistory = res.filter(p => p.studentId === this.studentId);
+    });
   }
 
-  loadstudentData() {
-    // Reload from localStorage or default list
-    let loadedList = this.loadStudentFromStorage();
+  setTab(tab: string) {
+    this.activeTab = tab;
+  }
 
-    // If localStorage data exists but doesn't have role field, clear it and use default
-    if (loadedList && loadedList.length > 0 && !loadedList[0].hasOwnProperty('roleNo')) {
-      localStorage.removeItem(this.STORAGE_KEY);
-      loadedList = null;
+  getClassName(id: number | null): string {
+    if (!id) return 'N/A';
+    const standard = this.classList.find(c => c.standardId === id);
+    return standard ? standard.standardName : `Class ${id}`;
+  }
+
+  getStudentImage(): string {
+    if (this.studentData?.imageUpload?.imageData) {
+      return this.studentData.imageUpload.imageData;
     }
-
-    this.studentList = loadedList || this.studentList;
-
-    // Convert to number and find matching student
-    this.studentData = this.studentList.find(student => +student.id === +this.studentId);
+    return 'assets/images/user-grid/user-grid-img2.png';
   }
-
 
   goBack() {
-    // Navigate back to student list
     this.router.navigate(['/student-list']);
+  }
+
+  editStudent() {
+    this.router.navigate(['/student-edit', this.studentId]);
   }
 
   ngAfterViewInit() {

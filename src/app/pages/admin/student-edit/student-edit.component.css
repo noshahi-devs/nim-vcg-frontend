@@ -1,58 +1,242 @@
-
-
-/* Mobile Devices (Portrait) - 320px to 575px */
-@media (max-width: 575px) {
-
-  /* Buttons */
-  .d-flex.gap-3 {
-    flex-direction: row !important;
-    gap: 0.75rem !important;
-  }
-  
-  .d-flex.gap-3 button {
-    width: 100%;
-    padding: 0.75rem 1.5rem !important;
-    font-size: 0.875rem !important;
-  }
-  
-}
-/* Mobile Devices (Landscape) & Small Tablets - 576px to 767px */
-@media (min-width: 576px) and (max-width: 767px) {
-  /* Buttons */
-  .d-flex.gap-3 button {
-    padding: 0.75rem 2rem !important;
-  }
-}
-
-/* Prevent horizontal scroll */
-body,
-html {
-  overflow-x: hidden;
-}
-
+/* ========================
+   STUDENT EDIT PAGE STYLES
+   ======================== */
 .dashboard-main-body {
-  overflow-x: hidden;
+  padding: 24px;
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
-/* Smooth transitions for all interactive elements */
-* {
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+/* ── Form Card ── */
+.premium-card {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
 }
 
-/* Focus styles for accessibility */
-.form-control:focus,
-.form-select:focus,
-.btn:focus {
+.card-header-premium {
+  padding: 24px 32px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-title-wrap h4 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: -0.02em;
+}
+
+.header-title-wrap p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+/* ── Tabs (Modern) ── */
+.premium-tabs {
+  padding: 0 32px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.nav-link-premium {
+  padding: 20px 0;
+  margin-right: 32px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.nav-link-premium:hover {
+  color: #1e293b;
+}
+
+.nav-link-premium.active {
+  color: #6366f1;
+  border-bottom-color: #6366f1;
+}
+
+/* ── Avatar Section ── */
+.avatar-section {
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: linear-gradient(to right, #f8faff, #ffffff);
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.avatar-upload-wrap {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.avatar-preview-box {
+  width: 100%;
+  height: 100%;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 4px solid #ffffff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-edit-btn {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  width: 32px;
+  height: 32px;
+  background: #6366f1;
+  color: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
+  transition: transform 0.2s;
+}
+
+.avatar-edit-btn:hover {
+  transform: scale(1.1);
+}
+
+/* ── Form Layout ── */
+.form-body-premium {
+  padding: 32px;
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  margin-bottom: 24px;
+}
+
+.section-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6366f1;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+}
+
+.form-group-premium {
+  margin-bottom: 24px;
+}
+
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.field-input,
+.field-select {
+  width: 100%;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #1e293b;
+  transition: all 0.2s;
   outline: none;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
 
-/* Improve touch targets on mobile */
-@media (max-width: 767px) {
-  .nav-link,
-  .btn,
-  .form-check-input {
-    min-height: 44px;
-    min-width: 44px;
+.field-input:focus,
+.field-select:focus {
+  background: #ffffff;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.field-input::placeholder {
+  color: #cbd5e1;
+}
+
+/* ── Action Buttons ── */
+.form-footer {
+  padding: 24px 32px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.btn-cancel {
+  padding: 12px 32px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fee2e2;
+}
+
+.btn-save-premium {
+  padding: 12px 48px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-save-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.4);
+}
+
+/* ── Animation ── */
+.fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
