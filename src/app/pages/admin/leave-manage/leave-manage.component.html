@@ -125,9 +125,9 @@
             </td>
             <td class="text-center">
               <span class="status-pill" [ngClass]="{
-                  'pending': leave.status === 0,
-                  'approved': leave.status === 1,
-                  'rejected': leave.status === 2
+                  'pending': leave.status == 0,
+                  'approved': leave.status == 1,
+                  'rejected': leave.status == 2
                 }">
                 <iconify-icon
                   [icon]="leave.status === 0 ? 'solar:clock-circle-linear' : (leave.status === 1 ? 'solar:check-circle-linear' : 'solar:close-circle-linear')"></iconify-icon>
@@ -136,7 +136,7 @@
             </td>
             <td class="text-center">
               <div class="d-flex align-items-center justify-content-center gap-1"
-                *ngIf="leave.status === 0 && hasRole('Principal')">
+                *ngIf="leave.status == 0 && (hasRole('Principal') || hasRole('Admin'))">
                 <button type="button" (click)="openApproveModal(leave)" class="decision-btn-glass approve"
                   title="Approve">
                   <iconify-icon icon="solar:check-read-bold"></iconify-icon>
@@ -145,7 +145,7 @@
                   <iconify-icon icon="solar:close-square-bold"></iconify-icon>
                 </button>
               </div>
-              <iconify-icon *ngIf="leave.status !== 0" icon="solar:verified-check-bold-duotone"
+              <iconify-icon *ngIf="leave.status != 0" icon="solar:verified-check-bold-duotone"
                 class="processed-icon"></iconify-icon>
             </td>
           </tr>

@@ -63,7 +63,12 @@ export class LeaveManageComponent implements OnInit {
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (data) => {
-          this.allLeaves = data;
+          // Normalize API data (handles both string and number enums)
+          this.allLeaves = data.map(leave => ({
+            ...leave,
+            status: typeof leave.status === 'string' ? LeaveStatus[leave.status as keyof typeof LeaveStatus] : leave.status,
+            leaveType: typeof leave.leaveType === 'string' ? LeaveType[leave.leaveType as keyof typeof LeaveType] : leave.leaveType
+          }));
           this.applyFilters();
         },
         error: (err) => {
@@ -201,15 +206,15 @@ export class LeaveManageComponent implements OnInit {
   }
 
   get pendingLeaves(): number {
-    return this.allLeaves.filter(l => l.status === LeaveStatus.Pending).length;
+    return this.allLeaves.filter(l => l.status == LeaveStatus.Pending).length;
   }
 
   get approvedLeaves(): number {
-    return this.allLeaves.filter(l => l.status === LeaveStatus.Approved).length;
+    return this.allLeaves.filter(l => l.status == LeaveStatus.Approved).length;
   }
 
   get rejectedLeaves(): number {
-    return this.allLeaves.filter(l => l.status === LeaveStatus.Rejected).length;
+    return this.allLeaves.filter(l => l.status == LeaveStatus.Rejected).length;
   }
 
   // Pagination

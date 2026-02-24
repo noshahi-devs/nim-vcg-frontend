@@ -118,14 +118,14 @@ export interface SubjectAnalytics {
   providedIn: 'root'
 })
 export class ExamService {
-  private apiUrl = 'https://visioncollegegojra.com/api';
+  private apiUrl = 'https://localhost:7225/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // ============= EXAM CRUD =============
-  
-  getAllExams(): Observable<Exam[]> {
-    return this.http.get<Exam[]>(`${this.apiUrl}/Exams`);
+
+  getAllExams(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/ExamSchedules/GetExamScheduleOptions`);
   }
 
   getExamById(examId: number): Observable<Exam> {
@@ -147,7 +147,7 @@ export class ExamService {
   }
 
   // ============= EXAM SCHEDULE CRUD =============
-  
+
   getSchedulesByExam(examId: number): Observable<ExamSchedule[]> {
     return this.http.get<ExamSchedule[]>(`${this.apiUrl}/ExamSchedules/exam/${examId}`);
   }
@@ -171,7 +171,7 @@ export class ExamService {
   }
 
   // ============= MARKS ENTRY CRUD =============
-  
+
   getMarksByExamAndSubject(examId: number, subjectId: number): Observable<MarksEntry[]> {
     return this.http.get<MarksEntry[]>(`${this.apiUrl}/Marks/exam/${examId}/subject/${subjectId}`);
   }
@@ -200,7 +200,7 @@ export class ExamService {
   }
 
   // ============= GRADE SCALE CRUD =============
-  
+
   getAllGradeScales(): Observable<GradeScale[]> {
     return this.http.get<GradeScale[]>(`${this.apiUrl}/GradeScales`);
   }
@@ -228,7 +228,7 @@ export class ExamService {
   }
 
   // ============= EXAM RESULTS =============
-  
+
   getResultsByExam(examId: number, classId?: number, sectionId?: number): Observable<ExamResult[]> {
     let url = `${this.apiUrl}/Results/exam/${examId}`;
     const params = [];
@@ -256,7 +256,7 @@ export class ExamService {
   }
 
   // ============= EXAM ANALYTICS =============
-  
+
   getExamAnalytics(examId: number, classId?: number, sectionId?: number): Observable<ExamAnalytics> {
     let url = `${this.apiUrl}/Analytics/exam/${examId}`;
     const params = [];
@@ -267,7 +267,7 @@ export class ExamService {
   }
 
   // ============= UTILITY METHODS =============
-  
+
   calculateGrade(percentage: number): string {
     if (percentage >= 90) return 'A+';
     if (percentage >= 80) return 'A';

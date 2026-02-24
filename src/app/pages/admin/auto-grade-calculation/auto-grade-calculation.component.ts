@@ -45,7 +45,7 @@ export class AutoGradeCalculationComponent implements OnInit {
   Math = Math;
 
   // Grade Calculation functionality
-  exams: Exam[] = [];
+  exams: any[] = [];
   selectedGenerateExamId: number = 0;
   isGeneratingResult: boolean = false;
 
@@ -58,8 +58,20 @@ export class AutoGradeCalculationComponent implements OnInit {
 
   loadExams() {
     this.examService.getAllExams().subscribe({
-      next: (res) => {
-        this.exams = res || [];
+      next: (res: any[]) => {
+        // Debug: Log the keys of the first item to catch casing issues
+        if (res && res.length > 0) {
+          console.log('Exam API Keys:', Object.keys(res[0]));
+        }
+
+        this.exams = (res || []).map(e => ({
+          examId: e.examScheduleId || e.ExamScheduleId || e.examId || 0,
+          examName: e.examScheduleName || e.ExamScheduleName || e.examName || 'Unknown Exam',
+          examType: 'Term'
+        }));
+
+        console.log('Mapped Exams:', this.exams);
+
         if (this.exams.length === 0) {
           this.loadMockExams();
         }
@@ -140,13 +152,13 @@ export class AutoGradeCalculationComponent implements OnInit {
         },
         error: (err) => {
           console.error('Generation Error:', err);
-          // Auto fallback to success if API causes 502 with mock data
+          const errorMsg = err.error?.message || err.error || 'Check marks entry or grade scale settings.';
+
           Swal.fire({
-            icon: 'success',
-            title: 'Mock Success!',
-            text: 'Results generated successfully (simulated due to API error).',
-            timer: 2000,
-            showConfirmButton: false
+            icon: 'error',
+            title: 'Calculation Failed',
+            text: `Error: ${errorMsg}`,
+            confirmButtonText: 'OK'
           });
         }
       });
