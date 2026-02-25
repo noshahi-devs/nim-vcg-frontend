@@ -1,0 +1,46 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy on VPS over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            APP_PATH="${{ secrets.FRONTEND_APP_PATH }}"
+            WEB_ROOT="${{ secrets.FRONTEND_WEB_ROOT }}"
+            BRANCH="${{ secrets.DEPLOY_BRANCH }}"
+
+            if [ -z "${BRANCH}" ]; then
+              BRANCH="main"
+            fi
+
+            cd "$APP_PATH"
+            git fetch origin "$BRANCH"
+            git checkout "$BRANCH"
+            git pull --ff-only origin "$BRANCH"
+
+            npm ci
+            npm run build
+
+            BUILD_DIR="dist/wowdash/browser"
+            if [ ! -d "$BUILD_DIR" ]; then
+              BUILD_DIR="dist/wowdash"
+            fi
+
+            rsync -a --delete "$BUILD_DIR"/ "$WEB_ROOT"/
