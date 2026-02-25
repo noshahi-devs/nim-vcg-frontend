@@ -1,0 +1,166 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - link "site logo" [ref=e6] [cursor=pointer]:
+        - /url: /class
+        - img "site logo" [ref=e7]
+      - list [ref=e9]:
+        - listitem [ref=e10]:
+          - link "Dashboard" [ref=e11] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e13]
+            - generic [ref=e16]: Dashboard
+        - listitem [ref=e17]:
+          - link "Section " [ref=e18] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e20]
+            - generic [ref=e22]: Section
+            - text: 
+          - text:  
+        - listitem [ref=e23]:
+          - link "Staff " [ref=e24] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e26]
+            - generic [ref=e28]: Staff
+            - text: 
+          - text:   
+        - listitem [ref=e29]:
+          - link "Student " [ref=e30] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e32]
+            - generic [ref=e34]: Student
+            - text: 
+          - text:   
+        - listitem [ref=e35]:
+          - link "Class " [ref=e36] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e38]
+            - generic [ref=e40]: Class
+            - text: 
+          - text:   
+        - listitem [ref=e41]:
+          - link "Subject " [ref=e42] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e44]
+            - generic [ref=e46]: Subject
+            - text: 
+          - text:  
+        - listitem [ref=e47]:
+          - link "Fee " [ref=e48] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e50]
+            - generic [ref=e55]: Fee
+            - text: 
+          - text:      
+        - listitem [ref=e56]:
+          - link "Salary " [ref=e57] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e59]
+            - generic [ref=e61]: Salary
+            - text: 
+          - text:  
+        - listitem [ref=e62]:
+          - link "Attendance " [ref=e63] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e65]
+            - generic [ref=e67]: Attendance
+            - text: 
+          - text:     
+        - listitem [ref=e68]:
+          - link "Leave " [ref=e69] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e71]
+            - generic [ref=e73]: Leave
+            - text: 
+          - text:   
+        - listitem [ref=e74]:
+          - link "Exam " [ref=e75] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e77]
+            - generic [ref=e79]: Exam
+            - text: 
+          - text:       
+        - listitem [ref=e80]:
+          - link "Accounts " [ref=e81] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e83]
+            - generic [ref=e85]: Accounts
+            - text: 
+          - text:      
+        - listitem [ref=e86]:
+          - link "Report " [ref=e87] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e89]
+            - generic [ref=e91]: Report
+            - text: 
+          - text:   
+        - listitem [ref=e92]:
+          - link "Administration " [ref=e93] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e95]
+            - generic [ref=e97]: Administration
+            - text: 
+          - text:      
+    - main [ref=e98]:
+      - generic [ref=e100]:
+        - generic [ref=e102]:
+          - button [ref=e103] [cursor=pointer]:
+            - img [ref=e105]
+          - generic [ref=e107]:
+            - textbox "Search" [ref=e108]
+            - img [ref=e110]
+        - generic [ref=e114]:
+          - button "light" [ref=e115] [cursor=pointer]: light 
+          - button "image" [ref=e117] [cursor=pointer]:
+            - img "image" [ref=e118]
+          - button [ref=e120] [cursor=pointer]:
+            - img [ref=e122]
+          - button [ref=e127] [cursor=pointer]:
+            - img [ref=e129]
+          - button "image" [ref=e132] [cursor=pointer]:
+            - img "image" [ref=e133]
+      - generic [ref=e135]:
+        - generic [ref=e137]:
+          - heading "Exam Analytics" [level=6] [ref=e138]
+          - list [ref=e139]:
+            - listitem [ref=e140]:
+              - link "Dashboard" [ref=e141] [cursor=pointer]:
+                - /url: /home
+                - img [ref=e143]
+                - text: Dashboard
+            - listitem [ref=e146]: "-"
+            - listitem [ref=e147]: Exam Analytics
+        - generic [ref=e148]:
+          - heading "Analytics Configuration" [level=4] [ref=e151]
+          - generic [ref=e153]:
+            - generic [ref=e154]:
+              - generic [ref=e155]: Select Exam
+              - combobox [ref=e156] [cursor=pointer]:
+                - option "Mid Term 2024"
+            - generic [ref=e157]:
+              - generic [ref=e158]: Select Class
+              - combobox [ref=e159] [cursor=pointer]:
+                - option "All Classes" [selected]
+                - option "Class One"
+                - option "Class Two"
+                - option "Class Three"
+                - option "Class Four"
+                - option "Class Six"
+                - option "Class Seven"
+                - option "Class Eight"
+                - option "Class Ten"
+                - option "11th Grade"
+            - generic [ref=e160]:
+              - generic [ref=e161]: Select Section
+              - combobox [disabled] [ref=e162] [cursor=pointer]:
+                - option "All Sections" [selected]
+      - generic [ref=e164]:
+        - paragraph [ref=e166]: © 2026 Noshahi Institute Manager - All Rights Reserved.
+        - paragraph [ref=e168]:
+          - text: Made by
+          - generic [ref=e169]: Noshahi Developers Inc.,
+  - img
+```

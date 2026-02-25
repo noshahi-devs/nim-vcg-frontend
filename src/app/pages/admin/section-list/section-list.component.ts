@@ -7,7 +7,11 @@ import { SectionService } from '../../../services/section.service';
 import { StandardService } from '../../../services/standard.service';
 import { Section } from '../../../Models/section';
 import { Standard } from '../../../Models/standard';
+import { AuthService } from '../../../SecurityModels/auth.service';
+import { StaffService } from '../../../services/staff.service';
+import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
+
 
 declare var bootstrap: any;
 
@@ -28,10 +32,17 @@ export class SectionListComponent implements OnInit {
   sectionList: Section[] = [];
   classes: Standard[] = [];
 
+  get totalSections(): number { return this.sectionList.length; }
+  get totalCapacity(): number { return this.sectionList.reduce((acc, curr) => acc + (curr.capacity || 0), 0); }
+  get assignedTeachersCount(): number { return new Set(this.sectionList.filter(s => s.staffId).map(s => s.staffId)).size; }
+
   constructor(
     private sectionService: SectionService,
-    private standardService: StandardService
+    private standardService: StandardService,
+    private authService: AuthService,
+    private staffService: StaffService
   ) { }
+
 
   ngOnInit(): void {
     this.loadSections();
@@ -40,6 +51,27 @@ export class SectionListComponent implements OnInit {
 
   loadSections(): void {
     this.loading = true;
+    const isTeacher = this.authService.hasAnyRole(['Teacher']);
+    const currentUser = this.authService.userValue;
+
+    if (isTeacher && currentUser?.email) {
+      this.staffService.getAllStaffs().subscribe({
+        next: (staffs) => {
+          const staff = staffs.find(s => s.email?.toLowerCase() === currentUser.email?.toLowerCase());
+          if (staff) {
+            this.fetchAndFilterSections(staff.staffId);
+          } else {
+            this.fetchAllSectionsRaw();
+          }
+        },
+        error: () => this.fetchAllSectionsRaw()
+      });
+    } else {
+      this.fetchAllSectionsRaw();
+    }
+  }
+
+  private fetchAllSectionsRaw(): void {
     this.sectionService.getSections().subscribe({
       next: (data) => {
         this.sectionList = data || [];
@@ -48,10 +80,23 @@ export class SectionListComponent implements OnInit {
       error: (err) => {
         console.error('Error loading sections:', err);
         this.loading = false;
-        // Fallback or error message
       }
     });
   }
+
+  private fetchAndFilterSections(staffId: number): void {
+    this.sectionService.getSections().subscribe({
+      next: (data) => {
+        this.sectionList = (data || []).filter(s => s.staffId === staffId);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading filtered sections:', err);
+        this.loading = false;
+      }
+    });
+  }
+
 
   loadClasses(): void {
     this.standardService.getStandards().subscribe({

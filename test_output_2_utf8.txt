@@ -1,0 +1,81 @@
+﻿
+Running 5 tests using 2 workers
+
+[1A[2K[1/5] [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:108:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned students in Student List
+[1A[2K[2/5] [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:124:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned classes in Class Management
+[1A[2K  1) [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:108:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned students in Student List 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Noshahi Developer\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+    Ôòæ Looks like Playwright Test or Playwright was just installed or updated. Ôòæ
+    Ôòæ Please run the following command to download new browsers:              Ôòæ
+    Ôòæ                                                                         Ôòæ
+    Ôòæ     npx playwright install                                              Ôòæ
+    Ôòæ                                                                         Ôòæ
+    Ôòæ <3 Playwright Team                                                      Ôòæ
+    ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+
+
+[1A[2K  2) [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:124:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned classes in Class Management 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Noshahi Developer\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+    Ôòæ Looks like Playwright Test or Playwright was just installed or updated. Ôòæ
+    Ôòæ Please run the following command to download new browsers:              Ôòæ
+    Ôòæ                                                                         Ôòæ
+    Ôòæ     npx playwright install                                              Ôòæ
+    Ôòæ                                                                         Ôòæ
+    Ôòæ <3 Playwright Team                                                      Ôòæ
+    ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+
+
+[1A[2K[3/5] [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:140:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see subjects for assigned classes in Subject List
+[1A[2K[4/5] [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:132:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned sections in Section List
+[1A[2K  3) [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:140:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see subjects for assigned classes in Subject List 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Noshahi Developer\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+    Ôòæ Looks like Playwright Test or Playwright was just installed or updated. Ôòæ
+    Ôòæ Please run the following command to download new browsers:              Ôòæ
+    Ôòæ                                                                         Ôòæ
+    Ôòæ     npx playwright install                                              Ôòæ
+    Ôòæ                                                                         Ôòæ
+    Ôòæ <3 Playwright Team                                                      Ôòæ
+    ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+
+
+[1A[2K  4) [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:132:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned sections in Section List 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Noshahi Developer\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+    Ôòæ Looks like Playwright Test or Playwright was just installed or updated. Ôòæ
+    Ôòæ Please run the following command to download new browsers:              Ôòæ
+    Ôòæ                                                                         Ôòæ
+    Ôòæ     npx playwright install                                              Ôòæ
+    Ôòæ                                                                         Ôòæ
+    Ôòæ <3 Playwright Team                                                      Ôòæ
+    ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+
+
+[1A[2K[5/5] [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:148:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned classes in Attendance
+[1A[2K  5) [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:148:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned classes in Attendance 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Noshahi Developer\AppData\Local\ms-playwright\chromium_headless_shell-1208\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+    Ôòæ Looks like Playwright Test or Playwright was just installed or updated. Ôòæ
+    Ôòæ Please run the following command to download new browsers:              Ôòæ
+    Ôòæ                                                                         Ôòæ
+    Ôòæ     npx playwright install                                              Ôòæ
+    Ôòæ                                                                         Ôòæ
+    Ôòæ <3 Playwright Team                                                      Ôòæ
+    ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+
+
+[1A[2K  5 failed
+    [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:108:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned students in Student List 
+    [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:124:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned classes in Class Management 
+    [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:132:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned sections in Section List 
+    [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:140:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see subjects for assigned classes in Subject List 
+    [chromium] ÔÇ║ e2e\teacher-visibility.spec.ts:148:9 ÔÇ║ Teacher Visibility E2E Tests ÔÇ║ Teacher should only see assigned classes in Attendance 
+
+[36m  Serving HTML report at http://localhost:52248. Press Ctrl+C to quit.[39m

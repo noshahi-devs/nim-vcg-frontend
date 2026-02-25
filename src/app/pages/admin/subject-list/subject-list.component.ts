@@ -6,6 +6,11 @@ import Swal from 'sweetalert2';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { SubjectService } from '../../../services/subject.service';
 import { Subject } from '../../../Models/subject';
+import { AuthService } from '../../../SecurityModels/auth.service';
+import { StaffService } from '../../../services/staff.service';
+import { SectionService } from '../../../services/section.service';
+import { forkJoin } from 'rxjs';
+
 
 declare var bootstrap: any;
 
@@ -23,11 +28,20 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   filterClass = '';
   subjectToDelete: Subject | null = null;
 
+  get totalSubjects(): number { return this.subjectList.length; }
+  get classesWithSubjectsCount(): number { return new Set(this.subjectList.map(s => s.standard?.standardId)).size; }
+
   standards: string[] = [];
   subjectList: Subject[] = [];
   classes: string[];
 
-  constructor(private subjectService: SubjectService) { }
+  constructor(
+    private subjectService: SubjectService,
+    private authService: AuthService,
+    private staffService: StaffService,
+    private sectionService: SectionService
+  ) { }
+
 
   ngOnInit(): void {
     this.loadSubjects();
@@ -36,6 +50,27 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void { }
 
   loadSubjects(): void {
+    const isTeacher = this.authService.hasAnyRole(['Teacher']);
+    const currentUser = this.authService.userValue;
+
+    if (isTeacher && currentUser?.email) {
+      this.staffService.getAllStaffs().subscribe({
+        next: (staffs) => {
+          const staff = staffs.find(s => s.email?.toLowerCase() === currentUser.email?.toLowerCase());
+          if (staff) {
+            this.fetchAndFilterSubjects(staff.staffId);
+          } else {
+            this.fetchAllSubjectsRaw();
+          }
+        },
+        error: () => this.fetchAllSubjectsRaw()
+      });
+    } else {
+      this.fetchAllSubjectsRaw();
+    }
+  }
+
+  private fetchAllSubjectsRaw(): void {
     this.subjectService.getSubjects().subscribe({
       next: (res) => {
         this.subjectList = res;
@@ -44,6 +79,25 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
       error: () => Swal.fire('Error', 'Failed to load subjects', 'error')
     });
   }
+
+  private fetchAndFilterSubjects(staffId: number): void {
+    forkJoin({
+      subjects: this.subjectService.getSubjects(),
+      sections: this.sectionService.getSections()
+    }).subscribe({
+      next: (res) => {
+        // Find sections assigned to this teacher
+        const assignedSections = (res.sections || []).filter(s => s.staffId === staffId);
+        const assignedClassNames = [...new Set(assignedSections.map(s => s.className))];
+
+        // Filter subjects by those class names
+        this.subjectList = res.subjects.filter(s => assignedClassNames.includes(s.standard?.standardName || ''));
+        this.classes = assignedClassNames;
+      },
+      error: () => Swal.fire('Error', 'Failed to load filtered subjects', 'error')
+    });
+  }
+
 
   get filteredSubjectList() {
     let list = this.subjectList;

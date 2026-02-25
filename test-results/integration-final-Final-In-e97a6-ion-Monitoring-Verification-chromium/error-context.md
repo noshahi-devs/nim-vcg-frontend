@@ -1,0 +1,172 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - link "site logo" [ref=e6] [cursor=pointer]:
+        - /url: /class
+        - img "site logo" [ref=e7]
+      - list [ref=e9]:
+        - listitem [ref=e10]:
+          - link "Dashboard" [ref=e11] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e13]
+            - generic [ref=e16]: Dashboard
+        - listitem [ref=e17]:
+          - link "Section " [ref=e18] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e20]
+            - generic [ref=e22]: Section
+            - text: 
+          - text:  
+        - listitem [ref=e23]:
+          - link "Staff " [ref=e24] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e26]
+            - generic [ref=e28]: Staff
+            - text: 
+          - text:   
+        - listitem [ref=e29]:
+          - link "Student " [ref=e30] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e32]
+            - generic [ref=e34]: Student
+            - text: 
+          - text:   
+        - listitem [ref=e35]:
+          - link "Class " [ref=e36] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e38]
+            - generic [ref=e40]: Class
+            - text: 
+          - text:   
+        - listitem [ref=e41]:
+          - link "Subject " [ref=e42] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e44]
+            - generic [ref=e46]: Subject
+            - text: 
+          - text:  
+        - listitem [ref=e47]:
+          - link "Fee " [ref=e48] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e50]
+            - generic [ref=e55]: Fee
+            - text: 
+          - text:      
+        - listitem [ref=e56]:
+          - link "Salary " [ref=e57] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e59]
+            - generic [ref=e61]: Salary
+            - text: 
+          - text:  
+        - listitem [ref=e62]:
+          - link "Attendance " [ref=e63] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e65]
+            - generic [ref=e67]: Attendance
+            - text: 
+          - text:     
+        - listitem [ref=e68]:
+          - link "Leave " [ref=e69] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e71]
+            - generic [ref=e73]: Leave
+            - text: 
+          - text:   
+        - listitem [ref=e74]:
+          - link "Exam " [ref=e75] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e77]
+            - generic [ref=e79]: Exam
+            - text: 
+          - text:       
+        - listitem [ref=e80]:
+          - link "Accounts " [ref=e81] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e83]
+            - generic [ref=e85]: Accounts
+            - text: 
+          - text:      
+        - listitem [ref=e86]:
+          - link "Report " [ref=e87] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e89]
+            - generic [ref=e91]: Report
+            - text: 
+          - text:   
+        - listitem [ref=e92]:
+          - link "Administration " [ref=e93] [cursor=pointer]:
+            - /url: javascript:void(0)
+            - img [ref=e95]
+            - generic [ref=e97]: Administration
+            - text: 
+          - text:      
+    - main [ref=e98]:
+      - generic [ref=e100]:
+        - generic [ref=e102]:
+          - button [ref=e103] [cursor=pointer]:
+            - img [ref=e105]
+          - generic [ref=e107]:
+            - textbox "Search" [ref=e108]
+            - img [ref=e110]
+        - generic [ref=e114]:
+          - button "light" [ref=e115] [cursor=pointer]: light 
+          - button "image" [ref=e117] [cursor=pointer]:
+            - img "image" [ref=e118]
+          - button [ref=e120] [cursor=pointer]:
+            - img [ref=e122]
+          - button [ref=e127] [cursor=pointer]:
+            - img [ref=e129]
+          - button "image" [ref=e132] [cursor=pointer]:
+            - img "image" [ref=e133]
+      - generic [ref=e134]:
+        - generic [ref=e136]:
+          - heading "System Administration" [level=6] [ref=e137]
+          - list [ref=e138]:
+            - listitem [ref=e139]:
+              - link "Dashboard" [ref=e140] [cursor=pointer]:
+                - /url: /home
+                - img [ref=e142]
+                - text: Dashboard
+            - listitem [ref=e145]: "-"
+            - listitem [ref=e146]: System Administration
+        - generic [ref=e148]:
+          - generic [ref=e149]:
+            - button "General Settings" [ref=e150] [cursor=pointer]: General Settings
+            - button "Notifications" [active] [ref=e151] [cursor=pointer]:
+              - img [ref=e153]
+              - text: Notifications
+            - button "Payment Methods" [ref=e156] [cursor=pointer]:
+              - img [ref=e158]
+              - text: Payment Methods
+            - button "Appearance" [ref=e162] [cursor=pointer]: Appearance
+          - generic [ref=e164]:
+            - generic [ref=e165]:
+              - heading "Notification Preferences" [level=3] [ref=e166]
+              - paragraph [ref=e167]: Configure which automated alerts should be active.
+            - button "Update Preferences" [ref=e169] [cursor=pointer]:
+              - img [ref=e171]
+              - text: Update Preferences
+            - generic [ref=e173]:
+              - heading "Recent Notification Logs" [level=3] [ref=e174]
+              - paragraph [ref=e175]: History of automated alerts sent to students and staff.
+            - table [ref=e177]:
+              - rowgroup [ref=e178]:
+                - row "Recipient Type Status Date" [ref=e179]:
+                  - columnheader "Recipient" [ref=e180]
+                  - columnheader "Type" [ref=e181]
+                  - columnheader "Status" [ref=e182]
+                  - columnheader "Date" [ref=e183]
+              - rowgroup [ref=e184]:
+                - row "No notification logs found." [ref=e185]:
+                  - cell "No notification logs found." [ref=e186]
+      - generic [ref=e188]:
+        - paragraph [ref=e190]: © 2026 Noshahi Institute Manager - All Rights Reserved.
+        - paragraph [ref=e192]:
+          - text: Made by
+          - generic [ref=e193]: Noshahi Developers Inc.,
+  - img
+```

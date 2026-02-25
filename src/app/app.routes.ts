@@ -131,6 +131,8 @@ import { RoleAccessComponent } from './pages/admin/role-access/role-access.compo
 import { AssignRoleComponent } from './pages/admin/assign-role/assign-role.component';
 
 
+import { GeneralSettingsComponent } from './pages/admin/general-settings/general-settings.component';
+
 export const routes: Routes = [
   { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
   { path: 'sign-in', component: SignInComponent },
@@ -232,7 +234,7 @@ export const routes: Routes = [
       // Settings & Others
       { path: 'language', component: LanguageComponent, data: { roles: ['Admin'] } },
       { path: 'theme', component: ThemeComponent, data: { roles: ['Admin'] } },
-      { path: 'settings', component: StarRatingComponent, data: { roles: ['Admin'] } },
+      { path: 'settings', component: GeneralSettingsComponent, data: { roles: ['Admin'] } },
       { path: 'view-profile', component: StaffViewProfileComponent, data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
 
       { path: 'unauthorized', component: ErrorComponent },
@@ -242,4 +244,4 @@ export const routes: Routes = [
 ];
 
 
-                 
+

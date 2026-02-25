@@ -113,159 +113,24 @@ export class AccountsService {
     return this.http.delete(`${this.apiUrl}/GeneralExpenses/${id}`, this.getAuthHeaders());
   }
 
-  // Ledger: Client-side aggregation of real data
+  // Ledger: Now fetched from backend for accuracy
   getLedger(): Observable<Transaction[]> {
-    return forkJoin({
-      incomes: this.getIncomeList(),
-      expenses: this.getExpenses()
-    }).pipe(
-      map(({ incomes, expenses }) => {
-        const transactions: Transaction[] = [];
-        let balance = 0;
-        let transactionCounter = 1;
-
-        const all = [
-          ...incomes.map(i => ({ ...i, type: 'Income', category: i.source })),
-          ...expenses.map(e => ({ ...e, type: 'Expense', category: e.expenseType }))
-        ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-        all.forEach(t => {
-          const debit = t.type === 'Expense' ? t.amount : 0;
-          const credit = t.type === 'Income' ? t.amount : 0;
-          balance += credit - debit;
-
-          transactions.push({
-            id: transactionCounter++,
-            date: t.date,
-            transactionId: `TXN-${new Date(t.date).getFullYear()}-${String(transactionCounter).padStart(4, '0')}`,
-            type: t.type,
-            category: t.category,
-            description: t.description,
-            debit,
-            credit,
-            balance
-          });
-        });
-
-        return transactions.reverse();
-      })
-    );
+    return this.http.get<Transaction[]>(`${this.apiUrl}/Accounts/ledger`, this.getAuthHeaders());
   }
 
-  // Profit & Loss Report
-  getProfitLossReport(startDate: string, endDate: string, campusId?: string): Observable<ProfitLossReport> {
-    return forkJoin({
-      incomes: this.getIncomeList(),
-      expenses: this.getExpenses()
-    }).pipe(
-      map(({ incomes, expenses }) => {
-        const filteredIncome = incomes.filter(i => {
-          const inRange = i.date >= startDate && i.date <= endDate;
-          const inCampus = !campusId || i.campus === campusId;
-          return inRange && inCampus;
-        });
-
-        const filteredExpenses = expenses.filter(e => {
-          const inRange = e.date >= startDate && e.date <= endDate;
-          const inCampus = !campusId || e.campus === campusId;
-          return inRange && inCampus;
-        });
-
-        const totalIncome = filteredIncome.reduce((sum, i) => sum + i.amount, 0);
-        const totalExpenses = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
-        const netProfit = totalIncome - totalExpenses;
-
-        // Group by category
-        const incomeByCategory = this.groupByCategory(filteredIncome, 'source');
-        const expenseByCategory = this.groupByCategory(filteredExpenses, 'expenseType');
-
-        return {
-          startDate,
-          endDate,
-          totalIncome,
-          totalExpenses,
-          netProfit,
-          incomeByCategory,
-          expenseByCategory
-        };
-      })
-    );
+  // Profit & Loss Report: Now fetched from backend
+  getProfitLossReport(startDate: string, endDate: string, campus?: string): Observable<ProfitLossReport> {
+    const params = { startDate, endDate };
+    if (campus) (params as any).campus = campus;
+    return this.http.get<ProfitLossReport>(`${this.apiUrl}/Accounts/profit-loss`, {
+      ...this.getAuthHeaders(),
+      params
+    });
   }
 
+  // Dashboard Data: Now fully aggregated on the backend
   getDashboardData(): Observable<DashboardData> {
-    return forkJoin({
-      incomes: this.getIncomeList(),
-      expenses: this.getExpenses()
-    }).pipe(
-      map(({ incomes, expenses }) => {
-        const monthMap = new Map<string, { income: number; expenses: number }>();
-
-        const getMonthKey = (dateStr: string) => {
-          const d = new Date(dateStr);
-          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        };
-
-        const processItem = (date: string, amount: number, type: 'income' | 'expenses') => {
-          const key = getMonthKey(date);
-          if (!monthMap.has(key)) {
-            monthMap.set(key, { income: 0, expenses: 0 });
-          }
-          const data = monthMap.get(key)!;
-          data[type] += amount;
-        };
-
-        incomes.forEach(i => processItem(i.date, i.amount, 'income'));
-        expenses.forEach(e => processItem(e.date, e.amount, 'expenses'));
-
-        // Sort keys chronologically
-        const sortedKeys = Array.from(monthMap.keys()).sort();
-
-        const months = sortedKeys.map(key => {
-          const [year, month] = key.split('-');
-          const date = new Date(parseInt(year), parseInt(month) - 1);
-          return date.toLocaleString('default', { month: 'short', year: 'numeric' });
-        });
-
-        const income = sortedKeys.map(key => monthMap.get(key)!.income);
-        const expensesData = sortedKeys.map(key => monthMap.get(key)!.expenses);
-
-        // Get recent transactions from ledger logic
-        const allTransactions = [
-          ...incomes.map(i => ({ ...i, type: 'Income', category: i.source })),
-          ...expenses.map(e => ({ ...e, type: 'Expense', category: e.expenseType }))
-        ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-        const recentTransactions: Transaction[] = allTransactions.slice(0, 5).map((t, idx) => ({
-          id: idx + 1,
-          date: t.date,
-          transactionId: `TXN-${new Date(t.date).getFullYear()}-${String(idx + 1).padStart(4, '0')}`,
-          type: t.type,
-          category: t.category,
-          description: t.description,
-          debit: t.type === 'Expense' ? t.amount : 0,
-          credit: t.type === 'Income' ? t.amount : 0,
-          balance: 0 // Balance not tracked here easily
-        }));
-
-        const totalIncome = incomes.reduce((sum, i) => sum + i.amount, 0);
-        const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
-        const profitLoss = totalIncome - totalExpenses;
-        const cashBankBalance = profitLoss; // Simplified for now
-
-        return {
-          chartData: {
-            months,
-            income,
-            expenses: expensesData
-          },
-          totalIncome,
-          totalExpenses,
-          profitLoss,
-          cashBankBalance,
-          recentTransactions
-        };
-      })
-    );
+    return this.http.get<DashboardData>(`${this.apiUrl}/Accounts/dashboard-data`, this.getAuthHeaders());
   }
 
   private groupByCategory(items: any[], categoryField: string): { category: string; amount: number }[] {

@@ -2,12 +2,14 @@
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
   <!-- Search Staff Section -->
-  <div class="search-card-premium mb-4">
-    <div class="card-body p-4">
+  <div class="glass-card mb-4" style="padding: 24px;">
+    <div class="card-body p-0">
       <div class="search-input-wrapper">
         <input type="text" class="form-control-premium" [(ngModel)]="searchQuery"
-          placeholder="Search by staff name, ID, or role..." />
-        <iconify-icon icon="mdi:magnify" class="search-icon-float"></iconify-icon>
+          placeholder="Search by staff name, ID, or role..."
+          style="background: rgba(255,255,255,0.7); border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 12px 15px 12px 45px; width: 100%;" />
+        <iconify-icon icon="mdi:magnify" class="search-icon-float"
+          style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #64748b;"></iconify-icon>
       </div>
     </div>
   </div>

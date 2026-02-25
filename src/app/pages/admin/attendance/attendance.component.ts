@@ -7,10 +7,13 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { AttendanceService } from '../../../services/attendance.service';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StandardService } from '../../../services/standard.service';
+import { StaffService } from '../../../services/staff.service';
+import { SectionService } from '../../../services/section.service';
 import { Student } from '../../../Models/student';
 import { Standard } from '../../../Models/standard';
 
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
+
 
 @Component({
   selector: 'app-attendance',
@@ -36,8 +39,11 @@ export class AttendanceComponent implements OnInit {
   constructor(
     private standardService: StandardService,
     private attendanceService: AttendanceService,
-    private authService: AuthService
+    private authService: AuthService,
+    private staffService: StaffService,
+    private sectionService: SectionService
   ) { }
+
 
   ngOnInit(): void {
     this.setTodayDate();
@@ -58,7 +64,24 @@ export class AttendanceComponent implements OnInit {
   loadStandards(): void {
     this.standardService.getStandards().subscribe({
       next: (data: Standard[]) => {
-        this.standards = data || [];
+        const isTeacher = this.authService.hasAnyRole(['Teacher']);
+        const currentUser = this.authService.userValue;
+
+        if (isTeacher && currentUser?.email) {
+          this.staffService.getAllStaffs().subscribe({
+            next: (staffs) => {
+              const staff = staffs.find(s => s.email?.toLowerCase() === currentUser.email?.toLowerCase());
+              if (staff) {
+                this.filterStandardsForTeacher(data, staff.staffId);
+              } else {
+                this.standards = data || [];
+              }
+            },
+            error: () => this.standards = data || []
+          });
+        } else {
+          this.standards = data || [];
+        }
       },
       error: () => {
         Swal.fire('Error', 'Could not load standards', 'error');
@@ -66,6 +89,18 @@ export class AttendanceComponent implements OnInit {
       }
     });
   }
+
+  private filterStandardsForTeacher(allStandards: Standard[], staffId: number): void {
+    this.sectionService.getSections().subscribe({
+      next: (sections) => {
+        const assignedSections = (sections || []).filter(s => s.staffId === staffId);
+        const assignedClassNames = [...new Set(assignedSections.map(s => s.className))];
+        this.standards = (allStandards || []).filter(c => assignedClassNames.includes(c.standardName));
+      },
+      error: () => this.standards = allStandards || []
+    });
+  }
+
 
   /** ==========================
    * LOAD STUDENTS BASED ON SELECTED STANDARD

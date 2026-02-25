@@ -23,6 +23,10 @@ export class StaffListComponent implements OnInit, AfterViewInit {
   loading = false;
   defaultImage = 'assets/images/user-grid/user-grid-img2.png';
 
+  get totalStaff(): number { return this.staffList.length; }
+  get teacherCount(): number { return this.staffList.filter(s => s.designation === 2).length; }
+  get departmentsCount(): number { return new Set(this.staffList.map(s => s.department?.departmentName || 'N/A')).size; }
+
   constructor(private staffService: StaffService) { }
 
   ngOnInit(): void {

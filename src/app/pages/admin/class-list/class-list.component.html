@@ -1,67 +1,98 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <div class="card h-100 p-0 radius-12">
-    <!-- Toolbar -->
-    <div
-      class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-      <div class="d-flex align-items-center flex-wrap gap-3">
-        <span class="text-md fw-medium text-secondary-light mb-0">Show</span>
-        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px">
-          <option>10</option>
-          <option>25</option>
-          <option>50</option>
-        </select>
+  <!-- ===================== STATS CARDS ===================== -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper blue">
+        <iconify-icon icon="mdi:google-classroom" class="text-2xl"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Classes</span>
+        <h3 class="stat-value">{{ totalClasses }}</h3>
+      </div>
+    </div>
 
-        <!-- Search -->
-        <form class="navbar-search">
-          <input type="text" class="bg-base h-40-px w-auto" name="search" [(ngModel)]="searchTerm"
-            placeholder="Search Class" />
-          <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
-        </form>
+    <div class="stat-card">
+      <div class="stat-icon-wrapper green">
+        <iconify-icon icon="mdi:account-group-outline" class="text-2xl"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Students</span>
+        <h3 class="stat-value">{{ sumStudents }}</h3>
+      </div>
+    </div>
 
+    <div class="stat-card">
+      <div class="stat-icon-wrapper orange">
+        <iconify-icon icon="mdi:book-open-page-variant-outline" class="text-2xl"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Subjects</span>
+        <h3 class="stat-value">{{ sumSubjects }}</h3>
+      </div>
+    </div>
+  </div>
 
-        <select class="form-select form-select-sm w-auto radius-12 h-40-px" [(ngModel)]="filterSection">
+  <div class="fee-card">
+    <!-- HEADER / FILTER BAR -->
+    <div class="fee-card-header">
+      <div class="header-left">
+        <div class="show-entries">
+          <span>Show</span>
+          <select class="entries-select">
+            <option>10</option>
+            <option>25</option>
+            <option>50</option>
+          </select>
+        </div>
+
+        <div class="search-wrapper">
+          <iconify-icon icon="ion:search-outline" class="search-icon"></iconify-icon>
+          <input type="text" class="search-input" name="search" [(ngModel)]="searchTerm"
+            placeholder="Search classes...">
+        </div>
+
+        <select class="entries-select" [(ngModel)]="filterSection">
           <option value="">All Sections</option>
           <option *ngFor="let s of sections" [value]="s">{{ s }}</option>
         </select>
       </div>
 
-      <a routerLink="/newclass"
-        class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
-        <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+      <a routerLink="/newclass" class="btn-add">
+        <iconify-icon icon="ic:baseline-plus" class="icon text-xl"></iconify-icon>
         Add Class
       </a>
     </div>
 
-    <!-- Class Cards -->
-    <div class="card-body p-24">
-      <div class="row gy-4">
-        <div class="col-xxl-2 col-lg-3 col-md-4 col-sm-6 user-grid-card" *ngFor="let classItem of filteredClassList">
-          <div class="position-relative border radius-16 overflow-hidden">
-
+    <!-- BODY -->
+    <div class="fee-card-body p-24">
+      <div class="row gy-4" *ngIf="filteredClassList.length > 0">
+        <!-- CLASS CARD -->
+        <div class="col-xxl-2 col-lg-3 col-md-4 col-sm-6" *ngFor="let classItem of filteredClassList">
+          <div class="student-card">
             <!-- Menu -->
-            <div class="dropdown position-absolute top-0 end-0 me-8 mt-8">
-              <button
-                class="bg-white w-28-px h-28-px radius-6 border d-flex justify-content-center align-items-center shadow-sm"
-                data-bs-toggle="dropdown">
+            <div class="dropdown position-absolute top-0 end-0 me-12 mt-12" style="z-index: 10;">
+              <button class="icon-btn-small" data-bs-toggle="dropdown">
                 <iconify-icon icon="entypo:dots-three-vertical"></iconify-icon>
               </button>
-
               <ul class="dropdown-menu p-12 border bg-base shadow">
                 <li>
-                  <a class="dropdown-item" [routerLink]="['/class-view', classItem.standardId]">
-                    View
+                  <a class="dropdown-item px-16 py-8 d-flex align-items-center gap-10"
+                    [routerLink]="['/class-view', classItem.standardId]">
+                    <iconify-icon icon="mdi:eye-outline"></iconify-icon> View
                   </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" [routerLink]="['/class-edit', classItem.standardId]">
-                    Edit
+                  <a class="dropdown-item px-16 py-8 d-flex align-items-center gap-10"
+                    [routerLink]="['/class-edit', classItem.standardId]">
+                    <iconify-icon icon="mdi:pencil-outline"></iconify-icon> Edit
                   </a>
                 </li>
                 <li>
-                  <button class="dropdown-item text-danger" (click)="confirmDelete(classItem)">
-                    Delete
+                  <button class="dropdown-item px-16 py-8 text-danger d-flex align-items-center gap-10"
+                    (click)="confirmDelete(classItem)">
+                    <iconify-icon icon="mdi:delete-outline"></iconify-icon> Delete
                   </button>
                 </li>
               </ul>
@@ -69,50 +100,57 @@
 
             <!-- Card Body -->
             <div class="p-16 text-center">
-              <img src="assets/images/user-grid/user-grid-img2.png"
-                class="border w-70-px h-70-px rounded-circle object-fit-cover mb-12" />
+              <div class="avatar-wrapper mb-12">
+                <img src="assets/images/user-grid/user-grid-img2.png" class="student-avatar" />
+              </div>
 
-              <h6 class="text-sm fw-semibold mb-4">
+              <h6 class="student-name-title mb-8">
                 {{ classItem.standardName }}
               </h6>
 
-              <!-- Subjects Count with Quick Add -->
-              <span class="text-secondary-light text-xs d-flex align-items-center justify-content-center gap-1 mb-8">
-                <iconify-icon icon="solar:book-bold-duotone" class="text-sm"></iconify-icon>
-                Subjects: {{ classItem.subjects?.length || 0 }}
-                <a [routerLink]="['/subject-add']" [queryParams]="{ classId: classItem.standardId }"
-                  class="btn btn-sm btn-outline-primary py-0 px-6 ms-4" style="font-size:10px; border-radius:6px;">
-                  + Add
-                </a>
-              </span>
+              <div class="student-meta mb-12">
+                <span class="meta-item">
+                  <iconify-icon icon="solar:book-bold-duotone"></iconify-icon>
+                  Subjects: {{ classItem.subjects?.length || 0 }}
+                  <a [routerLink]="['/subject-add']" [queryParams]="{ classId: classItem.standardId }"
+                    class="btn btn-sm btn-outline-primary py-0 px-6 ms-4" style="font-size:10px; border-radius:6px;">
+                    + Add
+                  </a>
+                </span>
+                <span class="meta-item">
+                  <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
+                  Students: {{ classItem.students?.length || 0 }}
+                  <a [routerLink]="['/student-add']" [queryParams]="{ classId: classItem.standardId }"
+                    class="btn btn-sm btn-outline-success py-0 px-6 ms-4" style="font-size:10px; border-radius:6px;">
+                    + Add
+                  </a>
+                </span>
+              </div>
 
-              <!-- Students Count with Quick Add -->
-              <span class="text-secondary-light text-xs d-flex align-items-center justify-content-center gap-1">
-                <iconify-icon icon="solar:users-group-two-rounded-bold-duotone" class="text-sm"></iconify-icon>
-                Students: {{ classItem.students?.length || 0 }}
-                <a [routerLink]="['/student-add']" [queryParams]="{ classId: classItem.standardId }"
-                  class="btn btn-sm btn-outline-success py-0 px-6 ms-4" style="font-size:10px; border-radius:6px;">
-                  + Add
-                </a>
-              </span>
+              <a [routerLink]="['/class-view', classItem.standardId]" class="btn-view-details">
+                View Details
+                <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-
       <!-- No Data Message -->
-      <div *ngIf="filteredClassList.length === 0" class="text-center py-5">
-        <iconify-icon icon="mdi:account-alert" class="text-warning" style="font-size: 64px;"></iconify-icon>
-        <h5 class="mt-3 mb-2">No classes found</h5>
-        <p class="text-muted">Click 'Add Class' to create one.</p>
-        <a routerLink="/newclass" class="btn btn-primary mt-3">
-          <iconify-icon icon="ic:baseline-plus" class="me-2"></iconify-icon>
+      <div *ngIf="filteredClassList.length === 0" class="empty-state-wrapper">
+        <div class="empty-icon-box">
+          <iconify-icon icon="mdi:school-off-outline"></iconify-icon>
+        </div>
+        <h5 class="mt-3 mb-2">No Classes Found</h5>
+        <p class="text-muted">Create your academic structure by adding classes.</p>
+        <a routerLink="/newclass" class="btn-add mt-16">
+          <iconify-icon icon="ic:baseline-plus"></iconify-icon>
           Add Class
         </a>
       </div>
     </div>
   </div>
+
 
   <!-- Delete Confirmation Modal -->
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

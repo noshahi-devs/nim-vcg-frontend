@@ -30,4 +30,12 @@ export class DashboardService {
     getStats(): Observable<DashboardStats> {
         return this.http.get<DashboardStats>(`${this.apiUrl}/stats`, this.getAuthHeaders());
     }
+
+    getChartData(): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/chart-data`, this.getAuthHeaders());
+    }
+
+    getStudentDistribution(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/student-distribution`, this.getAuthHeaders());
+    }
 }

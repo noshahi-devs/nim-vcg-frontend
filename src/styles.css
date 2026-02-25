@@ -1,7 +1,9 @@
 :root {
-  --primary-color: #800020; /* Maroon */
+  --primary-color: #800020;
+  /* Maroon */
   --primary-light: #a52a2a;
-  --secondary-color: #ffd700; /* Gold */
+  --secondary-color: #ffd700;
+  /* Gold */
   --accent-color: #ff4500;
   --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
   --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
@@ -13,6 +15,7 @@ body {
   font-family: 'Inter', sans-serif !important;
   background: var(--bg-gradient);
 }
+
 .outstanding-card {
   background: var(--glass-bg);
   backdrop-filter: blur(12px);
@@ -69,7 +72,7 @@ body {
   margin-bottom: 24px;
 }
 
-.form-floating-custom .form-control, 
+.form-floating-custom .form-control,
 .form-floating-custom .form-select {
   border: 2px solid transparent;
   background: #f8f9fa;
@@ -85,7 +88,7 @@ body {
   box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.1);
 }
 
-.form-floating-custom i, 
+.form-floating-custom i,
 .form-floating-custom iconify-icon {
   position: absolute;
   left: 16px;
@@ -96,8 +99,8 @@ body {
   font-size: 1.2rem;
 }
 
-.form-floating-custom .form-control:focus + i,
-.form-floating-custom .form-control:focus + iconify-icon {
+.form-floating-custom .form-control:focus+i,
+.form-floating-custom .form-control:focus+iconify-icon {
   color: var(--primary-color);
 }
 
@@ -107,4 +110,79 @@ body {
   background: var(--secondary-color);
   margin: 8px auto 24px;
   border-radius: 2px;
+}
+
+/* PREMIUM GLASSMORPHISM UTILITIES */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.12);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.glass-table {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.glass-table thead th {
+  background: rgba(78, 84, 200, 0.05);
+  color: #1e293b !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.8px;
+  padding: 16px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.glass-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.glass-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.glass-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  vertical-align: middle;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.premium-gradient-text {
+  background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
 }

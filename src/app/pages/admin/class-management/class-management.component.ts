@@ -7,8 +7,11 @@ import { StandardService } from '../../../services/standard.service';
 import { SectionService } from '../../../services/section.service';
 import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
+import { AuthService } from '../../../SecurityModels/auth.service';
+import { StaffService } from '../../../services/staff.service';
+import { finalize, forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
-import { finalize } from 'rxjs';
+
 
 @Component({
   selector: 'app-class-management',
@@ -43,8 +46,11 @@ export class ClassManagementComponent implements OnInit {
   constructor(
     private router: Router,
     private standardService: StandardService,
-    private sectionService: SectionService
+    private sectionService: SectionService,
+    private authService: AuthService,
+    private staffService: StaffService
   ) { }
+
 
   ngOnInit() {
     this.loadData();
@@ -52,21 +58,59 @@ export class ClassManagementComponent implements OnInit {
 
   loadData() {
     this.loading = true;
-    this.standardService.getStandards()
-      .pipe(finalize(() => this.loading = false))
-      .subscribe({
-        next: (data) => {
-          this.classes = data || [];
-          this.applyFilter();
-        },
-        error: () => Swal.fire('Error', 'Failed to load class data', 'error')
-      });
+    const isTeacher = this.authService.hasAnyRole(['Teacher']);
+    const currentUser = this.authService.userValue;
 
-    this.sectionService.getSections().subscribe({
-      next: (data) => this.sections = data || [],
-      error: (err) => console.error('Error loading sections', err)
+    if (isTeacher && currentUser?.email) {
+      this.staffService.getAllStaffs().subscribe({
+        next: (staffs) => {
+          const staff = staffs.find(s => s.email?.toLowerCase() === currentUser.email?.toLowerCase());
+          if (staff) {
+            this.fetchAndFilterData(staff.staffId);
+          } else {
+            this.fetchAllDataRaw();
+          }
+        },
+        error: () => this.fetchAllDataRaw()
+      });
+    } else {
+      this.fetchAllDataRaw();
+    }
+  }
+
+  private fetchAllDataRaw() {
+    forkJoin({
+      classes: this.standardService.getStandards(),
+      sections: this.sectionService.getSections()
+    }).pipe(finalize(() => this.loading = false)).subscribe({
+      next: (res) => {
+        this.classes = res.classes || [];
+        this.sections = res.sections || [];
+        this.applyFilter();
+      },
+      error: () => Swal.fire('Error', 'Failed to load data', 'error')
     });
   }
+
+  private fetchAndFilterData(staffId: number) {
+    forkJoin({
+      classes: this.standardService.getStandards(),
+      sections: this.sectionService.getSections()
+    }).pipe(finalize(() => this.loading = false)).subscribe({
+      next: (res) => {
+        // Filter sections by staffId
+        this.sections = (res.sections || []).filter(s => s.staffId === staffId);
+
+        // Filter classes that have these sections
+        const assignedClassNames = [...new Set(this.sections.map(s => s.className))];
+        this.classes = (res.classes || []).filter(c => assignedClassNames.includes(c.standardName));
+
+        this.applyFilter();
+      },
+      error: () => Swal.fire('Error', 'Failed to load filtered data', 'error')
+    });
+  }
+
 
   getSectionsForClass(std: Standard): Section[] {
     return this.sections.filter(s => s.className === std.standardName);

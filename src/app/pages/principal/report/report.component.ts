@@ -1,150 +1,90 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 declare var $: any;
 import {
   NgApexchartsModule,
   ChartComponent
 } from 'ng-apexcharts';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { DashboardService } from '../../../services/dashboard.service';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-report',
   standalone: true,
-  imports: [NgApexchartsModule, BreadcrumbComponent],
+  imports: [NgApexchartsModule, BreadcrumbComponent, CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './report.component.html',
   styleUrl: './report.component.css'
 })
-export class ReportComponent {
-  title = 'Home 10';
+export class ReportComponent implements OnInit {
+  title = 'Analytics Report';
   purchaseSaleChart;
   incomeExpense;
   userOverviewDonutChart;
-  constructor() {
 
+  constructor(private dashboardService: DashboardService) {
+    this.initStaticCharts();
+  }
 
-    this.incomeExpense = this.createChartTwo('#487FFF', '#FF9F29');
+  ngOnInit() {
+    this.dashboardService.getChartData().subscribe(data => {
+      this.updateHistoricalCharts(data);
+    });
+
+    this.dashboardService.getStudentDistribution().subscribe(data => {
+      this.updateDonutChart(data);
+    });
+  }
+
+  initStaticCharts() {
+    this.incomeExpense = this.createChartTwo('#487FFF', '#FF9F29', [], [], []);
+
     this.userOverviewDonutChart = {
-      series: [30, 30, 20, 20],
-      colors: ['#FF9F29', '#487FFF', '#45B369', '#9935FE'],
-      labels: ['Purchase', 'Sales', 'Expense', 'Gross Profit'],
-      legend: {
-        show: false
-      },
-      chart: {
-        type: 'donut',
-        height: 270,
-        sparkline: {
-          enabled: true // Remove whitespace
-        },
-        margin: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        },
-        padding: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        }
-      },
-      stroke: {
-        width: 0,
-      },
-      dataLabels: {
-        enabled: true
-      },
-      responsive: [{
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 200
-          },
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }],
-      tooltip: {
-        custom: ({ seriesIndex, series, dataPointIndex, w }) => {
-          const donutColor = w.globals.colors[seriesIndex];
-          const label = w.config.labels[seriesIndex];
-          return `
-            <div style="font-size: 12px; padding:5px 10px; background-color: ${donutColor}; color: white; ">
-              ${label}: ${series[seriesIndex]} 
-            </div>
-          `;
-        }
-      },
+      series: [],
+      colors: ['#FF9F29', '#487FFF', '#45B369', '#9935FE', '#FF487F'],
+      labels: [],
+      legend: { show: false },
+      chart: { type: 'donut', height: 270, sparkline: { enabled: true } },
+      stroke: { width: 0 },
+      dataLabels: { enabled: true }
     };
 
     this.purchaseSaleChart = {
-      series: [{
-        name: 'Net Profit',
-        data: [44, 100, 40, 56, 30, 58, 50]
-      }, {
-        name: 'Free Cash',
-        data: [60, 120, 60, 90, 50, 95, 90]
-      }],
+      series: [{ name: 'Income', data: [] }, { name: 'Expense', data: [] }],
       colors: ['#45B369', '#FF9F29'],
-      labels: ['Active', 'New', 'Total'],
-
-      legend: {
-        show: false
-      },
-      chart: {
-        type: 'bar',
-        height: 260,
-        toolbar: {
-          show: false
-        },
-      },
-      grid: {
-        show: true,
-        borderColor: '#D1D5DB',
-        strokeDashArray: 4, // Use a number for dashed style
-        position: 'back',
-      },
-      plotOptions: {
-        bar: {
-          borderRadius: 4,
-          columnWidth: 8,
-        },
-      },
-      dataLabels: {
-        enabled: false
-      },
-      states: {
-        hover: {
-          filter: {
-            type: 'none'
-          }
-        }
-      },
-      stroke: {
-        show: true,
-        width: 0,
-        colors: ['transparent']
-      },
-      xaxis: {
-        categories: ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'],
-      },
-      fill: {
-        opacity: 1,
-        width: 18,
-      },
+      chart: { type: 'bar', height: 260, toolbar: { show: false } },
+      xaxis: { categories: [] }
     };
-
   }
 
-  createChartTwo(color1, color2) {
+  updateHistoricalCharts(data: any) {
+    this.incomeExpense = this.createChartTwo('#487FFF', '#FF9F29', data.income, data.expense, data.labels);
+    this.purchaseSaleChart = {
+      ...this.purchaseSaleChart,
+      series: [
+        { name: 'Income', data: data.income },
+        { name: 'Expense', data: data.expense }
+      ],
+      xaxis: { categories: data.labels }
+    };
+  }
+
+  updateDonutChart(data: any[]) {
+    this.userOverviewDonutChart = {
+      ...this.userOverviewDonutChart,
+      series: data.map(d => d.count),
+      labels: data.map(d => d.className)
+    };
+  }
+
+  createChartTwo(color1, color2, series1Data, series2Data, labels) {
     return {
       series: [{
-        name: 'series1',
-        data: [48, 35, 50, 32, 48, 40, 55, 50, 60]
+        name: 'Income',
+        data: series1Data
       }, {
-        name: 'series2',
-        data: [12, 20, 15, 26, 22, 30, 25, 35, 25]
+        name: 'Expense',
+        data: series2Data
       }],
       legend: {
         show: false
@@ -205,16 +145,6 @@ export class ReportComponent {
       fill: {
         type: 'gradient',
         colors: [color1, color2], // Use two colors for the gradient
-        // gradient: {
-        //     shade: 'light',
-        //     type: 'vertical',
-        //     shadeIntensity: 0.5,
-        //     gradientToColors: [`${color1}`, `${color2}00`], // Bottom gradient colors with transparency
-        //     inverseColors: false,
-        //     opacityFrom: .6,
-        //     opacityTo: 0.3,
-        //     stops: [0, 100],
-        // },
         gradient: {
           shade: 'light',
           type: 'vertical',
@@ -235,7 +165,7 @@ export class ReportComponent {
         }
       },
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: labels.length > 0 ? labels : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         tooltip: {
           enabled: false
         },
@@ -251,7 +181,7 @@ export class ReportComponent {
       yaxis: {
         labels: {
           formatter: function (value) {
-            return "$" + value + "k";
+            return "PKR " + value;
           },
           style: {
             fontSize: "14px"

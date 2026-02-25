@@ -33,313 +33,77 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   ngOnInit() {
     this.dashboardService.getStats().subscribe(data => {
       this.stats = data;
-      // Update charts if needed based on real data
+    });
+
+    this.dashboardService.getChartData().subscribe(data => {
+      this.updateHistoricalCharts(data);
+    });
+
+    this.dashboardService.getStudentDistribution().subscribe(data => {
+      this.updateDonutChart(data);
     });
   }
 
   initCharts() {
+    // Initial empty/placeholder state for charts
     this.chartOptions = {
-      series: [
-        {
-          name: 'Fee Collection (in thousands)',
-          data: [10, 12, 11, 15, 13, 18, 16, 20, 17, 22, 19, 25],
-        },
-      ],
-      chart: {
-        height: 264,
-        type: 'line',
-        toolbar: {
-          show: false,
-        },
-        zoom: {
-          enabled: false,
-        },
-        dropShadow: {
-          enabled: true,
-          top: 6,
-          left: 0,
-          blur: 4,
-          color: '#000',
-          opacity: 0.1,
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      stroke: {
-        curve: 'smooth',
-        colors: ['#487FFF'],
-        width: 3,
-      },
-      markers: {
-        size: 0,
-        strokeWidth: 3,
-        hover: {
-          size: 8,
-        },
-      },
-      tooltip: {
-        enabled: true,
-        x: {
-          show: true,
-        },
-        y: {
-          show: false,
-        },
-        z: {
-          show: false,
-        },
-      },
-      grid: {
-        row: {
-          colors: ['transparent', 'transparent'],
-          opacity: 0.5,
-        },
-        borderColor: '#D1D5DB',
-        strokeDashArray: 3,
-      },
-      yaxis: {
-        labels: {
-          formatter: function (value: number) {
-            return '$' + value + 'k';
-          },
-          style: {
-            fontSize: '14px',
-          },
-        },
-      },
-      xaxis: {
-        categories: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec',
-        ],
-        tooltip: {
-          enabled: false,
-        },
-        labels: {
-          formatter: function (value: string) {
-            return value;
-          },
-          style: {
-            fontSize: '14px',
-          },
-        },
-        axisBorder: {
-          show: false,
-        },
-        crosshairs: {
-          show: true,
-          width: 20,
-          stroke: {
-            width: 0,
-          },
-          fill: {
-            type: 'solid',
-            color: '#487FFF40',
-          },
-        },
-      },
+      series: [{ name: 'Fee Collection', data: [] }],
+      chart: { height: 264, type: 'line', toolbar: { show: false } },
+      stroke: { curve: 'smooth', colors: ['#487FFF'], width: 3 },
+      xaxis: { categories: [] }
     };
 
-    // bar chart 
     this.barChartOptions = {
-      series: [{
-        name: "New Admissions",
-        data: [{
-          x: 'Sun',
-          y: 15,
-        }, {
-          x: 'Mon',
-          y: 12,
-        }, {
-          x: 'Tue',
-          y: 18,
-        }, {
-          x: 'Wed',
-          y: 20,
-        }, {
-          x: 'Thu',
-          y: 13,
-        }, {
-          x: 'Fri',
-          y: 16,
-        }, {
-          x: 'Sat',
-          y: 6,
-        }]
-      }],
-
-      chart: {
-        type: 'bar',
-        height: 235,
-        toolbar: {
-          show: false
-        },
-      },
-      plotOptions: {
-        bar: {
-          borderRadius: 6,
-          horizontal: false,
-          columnWidth: '52%',
-          endingShape: 'rounded',
-        }
-      },
-      dataLabels: {
-        enabled: false
-      },
-      fill: {
-        type: 'gradient',
-        colors: ['#dae5ff'], // Set the starting color (top color) here
-        gradient: {
-          shade: 'light', // Gradient shading type
-          type: 'vertical',  // Gradient direction (vertical)
-          shadeIntensity: 0.5, // Intensity of the gradient shading
-          gradientToColors: ['#dae5ff'], // Bottom gradient color (with transparency)
-          inverseColors: false, // Do not invert colors
-          opacityFrom: 1, // Starting opacity
-          opacityTo: 1,  // Ending opacity
-          stops: [0, 100],
-        },
-      },
-      grid: {
-        show: false,
-        borderColor: '#D1D5DB',
-        strokeDashArray: 4, // Use a number for dashed style
-        position: 'back',
-        padding: {
-          top: -10,
-          right: -10,
-          bottom: -10,
-          left: -10
-        }
-      },
-      xaxis: {
-        type: 'category',
-        categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-      },
-      yaxis: {
-        show: false,
-      },
+      series: [{ name: "New Admissions", data: [] }],
+      chart: { type: 'bar', height: 235, toolbar: { show: false } },
+      xaxis: { categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] }
     };
 
     this.donutChartOptions = {
-      series: [1165, 85, 1250],
-      colors: ['#487FFF', '#FF9F29', '#E4F1FF'],
-      labels: ['Active', 'New', 'Total'],
-      legend: {
-        show: false
-      },
-      chart: {
-        type: 'donut',
-        height: 270,
-        sparkline: {
-          enabled: true // Remove whitespace
-        },
-        margin: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        },
-        padding: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        }
-      },
-      stroke: {
-        width: 0,
-      },
-      dataLabels: {
-        enabled: false
-      },
-      responsive: [{
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 200
-          },
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }],
-      tooltip: {
-        custom: ({ seriesIndex, series, dataPointIndex, w }) => {
-          const donutColor = w.globals.colors[seriesIndex];
-          const label = w.config.labels[seriesIndex];
-          return `
-            <div style="font-size: 12px; padding:5px 10px; background-color: ${donutColor}; color: white; ">
-              ${label}: ${series[seriesIndex]} 
-            </div>
-          `;
-        }
-      },
+      series: [],
+      colors: ['#487FFF', '#FF9F29', '#45B369', '#9935FE', '#FF487F'],
+      labels: [],
+      chart: { type: 'donut', height: 270, sparkline: { enabled: true } },
+      legend: { show: false }
     };
+
     this.paymentStatusChartOptions = {
-      series: [{
-        name: 'Fee Collection',
-        data: [20000, 22000, 21000, 25000, 28000, 26000, 30000, 27000, 29000, 32000, 30000, 35000]
-      }, {
-        name: 'Expenses',
-        data: [15000, 16000, 17000, 18000, 19000, 18500, 20000, 19000, 21000, 22000, 21000, 23000]
-      }],
+      series: [
+        { name: 'Income', data: [] },
+        { name: 'Expense', data: [] }
+      ],
       colors: ['#487FFF', '#FF9F29'],
-      labels: ['Active', 'New', 'Total'],
-      legend: {
-        show: false
-      },
-      chart: {
-        type: 'bar',
-        height: 250,
-        toolbar: {
-          show: false
-        },
-      },
-      grid: {
-        show: true,
-        borderColor: '#D1D5DB',
-        strokeDashArray: 4, // Use a number for dashed style
-        position: 'back',
-      },
-      plotOptions: {
-        bar: {
-          borderRadius: 4,
-          columnWidth: 10,
-        },
-      },
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        show: true,
-        width: 2,
-        colors: ['transparent']
-      },
-      xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      },
-      yaxis: {
-        categories: ['0', '5000', '10,000', '20,000', '30,000', '50,000', '60,000', '60,000', '70,000', '80,000', '90,000', '100,000'],
-      },
-      fill: {
-        opacity: 1,
-        width: 18,
-      },
+      chart: { type: 'bar', height: 250, toolbar: { show: false } },
+      xaxis: { categories: [] }
     };
   }
 
+  updateHistoricalCharts(data: any) {
+    // Update Line Chart (Fee/Income Trend)
+    this.chartOptions = {
+      ...this.chartOptions,
+      series: [{ name: 'Monthly Income', data: data.income }],
+      xaxis: { ...this.chartOptions.xaxis, categories: data.labels }
+    };
+
+    // Update Income vs Expense Bar Chart
+    this.paymentStatusChartOptions = {
+      ...this.paymentStatusChartOptions,
+      series: [
+        { name: 'Income', data: data.income },
+        { name: 'Expense', data: data.expense }
+      ],
+      xaxis: { ...this.paymentStatusChartOptions.xaxis, categories: data.labels }
+    };
+  }
+
+  updateDonutChart(data: any[]) {
+    this.donutChartOptions = {
+      ...this.donutChartOptions,
+      series: data.map(d => d.count),
+      labels: data.map(d => d.className)
+    };
+  }
   ngAfterViewInit(): void {
     $('#world-map').vectorMap(
       {
@@ -413,6 +177,4 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         hoverColor: '#fff',
       });
   }
-
-
 }

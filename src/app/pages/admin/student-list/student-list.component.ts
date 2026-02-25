@@ -9,6 +9,10 @@ import { SectionService } from '../../../services/section.service';
 import { Student } from '../../../Models/student';
 import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
+import { AuthService } from '../../../SecurityModels/auth.service';
+import { StaffService } from '../../../services/staff.service';
+import { finalize, forkJoin } from 'rxjs';
+
 
 declare var bootstrap: any;
 
@@ -40,17 +44,106 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   classes = ['Nursery', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
   sections = ['A', 'B', 'C', 'D'];
 
+  // Teacher specific context
+  isTeacher = false;
+  staffId: number | null = null;
+  assignedSections: Section[] = [];
+  assignedClassNames: string[] = [];
+  loading = false;
+
+  get totalStudents(): number { return this.studentList.length; }
+  get activeStudents(): number { return this.studentList.filter(s => s.status?.toLowerCase() === 'active').length; }
+  get inactiveStudents(): number { return this.studentList.filter(s => s.status?.toLowerCase() === 'inactive').length; }
+
+
   constructor(
     private studentService: StudentService,
     private standardService: StandardService,
-    private sectionService: SectionService
+    private sectionService: SectionService,
+    private authService: AuthService,
+    private staffService: StaffService
   ) { }
 
+
   ngOnInit(): void {
-    this.loadStudents();
-    this.loadClasses();
-    this.loadSections();
+    this.checkTeacherContext();
   }
+
+  private checkTeacherContext() {
+    this.loading = true;
+    this.isTeacher = this.authService.hasAnyRole(['Teacher']);
+    const currentUser = this.authService.userValue;
+
+    if (this.isTeacher && currentUser?.email) {
+      // Find staffId by email
+      this.staffService.getAllStaffs().subscribe({
+        next: (staffs) => {
+          const staff = staffs.find(s => s.email?.toLowerCase() === currentUser.email?.toLowerCase());
+          if (staff) {
+            this.staffId = staff.staffId;
+            this.loadTeacherAssignments();
+          } else {
+            console.error("Teacher account not linked to any staff record.");
+            this.loadAllData();
+          }
+        },
+        error: (err) => {
+          console.error("Error fetching staff for teacher lookup:", err);
+          this.loadAllData();
+        }
+      });
+    } else {
+      this.loadAllData();
+    }
+  }
+
+  private loadTeacherAssignments() {
+    this.sectionService.getSections().subscribe({
+      next: (sections) => {
+        this.assignedSections = sections.filter(s => s.staffId === this.staffId);
+        this.assignedClassNames = [...new Set(this.assignedSections.map(s => s.className))];
+        this.loadAllData();
+      },
+      error: (err) => {
+        console.error("Error loading teacher assignments:", err);
+        this.loadAllData();
+      }
+    });
+  }
+
+  private loadAllData() {
+    forkJoin({
+      students: this.studentService.GetStudents(),
+      classes: this.standardService.getStandards(),
+      sections: this.sectionService.getSections()
+    }).pipe(finalize(() => this.loading = false)).subscribe({
+      next: (res) => {
+        this.studentList = res.students;
+        this.classList = res.classes;
+        this.sectionList = res.sections;
+
+        if (this.isTeacher) {
+          this.applyTeacherFiltering();
+        }
+
+        this.applyFilters();
+      }
+    });
+  }
+
+  private applyTeacherFiltering() {
+    // 1. Filter section dropdown to only assigned sections
+    this.sectionList = this.sectionList.filter(s => s.staffId === this.staffId);
+
+    // 2. Filter class dropdown to only classes that have assigned sections
+    this.classList = this.classList.filter(c => this.assignedClassNames.includes(c.standardName));
+
+    // 3. Filter student list to only those in assigned sections
+    this.studentList = this.studentList.filter(s =>
+      this.assignedSections.some(sec => sec.className === this.getClassName(s.standardId) && sec.sectionName === s.section)
+    );
+  }
+
 
   // -------------------------------------------------------
   // Fetch Students From API

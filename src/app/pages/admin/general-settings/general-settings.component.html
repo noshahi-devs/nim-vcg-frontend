@@ -1,0 +1,183 @@
+<app-breadcrumb [title]="title"></app-breadcrumb>
+
+<div class="settings-container">
+    <div class="glass-card main-settings-card">
+        <div class="settings-sidebar">
+            <button [class.active]="activeTab === 'general'" (click)="setTab('general')">
+                <iconify-icon icon="solar:user-settings-bold"></iconify-icon>
+                General Settings
+            </button>
+            <button [class.active]="activeTab === 'notifications'" (click)="setTab('notifications')">
+                <iconify-icon icon="solar:bell-bing-bold"></iconify-icon>
+                Notifications
+            </button>
+            <button [class.active]="activeTab === 'payment'" (click)="setTab('payment')">
+                <iconify-icon icon="solar:card-2-bold"></iconify-icon>
+                Payment Methods
+            </button>
+            <button [class.active]="activeTab === 'appearance'" (click)="setTab('appearance')">
+                <iconify-icon icon="solar:pallete-bold"></iconify-icon>
+                Appearance
+            </button>
+        </div>
+
+        <div class="settings-content">
+            <!-- General Settings Tab -->
+            <div *ngIf="activeTab === 'general'" class="tab-pane fade-in">
+                <div class="section-header">
+                    <h3>General Administration</h3>
+                    <p>Manage your institute details and basic configurations.</p>
+                </div>
+
+                <div class="row g-4 mt-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Institute Name</label>
+                        <input type="text" class="form-control" [(ngModel)]="generalSettings.instituteName"
+                            placeholder="e.g. Noshahi Modern School">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" [(ngModel)]="generalSettings.institutePhone"
+                            placeholder="+92 312 4567890">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" rows="2"
+                            [(ngModel)]="generalSettings.instituteAddress"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Official Email</label>
+                        <input type="email" class="form-control" [(ngModel)]="generalSettings.instituteEmail">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Currency Symbol</label>
+                        <input type="text" class="form-control" [(ngModel)]="generalSettings.currencySymbol">
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+                    <button class="btn btn-primary" (click)="saveGeneralSettings()">
+                        <iconify-icon icon="solar:diskette-bold" class="me-2"></iconify-icon> Save Changes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notifications Tab -->
+            <div *ngIf="activeTab === 'notifications'" class="tab-pane fade-in">
+                <div class="section-header">
+                    <h3>Notification Preferences</h3>
+                    <p>Configure which automated alerts should be active.</p>
+                </div>
+
+                <div class="notification-list mt-4">
+                    <div *ngFor="let item of notificationSettings" class="notification-item glass-item">
+                        <div class="item-info">
+                            <h5>{{ item.settingKey }}</h5>
+                            <p>{{ item.description }}</p>
+                        </div>
+                        <div class="item-action">
+                            <div class="form-check form-switch style-check d-flex align-items-center">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    [(ngModel)]="item.isEnabled">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+                    <button class="btn btn-warning" (click)="saveNotifications()">
+                        <iconify-icon icon="solar:check-read-linear" class="me-2"></iconify-icon> Update Preferences
+                    </button>
+                </div>
+
+                <div class="section-header mt-5">
+                    <h3>Recent Notification Logs</h3>
+                    <p>History of automated alerts sent to students and staff.</p>
+                </div>
+
+                <div class="table-responsive mt-3">
+                    <table class="table table-sm glass-table">
+                        <thead>
+                            <tr>
+                                <th>Recipient</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let log of notificationLogs">
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="fw-bold">{{ log.recipientName }}</span>
+                                        <small class="text-muted">{{ log.recipientEmail }}</small>
+                                    </div>
+                                </td>
+                                <td>{{ log.notificationType }}</td>
+                                <td>
+                                    <span class="badge" [class.bg-success]="log.status === 'Sent'"
+                                        [class.bg-danger]="log.status === 'Failed'">
+                                        {{ log.status }}
+                                    </span>
+                                </td>
+                                <td><small>{{ log.createdAt | date:'short' }}</small></td>
+                            </tr>
+                            <tr *ngIf="notificationLogs.length === 0">
+                                <td colspan="4" class="text-center py-4">No notification logs found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payment Methods Tab -->
+            <div *ngIf="activeTab === 'payment'" class="tab-pane fade-in">
+                <div class="section-header">
+                    <h3>Payment Gateways</h3>
+                    <p>Configure online payment integrations for fee collection.</p>
+                </div>
+
+                <div class="gateway-list mt-4">
+                    <div *ngFor="let gateway of paymentSettings" class="gateway-card glass-item p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="mb-0">{{ gateway.gatewayName }}</h4>
+                            <div class="form-check form-switch style-check d-flex align-items-center">
+                                <input class="form-check-input" type="checkbox" [(ngModel)]="gateway.isActive">
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">API Key</label>
+                                <input type="password" class="form-control" [(ngModel)]="gateway.apiKey">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Merchant ID</label>
+                                <input type="text" class="form-control" [(ngModel)]="gateway.merchantId">
+                            </div>
+                        </div>
+
+                        <div class="mt-3 d-flex justify-content-end">
+                            <button class="btn btn-sm btn-outline-primary" (click)="savePaymentGateway(gateway)">Update
+                                {{ gateway.gatewayName }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appearance Tab Placeholder -->
+            <div *ngIf="activeTab === 'appearance'" class="tab-pane fade-in">
+                <div class="section-header">
+                    <h3>Theme & Appearance</h3>
+                    <p>Customize the look and feel of the management system.</p>
+                </div>
+                <div class="text-center py-5">
+                    <iconify-icon icon="solar:clapperboard-edit-bold" class="text-6xl text-primary-200"></iconify-icon>
+                    <h4 class="mt-3">Advanced Theme Customization</h4>
+                    <p>Control brand colors, dark mode defaults, and layout density.</p>
+                    <button class="btn btn-primary-light mt-2" routerLink="/theme">Go to Theme Editor</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
