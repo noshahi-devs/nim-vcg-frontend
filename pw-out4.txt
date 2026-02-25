@@ -1,0 +1,55 @@
+
+Running 4 tests using 2 workers
+
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
+Aborting unhandled API request: http://localhost:5257/api/Notifications/logs
+  ✓  2 [chromium] › e2e\integration-final.spec.ts:175:9 › Final Integration & Automation Tests › Automated Grading Workflow Visibility (11.4s)
+  ✓  1 [chromium] › e2e\integration-final.spec.ts:148:9 › Final Integration & Automation Tests › Admin Settings Persistence Workflow (12.3s)
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
+Aborting unhandled API request: http://localhost:5257/api/Notifications/logs
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
+Aborting unhandled API request: http://localhost:5257/api/Standards
+Aborting unhandled API request: http://localhost:5257/api/Sections
+  ✓  3 [chromium] › e2e\integration-final.spec.ts:188:9 › Final Integration & Automation Tests › Analytics & Reports Integrity (11.4s)
+  ✘  4 [chromium] › e2e\integration-final.spec.ts:210:9 › Final Integration & Automation Tests › Notification Monitoring Verification (17.7s)
+
+
+  1) [chromium] › e2e\integration-final.spec.ts:210:9 › Final Integration & Automation Tests › Notification Monitoring Verification 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('table.glass-table tbody tr').first()
+    Expected substring: [32m"John Doe"[39m
+    Received string:    [31m"No notification logs found."[39m
+    Timeout: 10000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 10000ms[22m
+    [2m  - waiting for locator('table.glass-table tbody tr').first()[22m
+    [2m    13 × locator resolved to <tr _ngcontent-ng-c2711354218="">…</tr>[22m
+    [2m       - unexpected value "No notification logs found."[22m
+
+
+      219 |         // Verify table has data
+      220 |         const tableRow = page.locator('table.glass-table tbody tr').first();
+    > 221 |         await expect(tableRow).toContainText('John Doe', { timeout: 10000 });
+          |                                ^
+      222 |         await expect(tableRow).toContainText('Sent');
+      223 |     });
+      224 | });
+        at E:\GitHub Projects\Noshahi-Institute-Manager\nim-vcg-frontend\e2e\integration-final.spec.ts:221:32
+
+    Error Context: test-results\integration-final-Final-In-e97a6-ion-Monitoring-Verification-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\integration-final.spec.ts:210:9 › Final Integration & Automation Tests › Notification Monitoring Verification 
+  3 passed (36.1s)

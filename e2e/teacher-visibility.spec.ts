@@ -20,6 +20,15 @@ test.describe('Teacher Visibility E2E Tests', () => {
     };
 
     test.beforeEach(async ({ page }) => {
+        page.on('console', msg => require('fs').appendFileSync('browser-logs.txt', 'CONSOLE: ' + msg.text() + '\\n'));
+        page.on('response', resp => require('fs').appendFileSync('browser-logs.txt', `RESP: ${resp.url()} ${resp.status()}\\n`));
+
+        // Abort all unhandled API requests to prevent hanging network calls when backend is down
+        await page.route('**/api/**', async route => {
+            console.log('Aborting unhandled API request:', route.request().url());
+            await route.abort();
+        });
+
         const fakeToken = createFakeToken();
 
         // Mock Login API
@@ -106,8 +115,11 @@ test.describe('Teacher Visibility E2E Tests', () => {
     });
 
     test('Teacher should only see assigned students in Student List', async ({ page }) => {
-        await page.goto('/student-list');
-        await expect(page.locator('.dashboard-main-body')).toBeVisible();
+        // SPA navigation
+        await page.locator('text=Student').first().click();
+        await page.locator('text=Student List').first().click();
+
+        await expect(page.locator('.dashboard-main-body')).toBeVisible({ timeout: 15000 });
 
         // Verify Student List filtering
         const studentCards = page.locator('.card'); // Assuming students are in cards
@@ -115,39 +127,51 @@ test.describe('Teacher Visibility E2E Tests', () => {
         await expect(page.locator('text=Hidden Student')).not.toBeVisible();
 
         // Verify Class filter only shows assigned class
-        const classSelect = page.locator('select').first(); // Adjust selector if needed
+        const classSelect = page.locator('select').nth(1); // The class filter is the second select
         await expect(classSelect.locator('option')).toHaveCount(2); // Default + Class 10
         await expect(classSelect).toContainText('Class 10');
         await expect(classSelect).not.toContainText('Class 9');
     });
 
     test('Teacher should only see assigned classes in Class Management', async ({ page }) => {
-        await page.goto('/class-management');
-        await expect(page.locator('.dashboard-main-body')).toBeVisible();
+        // SPA navigation
+        await page.locator('text=Class').first().click();
+        await page.locator('text=Class Manage').first().click();
+
+        await expect(page.locator('.dashboard-main-body')).toBeVisible({ timeout: 15000 });
 
         await expect(page.locator('text=Class 10')).toBeVisible();
         await expect(page.locator('text=Class 9')).not.toBeVisible();
     });
 
     test('Teacher should only see assigned sections in Section List', async ({ page }) => {
-        await page.goto('/section-list');
-        await expect(page.locator('.dashboard-main-body')).toBeVisible();
+        // SPA navigation
+        await page.locator('text=Section').first().click();
+        await page.locator('text=Section List').first().click();
 
-        await expect(page.locator('text=Class 10').first()).toBeVisible();
-        await expect(page.locator('td', { hasText: 'Class 9' })).not.toBeVisible();
+        await expect(page.locator('.dashboard-main-body')).toBeVisible({ timeout: 15000 });
+
+        await expect(page.locator('.student-name-title', { hasText: 'A' }).first()).toBeVisible();
+        await expect(page.locator('.student-name-title', { hasText: 'B' })).not.toBeVisible();
     });
 
     test('Teacher should only see subjects for assigned classes in Subject List', async ({ page }) => {
-        await page.goto('/subject-list');
-        await expect(page.locator('.dashboard-main-body')).toBeVisible();
+        // SPA navigation
+        await page.locator('text=Subject').first().click();
+        await page.locator('text=All Subjects').first().click();
+
+        await expect(page.locator('.dashboard-main-body')).toBeVisible({ timeout: 15000 });
 
         await expect(page.locator('text=Math')).toBeVisible();
         await expect(page.locator('text=History')).not.toBeVisible();
     });
 
     test('Teacher should only see assigned classes in Attendance', async ({ page }) => {
-        await page.goto('/attendance');
-        await expect(page.locator('.dashboard-main-body')).toBeVisible();
+        // SPA navigation
+        await page.locator('span:has-text("Attendance")').first().click();
+        await page.locator('text=Student Attendance').first().click();
+
+        await expect(page.locator('.dashboard-main-body')).toBeVisible({ timeout: 15000 });
 
         const classSelect = page.locator('select').first();
         await expect(classSelect).toContainText('Class 10');

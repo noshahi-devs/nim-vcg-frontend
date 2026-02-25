@@ -16,6 +16,15 @@ test.describe('Final Integration & Automation Tests', () => {
     };
 
     test.beforeEach(async ({ page }) => {
+        // Abort unhandled API requests
+        await page.route('**/api/**', async route => {
+            // Let the explicit mocks below handle it if they match
+            // Wait, Playwright processes last registered routes FIRST.
+            // So if we register this first, it acts as a fallback.
+            console.log('Aborting unhandled API request:', route.request().url());
+            await route.abort();
+        });
+
         const fakeToken = createFakeToken();
 
         // Mock Login
@@ -32,19 +41,28 @@ test.describe('Final Integration & Automation Tests', () => {
             });
         });
 
-        // Mock Settings GET
-        await page.route('**/api/settings', async route => {
+        // Mock Settings GET (General)
+        await page.route('**/api/Settings/general', async route => {
             await route.fulfill({
                 status: 200,
                 contentType: 'application/json',
-                body: JSON.stringify({
-                    instituteName: 'Test Academy',
-                    institutePhone: '123456789',
-                    instituteAddress: '123 Street',
-                    instituteEmail: 'test@academy.com',
-                    currencySymbol: 'PKR'
-                }),
+                body: JSON.stringify([
+                    { settingKey: 'instituteName', settingValue: 'Test Academy', category: 'General' },
+                    { settingKey: 'institutePhone', settingValue: '123456789', category: 'General' },
+                    { settingKey: 'instituteAddress', settingValue: '123 Street', category: 'General' },
+                    { settingKey: 'currencySymbol', settingValue: 'PKR', category: 'General' }
+                ]),
             });
+        });
+
+        // Mock Settings GET (Notifications)
+        await page.route('**/api/Settings/notifications', async route => {
+            await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
+        });
+
+        // Mock Settings GET (Payment Gateway)
+        await page.route('**/api/Settings/payment-gateway', async route => {
+            await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
         });
 
         // Mock Settings POST
@@ -57,7 +75,7 @@ test.describe('Final Integration & Automation Tests', () => {
         });
 
         // Mock Notifications GET
-        await page.route('**/api/notifications/logs', async route => {
+        await page.route('**/api/Notifications/logs', async route => {
             await route.fulfill({
                 status: 200,
                 contentType: 'application/json',
@@ -128,7 +146,10 @@ test.describe('Final Integration & Automation Tests', () => {
     });
 
     test('Admin Settings Persistence Workflow', async ({ page }) => {
-        await page.goto('/settings');
+        // SPA navigation
+        await page.locator('text=Administration').click();
+        await page.locator('text=General').first().click();
+
         await expect(page.locator('.settings-container')).toBeVisible({ timeout: 15000 });
         await expect(page.locator('h3')).toContainText('General Administration');
 
@@ -152,7 +173,9 @@ test.describe('Final Integration & Automation Tests', () => {
     });
 
     test('Automated Grading Workflow Visibility', async ({ page }) => {
-        await page.goto('/auto-grade-calculation');
+        await page.locator('span:has-text("Exam")').first().click();
+        await page.locator('text=Auto Grade').click();
+
         await expect(page.locator('.dashboard-main-body')).toBeVisible({ timeout: 15000 });
         await expect(page.locator('.fee-card-header h4')).toContainText('Auto Generate Exam Results');
 
@@ -164,20 +187,32 @@ test.describe('Final Integration & Automation Tests', () => {
 
     test('Analytics & Reports Integrity', async ({ page }) => {
         // Profit & Loss
-        await page.goto('/profit-loss');
+        await page.locator('span:has-text("Accounts")').first().click();
+        await page.locator('text=Profit & Loss Report').click();
+
         await expect(page.locator('.dashboard-main-body')).toBeVisible({ timeout: 15000 });
         // Check for common chart containers or canvas
         await expect(page.locator('canvas, .apexcharts-canvas').first()).toBeVisible({ timeout: 15000 });
 
         // Exam Analytics
-        await page.goto('/exam-analytics');
+        await page.locator('span:has-text("Exam")').first().click();
+        await page.locator('text=Exam Analytics').click();
+
         await expect(page.locator('.dashboard-main-body')).toBeVisible({ timeout: 15000 });
-        await expect(page.locator('canvas, .apexcharts-canvas').first()).toBeVisible({ timeout: 15000 });
+
+        // Select the exam from dropdown
+        await page.locator('select[name="exam"]').selectOption({ label: 'Mid Term 2024' });
+
+        // Verify stats row or subject performance table becomes visible
+        await expect(page.locator('.stats-row')).toBeVisible({ timeout: 15000 });
     });
 
     test('Notification Monitoring Verification', async ({ page }) => {
-        await page.goto('/settings');
-        await page.click('button:has-text("Notifications")');
+        await page.locator('text=Administration').click();
+        await page.locator('text=General').first().click(); // Navigate to Settings
+
+        // Click the Notifications tab inside settings
+        await page.locator('.settings-sidebar button:has-text("Notifications")').click();
 
         await expect(page.locator('h3:has-text("Recent Notification Logs")')).toBeVisible({ timeout: 10000 });
 

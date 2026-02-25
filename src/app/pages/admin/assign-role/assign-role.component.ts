@@ -15,9 +15,7 @@ import Swal from 'sweetalert2';
     imports: [CommonModule, FormsModule, BreadcrumbComponent],
     providers: [RoleService, StaffService],
     templateUrl: './assign-role.component.html',
-    styles: [`
-    :host { display: block; }
-  `]
+    styleUrls: ['./assign-role.component.css']
 })
 export class AssignRoleComponent implements OnInit {
     title = 'Assign Role';

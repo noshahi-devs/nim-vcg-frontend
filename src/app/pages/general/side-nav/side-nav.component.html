@@ -27,7 +27,7 @@
 
 
       <!-- Section -->
-      <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
+      <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:view-list" class="menu-icon"></iconify-icon>
           <span>Section</span>
@@ -88,7 +88,7 @@
       </li>
 
       <!-- Class -->
-      <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
+      <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:google-classroom" class="menu-icon"></iconify-icon>
           <span>Class</span>
@@ -99,8 +99,7 @@
           <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/newclass"><i
                 class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add New
               Class</a></li>
-          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/class-management"><i
-                class="ri-circle-fill circle-icon text-danger w-auto"></i> Class
+          <li><a routerLink="/class-management"><i class="ri-circle-fill circle-icon text-danger w-auto"></i> Class
               Manage</a></li>
         </ul>
       </li>
@@ -321,11 +320,9 @@
           <span>Report</span>
         </a>
         <ul class="sidebar-submenu">
-          <li><a routerLink="/report"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Student</a>
+          <li><a routerLink="/report"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Report
+              Analytics</a>
           </li>
-          <li><a routerLink="/report"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Staff</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Accountant'])"><a routerLink="/report"><i
-                class="ri-circle-fill circle-icon text-info-main w-auto"></i> Finance</a></li>
         </ul>
       </li>
 

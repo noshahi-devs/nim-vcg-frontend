@@ -11,9 +11,7 @@ import { RouterLink } from '@angular/router';
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     imports: [CommonModule, FormsModule, RouterLink],
     templateUrl: './role-access.component.html',
-    styles: [`
-    :host { display: block; }
-  `]
+    styleUrl: './role-access.component.css'
 })
 export class RoleAccessComponent implements OnInit {
     roles: Role[] = [];

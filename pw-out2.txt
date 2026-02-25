@@ -1,0 +1,25 @@
+
+Running 5 tests using 2 workers
+
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
+  ✓  2 [chromium] › e2e\teacher-visibility.spec.ts:117:9 › Teacher Visibility E2E Tests › Teacher should only see assigned students in Student List (14.5s)
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
+  ✓  1 [chromium] › e2e\teacher-visibility.spec.ts:136:9 › Teacher Visibility E2E Tests › Teacher should only see assigned classes in Class Management (17.1s)
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
+  ✓  4 [chromium] › e2e\teacher-visibility.spec.ts:158:9 › Teacher Visibility E2E Tests › Teacher should only see subjects for assigned classes in Subject List (8.0s)
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
+  ✓  3 [chromium] › e2e\teacher-visibility.spec.ts:147:9 › Teacher Visibility E2E Tests › Teacher should only see assigned sections in Section List (11.6s)
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
+Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
+  ✓  5 [chromium] › e2e\teacher-visibility.spec.ts:169:9 › Teacher Visibility E2E Tests › Teacher should only see assigned classes in Attendance (10.9s)
+
+  5 passed (50.0s)

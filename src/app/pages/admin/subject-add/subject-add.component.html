@@ -2,67 +2,92 @@
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
   <div class="row justify-content-center">
-    <div class="col-md-10 border-20">
-      <div class="card shadow-sm radius-12 mt-4">
-        <div class="card-header bg-base py-16 px-24 border-bottom text-center">
-          <h5 class="fw-semibold mb-0 text-primary-600">Add Subjects</h5>
+    <div class="col-md-10 mt-4">
+      <div class="fee-card">
+        <div class="fee-card-header premium-header d-flex align-items-center justify-content-between">
+          <h5 class="fw-semibold mb-0" style="color: white;">Add Subjects</h5>
         </div>
 
-        <div class="card-body px-24 py-16">
+        <div class="fee-card-body px-24 py-16">
           <form #subjectForm="ngForm" (ngSubmit)="onSubmit(subjectForm)" novalidate>
 
             <!-- Select Class -->
-            <div class="mb-4">
-              <label class="form-label fw-semibold">Select Class <span class="text-danger">*</span></label>
-              <!-- Replace localStorage select with API-based classes -->
-              <select class="form-select radius-8" name="selectedClassId" [(ngModel)]="selectedClassId" required
-                #classSelect="ngModel" [ngClass]="{ 'is-invalid': classSelect.invalid && classSelect.touched }">
-                <option value="" disabled selected>Select a Class</option>
-                <option *ngFor="let c of classes" [value]="c.standardId">{{ c.standardName }}</option>
-              </select>
-
-              <small *ngIf="classSelect.invalid && classSelect.touched" class="text-danger">
-                Please select a class
-              </small>
+            <div class="form-card mb-4">
+              <div class="form-card-label">
+                <span class="card-dot blue"></span>
+                Class Selection
+              </div>
+              <div class="form-group-premium mt-3">
+                <label class="field-label">Select Class <span class="text-danger">*</span></label>
+                <div class="select-wrapper-premium">
+                  <select class="field-select" name="selectedClassId" [(ngModel)]="selectedClassId" required
+                    #classSelect="ngModel" [ngClass]="{ 'is-invalid': classSelect.invalid && classSelect.touched }">
+                    <option value="" disabled selected>Select a Class</option>
+                    <option *ngFor="let c of classes" [value]="c.standardId">{{ c.standardName }}</option>
+                  </select>
+                  <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
+                <small *ngIf="classSelect.invalid && classSelect.touched" class="text-danger mt-1 d-block">
+                  Please select a class
+                </small>
+              </div>
             </div>
 
             <!-- Dynamic Subject Fields -->
-            <div class="border border-neutral-200 radius-8 p-3 mb-3">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-semibold mb-0">Subjects</h6>
-                <button type="button" class="btn btn-sm btn-success radius-8 d-flex align-items-center gap-2"
-                  (click)="addMoreSubject()">
-                  <iconify-icon icon="ic:baseline-plus" class="text-lg"></iconify-icon>
+            <div class="form-card mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-0">
+                <div class="form-card-label mb-0">
+                  <span class="card-dot green"></span>
+                  Subjects
+                </div>
+                <button type="button" class="btn-secondary-premium" (click)="addMoreSubject()"
+                  style="padding: 8px 16px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="me-1"
+                    style="width: 18px; height: 18px;">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
                   Add More
                 </button>
               </div>
 
-              <div *ngFor="let subject of subjects; let i = index" class="mb-3">
-                <div class="row align-items-end">
-                  <div class="col-md-5">
-                    <label class="form-label fw-semibold">Subject Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control radius-8" [(ngModel)]="subject.subjectName"
-                      [name]="'subjectName_' + i" placeholder="e.g., Mathematics" required />
+              <div *ngFor="let subject of subjects; let i = index" class="row align-items-end mt-3">
+                <div class="col-md-5">
+                  <div class="form-group-premium">
+                    <label class="field-label">Subject Name <span class="text-danger">*</span></label>
+                    <input type="text" class="field-input" [(ngModel)]="subject.subjectName" [name]="'subjectName_' + i"
+                      placeholder="e.g., Mathematics" required />
                   </div>
-                  <div class="col-md-5">
-                    <label class="form-label fw-semibold">Subject Code <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control radius-8" [(ngModel)]="subject.subjectCode"
-                      [name]="'marks_' + i" placeholder=" 400" min="1" required />
+                </div>
+                <div class="col-md-5">
+                  <div class="form-group-premium">
+                    <label class="field-label">Subject Code <span class="text-danger">*</span></label>
+                    <input type="number" class="field-input" [(ngModel)]="subject.subjectCode" [name]="'marks_' + i"
+                      placeholder=" 400" min="1" required />
                   </div>
-                  <div class="col-md-2 py-16">
-                    <button type="button"
-                      class="btn btn-danger w-100 radius-8 d-flex align-items-center justify-content-center gap-2"
-                      (click)="removeSubject(i)" [disabled]="subjects.length === 1">
-                      <iconify-icon icon="ic:baseline-minus" class="text-lg"></iconify-icon>
-                      Remove
-                    </button>
-                  </div>
+                </div>
+                <div class="col-md-2" style="padding-bottom: 4px;">
+                  <button type="button"
+                    class="icon-btn delete-btn w-100 d-flex align-items-center justify-content-center gap-2"
+                    style="height: 48px; border-radius: 12px; background: rgba(239, 68, 68, 0.1); color: #ef4444;"
+                    (click)="removeSubject(i)" [disabled]="subjects.length === 1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      style="width: 18px; height: 18px;">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Remove
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div class="d-flex align-items-center justify-content-center gap-3 mt-4">
-              <button type="submit" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8">
+            <div class="d-flex align-items-center justify-content-end gap-3 mt-4">
+              <button type="submit" class="btn-primary-gradient px-4 py-2 radius-8 d-flex align-items-center gap-2">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  style="width: 20px; height: 20px;">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
                 Save Subjects
               </button>
             </div>

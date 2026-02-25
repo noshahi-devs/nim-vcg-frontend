@@ -16,15 +16,27 @@
     <div class="row gy-4">
         <!-- ADD ROLE CARD -->
         <div class="col-md-4">
-            <div class="card h-100 p-0 radius-12">
-                <div class="card-header border-bottom bg-base py-16 px-24">
-                    <h6 class="text-lg fw-semibold mb-0">Add New Role</h6>
+            <div class="fee-card h-100">
+                <div class="fee-card-header premium-header">
+                    <h6 class="text-lg fw-semibold mb-0" style="color: white;">Add New Role</h6>
                 </div>
-                <div class="card-body p-24">
-                    <label class="form-label">Role Name</label>
-                    <div class="d-flex gap-2">
-                        <input type="text" class="form-control" [(ngModel)]="newRoleName" placeholder="e.g. Librarian">
-                        <button class="btn btn-primary" (click)="addRole()">Add</button>
+                <div class="fee-card-body p-24">
+                    <div class="form-group-premium mt-2">
+                        <label class="field-label">Role Name</label>
+                        <div class="d-flex flex-column gap-4 mt-2">
+                            <input type="text" class="field-input" [(ngModel)]="newRoleName"
+                                placeholder="e.g. Librarian">
+                            <button
+                                class="btn-primary-gradient px-4 py-2 radius-8 d-flex align-items-center justify-content-center gap-2 mt-2"
+                                (click)="addRole()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                    style="width: 20px; height: 20px;">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                Add Role
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -32,13 +44,13 @@
 
         <!-- ROLES LIST -->
         <div class="col-md-8">
-            <div class="card h-100 p-0 radius-12">
-                <div class="card-header border-bottom bg-base py-16 px-24">
-                    <h6 class="text-lg fw-semibold mb-0">Existing Roles</h6>
+            <div class="fee-card h-100 p-0">
+                <div class="fee-card-header premium-header border-bottom">
+                    <h6 class="text-lg fw-semibold mb-0" style="color: white;">Existing Roles</h6>
                 </div>
-                <div class="card-body p-24">
-                    <div class="table-responsive">
-                        <table class="table bordered-table sm-table hover-table">
+                <div class="fee-card-body p-0">
+                    <div class="table-wrapper m-0 pb-0" style="border: none;">
+                        <table class="fee-table">
                             <thead>
                                 <tr>
                                     <th>Role Name</th>
@@ -47,12 +59,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let role of roles">
-                                    <td class="fw-medium text-primary-600">{{ role.name }}</td>
+                                <tr class="table-row" *ngFor="let role of roles">
                                     <td>
-                                        <div class="d-flex flex-wrap gap-1">
+                                        <span class="fw-semibold text-primary" style="font-size: 15px;">{{ role.name
+                                            }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-2">
                                             <span *ngFor="let perm of role.permissions"
-                                                class="badge bg-neutral-200 text-neutral-600 rounded-pill fw-normal text-xs">
+                                                class="amount-chip pending px-2 py-1 text-xs"
+                                                style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">
                                                 {{ perm }}
                                             </span>
                                             <span *ngIf="!role.permissions?.length" class="text-muted text-xs">No
@@ -60,11 +76,27 @@
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <button
-                                            class="w-32-px h-32-px bg-danger-subtle text-danger-main rounded-circle d-flex justify-content-center align-items-center"
-                                            (click)="deleteRole(role.id)">
-                                            <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
+                                        <button class="icon-btn delete-btn" (click)="deleteRole(role.id)"
+                                            title="Delete Role">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="3 6 5 6 21 6" />
+                                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                                <path d="M10 11v6M14 11v6" />
+                                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1-1v2" />
+                                            </svg>
                                         </button>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="roles?.length === 0">
+                                    <td colspan="3" class="empty-state">
+                                        <div class="empty-content">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="1.5">
+                                                <circle cx="12" cy="12" r="10" />
+                                                <path d="M8 12h8" />
+                                            </svg>
+                                            <p>No roles found.</p>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
