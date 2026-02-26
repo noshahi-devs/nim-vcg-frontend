@@ -71,7 +71,7 @@ import { AuthService } from '../../../SecurityModels/auth.service';
 import { Router, RouterLink } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
-
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-sign-up',
   standalone: true,
@@ -126,8 +126,39 @@ export class SignUpComponent {
       },
       error: (err) => {
         console.error('Registration error:', err);
+
+        let errMsg = '';
+        if (err.status === 400) {
+          // Handle validation errors or bad requests
+          const backendErrors = err.error?.errors || err.error?.message;
+          if (typeof backendErrors === 'object') {
+            errMsg = Object.values(backendErrors).flat().join(', ');
+          } else {
+            errMsg = backendErrors || 'Invalid registration details provided.';
+          }
+        } else if (err.status === 409) {
+          errMsg = 'An account with this email/username already exists.';
+        } else if (err.status === 500) {
+          errMsg = 'Internal Server Error. Please contact support or try again later.';
+        } else if (err.status === 0) {
+          errMsg = 'Unable to connect to the server. Please check your internet connection.';
+        } else {
+          errMsg = err.error?.message || 'Something went wrong. Please try again.';
+        }
+
+        Swal.fire({
+          title: 'Registration Failed',
+          text: errMsg,
+          icon: 'error',
+          confirmButtonText: 'Try Again',
+          confirmButtonColor: '#6366f1',
+          customClass: {
+            popup: 'premium-swal-popup',
+            title: 'premium-swal-title',
+          }
+        });
+
         this.isSubmitting = false;
-        this.errorMessage = err.error?.errors || 'Something went wrong. Please try again.';
       }
     });
   }

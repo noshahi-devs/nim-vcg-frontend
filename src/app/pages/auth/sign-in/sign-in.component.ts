@@ -144,7 +144,34 @@ export class SignInComponent {
 
       error: (err) => {
         console.error('Login failed:', err);
-        this.errorMessage = err.error?.message || 'Login failed';
+
+        let errMsg = '';
+        if (err.status === 401) {
+          errMsg = 'Invalid email or password. Please try again.';
+        } else if (err.status === 400) {
+          errMsg = err.error?.message || 'Bad Request. Please check your inputs.';
+        } else if (err.status === 404) {
+          errMsg = 'Account not found. Please sign up first.';
+        } else if (err.status === 500) {
+          errMsg = 'Internal Server Error. Please contact support or try again later.';
+        } else if (err.status === 0) {
+          errMsg = 'Unable to connect to the server. Please check your internet connection.';
+        } else {
+          errMsg = err.error?.message || 'An unexpected error occurred during login.';
+        }
+
+        Swal.fire({
+          title: 'Sign In Failed',
+          text: errMsg,
+          icon: 'error',
+          confirmButtonText: 'Try Again',
+          confirmButtonColor: '#6366f1',
+          customClass: {
+            popup: 'premium-swal-popup',
+            title: 'premium-swal-title',
+          }
+        });
+
         this.isSubmitting = false;
       }
     });
