@@ -1,6 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { UserManagementService, User } from '../../../services/user-management.service';
 import Swal from 'sweetalert2';
@@ -69,7 +70,7 @@ export class StaffManageLoginComponent implements OnInit {
 
   loading = false;
 
-  constructor(private userService: UserManagementService) { }
+  constructor(private userService: UserManagementService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadStaffData();
@@ -139,10 +140,7 @@ export class StaffManageLoginComponent implements OnInit {
 
   // Dialog Methods
   openAddDialog(): void {
-    this.isEditMode = false;
-    this.loginForm = this.getEmptyForm();
-    this.confirmPassword = '';
-    this.showDialog = true;
+    this.router.navigate(['/sign-up']);
   }
 
   openEditDialog(login: Login): void {
