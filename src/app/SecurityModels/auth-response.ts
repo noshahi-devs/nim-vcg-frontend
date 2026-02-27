@@ -1,12 +1,9 @@
-export class AuthResponse {
-
-  public username!: string;
-  public email!: string;
-  public token!: string;
-  public roles: string[] = [];
-  permissions?: string[]; // optional
-
-
+export interface AuthResponse {
+  username: string;
+  email: string;
+  token: string;
+  roles: string[];
+  permissions: string[];
 }
 
 export class AppUser {

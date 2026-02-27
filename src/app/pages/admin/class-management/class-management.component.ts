@@ -47,7 +47,7 @@ export class ClassManagementComponent implements OnInit {
     private router: Router,
     private standardService: StandardService,
     private sectionService: SectionService,
-    private authService: AuthService,
+    public authService: AuthService,
     private staffService: StaffService
   ) { }
 

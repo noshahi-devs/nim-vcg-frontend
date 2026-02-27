@@ -6,6 +6,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { StaffService } from '../../../services/staff.service';
 import { Designation } from '../../../Models/staff';
 import { finalize } from 'rxjs';
+import { AuthService } from '../../../SecurityModels/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -27,7 +28,10 @@ export class StaffListComponent implements OnInit, AfterViewInit {
   get teacherCount(): number { return this.staffList.filter(s => s.designation === 2).length; }
   get departmentsCount(): number { return new Set(this.staffList.map(s => s.department?.departmentName || 'N/A')).size; }
 
-  constructor(private staffService: StaffService) { }
+  constructor(
+    private staffService: StaffService,
+    public authService: AuthService
+  ) { }
 
   ngOnInit(): void {
     this.loadStaff();

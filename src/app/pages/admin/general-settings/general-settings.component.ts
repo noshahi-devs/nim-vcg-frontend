@@ -25,7 +25,8 @@ export class GeneralSettingsComponent implements OnInit {
         instituteEmail: '',
         academicYear: '',
         currencySymbol: 'PKR',
-        logoUrl: ''
+        logoUrl: '',
+        preferredTheme: 'light' // Default
     };
 
     notificationSettings: NotificationSetting[] = [];

@@ -6,84 +6,64 @@
     <div class="stats-row mb-24">
         <div class="stat-card">
             <div class="stat-icon-wrapper text-primary-main bg-primary-100">
-                <svg viewBox="0 0 24 24" fill="none" class="text-primary-main" stroke="currentColor" stroke-width="2"
-                    width="24" height="24">
-                    <circle cx="9" cy="21" r="1" />
-                    <circle cx="20" cy="21" r="1" />
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                </svg>
+                <iconify-icon icon="solar:wallet-bold" class="text-2xl"></iconify-icon>
             </div>
             <div class="stat-content">
-                <span class="stat-label">Gross Sales</span>
-                <h3 class="stat-value text-primary-main">$40,000</h3>
+                <span class="stat-label">Total Income</span>
+                <h3 class="stat-value text-primary-main">{{ accountData?.totalIncome | currency:'PKR':'symbol':'1.0-0'
+                    }}</h3>
                 <p class="text-sm text-secondary-light mt-8 mb-0 d-flex align-items-center gap-4">
-                    <span class="text-success-main fw-medium d-flex align-items-center"><svg viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                            <polyline points="17 6 23 6 23 12" />
-                        </svg> 80%</span> From last month
+                    <span class="text-success-main fw-medium d-flex align-items-center">
+                        <iconify-icon icon="solar:alt-arrow-up-bold" class="me-1"></iconify-icon> Real-time
+                    </span> Latest Data
                 </p>
             </div>
         </div>
 
         <div class="stat-card">
             <div class="stat-icon-wrapper" style="background: #e0e7ff; color: #4f46e5;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                    <line x1="3" y1="6" x2="21" y2="6" />
-                    <path d="M16 10a4 4 0 0 1-8 0" />
-                </svg>
+                <iconify-icon icon="solar:cart-large-bold" class="text-2xl"></iconify-icon>
             </div>
             <div class="stat-content">
-                <span class="stat-label">Total Purchase</span>
-                <h3 class="stat-value" style="color: #4f46e5;">$35,000</h3>
+                <span class="stat-label">Total Expenses</span>
+                <h3 class="stat-value" style="color: #4f46e5;">{{ accountData?.totalExpenses |
+                    currency:'PKR':'symbol':'1.0-0' }}</h3>
                 <p class="text-sm text-secondary-light mt-8 mb-0 d-flex align-items-center gap-4">
-                    <span class="text-success-main fw-medium d-flex align-items-center"><svg viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                            <polyline points="17 6 23 6 23 12" />
-                        </svg> 95%</span> From last month
+                    <span class="text-danger-main fw-medium d-flex align-items-center">
+                        <iconify-icon icon="solar:alt-arrow-down-bold" class="me-1"></iconify-icon> Active
+                    </span> Monthly tracking
                 </p>
             </div>
         </div>
 
         <div class="stat-card">
             <div class="stat-icon-wrapper green">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-                    <line x1="12" y1="1" x2="12" y2="23" />
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                </svg>
+                <iconify-icon icon="solar:money-bag-bold" class="text-2xl"></iconify-icon>
             </div>
             <div class="stat-content">
-                <span class="stat-label">Total Income</span>
-                <h3 class="stat-value text-success-main">$30,000</h3>
+                <span class="stat-label">Net Profit</span>
+                <h3 class="stat-value text-success-main">{{ accountData?.profitLoss | currency:'PKR':'symbol':'1.0-0' }}
+                </h3>
                 <p class="text-sm text-secondary-light mt-8 mb-0 d-flex align-items-center gap-4">
-                    <span class="text-danger-main fw-medium d-flex align-items-center"><svg viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                            <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
-                            <polyline points="17 18 23 18 23 12" />
-                        </svg> 30%</span> From last month
+                    <span class="text-success-main fw-medium d-flex align-items-center">
+                        <iconify-icon icon="solar:chart-bold" class="me-1"></iconify-icon> Final
+                    </span> After Deductions
                 </p>
             </div>
         </div>
 
         <div class="stat-card">
             <div class="stat-icon-wrapper orange">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-                    <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                    <polyline points="2 17 12 22 22 17" />
-                    <polyline points="2 12 12 17 22 12" />
-                </svg>
+                <iconify-icon icon="solar:bank-bold" class="text-2xl"></iconify-icon>
             </div>
             <div class="stat-content">
-                <span class="stat-label">Total Expense</span>
-                <h3 class="stat-value text-danger-main">$7,000</h3>
+                <span class="stat-label">Cash/Bank Balance</span>
+                <h3 class="stat-value text-danger-main">{{ accountData?.cashBankBalance |
+                    currency:'PKR':'symbol':'1.0-0' }}</h3>
                 <p class="text-sm text-secondary-light mt-8 mb-0 d-flex align-items-center gap-4">
-                    <span class="text-success-main fw-medium d-flex align-items-center"><svg viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                            <polyline points="17 6 23 6 23 12" />
-                        </svg> 60%</span> From last month
+                    <span class="text-info-main fw-medium d-flex align-items-center">
+                        <iconify-icon icon="solar:hand-money-bold" class="me-1"></iconify-icon> Liquid
+                    </span> Available Now
                 </p>
             </div>
         </div>
@@ -94,14 +74,9 @@
         <div class="col-xxl-8">
             <div class="fee-card h-100 mb-0">
                 <div class="fee-card-header d-flex justify-content-between align-items-center">
-                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Income Vs Expense</h6>
+                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Income Vs Expense Trend</h6>
                     <div class="show-entries" style="margin-bottom: 0;">
-                        <select class="entries-select" style="min-width: 120px;">
-                            <option>Yearly</option>
-                            <option>Monthly</option>
-                            <option>Weekly</option>
-                            <option>Today</option>
-                        </select>
+                        <span class="badge bg-primary-focus text-primary-main">Live Analytics</span>
                     </div>
                 </div>
 
@@ -109,36 +84,22 @@
                     <ul class="d-flex flex-wrap align-items-center justify-content-center mb-16 gap-32">
                         <li class="d-flex flex-column gap-4">
                             <div class="d-flex align-items-center gap-8">
-                                <span class="w-12-px h-12-px rounded-circle bg-primary-100"
-                                    style="background-color: #487FFF !important;"></span>
-                                <span class="text-secondary-light text-sm fw-semibold">Income</span>
+                                <span class="w-12-px h-12-px rounded-circle bg-primary-main"></span>
+                                <span class="text-secondary-light text-sm fw-semibold">Total Income</span>
                             </div>
                             <div class="d-flex align-items-center gap-8">
-                                <h5 class="mb-0 fw-bold">$26,201</h5>
-                                <span
-                                    class="text-success-main d-flex align-items-center gap-4 text-sm fw-semibold bg-success-focus px-8 py-2 radius-4">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                                        width="14" height="14">
-                                        <polyline points="18 15 12 9 6 15" />
-                                    </svg> 10%
-                                </span>
+                                <h5 class="mb-0 fw-bold">{{ accountData?.totalIncome | currency:'PKR':'symbol':'1.0-0'
+                                    }}</h5>
                             </div>
                         </li>
                         <li class="d-flex flex-column gap-4">
                             <div class="d-flex align-items-center gap-8">
-                                <span class="w-12-px h-12-px rounded-circle"
-                                    style="background-color: #FF9F29 !important;"></span>
-                                <span class="text-secondary-light text-sm fw-semibold">Expenses</span>
+                                <span class="w-12-px h-12-px rounded-circle bg-success-main"></span>
+                                <span class="text-secondary-light text-sm fw-semibold">Total Expenses</span>
                             </div>
                             <div class="d-flex align-items-center gap-8">
-                                <h5 class="mb-0 fw-bold">$18,120</h5>
-                                <span
-                                    class="text-danger-main d-flex align-items-center gap-4 text-sm fw-semibold bg-danger-focus px-8 py-2 radius-4">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                                        width="14" height="14">
-                                        <polyline points="6 9 12 15 18 9" />
-                                    </svg> 10%
-                                </span>
+                                <h5 class="mb-0 fw-bold">{{ accountData?.totalExpenses | currency:'PKR':'symbol':'1.0-0'
+                                    }}</h5>
                             </div>
                         </li>
                     </ul>
@@ -155,72 +116,40 @@
             </div>
         </div>
 
-        <!-- ===================== USERS ===================== -->
+        <!-- ===================== LATEST STAFF ATTENDANCE ===================== -->
         <div class="col-xxl-4 col-md-6">
             <div class="fee-card h-100 mb-0">
                 <div class="fee-card-header d-flex justify-content-between align-items-center">
-                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Users</h6>
-                    <a href="javascript:void(0)" class="btn-ghost" style="padding: 6px 12px; font-size: 13px;">View
-                        All</a>
+                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">System Users</h6>
+                    <a routerLink="/staff-list" class="btn-ghost" style="padding: 6px 12px; font-size: 13px;">View
+                        Staff</a>
                 </div>
                 <div class="fee-card-body p-24">
                     <div class="d-flex flex-column gap-16">
-                        <!-- User 1 -->
                         <div class="d-flex align-items-center justify-content-between p-12 radius-8"
                             style="background: #f8fafc; border: 1px solid #e2e8f0;">
                             <div class="d-flex align-items-center gap-12">
                                 <div
                                     class="w-44-px h-44-px bg-primary-100 rounded-circle text-primary-main d-flex justify-content-center align-items-center fw-bold text-lg">
-                                    PS
+                                    AD
                                 </div>
                                 <div>
-                                    <h6 class="text-md fw-semibold mb-0 text-secondary-dark">Psychiatry</h6>
-                                    <span class="text-sm text-secondary-light">Super Admin</span>
-                                </div>
-                            </div>
-                            <span class="amount-chip due">Pending</span>
-                        </div>
-                        <!-- User 2 -->
-                        <div class="d-flex align-items-center justify-content-between p-12 radius-8"
-                            style="background: #f8fafc; border: 1px solid #e2e8f0;">
-                            <div class="d-flex align-items-center gap-12">
-                                <div class="w-44-px h-44-px rounded-circle text-white d-flex justify-content-center align-items-center fw-bold text-lg"
-                                    style="background: #4f46e5;">
-                                    OR
-                                </div>
-                                <div>
-                                    <h6 class="text-md fw-semibold mb-0 text-secondary-dark">Orthopedic</h6>
-                                    <span class="text-sm text-secondary-light">Admin</span>
+                                    <h6 class="text-md fw-semibold mb-0 text-secondary-dark">System Admin</h6>
+                                    <span class="text-sm text-secondary-light">Administrator</span>
                                 </div>
                             </div>
                             <span class="amount-chip paid">Active</span>
                         </div>
-                        <!-- User 3 -->
                         <div class="d-flex align-items-center justify-content-between p-12 radius-8"
                             style="background: #f8fafc; border: 1px solid #e2e8f0;">
                             <div class="d-flex align-items-center gap-12">
                                 <div
-                                    class="w-44-px h-44-px bg-success-100 rounded-circle text-success-main d-flex justify-content-center align-items-center fw-bold text-lg">
-                                    CA
+                                    class="w-44-px h-44-px bg-info-100 rounded-circle text-info-main d-flex justify-content-center align-items-center fw-bold text-lg">
+                                    PR
                                 </div>
                                 <div>
-                                    <h6 class="text-md fw-semibold mb-0 text-secondary-dark">Cardiology</h6>
-                                    <span class="text-sm text-secondary-light">Manager</span>
-                                </div>
-                            </div>
-                            <span class="amount-chip paid">Active</span>
-                        </div>
-                        <!-- User 4 -->
-                        <div class="d-flex align-items-center justify-content-between p-12 radius-8"
-                            style="background: #f8fafc; border: 1px solid #e2e8f0;">
-                            <div class="d-flex align-items-center gap-12">
-                                <div
-                                    class="w-44-px h-44-px bg-warning-100 rounded-circle text-warning-main d-flex justify-content-center align-items-center fw-bold text-lg">
-                                    PE
-                                </div>
-                                <div>
-                                    <h6 class="text-md fw-semibold mb-0 text-secondary-dark">Pediatrics</h6>
-                                    <span class="text-sm text-secondary-light">Admin</span>
+                                    <h6 class="text-md fw-semibold mb-0 text-secondary-dark">Principal</h6>
+                                    <span class="text-sm text-secondary-light">Academic Head</span>
                                 </div>
                             </div>
                             <span class="amount-chip paid">Active</span>
@@ -230,104 +159,46 @@
             </div>
         </div>
 
-        <!-- ===================== TOP SUPPLIERS ===================== -->
-        <div class="col-xxl-4 col-md-6">
+        <!-- ===================== QUICK LINKS ===================== -->
+        <div class="col-xxl-8 col-md-6">
             <div class="fee-card h-100 mb-0">
                 <div class="fee-card-header d-flex justify-content-between align-items-center">
-                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Top Suppliers</h6>
-                    <a href="javascript:void(0)" class="btn-ghost" style="padding: 6px 12px; font-size: 13px;">View
-                        All</a>
+                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Administrative Quick Actions</h6>
                 </div>
-                <div class="fee-card-body p-0">
-                    <div class="table-wrapper m-24">
-                        <table class="fee-table">
-                            <thead>
-                                <tr>
-                                    <th scope="col" style="width: 50px;">SL</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col" class="text-end">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="table-row">
-                                    <td><span class="text-secondary-light">1</span></td>
-                                    <td><span class="student-name text-sm">Esther Howard</span></td>
-                                    <td class="text-end fw-bold text-secondary-dark">$30,000.00</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td><span class="text-secondary-light">2</span></td>
-                                    <td><span class="student-name text-sm">Wade Warren</span></td>
-                                    <td class="text-end fw-bold text-secondary-dark">$40,000.00</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td><span class="text-secondary-light">3</span></td>
-                                    <td><span class="student-name text-sm">Jenny Wilson</span></td>
-                                    <td class="text-end fw-bold text-secondary-dark">$50,000.00</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td><span class="text-secondary-light">4</span></td>
-                                    <td><span class="student-name text-sm">Kristin Watson</span></td>
-                                    <td class="text-end fw-bold text-secondary-dark">$60,000.00</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td><span class="text-secondary-light">5</span></td>
-                                    <td><span class="student-name text-sm">Eleanor Pena</span></td>
-                                    <td class="text-end fw-bold text-secondary-dark">$70,000.00</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ===================== TOP CUSTOMER ===================== -->
-        <div class="col-xxl-4 col-md-6">
-            <div class="fee-card h-100 mb-0">
-                <div class="fee-card-header d-flex justify-content-between align-items-center">
-                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Top Customer</h6>
-                    <a href="javascript:void(0)" class="btn-ghost" style="padding: 6px 12px; font-size: 13px;">View
-                        All</a>
-                </div>
-                <div class="fee-card-body p-0">
-                    <div class="table-wrapper m-24">
-                        <table class="fee-table">
-                            <thead>
-                                <tr>
-                                    <th scope="col" style="width: 50px;">SL</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col" class="text-end">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="table-row">
-                                    <td><span class="text-secondary-light">1</span></td>
-                                    <td><span class="student-name text-sm text-primary-main">Savannah Nguyen</span></td>
-                                    <td class="text-end fw-bold text-success-main">$30,000.00</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td><span class="text-secondary-light">2</span></td>
-                                    <td><span class="student-name text-sm text-primary-main">Annette Black</span></td>
-                                    <td class="text-end fw-bold text-success-main">$40,000.00</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td><span class="text-secondary-light">3</span></td>
-                                    <td><span class="student-name text-sm text-primary-main">Theresa Webb</span></td>
-                                    <td class="text-end fw-bold text-success-main">$50,000.00</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td><span class="text-secondary-light">4</span></td>
-                                    <td><span class="student-name text-sm text-primary-main">Marvin McKinney</span></td>
-                                    <td class="text-end fw-bold text-success-main">$60,000.00</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td><span class="text-secondary-light">5</span></td>
-                                    <td><span class="student-name text-sm text-primary-main">Brooklyn Simmons</span>
-                                    </td>
-                                    <td class="text-end fw-bold text-success-main">$70,000.00</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="fee-card-body p-24">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <button routerLink="/student-add" class="btn btn-primary w-100 py-3">
+                                <iconify-icon icon="solar:user-plus-bold" class="me-2"></iconify-icon> New Admission
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button routerLink="/collect-fee" class="btn btn-success w-100 py-3">
+                                <iconify-icon icon="solar:bill-list-bold" class="me-2"></iconify-icon> Collect Fee
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button routerLink="/attendance" class="btn btn-info w-100 py-3">
+                                <iconify-icon icon="solar:clipboard-check-bold" class="me-2"></iconify-icon> Student
+                                Attendance
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button routerLink="/exam-schedule" class="btn btn-warning w-100 py-3">
+                                <iconify-icon icon="solar:calendar-date-bold" class="me-2"></iconify-icon> Exam Schedule
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button routerLink="/marks-entry" class="btn btn-purple w-100 py-3"
+                                style="background-color: #9935FE; color: white;">
+                                <iconify-icon icon="solar:pen-new-square-bold" class="me-2"></iconify-icon> Entry Marks
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button routerLink="/settings" class="btn btn-secondary w-100 py-3">
+                                <iconify-icon icon="solar:settings-bold" class="me-2"></iconify-icon> System Settings
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -337,14 +208,9 @@
         <div class="col-xxl-4 col-md-12">
             <div class="fee-card h-100 mb-0">
                 <div class="fee-card-header d-flex justify-content-between align-items-center">
-                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Overall Report</h6>
+                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Income vs Expense Ratio</h6>
                     <div class="show-entries" style="margin-bottom: 0;">
-                        <select class="entries-select" style="min-width: 120px;">
-                            <option>Yearly</option>
-                            <option>Monthly</option>
-                            <option>Weekly</option>
-                            <option>Today</option>
-                        </select>
+                        <span class="badge bg-success-focus text-success-main">Dynamic</span>
                     </div>
                 </div>
                 <div class="fee-card-body p-24">
@@ -365,17 +231,10 @@
                     <div class="row g-16 mt-32 justify-content-center">
                         <div class="col-6">
                             <div class="p-16 radius-8 d-flex align-items-center gap-12"
-                                style="background: #fff8f1; border: 1px solid #ffedd5;">
-                                <span class="w-12-px h-12-px rounded-circle" style="background: #FF9F29;"></span>
-                                <span class="text-secondary-dark fw-semibold text-sm">Purchase</span>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="p-16 radius-8 d-flex align-items-center gap-12"
                                 style="background: #eff6ff; border: 1px solid #dbeafe;">
                                 <span class="w-12-px h-12-px rounded-circle bg-primary-main"
                                     style="background-color: #487FFF !important;"></span>
-                                <span class="text-secondary-dark fw-semibold text-sm">Sales</span>
+                                <span class="text-secondary-dark fw-semibold text-sm">Income</span>
                             </div>
                         </div>
                         <div class="col-6">
@@ -384,14 +243,6 @@
                                 <span class="w-12-px h-12-px rounded-circle bg-success-main"
                                     style="background-color: #45B369 !important;"></span>
                                 <span class="text-secondary-dark fw-semibold text-sm">Expense</span>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="p-16 radius-8 d-flex align-items-center gap-12"
-                                style="background: #faf5ff; border: 1px solid #e9d5ff;">
-                                <span class="w-12-px h-12-px rounded-circle"
-                                    style="background-color: #9935FE !important;"></span>
-                                <span class="text-secondary-dark fw-semibold text-sm">Gross Profit</span>
                             </div>
                         </div>
                     </div>
@@ -403,9 +254,9 @@
         <div class="col-xxl-12">
             <div class="fee-card mb-0">
                 <div class="fee-card-header d-flex justify-content-between align-items-center">
-                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Recent Transactions</h6>
-                    <a href="javascript:void(0)" class="btn-ghost" style="padding: 6px 12px; font-size: 13px;">View
-                        All</a>
+                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Recent Transactions (Income & Expenses)</h6>
+                    <a routerLink="/accounts-ledger" class="btn-ghost" style="padding: 6px 12px; font-size: 13px;">View
+                        Full Ledger</a>
                 </div>
                 <div class="fee-card-body p-0">
                     <div class="table-wrapper m-24">
@@ -414,46 +265,29 @@
                                 <tr>
                                     <th scope="col" style="width: 50px;">SL</th>
                                     <th scope="col">Date</th>
-                                    <th scope="col">Payment Type</th>
-                                    <th scope="col" class="text-end">Paid Amount</th>
-                                    <th scope="col" class="text-end">Due Amount</th>
-                                    <th scope="col" class="text-end">Payable Amount</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col" class="text-end">Debit (Exp)</th>
+                                    <th scope="col" class="text-end">Credit (Inc)</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="table-row">
-                                    <td>1</td>
-                                    <td><span class="date-val fw-bold text-secondary-dark">21 Jun 2024</span></td>
-                                    <td><span class="amount-chip paid">Cash</span></td>
-                                    <td class="text-end fw-semibold text-success-main">$0.00</td>
-                                    <td class="text-end fw-semibold text-danger-main">$150.00</td>
-                                    <td class="text-end fw-bold text-secondary-dark">$150.00</td>
+                                <tr *ngFor="let txn of accountData?.recentTransactions; let i = index"
+                                    class="table-row">
+                                    <td>{{ i + 1 }}</td>
+                                    <td><span class="date-val fw-bold text-secondary-dark">{{ txn.date |
+                                            date:'mediumDate' }}</span></td>
+                                    <td><span class="amount-chip" [class.paid]="txn.type === 'Income'"
+                                            [class.due]="txn.type === 'Expense'">{{ txn.category }}</span></td>
+                                    <td><span class="text-sm text-secondary-light">{{ txn.description }}</span></td>
+                                    <td class="text-end fw-semibold text-danger-main">{{ txn.debit |
+                                        currency:'PKR':'':'1.0-0' }}</td>
+                                    <td class="text-end fw-semibold text-success-main">{{ txn.credit |
+                                        currency:'PKR':'':'1.0-0' }}</td>
                                 </tr>
-                                <tr class="table-row">
-                                    <td>2</td>
-                                    <td><span class="date-val fw-bold text-secondary-dark">21 Jun 2024</span></td>
-                                    <td><span class="amount-chip"
-                                            style="background: #eff6ff; color: #3b82f6;">Bank</span></td>
-                                    <td class="text-end fw-semibold text-success-main">$570.00</td>
-                                    <td class="text-end fw-semibold text-danger-main">$0.00</td>
-                                    <td class="text-end fw-bold text-secondary-dark">$570.00</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td>3</td>
-                                    <td><span class="date-val fw-bold text-secondary-dark">21 Jun 2024</span></td>
-                                    <td><span class="amount-chip"
-                                            style="background: #f5f3ff; color: #8b5cf6;">PayPal</span></td>
-                                    <td class="text-end fw-semibold text-success-main">$300.00</td>
-                                    <td class="text-end fw-semibold text-danger-main">$100.00</td>
-                                    <td class="text-end fw-bold text-secondary-dark">$200.00</td>
-                                </tr>
-                                <tr class="table-row">
-                                    <td>4</td>
-                                    <td><span class="date-val fw-bold text-secondary-dark">21 Jun 2024</span></td>
-                                    <td><span class="amount-chip paid">Cash</span></td>
-                                    <td class="text-end fw-semibold text-success-main">$0.00</td>
-                                    <td class="text-end fw-semibold text-danger-main">$150.00</td>
-                                    <td class="text-end fw-bold text-secondary-dark">$150.00</td>
+                                <tr
+                                    *ngIf="!accountData?.recentTransactions || accountData?.recentTransactions?.length === 0">
+                                    <td colspan="6" class="text-center py-4">No recent transactions found.</td>
                                 </tr>
                             </tbody>
                         </table>

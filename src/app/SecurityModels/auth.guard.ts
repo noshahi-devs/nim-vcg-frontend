@@ -137,14 +137,24 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
     return false;
   }
 
-  // 🔐 2. Check route-specific roles
-  const allowedRoles: string[] = route.data['roles'] ?? []; // roles from route data
+  // 🔐 2. Check route-specific roles & permissions
+  const allowedRoles: string[] = route.data['roles'] ?? [];
+  const requiredPermissions: string[] = route.data['permissions'] ?? [];
 
+  // Check Roles
   if (allowedRoles.length > 0) {
-    // Check if user has at least one allowed role
-    const hasAccess = user.roles.some(r => allowedRoles.includes(r));
-    if (!hasAccess) {
-      router.navigate(['/unauthorized']); // Or dashboard
+    const hasRoleAccess = user.roles.some(r => allowedRoles.includes(r));
+    if (!hasRoleAccess) {
+      router.navigate(['/unauthorized']);
+      return false;
+    }
+  }
+
+  // Check Permissions (Granular)
+  if (requiredPermissions.length > 0) {
+    const hasPermission = user.permissions.some(p => requiredPermissions.includes(p));
+    if (!hasPermission) {
+      router.navigate(['/unauthorized']);
       return false;
     }
   }

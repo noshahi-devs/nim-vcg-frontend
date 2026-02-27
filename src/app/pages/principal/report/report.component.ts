@@ -6,6 +6,7 @@ import {
 } from 'ng-apexcharts';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { DashboardService } from '../../../services/dashboard.service';
+import { AccountsService, DashboardData } from '../../../services/accounts.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -22,17 +23,24 @@ export class ReportComponent implements OnInit {
   incomeExpense;
   userOverviewDonutChart;
 
-  constructor(private dashboardService: DashboardService) {
+  accountData: DashboardData | null = null;
+
+  constructor(
+    private dashboardService: DashboardService,
+    private accountsService: AccountsService
+  ) {
     this.initStaticCharts();
   }
 
   ngOnInit() {
-    this.dashboardService.getChartData().subscribe(data => {
-      this.updateHistoricalCharts(data);
+    this.accountsService.getDashboardData().subscribe(data => {
+      this.accountData = data;
+      this.updateHistoricalCharts(data.chartData);
+      this.updateDonutChartFromAccount(data);
     });
 
     this.dashboardService.getStudentDistribution().subscribe(data => {
-      this.updateDonutChart(data);
+      // Keep student distribution as well
     });
   }
 
@@ -74,6 +82,15 @@ export class ReportComponent implements OnInit {
       ...this.userOverviewDonutChart,
       series: data.map(d => d.count),
       labels: data.map(d => d.className)
+    };
+  }
+
+  updateDonutChartFromAccount(data: any) {
+    this.userOverviewDonutChart = {
+      ...this.userOverviewDonutChart,
+      series: [data.totalIncome, data.totalExpenses],
+      labels: ['Income', 'Expenses'],
+      colors: ['#487FFF', '#45B369']
     };
   }
 

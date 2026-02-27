@@ -38,4 +38,8 @@ export class DashboardService {
     getStudentDistribution(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/student-distribution`, this.getAuthHeaders());
     }
+
+    getWeeklyAdmissions(): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/weekly-admissions`, this.getAuthHeaders());
+    }
 }

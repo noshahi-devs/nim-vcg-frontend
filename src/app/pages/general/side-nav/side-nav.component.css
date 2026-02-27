@@ -1,0 +1,114 @@
+:host ::ng-deep {
+    /* ULTIMATE BRAND-ALIGNED PREMIUM DESIGN */
+
+    --brand-indigo: #6366f1;
+    --brand-violet: #8b5cf6;
+    --brand-lavender: #a78bfa;
+    --brand-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+
+    /* 1. SIDEBAR - EXACT VIOLET MATCH */
+    html aside.sidebar,
+    html[data-theme="light"] aside.sidebar,
+    html[data-theme="dark"] aside.sidebar {
+        background: var(--brand-gradient) !important;
+        background-image: var(--brand-gradient) !important;
+        background-color: var(--brand-violet) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 15px 0 45px rgba(99, 102, 241, 0.3) !important;
+        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 1001;
+    }
+
+    /* 2. LOGO REFINEMENT */
+    .sidebar-logo-container {
+        padding: 32px 24px;
+        background: rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-logo img {
+        filter: brightness(0) invert(1) !important;
+        max-width: 160px !important;
+    }
+
+    /* 3. MENU - 3D TILT FIX */
+    .sidebar-menu-area {
+        perspective: 2000px;
+    }
+
+    .sidebar-menu li {
+        margin: 10px 18px;
+        perspective: 1000px;
+        transform-style: preserve-3d;
+    }
+
+    .sidebar-menu li a {
+        display: flex;
+        align-items: center;
+        padding: 14px 20px;
+        border-radius: 14px;
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-weight: 600 !important;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease;
+        transform-style: preserve-3d;
+        position: relative;
+    }
+
+    /* THE POP-OUT HOVER */
+    .sidebar-menu li a:hover {
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: #ffffff !important;
+        transform: translateZ(50px) rotateY(15deg) scale(1.02);
+        box-shadow: -10px 15px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ICON LIFTED HIGHER */
+    .sidebar-menu li a i,
+    .sidebar-menu li a iconify-icon {
+        color: #ffffff !important;
+        font-size: 24px !important;
+        transform: translateZ(25px);
+        margin-right: 16px;
+    }
+
+    .sidebar-menu li a span {
+        transform: translateZ(10px);
+    }
+
+    /* 4. ACTIVE PAGE - GLOWING WHITE */
+    .sidebar-menu li a.active-page {
+        background: #ffffff !important;
+        color: var(--brand-indigo) !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3) !important;
+        transform: translateZ(60px) scale(1.05);
+        font-weight: 700 !important;
+    }
+
+    .sidebar-menu li a.active-page i,
+    .sidebar-menu li a.active-page iconify-icon {
+        color: var(--brand-indigo) !important;
+    }
+
+    /* 5. TOPBAR - HEAVY GLASSMORPHISM */
+    .navbar-header {
+        background: rgba(255, 255, 255, 0.8) !important;
+        backdrop-filter: blur(20px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+        padding: 18px 40px !important;
+        box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1) !important;
+    }
+
+    .navbar-search input {
+        background: #f1f5f9 !important;
+        border: 2px solid transparent !important;
+        border-radius: 14px !important;
+        padding: 12px 20px 12px 50px !important;
+    }
+
+    .navbar-search input:focus {
+        background: #ffffff !important;
+        border-color: var(--brand-indigo) !important;
+        box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.15) !important;
+    }
+}

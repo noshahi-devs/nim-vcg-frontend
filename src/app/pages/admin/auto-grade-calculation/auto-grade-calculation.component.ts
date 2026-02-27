@@ -59,63 +59,17 @@ export class AutoGradeCalculationComponent implements OnInit {
   loadExams() {
     this.examService.getAllExams().subscribe({
       next: (res: any[]) => {
-        // Debug: Log the keys of the first item to catch casing issues
-        if (res && res.length > 0) {
-          console.log('Exam API Keys:', Object.keys(res[0]));
-        }
-
         this.exams = (res || []).map(e => ({
           examId: e.examScheduleId || e.ExamScheduleId || e.examId || 0,
           examName: e.examScheduleName || e.ExamScheduleName || e.examName || 'Unknown Exam',
           examType: 'Term'
         }));
-
-        console.log('Mapped Exams:', this.exams);
-
-        if (this.exams.length === 0) {
-          this.loadMockExams();
-        }
       },
       error: (err) => {
         console.error('Failed to load exams', err);
-        this.loadMockExams();
+        this.exams = [];
       }
     });
-  }
-
-  loadMockExams() {
-    this.exams = [
-      {
-        examId: 1,
-        examName: 'First Term Exam 2024',
-        examType: 'Term',
-        classId: 1,
-        sectionId: 1,
-        startDate: '2024-03-10',
-        endDate: '2024-03-25',
-        status: 'Active'
-      },
-      {
-        examId: 2,
-        examName: 'Monthly Test April',
-        examType: 'Monthly',
-        classId: 1,
-        sectionId: 1,
-        startDate: '2024-04-15',
-        endDate: '2024-04-18',
-        status: 'Active'
-      },
-      {
-        examId: 3,
-        examName: 'Mid Term Exam 2024',
-        examType: 'Term',
-        classId: 2,
-        sectionId: 2,
-        startDate: '2024-06-10',
-        endDate: '2024-06-25',
-        status: 'Active'
-      }
-    ];
   }
 
   generateExamResults() {
@@ -126,7 +80,6 @@ export class AutoGradeCalculationComponent implements OnInit {
 
     this.isGeneratingResult = true;
 
-    // Check if the selected exam ID is from our mock data
     const selectedExam = this.exams.find(e => e.examId === this.selectedGenerateExamId);
 
     Swal.fire({
@@ -172,72 +125,16 @@ export class AutoGradeCalculationComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.gradeScales = res || [];
-          if (this.gradeScales.length === 0) {
-            this.loadMockData();
-          }
           this.filteredGradeScales = [...this.gradeScales];
           this.updatePagination();
         },
         error: (err) => {
           console.error('Error fetching grade scales:', err);
-          this.loadMockData();
+          this.gradeScales = [];
+          this.filteredGradeScales = [];
+          this.updatePagination();
         }
       });
-  }
-
-  loadMockData() {
-    this.gradeScales = [
-      {
-        gradeId: 1,
-        grade: 'A+',
-        minPercentage: 90,
-        maxPercentage: 100,
-        gradePoint: 4.0,
-        remarks: 'Outstanding'
-      },
-      {
-        gradeId: 2,
-        grade: 'A',
-        minPercentage: 80,
-        maxPercentage: 89,
-        gradePoint: 3.7,
-        remarks: 'Excellent'
-      },
-      {
-        gradeId: 3,
-        grade: 'B',
-        minPercentage: 70,
-        maxPercentage: 79,
-        gradePoint: 3.3,
-        remarks: 'Very Good'
-      },
-      {
-        gradeId: 4,
-        grade: 'C',
-        minPercentage: 60,
-        maxPercentage: 69,
-        gradePoint: 3.0,
-        remarks: 'Good'
-      },
-      {
-        gradeId: 5,
-        grade: 'D',
-        minPercentage: 50,
-        maxPercentage: 59,
-        gradePoint: 2.0,
-        remarks: 'Satisfactory'
-      },
-      {
-        gradeId: 6,
-        grade: 'F',
-        minPercentage: 0,
-        maxPercentage: 49,
-        gradePoint: 0.0,
-        remarks: 'Fail'
-      }
-    ];
-    this.filteredGradeScales = [...this.gradeScales];
-    this.updatePagination();
   }
 
   searchGradeScales() {

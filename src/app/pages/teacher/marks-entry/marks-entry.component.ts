@@ -14,6 +14,7 @@ import { Standard } from '../../../Models/standard';
 import { Student } from '../../../Models/student';
 import { MarkEntryService } from '../../../services/marks-entry.service';
 import { StaffService } from '../../../services/staff.service';
+import { AuthService } from '../../../SecurityModels/auth.service';
 import { StudentService } from '../../../services/student.service';
 import { ExamScheduleService } from '../../../services/exam-schedule.service';
 import { ExamtypeService } from '../../../services/examtype.service';
@@ -71,7 +72,8 @@ export class MarksEntryComponent implements OnInit {
     private examtypeService: ExamtypeService,
     private subjectService: SubjectService,
     private standardService: StandardService,
-    private router: Router) { }
+    private router: Router,
+    public authService: AuthService) { }
 
   ngOnInit(): void {
     this.initializeForm();

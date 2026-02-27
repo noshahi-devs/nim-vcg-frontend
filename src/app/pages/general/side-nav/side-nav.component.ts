@@ -178,6 +178,7 @@ import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router
 import { Subscription } from 'rxjs';
 import { ThemeService } from '../../../services/theme.service';
 import { AuthService } from '../../../SecurityModels/auth.service';
+import { AppConfigService } from '../../../services/app-config.service';
 import $ from 'jquery';
 import { CommonModule, NgIf } from "@angular/common";
 
@@ -194,6 +195,7 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   currentYear = new Date().getFullYear();
   currentThemeSetting: string = 'light';
   roles: string[] = [];
+  config: any;
 
   get currentUser() {
     return this.authService.userValue;
@@ -206,10 +208,16 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private router: Router,
     private themeService: ThemeService,
-    private authService: AuthService
+    private authService: AuthService,
+    private appConfig: AppConfigService
   ) { }
 
   ngOnInit(): void {
+    // ✅ Load dynamic config
+    this.appConfig.config$.subscribe(config => {
+      this.config = config;
+    });
+
     // ✅ Load roles
     this.roles = this.authService.roles;
 
