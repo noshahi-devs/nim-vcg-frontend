@@ -202,6 +202,7 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private routerSubscription!: Subscription;
+  private readonly eventNamespace = ".sideNav";
 
   @ViewChild('themeButton') themeButton!: ElementRef<HTMLElement>;
 
@@ -252,19 +253,86 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   ngAfterViewInit(): void {
-    $(".sidebar-menu .dropdown").on("click", function () {
-      const item = $(this);
-      item.siblings(".dropdown").children(".sidebar-submenu").slideUp();
-      item.siblings(".dropdown").removeClass("dropdown-open");
-      item.children(".sidebar-submenu").slideToggle();
-      item.toggleClass("dropdown-open");
-    });
+    const ns = this.eventNamespace;
+
+    $(".sidebar-menu .sidebar-submenu li")
+      .off(`click${ns}`)
+      .on(`click${ns}`, (event) => {
+        event.stopPropagation();
+      });
+
+    $(".sidebar-menu .dropdown")
+      .off(`click${ns}`)
+      .on(`click${ns}`, function () {
+        const item = $(this);
+        item.siblings(".dropdown").children(".sidebar-submenu").slideUp();
+        item.siblings(".dropdown").removeClass("dropdown-open");
+        item.children(".sidebar-submenu").slideToggle();
+        item.toggleClass("dropdown-open");
+      });
+
+    $(".sidebar-toggle")
+      .off(`click${ns}`)
+      .on(`click${ns}`, (event) => {
+        const target = $(event.currentTarget);
+        target.toggleClass("active");
+        $(".sidebar").toggleClass("active");
+        $(".dashboard-main").toggleClass("active");
+      });
+
+    $(".sidebar-mobile-toggle")
+      .off(`click${ns}`)
+      .on(`click${ns}`, () => {
+        $(".sidebar").addClass("sidebar-open");
+        $("body").addClass("overlay-active");
+      });
+
+    $(".sidebar-close-btn")
+      .off(`click${ns}`)
+      .on(`click${ns}`, () => {
+        this.closeMobileSidebar();
+      });
+
+    $(document)
+      .off(`click${ns}`)
+      .on(`click${ns}`, (event) => {
+        if (!$("body").hasClass("overlay-active")) {
+          return;
+        }
+
+        const eventTarget = event.target;
+        if (!(eventTarget instanceof Element)) {
+          return;
+        }
+
+        const target = $(eventTarget);
+        if (!target.closest(".sidebar, .sidebar-mobile-toggle").length) {
+          this.closeMobileSidebar();
+        }
+      });
+
+    $(window)
+      .off(`resize${ns}`)
+      .on(`resize${ns}`, () => {
+        if (window.innerWidth >= 1200) {
+          this.closeMobileSidebar();
+        }
+      });
   }
 
   ngOnDestroy(): void {
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
     }
+
+    const ns = this.eventNamespace;
+    $(".sidebar-menu .sidebar-submenu li").off(ns);
+    $(".sidebar-menu .dropdown").off(ns);
+    $(".sidebar-toggle").off(ns);
+    $(".sidebar-mobile-toggle").off(ns);
+    $(".sidebar-close-btn").off(ns);
+    $(document).off(ns);
+    $(window).off(ns);
   }
 
   handleSidebarActiveClass(event: NavigationEnd) {
@@ -288,5 +356,10 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  private closeMobileSidebar(): void {
+    $(".sidebar").removeClass("sidebar-open");
+    $("body").removeClass("overlay-active");
   }
 }

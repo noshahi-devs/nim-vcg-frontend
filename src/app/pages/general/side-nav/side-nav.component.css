@@ -1,114 +1,275 @@
 :host ::ng-deep {
-    /* ULTIMATE BRAND-ALIGNED PREMIUM DESIGN */
+    --auth-primary: #224abe;
+    --auth-indigo-deep: #224abe;
 
-    --brand-indigo: #6366f1;
-    --brand-violet: #8b5cf6;
-    --brand-lavender: #a78bfa;
-    --brand-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    --sidebar-border: rgba(255, 255, 255, 0.24);
+    --sidebar-text: rgba(255, 255, 255, 0.95);
+    --sidebar-text-muted: rgba(241, 245, 249, 0.86);
+    --sidebar-hover: rgba(255, 255, 255, 0.16);
+    --sidebar-active-bg: rgba(255, 255, 255, 0.96);
+    --sidebar-active-text: #224abe;
 
-    /* 1. SIDEBAR - EXACT VIOLET MATCH */
-    html aside.sidebar,
-    html[data-theme="light"] aside.sidebar,
-    html[data-theme="dark"] aside.sidebar {
-        background: var(--brand-gradient) !important;
-        background-image: var(--brand-gradient) !important;
-        background-color: var(--brand-violet) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
-        box-shadow: 15px 0 45px rgba(99, 102, 241, 0.3) !important;
-        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 1001;
+    --header-chip-bg: rgba(255, 255, 255, 0.16);
+    --header-chip-border: rgba(255, 255, 255, 0.36);
+}
+
+:host ::ng-deep aside.sidebar {
+    background: var(--auth-primary);
+    border-inline-end: 1px solid var(--sidebar-border);
+    box-shadow: 0 22px 44px rgba(79, 70, 229, 0.35);
+    overflow: hidden;
+}
+
+:host ::ng-deep html[data-theme="dark"] aside.sidebar {
+    background: var(--auth-primary);
+    border-inline-end: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+:host ::ng-deep aside.sidebar::before {
+    display: none;
+}
+
+:host ::ng-deep .sidebar-logo-container {
+    padding: 1rem 1rem 0.75rem;
+}
+
+:host ::ng-deep .sidebar-logo {
+    border: 1px solid var(--sidebar-border);
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(6px);
+    border-radius: 0.9rem;
+    height: 4rem;
+    padding-inline: 0.9rem;
+}
+
+:host ::ng-deep .sidebar-logo img {
+    max-height: 2.5rem;
+    width: auto;
+}
+
+:host ::ng-deep .sidebar-menu-area {
+    height: calc(100vh - 4.75rem);
+    border-inline-end: 0;
+    padding: 0.25rem 0.75rem 1.2rem;
+}
+
+:host ::ng-deep .sidebar-menu-area::-webkit-scrollbar {
+    width: 0.4rem;
+}
+
+:host ::ng-deep .sidebar-menu-area::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+}
+
+:host ::ng-deep .sidebar-menu li {
+    margin-bottom: 0.2rem;
+}
+
+:host ::ng-deep .sidebar-menu li a {
+    min-height: 2.7rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--sidebar-text);
+    padding: 0.62rem 0.78rem;
+    transition: all 0.25s ease;
+}
+
+:host ::ng-deep .sidebar-menu li a:hover {
+    background: var(--sidebar-hover);
+    color: #ffffff;
+    transform: translateX(2px);
+}
+
+:host ::ng-deep .sidebar-menu li a .menu-icon,
+:host ::ng-deep .sidebar-menu li a iconify-icon,
+:host ::ng-deep .sidebar-menu li a i {
+    color: inherit;
+    opacity: 0.95;
+}
+
+:host ::ng-deep .sidebar-menu li.dropdown > a::after {
+    color: inherit;
+    opacity: 0.8;
+}
+
+:host ::ng-deep .sidebar-menu li > a.active-page,
+:host ::ng-deep .sidebar-menu li.dropdown.dropdown-open > a,
+:host ::ng-deep .sidebar-menu li.dropdown.open > a {
+    background: var(--sidebar-active-bg);
+    color: var(--sidebar-active-text);
+    box-shadow: 0 10px 20px rgba(49, 46, 129, 0.2);
+}
+
+:host ::ng-deep .sidebar-menu li > a.active-page:hover,
+:host ::ng-deep .sidebar-menu li.dropdown.dropdown-open > a:hover,
+:host ::ng-deep .sidebar-menu li.dropdown.open > a:hover {
+    color: var(--sidebar-active-text);
+}
+
+:host ::ng-deep .sidebar-menu .sidebar-submenu {
+    position: relative;
+    margin: 0.15rem 0 0.55rem;
+    padding-block-start: 0.35rem;
+    padding-inline-start: 1.35rem;
+}
+
+:host ::ng-deep .sidebar-menu .sidebar-submenu::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0.55rem;
+    inset-block-start: 0.35rem;
+    inset-block-end: 0.4rem;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.34);
+}
+
+:host ::ng-deep .sidebar-menu .sidebar-submenu li a {
+    padding: 0.42rem 0.68rem;
+    border-radius: 0.62rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--sidebar-text-muted);
+}
+
+:host ::ng-deep .sidebar-menu .sidebar-submenu li a:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+}
+
+:host ::ng-deep .sidebar-menu .sidebar-submenu li.active-page a,
+:host ::ng-deep .sidebar-menu .sidebar-submenu li a.active-page {
+    background: rgba(255, 255, 255, 0.24);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+:host ::ng-deep .sidebar.active .sidebar-menu li a {
+    justify-content: center;
+    padding-inline: 0.55rem;
+}
+
+:host ::ng-deep .sidebar.active .sidebar-menu li a i,
+:host ::ng-deep .sidebar.active .sidebar-menu li a iconify-icon {
+    margin-inline-end: 0;
+}
+
+:host ::ng-deep .sidebar.active:hover .sidebar-menu li a {
+    justify-content: flex-start;
+    padding-inline: 0.78rem;
+}
+
+:host ::ng-deep .sidebar.active:hover .sidebar-menu li a .menu-icon,
+:host ::ng-deep .sidebar.active:hover .sidebar-menu li a iconify-icon {
+    margin-inline-end: 0.5rem;
+}
+
+:host ::ng-deep .sidebar.active:hover .sidebar-menu li a i {
+    margin-inline-end: 0.75rem;
+}
+
+:host ::ng-deep .sidebar-close-btn {
+    top: 0.85rem;
+    inset-inline-end: 0.85rem;
+    border: 1px solid var(--sidebar-border);
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+:host ::ng-deep .navbar-header {
+    background: var(--auth-primary) !important;
+    border-bottom: 1px solid var(--sidebar-border) !important;
+    box-shadow: 0 10px 24px rgba(79, 70, 229, 0.28);
+}
+
+:host ::ng-deep .navbar-search input {
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid var(--header-chip-border);
+    color: #ffffff;
+}
+
+:host ::ng-deep .navbar-search input::placeholder {
+    color: rgba(255, 255, 255, 0.82);
+}
+
+:host ::ng-deep .navbar-search .icon {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+:host ::ng-deep .navbar-search input:focus {
+    background: rgba(255, 255, 255, 0.24);
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+:host ::ng-deep .sidebar-toggle,
+:host ::ng-deep .sidebar-mobile-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--header-chip-border);
+    background: var(--header-chip-bg);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+
+:host ::ng-deep .sidebar-toggle {
+    display: none;
+}
+
+:host ::ng-deep .sidebar-mobile-toggle {
+    display: inline-flex;
+}
+
+@media (min-width: 1200px) {
+    :host ::ng-deep .sidebar-toggle {
+        display: inline-flex;
     }
 
-    /* 2. LOGO REFINEMENT */
-    .sidebar-logo-container {
-        padding: 32px 24px;
-        background: rgba(0, 0, 0, 0.1);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    :host ::ng-deep .sidebar-mobile-toggle {
+        display: none;
     }
+}
 
-    .sidebar-logo img {
-        filter: brightness(0) invert(1) !important;
-        max-width: 160px !important;
-    }
+:host ::ng-deep .sidebar-toggle .icon,
+:host ::ng-deep .sidebar-mobile-toggle .icon {
+    color: inherit;
+}
 
-    /* 3. MENU - 3D TILT FIX */
-    .sidebar-menu-area {
-        perspective: 2000px;
-    }
+:host ::ng-deep .sidebar-toggle:hover,
+:host ::ng-deep .sidebar-mobile-toggle:hover,
+:host ::ng-deep .sidebar-toggle.active {
+    background: #ffffff;
+    color: var(--auth-indigo-deep);
+    box-shadow: 0 8px 18px rgba(49, 46, 129, 0.24);
+}
 
-    .sidebar-menu li {
-        margin: 10px 18px;
-        perspective: 1000px;
-        transform-style: preserve-3d;
-    }
+:host ::ng-deep .navbar-header [data-theme-toggle] {
+    background: var(--header-chip-bg) !important;
+    border: 1px solid var(--header-chip-border) !important;
+}
 
-    .sidebar-menu li a {
-        display: flex;
-        align-items: center;
-        padding: 14px 20px;
-        border-radius: 14px;
-        color: rgba(255, 255, 255, 0.9) !important;
-        font-weight: 600 !important;
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s ease;
-        transform-style: preserve-3d;
-        position: relative;
-    }
+:host ::ng-deep .navbar-header [data-theme-toggle]::after {
+    color: #ffffff !important;
+}
 
-    /* THE POP-OUT HOVER */
-    .sidebar-menu li a:hover {
-        background: rgba(255, 255, 255, 0.15) !important;
-        color: #ffffff !important;
-        transform: translateZ(50px) rotateY(15deg) scale(1.02);
-        box-shadow: -10px 15px 35px rgba(0, 0, 0, 0.3);
-    }
+:host ::ng-deep .navbar-header [data-theme-toggle]:hover {
+    background: #ffffff !important;
+}
 
-    /* ICON LIFTED HIGHER */
-    .sidebar-menu li a i,
-    .sidebar-menu li a iconify-icon {
-        color: #ffffff !important;
-        font-size: 24px !important;
-        transform: translateZ(25px);
-        margin-right: 16px;
-    }
+:host ::ng-deep .navbar-header [data-theme-toggle]:hover::after {
+    color: var(--auth-indigo-deep) !important;
+}
 
-    .sidebar-menu li a span {
-        transform: translateZ(10px);
-    }
+:host ::ng-deep .navbar-header .has-indicator {
+    background: var(--header-chip-bg) !important;
+    border: 1px solid var(--header-chip-border);
+}
 
-    /* 4. ACTIVE PAGE - GLOWING WHITE */
-    .sidebar-menu li a.active-page {
-        background: #ffffff !important;
-        color: var(--brand-indigo) !important;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3) !important;
-        transform: translateZ(60px) scale(1.05);
-        font-weight: 700 !important;
-    }
-
-    .sidebar-menu li a.active-page i,
-    .sidebar-menu li a.active-page iconify-icon {
-        color: var(--brand-indigo) !important;
-    }
-
-    /* 5. TOPBAR - HEAVY GLASSMORPHISM */
-    .navbar-header {
-        background: rgba(255, 255, 255, 0.8) !important;
-        backdrop-filter: blur(20px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-        border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
-        padding: 18px 40px !important;
-        box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1) !important;
-    }
-
-    .navbar-search input {
-        background: #f1f5f9 !important;
-        border: 2px solid transparent !important;
-        border-radius: 14px !important;
-        padding: 12px 20px 12px 50px !important;
-    }
-
-    .navbar-search input:focus {
-        background: #ffffff !important;
-        border-color: var(--brand-indigo) !important;
-        box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.15) !important;
-    }
+:host ::ng-deep .navbar-header .has-indicator iconify-icon {
+    color: #ffffff !important;
 }
