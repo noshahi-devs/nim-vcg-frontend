@@ -73,7 +73,7 @@
         </div>
       </div>
 
-      <a routerLink="/student-add" class="btn-add">
+      <a routerLink="/student-add" class="btn-add" *ngIf="authService.hasRole('Admin')">
         <iconify-icon icon="ic:baseline-plus" class="icon text-xl"></iconify-icon>
         Add Student
       </a>
@@ -98,13 +98,13 @@
                     <iconify-icon icon="mdi:eye-outline"></iconify-icon> View
                   </a>
                 </li>
-                <li>
+                <li *ngIf="authService.hasRole('Admin')">
                   <a class="dropdown-item px-16 py-8 d-flex align-items-center gap-10"
                     [routerLink]="['/student-edit', student.studentId]">
                     <iconify-icon icon="mdi:pencil-outline"></iconify-icon> Edit
                   </a>
                 </li>
-                <li>
+                <li *ngIf="authService.hasRole('Admin')">
                   <button type="button" class="dropdown-item px-16 py-8 text-danger d-flex align-items-center gap-10"
                     (click)="confirmDelete(student)">
                     <iconify-icon icon="mdi:delete-outline"></iconify-icon> Delete
@@ -151,7 +151,7 @@
         </div>
         <h5 class="mt-3 mb-2">No students found</h5>
         <p class="text-muted">Adjust your filters or register a new student.</p>
-        <a routerLink="/student-add" class="btn-add mt-16">
+        <a routerLink="/student-add" class="btn-add mt-16" *ngIf="authService.hasRole('Admin')">
           <iconify-icon icon="ic:baseline-plus"></iconify-icon>
           Add Student
         </a>

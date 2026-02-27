@@ -41,9 +41,6 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   classList: Standard[] = [];
   sectionList: Section[] = [];
 
-  classes = ['Nursery', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-  sections = ['A', 'B', 'C', 'D'];
-
   // Teacher specific context
   isTeacher = false;
   staffId: number | null = null;
@@ -60,7 +57,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     private studentService: StudentService,
     private standardService: StandardService,
     private sectionService: SectionService,
-    private authService: AuthService,
+    public authService: AuthService,
     private staffService: StaffService
   ) { }
 

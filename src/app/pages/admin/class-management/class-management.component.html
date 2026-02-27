@@ -2,388 +2,295 @@
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
   <!-- Summary Stats -->
-  <div class="row gy-4 mb-24">
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card radius-12 border-0 shadow-sm h-100">
-        <div class="card-body p-20 d-flex align-items-center gap-16">
-          <div
-            class="w-56-px h-56-px radius-12 bg-primary-100 d-flex justify-content-center align-items-center flex-shrink-0">
-            <iconify-icon icon="solar:folder-bold-duotone" class="text-primary-600 text-3xl"></iconify-icon>
-          </div>
-          <div>
-            <p class="text-secondary-light text-sm fw-medium mb-4">Total Classes</p>
-            <h5 class="fw-bold text-neutral-900 mb-0">{{ classes.length }}</h5>
-          </div>
-        </div>
+  <div class="stats-row animate-fade-up" *ngIf="authService.hasAnyRole(['Admin', 'Principal', 'Accountant'])">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper blue">
+        <iconify-icon icon="solar:folder-bold-duotone"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Classes</span>
+        <h5 class="stat-value">{{ classes.length }}</h5>
       </div>
     </div>
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card radius-12 border-0 shadow-sm h-100">
-        <div class="card-body p-20 d-flex align-items-center gap-16">
-          <div
-            class="w-56-px h-56-px radius-12 bg-success-100 d-flex justify-content-center align-items-center flex-shrink-0">
-            <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"
-              class="text-success-600 text-3xl"></iconify-icon>
-          </div>
-          <div>
-            <p class="text-secondary-light text-sm fw-medium mb-4">Total Students</p>
-            <h5 class="fw-bold text-neutral-900 mb-0">{{ totalStudents }}</h5>
-          </div>
-        </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrapper green">
+        <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Students</span>
+        <h5 class="stat-value">{{ totalStudents }}</h5>
       </div>
     </div>
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card radius-12 border-0 shadow-sm h-100">
-        <div class="card-body p-20 d-flex align-items-center gap-16">
-          <div
-            class="w-56-px h-56-px radius-12 bg-info-100 d-flex justify-content-center align-items-center flex-shrink-0">
-            <iconify-icon icon="solar:book-bold-duotone" class="text-info-600 text-3xl"></iconify-icon>
-          </div>
-          <div>
-            <p class="text-secondary-light text-sm fw-medium mb-4">Total Subjects</p>
-            <h5 class="fw-bold text-neutral-900 mb-0">{{ totalSubjects }}</h5>
-          </div>
-        </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrapper orange">
+        <iconify-icon icon="solar:book-bold-duotone"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Subjects</span>
+        <h5 class="stat-value">{{ totalSubjects }}</h5>
       </div>
     </div>
-    <div class="col-xxl-3 col-sm-6">
-      <div class="card radius-12 border-0 shadow-sm h-100">
-        <div class="card-body p-20 d-flex align-items-center gap-16">
-          <div
-            class="w-56-px h-56-px radius-12 bg-warning-100 d-flex justify-content-center align-items-center flex-shrink-0">
-            <iconify-icon icon="solar:layers-bold-duotone" class="text-warning-600 text-3xl"></iconify-icon>
-          </div>
-          <div>
-            <p class="text-secondary-light text-sm fw-medium mb-4">Total Sections</p>
-            <h5 class="fw-bold text-neutral-900 mb-0">{{ totalSections }}</h5>
-          </div>
-        </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrapper yellow">
+        <iconify-icon icon="solar:layers-bold-duotone"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Sections</span>
+        <h5 class="stat-value">{{ totalSections }}</h5>
       </div>
     </div>
   </div>
 
-  <!-- Table Card -->
-  <div class="card h-100 p-0 radius-12 overflow-hidden shadow-sm border-0">
-    <div
-      class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between flex-wrap gap-3">
-      <h6 class="text-lg fw-semibold mb-0 d-flex align-items-center gap-2">
-        <iconify-icon icon="solar:folder-bold-duotone" class="text-primary-600"></iconify-icon>
-        All Classes
-      </h6>
-      <div class="d-flex align-items-center gap-3 flex-wrap">
-        <!-- Search -->
-        <form class="navbar-search">
-          <input type="text" class="bg-base h-40-px w-auto" [(ngModel)]="searchTerm" (input)="applyFilter()"
-            name="search" placeholder="Search class, teacher..." />
-          <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
-        </form>
+  <!-- Main Table Card -->
+  <div class="fee-card animate-fade-up delay-100">
+    <div class="fee-card-header">
+      <div class="header-left">
+        <h6 class="header-title-premium">
+          <iconify-icon icon="solar:folder-bold-duotone"></iconify-icon>
+          Management Portal
+        </h6>
+      </div>
 
-        <!-- Rows per page -->
-        <select class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="rowsPerPage"
-          (change)="currentPage = 1; updatePagination()">
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
+      <div class="header-actions">
+        <!-- Search -->
+        <div class="search-wrapper">
+          <iconify-icon icon="ion:search-outline" class="search-icon"></iconify-icon>
+          <input type="text" class="search-input" [(ngModel)]="searchTerm" (input)="applyFilter()" name="search"
+            placeholder="Search class, teacher, code..." />
+        </div>
+
+        <!-- Entries select -->
+        <select class="entries-select" [(ngModel)]="rowsPerPage" (change)="currentPage = 1; updatePagination()">
+          <option [value]="10">10 Rows</option>
+          <option [value]="25">25 Rows</option>
+          <option [value]="50">50 Rows</option>
         </select>
 
         <!-- Refresh -->
-        <button type="button" (click)="loadData()"
-          class="btn btn-outline-secondary radius-8 d-flex align-items-center gap-2 h-40-px px-16">
+        <button type="button" (click)="loadData()" class="btn-refresh" title="Reload Data">
           <iconify-icon icon="mdi:refresh"></iconify-icon>
           Refresh
         </button>
 
-        <!-- Add Class -->
-        <a routerLink="/newclass" class="btn btn-primary radius-8 d-flex align-items-center gap-2 h-40-px px-16">
+        <!-- Add Button -->
+        <a routerLink="/newclass" class="btn-add" *ngIf="authService.hasRole('Admin')">
           <iconify-icon icon="ic:baseline-plus"></iconify-icon>
-          Add Class
+          New Class
         </a>
       </div>
     </div>
 
-    <div class="card-body p-24">
+    <div class="fee-card-body">
       <!-- Loading State -->
       <div *ngIf="loading" class="text-center py-40">
         <div class="spinner-border text-primary" role="status"></div>
-        <p class="text-secondary-light mt-12">Loading classes...</p>
+        <p class="text-secondary-light mt-12">Synchronizing data...</p>
       </div>
 
-      <!-- Table -->
-      <div class="table-responsive scroll-sm" *ngIf="!loading">
-        <table class="table bordered-table sm-table mb-0">
+      <!-- No Data State -->
+      <div *ngIf="!loading && paginatedClasses.length === 0" class="empty-state">
+        <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
+        <p>No class records discovered matching your criteria.</p>
+        <a routerLink="/newclass" class="btn-add mt-16" *ngIf="authService.hasRole('Admin')">Initialize First Class</a>
+      </div>
+
+      <!-- Premium Table -->
+      <div class="fee-table-wrapper" *ngIf="!loading && paginatedClasses.length > 0">
+        <table class="fee-table">
           <thead>
             <tr>
-              <th scope="col" class="text-center" style="width: 50px;">#</th>
-              <th scope="col">Class Name</th>
-              <th scope="col">Class Teacher</th>
-              <th scope="col" class="text-center">Subjects</th>
-              <th scope="col" class="text-center">Sections</th>
-              <th scope="col" class="text-center">Students</th>
-              <th scope="col" class="text-center">Status</th>
-              <th scope="col" class="text-center">Actions</th>
+              <th style="width: 60px;">ID</th>
+              <th>Class Identity</th>
+              <th>Assigned Teacher</th>
+              <th class="text-center">Subjects</th>
+              <th class="text-center">Sections</th>
+              <th class="text-center">Students</th>
+              <th class="text-center">Status</th>
+              <th class="text-center">Operations</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let cls of paginatedClasses; let i = index">
-              <td class="text-center text-secondary-light fw-medium">
-                {{ (currentPage - 1) * rowsPerPage + i + 1 }}
+              <td>
+                <span class="row-num">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</span>
               </td>
               <td>
-                <div class="d-flex align-items-center gap-12">
-                  <div
-                    class="w-36-px h-36-px radius-8 bg-primary-100 d-flex justify-content-center align-items-center flex-shrink-0">
-                    <iconify-icon icon="solar:folder-bold-duotone" class="text-primary-600 text-xl"></iconify-icon>
+                <div class="class-info-wrap">
+                  <div class="class-icon">
+                    <iconify-icon icon="solar:folder-bold-duotone"></iconify-icon>
                   </div>
                   <div>
-                    <span class="fw-semibold text-neutral-900 d-block text-sm">{{ cls.standardName }}</span>
-                    <span class="text-xs text-secondary-light" *ngIf="cls.standardCode">Code: {{ cls.standardCode
-                      }}</span>
+                    <span class="class-name">{{ cls.standardName }}</span>
+                    <span class="class-code">{{ cls.standardCode || 'No Code' }}</span>
                   </div>
                 </div>
               </td>
               <td>
-                <span *ngIf="cls.classTeacher" class="d-flex align-items-center gap-2">
-                  <iconify-icon icon="solar:user-bold-duotone" class="text-success-600"></iconify-icon>
-                  <span class="text-sm">{{ cls.classTeacher }}</span>
-                </span>
-                <span *ngIf="!cls.classTeacher" class="text-secondary-light text-sm">Not Assigned</span>
+                <div class="teacher-tag">
+                  <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
+                  <span>{{ cls.classTeacher || 'Unassigned' }}</span>
+                </div>
               </td>
               <td class="text-center">
-                <span class="badge bg-info-100 text-info-600 px-12 py-4 radius-8 fw-medium text-sm">
-                  {{ cls.subjects?.length || 0 }} Subjects
-                </span>
-              </td>
-              <td class="text-center">
-                <span class="badge bg-warning-100 text-warning-600 px-12 py-4 radius-8 fw-medium text-sm">
-                  {{ getSectionsForClass(cls).length }} Sections
+                <span class="badge-premium badge-blue">
+                  {{ cls.subjects?.length || 0 }} Dept.
                 </span>
               </td>
               <td class="text-center">
-                <span class="badge bg-success-100 text-success-600 px-12 py-4 radius-8 fw-medium text-sm">
-                  {{ cls.students?.length || 0 }} Students
+                <span class="badge-premium badge-orange">
+                  {{ getSectionsForClass(cls).length }} Units
                 </span>
               </td>
               <td class="text-center">
-                <span class="badge px-16 py-6 radius-20 fw-medium text-sm"
-                  [ngClass]="cls.status === 'Inactive' ? 'bg-danger-100 text-danger-600' : 'bg-success-100 text-success-600'">
+                <span class="badge-premium badge-green">
+                  {{ cls.students?.length || 0 }} Enroll.
+                </span>
+              </td>
+              <td class="text-center">
+                <span class="badge-premium" [ngClass]="cls.status === 'Inactive' ? 'badge-red' : 'badge-green'">
                   {{ cls.status || 'Active' }}
                 </span>
               </td>
-              <td class="text-center">
-                <div class="d-flex align-items-center gap-8 justify-content-center">
-                  <!-- View -->
-                  <button type="button" (click)="openViewDialog(cls)"
-                    class="w-36-px h-36-px bg-info-100 text-info-600 radius-8 d-flex justify-content-center align-items-center border-0"
-                    title="View Details">
-                    <iconify-icon icon="mdi:eye-outline" class="text-lg"></iconify-icon>
+              <td>
+                <div class="action-btns">
+                  <button type="button" (click)="openViewDialog(cls)" class="icon-btn btn-view" title="Explore Class">
+                    <iconify-icon icon="mdi:eye-outline"></iconify-icon>
                   </button>
-                  <!-- Add Subjects -->
                   <a [routerLink]="['/subject-add']" [queryParams]="{ classId: cls.standardId }"
-                    class="w-36-px h-36-px bg-primary-100 text-primary-600 radius-8 d-flex justify-content-center align-items-center"
-                    title="Add Subjects">
-                    <iconify-icon icon="solar:book-bold-duotone" class="text-lg"></iconify-icon>
+                    class="icon-btn btn-subject" title="Manage Subjects"
+                    *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
+                    <iconify-icon icon="solar:book-bold-duotone"></iconify-icon>
                   </a>
-                  <!-- Add Students -->
                   <a [routerLink]="['/student-add']" [queryParams]="{ classId: cls.standardId }"
-                    class="w-36-px h-36-px bg-success-100 text-success-600 radius-8 d-flex justify-content-center align-items-center"
-                    title="Add Students">
-                    <iconify-icon icon="solar:user-plus-bold-duotone" class="text-lg"></iconify-icon>
+                    class="icon-btn btn-student" title="Add Students"
+                    *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
+                    <iconify-icon icon="solar:user-plus-bold-duotone"></iconify-icon>
                   </a>
-                  <!-- Add Section -->
                   <a [routerLink]="['/section-add']" [queryParams]="{ className: cls.standardName }"
-                    class="w-36-px h-36-px bg-warning-100 text-warning-600 radius-8 d-flex justify-content-center align-items-center"
-                    title="Add Section">
-                    <iconify-icon icon="solar:layers-bold-duotone" class="text-lg"></iconify-icon>
+                    class="icon-btn btn-section" title="Configure Sections"
+                    *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
+                    <iconify-icon icon="solar:layers-bold-duotone"></iconify-icon>
                   </a>
-                  <!-- Delete -->
-                  <button type="button" (click)="deleteClass(cls)"
-                    class="w-36-px h-36-px bg-danger-100 text-danger-600 radius-8 d-flex justify-content-center align-items-center border-0"
-                    title="Delete Class">
-                    <iconify-icon icon="fluent:delete-24-regular" class="text-lg"></iconify-icon>
+                  <button type="button" (click)="deleteClass(cls)" class="icon-btn btn-delete" title="Archive Record"
+                    *ngIf="authService.hasRole('Admin')">
+                    <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
                   </button>
                 </div>
-              </td>
-            </tr>
-
-            <!-- Loading row -->
-            <tr *ngIf="paginatedClasses.length === 0 && !loading">
-              <td colspan="8" class="text-center py-40">
-                <iconify-icon icon="solar:folder-error-bold-duotone" class="text-neutral-300"
-                  style="font-size: 64px;"></iconify-icon>
-                <p class="text-secondary-light fw-medium mt-12 mb-16">No classes found</p>
-                <a routerLink="/newclass" class="btn btn-primary radius-8 d-inline-flex align-items-center gap-2">
-                  <iconify-icon icon="ic:baseline-plus"></iconify-icon>
-                  Create First Class
-                </a>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Pagination -->
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24"
-        *ngIf="!loading && filteredClasses.length > 0">
-        <span class="text-secondary-light text-sm">
-          Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to
+      <!-- Premium Pagination -->
+      <div class="pagination-wrap" *ngIf="!loading && filteredClasses.length > 0">
+        <span class="pagination-info">
+          Displaying {{ (currentPage - 1) * rowsPerPage + 1 }} -
           {{ Math.min(currentPage * rowsPerPage, filteredClasses.length) }}
-          of {{ filteredClasses.length }} entries
+          of {{ filteredClasses.length }}
         </span>
-        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
-          <li class="page-item">
-            <a class="page-link bg-neutral-100 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
-              [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
-              <iconify-icon icon="ep:arrow-left"></iconify-icon>
-            </a>
-          </li>
-          <li class="page-item" *ngFor="let page of getPageNumbers()">
-            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
-              [class.bg-primary-600]="currentPage === page" [class.text-white]="currentPage === page"
-              [class.bg-neutral-100]="currentPage !== page" [class.text-secondary-light]="currentPage !== page"
-              (click)="changePage(page)" href="javascript:void(0)">{{ page }}</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link bg-neutral-100 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px"
-              [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
-              href="javascript:void(0)">
-              <iconify-icon icon="ep:arrow-right"></iconify-icon>
-            </a>
-          </li>
-        </ul>
+
+        <div class="pagination-btns">
+          <div class="page-link-premium" [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+            <iconify-icon icon="ep:arrow-left"></iconify-icon>
+          </div>
+
+          <div *ngFor="let page of getPageNumbers()" class="page-link-premium" [class.active]="currentPage === page"
+            (click)="changePage(page)">
+            {{ page }}
+          </div>
+
+          <div class="page-link-premium" [class.disabled]="currentPage === totalPages"
+            (click)="changePage(currentPage + 1)">
+            <iconify-icon icon="ep:arrow-right"></iconify-icon>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- =================== VIEW DIALOG =================== -->
-<div class="modal fade" [class.show]="showViewDialog" [style.display]="showViewDialog ? 'block' : 'none'" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content radius-16 bg-base border-0 shadow">
-      <div class="modal-header border-bottom py-16 px-24">
-        <h1 class="modal-title fs-5 fw-semibold d-flex align-items-center gap-2">
-          <iconify-icon icon="solar:folder-bold-duotone" class="text-primary-600"></iconify-icon>
-          Class Details
-        </h1>
-        <button type="button" class="btn-close" (click)="closeDialog()" aria-label="Close"></button>
+<!-- PREMIUM DETAIL MODAL -->
+<div class="modal-overlay" *ngIf="showViewDialog" (click)="closeDialog()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-header-premium">
+      <div class="modal-icon-premium">
+        <iconify-icon icon="solar:folder-bold-duotone"></iconify-icon>
       </div>
+      <div class="modal-header-text">
+        <h3>{{ selectedClass?.standardName }}</h3>
+        <p>Class Identification: {{ selectedClass?.standardCode || 'N/A' }}</p>
+      </div>
+      <button class="btn-close-premium" (click)="closeDialog()">
+        <iconify-icon icon="material-symbols:close-rounded"></iconify-icon>
+      </button>
+    </div>
 
-      <div class="modal-body p-24" *ngIf="selectedClass">
-        <!-- Header Info -->
-        <div class="d-flex align-items-center gap-16 p-20 bg-primary-50 radius-12 mb-24">
-          <div
-            class="w-64-px h-64-px radius-16 bg-primary-600 d-flex justify-content-center align-items-center flex-shrink-0">
-            <iconify-icon icon="solar:folder-bold-duotone" class="text-white" style="font-size: 32px;"></iconify-icon>
-          </div>
-          <div>
-            <h4 class="fw-bold text-neutral-900 mb-4">{{ selectedClass.standardName }}</h4>
-            <p class="text-secondary-light mb-0 text-sm">
-              <iconify-icon icon="solar:user-bold-duotone" class="me-1"></iconify-icon>
-              Teacher: <strong>{{ selectedClass.classTeacher || 'Not Assigned' }}</strong>
-            </p>
-          </div>
-          <div class="ms-auto text-end">
-            <span class="badge bg-success-100 text-success-600 px-16 py-6 radius-20 fw-semibold">
-              {{ selectedClass.status || 'Active' }}
-            </span>
-          </div>
+    <div class="modal-body-premium" *ngIf="selectedClass">
+      <!-- Quick Stats -->
+      <div class="info-cards-grid">
+        <div class="info-stat-card blue">
+          <span class="info-stat-val">{{ selectedClass.subjects?.length || 0 }}</span>
+          <span class="info-stat-lab">Subjects</span>
         </div>
-
-        <!-- Stats Row -->
-        <div class="row g-3 mb-20">
-          <div class="col-4">
-            <div class="text-center p-16 bg-info-50 radius-12">
-              <h4 class="fw-bold text-info-600 mb-4">{{ selectedClass.subjects?.length || 0 }}</h4>
-              <p class="text-sm text-secondary-light mb-0">Subjects</p>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="text-center p-16 bg-warning-50 radius-12">
-              <h4 class="fw-bold text-warning-600 mb-4">{{ selectedClass ? getSectionsForClass(selectedClass).length : 0
-                }}</h4>
-              <p class="text-sm text-secondary-light mb-0">Sections</p>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="text-center p-16 bg-success-50 radius-12">
-              <h4 class="fw-bold text-success-600 mb-4">{{ selectedClass.students?.length || 0 }}</h4>
-              <p class="text-sm text-secondary-light mb-0">Students</p>
-            </div>
-          </div>
+        <div class="info-stat-card orange">
+          <span class="info-stat-val">{{ getSectionsForClass(selectedClass).length }}</span>
+          <span class="info-stat-lab">Sections</span>
         </div>
-
-        <!-- Subjects List -->
-        <div class="mb-20" *ngIf="selectedClass.subjects && selectedClass.subjects.length > 0">
-          <label class="fw-semibold text-sm text-neutral-700 d-block mb-12">
-            <iconify-icon icon="solar:book-bold-duotone" class="text-info-600 me-1"></iconify-icon>
-            Subjects Assigned
-          </label>
-          <div class="d-flex flex-wrap gap-2">
-            <span *ngFor="let s of selectedClass.subjects"
-              class="badge bg-info-100 text-info-700 px-14 py-6 radius-20 fw-medium text-sm">
-              {{ s.subjectName }}
-            </span>
-          </div>
-        </div>
-        <div class="mb-20" *ngIf="!selectedClass.subjects || selectedClass.subjects.length === 0">
-          <label class="fw-semibold text-sm text-neutral-700 d-block mb-8">
-            <iconify-icon icon="solar:book-bold-duotone" class="text-info-600 me-1"></iconify-icon>
-            Subjects
-          </label>
-          <p class="text-secondary-light text-sm mb-0">No subjects assigned yet.
-            <a [routerLink]="['/subject-add']" [queryParams]="{ classId: selectedClass.standardId }"
-              (click)="closeDialog()" class="text-primary-600 fw-semibold">Add subjects</a>
-          </p>
-        </div>
-
-        <!-- Sections List -->
-        <div class="mb-20" *ngIf="selectedClass && getSectionsForClass(selectedClass).length > 0">
-          <label class="fw-semibold text-sm text-neutral-700 d-block mb-12">
-            <iconify-icon icon="solar:layers-bold-duotone" class="text-warning-600 me-1"></iconify-icon>
-            Sections
-          </label>
-          <div class="d-flex flex-wrap gap-2">
-            <span *ngFor="let sec of getSectionsForClass(selectedClass)"
-              class="badge bg-warning-100 text-warning-700 px-14 py-6 radius-20 fw-medium text-sm">
-              {{ sec.sectionName }}
-              <span class="text-xs opacity-75 ms-1" *ngIf="sec.classTeacher">({{ sec.classTeacher.staffName }})</span>
-            </span>
-          </div>
-        </div>
-        <div class="mb-20" *ngIf="selectedClass && getSectionsForClass(selectedClass).length === 0">
-          <label class="fw-semibold text-sm text-neutral-700 d-block mb-8">
-            <iconify-icon icon="solar:layers-bold-duotone" class="text-warning-600 me-1"></iconify-icon>
-            Sections
-          </label>
-          <p class="text-secondary-light text-sm mb-0">No sections created yet.
-            <a [routerLink]="['/section-add']" [queryParams]="{ className: selectedClass.standardName }"
-              (click)="closeDialog()" class="text-primary-600 fw-semibold">Create section</a>
-          </p>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="d-flex flex-wrap gap-3 pt-16 border-top">
-          <a [routerLink]="['/subject-add']" [queryParams]="{ classId: selectedClass.standardId }"
-            (click)="closeDialog()" class="btn btn-sm btn-outline-info radius-8 d-flex align-items-center gap-2">
-            <iconify-icon icon="solar:book-bold-duotone"></iconify-icon> Add Subjects
-          </a>
-          <a [routerLink]="['/student-add']" [queryParams]="{ classId: selectedClass.standardId }"
-            (click)="closeDialog()" class="btn btn-sm btn-outline-success radius-8 d-flex align-items-center gap-2">
-            <iconify-icon icon="solar:user-plus-bold-duotone"></iconify-icon> Add Students
-          </a>
-          <a [routerLink]="['/section-add']" [queryParams]="{ className: selectedClass.standardName }"
-            (click)="closeDialog()" class="btn btn-sm btn-outline-warning radius-8 d-flex align-items-center gap-2">
-            <iconify-icon icon="solar:layers-bold-duotone"></iconify-icon> Add Section
-          </a>
+        <div class="info-stat-card green">
+          <span class="info-stat-val">{{ selectedClass.students?.length || 0 }}</span>
+          <span class="info-stat-lab">Students</span>
         </div>
       </div>
 
-      <div class="modal-footer py-16 px-24 border-top">
-        <button type="button" (click)="closeDialog()" class="btn btn-secondary radius-8 px-24">Close</button>
+      <!-- Teacher Detail -->
+      <div class="detail-section">
+        <span class="detail-label">
+          <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
+          Supervising Teacher
+        </span>
+        <div class="d-flex align-items-center gap-3">
+          <div class="fw-bold text-dark fs-5">{{ selectedClass.classTeacher || 'No Teacher Assigned' }}</div>
+          <span class="badge-premium badge-green ms-auto">{{ selectedClass.status || 'Active' }}</span>
+        </div>
       </div>
+
+      <!-- Subjects Tag Cloud -->
+      <div class="detail-section">
+        <span class="detail-label">
+          <iconify-icon icon="solar:book-bold-duotone"></iconify-icon>
+          Curriculum Subjects
+        </span>
+        <div class="detail-tags" *ngIf="selectedClass.subjects && selectedClass.subjects.length > 0">
+          <span class="tag-premium" *ngFor="let s of selectedClass.subjects">
+            {{ s.subjectName }}
+          </span>
+        </div>
+        <p class="text-muted text-sm" *ngIf="!selectedClass.subjects || selectedClass.subjects.length === 0">
+          No subjects mapped to this curriculum.
+        </p>
+      </div>
+
+      <!-- Sections Tag Cloud -->
+      <div class="detail-section" *ngIf="getSectionsForClass(selectedClass).length > 0">
+        <span class="detail-label">
+          <iconify-icon icon="solar:layers-bold-duotone"></iconify-icon>
+          Registered Sections
+        </span>
+        <div class="detail-tags">
+          <span class="tag-premium" *ngFor="let sec of getSectionsForClass(selectedClass)">
+            {{ sec.sectionName }}
+            <small class="text-muted" *ngIf="sec.classTeacher">({{ sec.classTeacher.staffName }})</small>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-modal-close" (click)="closeDialog()">Acknowledge</button>
     </div>
   </div>
 </div>
-
-<!-- Backdrop -->
-<div class="modal-backdrop fade" [class.show]="showViewDialog" *ngIf="showViewDialog" (click)="closeDialog()"
-  [style.opacity]="0.4"></div>

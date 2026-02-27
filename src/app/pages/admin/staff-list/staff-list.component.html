@@ -2,7 +2,7 @@
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
   <!-- ===================== STATS CARDS ===================== -->
-  <div class="stats-row">
+  <div class="stats-row" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
     <div class="stat-card">
       <div class="stat-icon-wrapper blue">
         <iconify-icon icon="mdi:account-hard-hat-outline" class="text-2xl"></iconify-icon>
@@ -54,7 +54,7 @@
         </div>
       </div>
 
-      <a routerLink="/staff-add" class="btn-add">
+      <a routerLink="/staff-add" class="btn-add" *ngIf="authService.hasRole('Admin')">
         <iconify-icon icon="ic:baseline-plus" class="icon text-xl"></iconify-icon>
         Add Staff
       </a>
@@ -86,13 +86,13 @@
                     <iconify-icon icon="mdi:eye-outline"></iconify-icon> View
                   </a>
                 </li>
-                <li>
+                <li *ngIf="authService.hasRole('Admin')">
                   <a class="dropdown-item px-16 py-8 d-flex align-items-center gap-10"
                     [routerLink]="['/staff-edit-profile', staff.staffId]">
                     <iconify-icon icon="mdi:pencil-outline"></iconify-icon> Edit
                   </a>
                 </li>
-                <li>
+                <li *ngIf="authService.hasRole('Admin')">
                   <button type="button" class="dropdown-item px-16 py-8 text-danger d-flex align-items-center gap-10"
                     (click)="confirmDelete(staff)">
                     <iconify-icon icon="mdi:delete-outline"></iconify-icon> Delete
@@ -138,7 +138,7 @@
         </div>
         <h5 class="mt-3 mb-2">No Staff Found</h5>
         <p class="text-muted">Register new team members to seeing them here.</p>
-        <a routerLink="/staff-add" class="btn-add mt-16">
+        <a routerLink="/staff-add" class="btn-add mt-16" *ngIf="authService.hasRole('Admin')">
           <iconify-icon icon="ic:baseline-plus"></iconify-icon>
           Add Staff
         </a>

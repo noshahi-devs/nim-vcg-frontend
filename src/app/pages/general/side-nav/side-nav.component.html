@@ -4,11 +4,10 @@
   <button type="button" class="sidebar-close-btn">
     <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
   </button>
-  <div>
-    <a routerLink="/class" class="sidebar-logo">
-      <img src="assets/images/logo.png" alt="site logo" class="light-logo">
-      <img src="assets/images/logo.png" alt="site logo" class="dark-logo">
-      <img src="assets/images/logo.png" alt="site logo" class="logo-icon">
+  <div class="sidebar-logo-container">
+    <a routerLink="/dashboard" class="sidebar-logo">
+      <img [src]="config?.instituteLogo || 'assets/images/logo.png'" alt="site logo" class="light-logo">
+      <img [src]="config?.instituteLogo || 'assets/images/logo.png'" alt="site logo" class="dark-logo">
     </a>
   </div>
   <div class="sidebar-menu-area">
@@ -16,8 +15,8 @@
 
 
 
-      <li *ngIf="hasAnyRole(['Admin','Accountant','Principal'])">
-        <a routerLink="/dashboard">
+      <li *ngIf="hasAnyRole(['Admin','Accountant','Principal','Teacher'])">
+        <a routerLink="/dashboard" routerLinkActive="active-page">
           <iconify-icon icon="solar:home-smile-angle-outline"></iconify-icon>
           <span>Dashboard</span>
         </a>
@@ -26,328 +25,251 @@
 
 
 
-      <!-- Section -->
-      <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
+      <!-- Section Management -->
+      <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:view-list" class="menu-icon"></iconify-icon>
-          <span>Section</span>
+          <span>Section Management</span>
         </a>
         <ul class="sidebar-submenu">
-          <li><a routerLink="/section-list"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Section
-              List</a></li>
-          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/section-add"><i
-                class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add
-              Section</a></li>
+          <li><a routerLink="/section-list" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Section List</a></li>
+          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/section-add" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Add Section</a></li>
         </ul>
       </li>
 
 
-      <!-- Staff -->
+      <!-- Employee Records -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:account-tie" class="menu-icon"></iconify-icon>
-          <span>Staff</span>
+          <span>Employee Records</span>
         </a>
         <ul class="sidebar-submenu">
-          <li>
-            <a routerLink="/staff-list">
-              <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> All Employees
-            </a>
-          </li>
-          <li *ngIf="hasAnyRole(['Admin'])">
-            <a routerLink="/staff-add">
-              <i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add New
-            </a>
-          </li>
-
-          <li *ngIf="hasAnyRole(['Admin'])">
-            <a routerLink="/staff-manage-login">
-              <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Manage Login
-            </a>
-          </li>
+          <li><a routerLink="/staff-list" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> All Employees</a></li>
+          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/staff-add" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Add New</a></li>
+          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/staff-manage-login" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-danger-main"></i> Manage Login</a></li>
         </ul>
       </li>
 
-      <!-- Student -->
+      <!-- Student Directory -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:account-school" class="menu-icon"></iconify-icon>
-          <span>Student</span>
+          <span>Student Directory</span>
         </a>
         <ul class="sidebar-submenu">
-          <li><a routerLink="/student-list"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Student
-              List</a></li>
-          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/student-add"><i
-                class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add Student</a></li>
-          <li *ngIf="hasAnyRole(['Admin'])">
-            <a routerLink="/student-promote">
-              <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i>Student Promote
-            </a>
-          </li>
+          <li><a routerLink="/student-list" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Student List</a></li>
+          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/student-add" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Add Student</a></li>
+          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/student-promote" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-danger-main"></i> Student Promote</a></li>
         </ul>
       </li>
 
-      <!-- Class -->
+      <!-- Academic Classes -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:google-classroom" class="menu-icon"></iconify-icon>
-          <span>Class</span>
+          <span>Academic Classes</span>
         </a>
         <ul class="sidebar-submenu">
-          <li><a routerLink="/class-list"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> All
-              Classes</a></li>
-          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/newclass"><i
-                class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add New
-              Class</a></li>
-          <li><a routerLink="/class-management"><i class="ri-circle-fill circle-icon text-danger w-auto"></i> Class
-              Manage</a></li>
+          <li><a routerLink="/class-list" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> All Classes</a></li>
+          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/newclass" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Add New Class</a></li>
+          <li><a routerLink="/class-management" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-danger"></i> Class Manage</a></li>
         </ul>
       </li>
 
-      <!-- Subject -->
+      <!-- Subject Assignment -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:book-open-variant" class="menu-icon"></iconify-icon>
-          <span>Subject</span>
+          <span>Subject Assignment</span>
         </a>
         <ul class="sidebar-submenu">
-          <li><a routerLink="/subject-list"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> All
-              Subjects</a></li>
-          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/subject-add"><i
-                class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Assign Subject</a></li>
+          <li><a routerLink="/subject-list" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> All Subjects</a></li>
+          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/subject-add" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Assign Subject</a></li>
         </ul>
       </li>
 
-      <!-- Fee -->
+      <!-- Financial Management -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
-          <span>Fee</span>
+          <span>Financial Management</span>
         </a>
         <ul class="sidebar-submenu">
-
-          <li><a routerLink="/fee">
-              <i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Create Fee Type
-            </a></li>
-          <li><a routerLink="/generate-fee-invoice">
-              <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Create Fee
-            </a></li>
-
-          <li><a routerLink="/monthly-payment">
-              <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Monthly Payment
-            </a></li>
-
-          <li><a routerLink="/other-payment">
-              <i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Other Payment
-            </a></li>
-          <li><a routerLink="/payment-detail">
-              <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Payment Detail
-            </a></li>
-          <li *ngIf="hasAnyRole(['Accountant'])"><a routerLink="/collect-fee">
-              <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> Collect Fee
-            </a></li>
-
-
-          <li><a routerLink="/fee-defaulters">
-              <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Fee Defaulters
-            </a></li>
-
+          <li><a routerLink="/fee" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-info-main"></i> Create Fee Type</a></li>
+          <li><a routerLink="/generate-fee-invoice" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Create Fee</a></li>
+          <li><a routerLink="/monthly-payment" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-danger-main"></i> Monthly Payment</a></li>
+          <li><a routerLink="/other-payment" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-info-main"></i> Other Payment</a></li>
+          <li><a routerLink="/payment-detail" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Payment Detail</a></li>
+          <li *ngIf="hasAnyRole(['Accountant'])"><a routerLink="/collect-fee" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-success-main"></i> Collect Fee</a></li>
+          <li><a routerLink="/fee-defaulters" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-danger-main"></i> Fee Defaulters</a></li>
         </ul>
       </li>
 
-      <!-- Salary -->
+      <!-- Payroll System -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:cash-multiple" class="menu-icon"></iconify-icon>
-          <span>Salary</span>
+          <span>Payroll System</span>
         </a>
         <ul class="sidebar-submenu">
-          <li><a routerLink="/salary"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Pay Salary</a>
-          </li>
-          <li><a routerLink="/salary-slip"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Salary
-              Paid Slip</a></li>
+          <li><a routerLink="/salary" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Pay Salary</a></li>
+          <li><a routerLink="/salary-slip" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Salary Paid Slip</a></li>
         </ul>
       </li>
 
-      <!-- Attendance -->
+      <!-- Attendance Tracking -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:calendar-check" class="menu-icon"></iconify-icon>
-          <span>Attendance</span>
+          <span>Attendance Tracking</span>
         </a>
         <ul class="sidebar-submenu">
-          <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/attendance"><i
-                class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Student
+          <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/attendance"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Student
               Attendance</a></li>
-
-          <!-- My Attendance -->
-          <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])">
-            <a routerLink="/my-attendance"><i class="ri-circle-fill circle-icon text-success-main w-auto"></i> My
-              Attendance</a>
-          </li>
-
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-attendance"><i
-                class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Staff Attendance</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/class-wise-report"><i
-                class="ri-circle-fill circle-icon text-danger w-auto"></i> Class Wise Report</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/student-attendance-report"><i
-                class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Student Attendance Report</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-attendance-report"><i
-                class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Staff Attendance Report</a></li>
+          <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/my-attendance"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-success-main"></i> My
+              Attendance</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-attendance"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Staff
+              Attendance</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/class-wise-report"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger"></i> Class Wise
+              Report</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/student-attendance-report"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Student
+              Attendance Report</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-attendance-report"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Staff
+              Attendance Report</a></li>
         </ul>
       </li>
 
-      <!-- Leave -->
+      <!-- Leave Management -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:calendar-outline" class="menu-icon"></iconify-icon>
-          <span>Leave</span>
+          <span>Leave Management</span>
         </a>
         <ul class="sidebar-submenu">
-          <li><a routerLink="/leave"><i class="ri-circle-fill circle-icon text-primary-600"></i> Dashboard</a></li>
-          <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/apply-leave"><i
-                class="ri-circle-fill circle-icon text-warning-main"></i> Apply Leave</a></li>
-          <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/my-leaves"><i
+          <li><a routerLink="/leave" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Dashboard</a></li>
+          <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/apply-leave"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Apply
+              Leave</a></li>
+          <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/my-leaves" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-success-main"></i> My Leaves</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/manage-leaves"><i
-                class="ri-circle-fill circle-icon text-danger-main"></i> Manage Leaves</a></li>
-          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/leave-type"><i
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/manage-leaves"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger-main"></i> Manage
+              Leaves</a></li>
+          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/leave-type" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-neutral-600"></i> Leave Type Management</a></li>
         </ul>
       </li>
 
-      <!-- Exam -->
+      <!-- Examination Center -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:school-outline" class="menu-icon"></iconify-icon>
-          <span>Exam</span>
+          <span>Examination Center</span>
         </a>
         <ul class="sidebar-submenu">
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])">
-            <a routerLink="/exam">
-              <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Manage Exams
-            </a>
-          </li>
-          <li>
-            <a routerLink="/exam-schedule">
-              <i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Exam Schedule
-            </a>
-          </li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])">
-            <a routerLink="/exam-schedule-standards-create">
-              <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Exam Schedule Standard
-            </a>
-          </li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])">
-            <a routerLink="/exam-schedule-standards-list">
-              <i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Exam Schedule Standard List
-            </a>
-          </li>
-          <li *ngIf="hasAnyRole(['Teacher'])">
-            <a routerLink="/marks-entry">
-              <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> Marks Entry
-            </a>
-          </li>
-          <li *ngIf="hasAnyRole(['Admin'])">
-            <a routerLink="/auto-grade-calculation">
-              <i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Auto Grade
-            </a>
-          </li>
-          <li>
-            <a routerLink="/exam-result">
-              <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Exam Results
-            </a>
-          </li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])">
-            <a routerLink="/exam-analytics">
-              <i class="ri-circle-fill circle-icon text-secondary-light w-auto"></i> Exam Analytics
-            </a>
-          </li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Manage Exams</a></li>
+          <li><a routerLink="/exam-schedule" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Exam Schedule</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-schedule-standards-create"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Exam Schedule
+              Standard</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-schedule-standards-list"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-info-main"></i> Exam Schedule
+              Standard List</a></li>
+          <li *ngIf="hasAnyRole(['Teacher'])"><a routerLink="/marks-entry" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-success-main"></i> Marks Entry</a></li>
+          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/auto-grade-calculation" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-info-main"></i> Auto Grade</a></li>
+          <li><a routerLink="/exam-result" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-danger-main"></i> Exam Results</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-analytics"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-secondary-light"></i> Exam
+              Analytics</a></li>
         </ul>
       </li>
 
-      <!-- accounts -->
+      <!-- Account Ledger -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin','Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:finance" class="menu-icon"></iconify-icon>
-          <span>Accounts</span>
+          <span>Account Ledger</span>
         </a>
         <ul class="sidebar-submenu">
-          <li>
-            <a routerLink="/accounts">
-              <i class="ri-circle-fill circle-icon text-primary-600"></i>
-              Dashboard
-            </a>
-          </li>
-          <li>
-            <a routerLink="/income-manage">
-              <i class="ri-circle-fill circle-icon text-success-main"></i>
-              Income Management
-            </a>
-          </li>
-          <li>
-            <a routerLink="/expense-manage">
-              <i class="ri-circle-fill circle-icon text-danger-main"></i>
-              Expense Management
-            </a>
-          </li>
-          <li>
-            <a routerLink="/profit-loss">
-              <i class="ri-circle-fill circle-icon text-warning-main"></i>
-              Profit &amp; Loss Report
-            </a>
-          </li>
-          <li>
-            <a routerLink="/accounts-ledger">
-              <i class="ri-circle-fill circle-icon text-neutral-600"></i>
-              Transactions
-            </a>
-          </li>
-
-          <li>
-            <a routerLink="/bank-cash">
-              <i class="ri-circle-fill circle-icon text-info-main"></i>
-              Bank Cash
-            </a>
-          </li>
+          <li><a routerLink="/accounts" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Dashboard</a></li>
+          <li><a routerLink="/income-manage" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-success-main"></i> Income Management</a></li>
+          <li><a routerLink="/expense-manage" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-danger-main"></i> Expense Management</a></li>
+          <li><a routerLink="/profit-loss" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Profit & Loss Report</a></li>
+          <li><a routerLink="/accounts-ledger" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-neutral-600"></i> Transactions</a></li>
+          <li><a routerLink="/bank-cash" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-info-main"></i> Bank Cash</a></li>
         </ul>
       </li>
 
-      <!-- Report -->
+      <!-- Analytics & Reports -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:file-chart" class="menu-icon"></iconify-icon>
-          <span>Report</span>
+          <span>Analytics & Reports</span>
         </a>
         <ul class="sidebar-submenu">
-          <li><a routerLink="/report"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Report
-              Analytics</a>
-          </li>
+          <li><a routerLink="/report" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Report Analytics</a></li>
         </ul>
       </li>
 
-      <!-- Settings -->
+      <!-- System Admin -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:cog" class="menu-icon"></iconify-icon>
-          <span>Administration</span>
+          <span>System Admin</span>
         </a>
         <ul class="sidebar-submenu">
-          <li><a routerLink="/settings"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> General</a>
-          </li>
-          <li><a routerLink="/settings"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i>
-              Notifications</a></li>
-          <li>
-            <a routerLink="/role-access"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Role &
-              Access</a>
-          </li>
-          <li>
-            <a routerLink="/assign-role"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Assign
-              Role</a>
-          </li>
-          <li><a routerLink="/theme"><i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Theme</a></li>
-          <li><a routerLink="/language"><i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Languages</a>
-
+          <li><a routerLink="/settings" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> General Settings</a></li>
+          <li><a routerLink="/role-access" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Role & Access</a></li>
+          <li><a routerLink="/assign-role" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Assign Role</a></li>
+          <li><a routerLink="/theme" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-danger-main"></i> Theme Customization</a></li>
+          <li><a routerLink="/language" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-info-main"></i> Language Settings</a></li>
         </ul>
       </li>
 
@@ -762,12 +684,11 @@
   <footer class="d-footer">
     <div class="row align-items-center justify-content-between">
       <div class="col-auto">
-        <p class="mb-0">©
-          {{ currentYear }} Noshahi Institute Manager - All Rights Reserved.
-        </p>
+        <p class="mb-0">© {{ currentYear }} <span class="fw-bold">{{ config?.instituteName || 'NIM' }}</span> Enterprise
+          - All Rights Reserved.</p>
       </div>
       <div class="col-auto">
-        <p class="mb-0">Made by <span class="text-primary-600">Noshahi Developers Inc.,</span></p>
+        <p class="mb-0">Engineered by <span class="text-primary-600 fw-semibold">Noshahi Developers Inc.</span></p>
       </div>
     </div>
   </footer>

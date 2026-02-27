@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ExamScheduleService } from '../../../services/exam-schedule.service';
 import { ExamScheduleVm } from '../../../Models/exam-schedule-vm';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { AuthService } from '../../../SecurityModels/auth.service';
 import Swal from 'sweetalert2';
 import { finalize } from 'rxjs';
 
@@ -40,7 +41,10 @@ export class ExamScheduleComponent implements OnInit {
   selectedSchedule: ExamScheduleVm | null = null;
   Math = Math;
 
-  constructor(private service: ExamScheduleService) { }
+  constructor(
+    private service: ExamScheduleService,
+    public authService: AuthService
+  ) { }
 
   ngOnInit(): void {
     this.initForm();

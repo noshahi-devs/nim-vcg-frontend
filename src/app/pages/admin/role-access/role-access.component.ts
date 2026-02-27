@@ -18,12 +18,7 @@ export class RoleAccessComponent implements OnInit {
     newRoleName: string = '';
     isLoading: boolean = false;
 
-    // Permissions Mock (Static for now, dynamic if backend supports Permission management)
-    availablePermissions: string[] = [
-        'User.Create', 'User.Edit', 'User.Delete',
-        'Student.View', 'Student.Edit',
-        'Fee.Manage', 'Report.View'
-    ];
+    availablePermissions: string[] = [];
 
     constructor(private roleService: RoleService) { }
 
@@ -35,28 +30,12 @@ export class RoleAccessComponent implements OnInit {
         this.isLoading = true;
         this.roleService.getAllRoles().subscribe({
             next: (data) => {
-                // Fallback for demo if API fails empty
-                if (!data || data.length === 0) {
-                    this.roles = [
-                        { id: '1', name: 'Admin', description: 'Full Access', permissions: this.availablePermissions },
-                        { id: '2', name: 'Principal', description: 'School Management', permissions: ['Student.View', 'Report.View'] },
-                        { id: '3', name: 'Teacher', description: 'Class Management', permissions: ['Student.View'] },
-                        { id: '4', name: 'Accountant', description: 'Financial Management', permissions: ['Fee.Manage'] }
-                    ];
-                } else {
-                    this.roles = data;
-                }
+                this.roles = data || [];
                 this.isLoading = false;
             },
             error: (err) => {
                 console.error('Failed to load roles', err);
-                // Fallback
-                this.roles = [
-                    { id: '1', name: 'Admin', description: 'Full Access', permissions: this.availablePermissions },
-                    { id: '2', name: 'Principal', description: 'School Management', permissions: ['Student.View', 'Report.View'] },
-                    { id: '3', name: 'Teacher', description: 'Class Management', permissions: ['Student.View'] },
-                    { id: '4', name: 'Accountant', description: 'Financial Management', permissions: ['Fee.Manage'] }
-                ];
+                this.roles = [];
                 this.isLoading = false;
             }
         });

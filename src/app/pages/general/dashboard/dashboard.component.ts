@@ -7,6 +7,7 @@ import {
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { DashboardService, DashboardStats } from '../../../services/dashboard.service';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../SecurityModels/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -26,7 +27,10 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   donutChartOptions;
   paymentStatusChartOptions;
 
-  constructor(private dashboardService: DashboardService) {
+  constructor(
+    private dashboardService: DashboardService,
+    public authService: AuthService
+  ) {
     this.initCharts();
   }
 
@@ -41,6 +45,10 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
     this.dashboardService.getStudentDistribution().subscribe(data => {
       this.updateDonutChart(data);
+    });
+
+    this.dashboardService.getWeeklyAdmissions().subscribe(data => {
+      this.updateBarChart(data);
     });
   }
 
@@ -102,6 +110,14 @@ export class DashboardComponent implements AfterViewInit, OnInit {
       ...this.donutChartOptions,
       series: data.map(d => d.count),
       labels: data.map(d => d.className)
+    };
+  }
+
+  updateBarChart(data: any) {
+    this.barChartOptions = {
+      ...this.barChartOptions,
+      series: [{ name: "New Admissions", data: data.data }],
+      xaxis: { ...this.barChartOptions.xaxis, categories: data.labels }
     };
   }
   ngAfterViewInit(): void {

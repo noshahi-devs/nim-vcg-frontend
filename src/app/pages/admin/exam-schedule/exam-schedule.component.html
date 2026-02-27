@@ -23,7 +23,7 @@
         </form>
       </div>
 
-      <button type="button" (click)="openAddDialog()"
+      <button type="button" (click)="openAddDialog()" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])"
         class="btn btn-primary text-sm btn-sm px-16 py-12 radius-8 d-flex align-items-center gap-2">
         <iconify-icon icon="solar:add-circle-bold-duotone" class="text-xl"></iconify-icon>
         Add New Schedule
@@ -69,11 +69,13 @@
                     <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
                   </button>
                   <button type="button" (click)="openEditDialog(sch)"
+                    *ngIf="authService.hasAnyRole(['Admin', 'Principal'])"
                     class="btn btn-success-100 text-success-600 btn-sm w-32-px h-32-px d-flex justify-content-center align-items-center radius-8"
                     title="Edit">
                     <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
                   </button>
                   <button type="button" (click)="confirmDelete(sch)"
+                    *ngIf="authService.hasAnyRole(['Admin', 'Principal'])"
                     class="btn btn-danger-100 text-danger-600 btn-sm w-32-px h-32-px d-flex justify-content-center align-items-center radius-8"
                     title="Delete">
                     <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
