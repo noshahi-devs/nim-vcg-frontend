@@ -46,8 +46,9 @@
                   <i class="ri-phone-line me-2 text-primary-500"></i>Active Mobile No
                 </label>
                 <div class="input-wrapper-premium">
-                  <input type="text" class="form-control-premium" name="contactNumber1" placeholder="0300-1234567"
-                    [(ngModel)]="newStaff.contactNumber1" pattern="^03\d{2}-\d{7}$" #contactNumber1="ngModel" required
+                  <input type="tel" class="form-control-premium" name="contactNumber1" placeholder="0300-1234567"
+                    [(ngModel)]="newStaff.contactNumber1" (input)="formatPhone($event)" pattern="^03\d{2}-\d{7}$"
+                    #contactNumber1="ngModel" required
                     [ngClass]="{ 'is-invalid': contactNumber1.invalid && contactNumber1.touched }" />
                 </div>
                 <div *ngIf="contactNumber1.touched && contactNumber1.invalid" class="error-feedback">
@@ -67,10 +68,8 @@
                     #designation="ngModel" required
                     [ngClass]="{ 'is-invalid': designation.invalid && designation.touched }">
                     <option value="" disabled selected>Select Designation</option>
-                    <option value="Instructor">Teacher</option>
-                    <option value="Professor">Professor</option>
-                    <option value="Principal">Principal</option>
-                    <option value="Counselor">Counselor</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Staff">Staff</option>
                     <option value="Admin">Admin</option>
                     <option value="Accountant">Accountant</option>
                   </select>
@@ -106,8 +105,8 @@
                 </label>
                 <div class="input-wrapper-premium">
                   <input type="text" class="form-control-premium" name="cnic" placeholder="33301-1234567-1"
-                    [(ngModel)]="newStaff.cnic" pattern="^\d{5}-\d{7}-\d{1}$" #cnic="ngModel"
-                    [ngClass]="{ 'is-invalid': cnic.invalid && cnic.touched }" />
+                    [(ngModel)]="newStaff.cnic" (input)="formatCnic($event)" pattern="^\d{5}-\d{7}-\d{1}$"
+                    #cnic="ngModel" [ngClass]="{ 'is-invalid': cnic.invalid && cnic.touched }" />
                 </div>
                 <div *ngIf="cnic.invalid && cnic.touched" class="error-feedback">
                   Invalid formatted CNIC
@@ -266,11 +265,41 @@
             <div class="col-md-4">
               <div class="form-group-premium">
                 <label class="form-label-premium">
-                  <i class="ri-mail-line me-2 text-primary-500"></i>Official Email
+                  <i class="ri-mail-line me-2 text-primary-500"></i>Official Email <span class="text-danger">*</span>
                 </label>
                 <div class="input-wrapper-premium">
                   <input type="email" class="form-control-premium" name="email" placeholder="example@college.com"
-                    [(ngModel)]="newStaff.email" />
+                    [(ngModel)]="newStaff.email" required email #email="ngModel"
+                    [ngClass]="{ 'is-invalid': email.invalid && email.touched }" />
+                </div>
+                <div *ngIf="email.invalid && email.touched" class="error-feedback">
+                  {{ email.errors?.['required'] ? 'Required: enter official email' : 'Invalid email format' }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Login Password -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-lock-password-line me-2 text-primary-500"></i>Login Password <span
+                    class="text-danger">*</span>
+                </label>
+                <div class="input-wrapper-premium position-relative">
+                  <input type="password" class="form-control-premium pe-5" name="password"
+                    placeholder="Minimum 6 characters" [(ngModel)]="newStaff.password" required minlength="6"
+                    #password="ngModel" id="password-field"
+                    [ngClass]="{ 'is-invalid': password.invalid && password.touched }" />
+                  <iconify-icon icon="solar:eye-outline" class="position-absolute cursor-pointer"
+                    style="right: 16px; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 20px;"
+                    onclick="
+                      const input = document.getElementById('password-field');
+                      input.type = input.type === 'password' ? 'text' : 'password';
+                      this.setAttribute('icon', input.type === 'password' ? 'solar:eye-outline' : 'solar:eye-closed-outline');
+                    "></iconify-icon>
+                </div>
+                <div *ngIf="password.invalid && password.touched" class="error-feedback">
+                  Required: minimum 6 characters
                 </div>
               </div>
             </div>

@@ -1,0 +1,152 @@
+<ng-container *ngIf="config$ | async as config">
+  <div class="brand-page">
+    <div class="bg-orb bg-orb-one"></div>
+    <div class="bg-orb bg-orb-two"></div>
+    <div class="grid-overlay"></div>
+
+    <header class="brand-nav">
+      <a class="brand-logo" routerLink="/">
+        <img [src]="config?.instituteLogo || 'assets/images/logo.png'" alt="institute logo">
+        <div>
+          <p class="logo-tag">Institute ERP Suite</p>
+          <h1>{{ config?.instituteName || 'Noshahi Institute Manager' }}</h1>
+        </div>
+      </a>
+
+      <nav class="brand-nav-links">
+        <a href="#features">Features</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="brand-actions">
+        <a routerLink="/sign-in" class="btn btn-ghost">Sign In</a>
+        <a routerLink="/sign-up" class="btn btn-solid">Get Started</a>
+      </div>
+    </header>
+
+    <main class="brand-main">
+      <section class="hero-section">
+        <div class="hero-copy fade-up depth-card">
+          <span class="hero-badge">Built for Schools, Colleges, and Campuses</span>
+          <h2>Professional institute management with a modern digital command center.</h2>
+          <p>
+            From student lifecycle and attendance to fee collection, payroll, and analytics,
+            streamline everything in a single intelligent platform.
+          </p>
+          <div class="hero-cta">
+            <a routerLink="/sign-in" class="btn btn-solid">Open Dashboard</a>
+            <a href="#features" class="btn btn-outline">Explore Modules</a>
+          </div>
+        </div>
+
+        <div class="hero-stage fade-up delay-1">
+          <div class="stage-ring stage-ring-one"></div>
+          <div class="stage-ring stage-ring-two"></div>
+
+          <article class="stage-card stage-card-main">
+            <span class="chip">Live Dashboard</span>
+            <img src="assets/images/chat/chat-main.png" alt="software dashboard preview">
+          </article>
+
+          <article class="stage-card stage-card-mini card-one">
+            <img src="assets/images/home-six/student-img1.png" alt="student profile">
+            <div>
+              <h4>Admissions Flow</h4>
+              <p>Enrollment tracked in real time.</p>
+            </div>
+          </article>
+
+          <article class="stage-card stage-card-mini card-two">
+            <img src="assets/images/home-six/student-img3.png" alt="staff profile">
+            <div>
+              <h4>Finance Visibility</h4>
+              <p>Fee and expense decisions with clarity.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="visual-strip fade-up delay-2">
+        <article class="visual-text depth-card">
+          <p class="eyebrow">Brand Experience</p>
+          <h3>Premium interface language designed for trust and control.</h3>
+          <p>
+            Professional typography, layered visuals, and depth-based motion
+            make the product feel modern and executive-ready.
+          </p>
+        </article>
+
+        <div class="visual-images">
+          <div class="visual-img visual-a">
+            <img src="assets/images/home-six/student-img4.png" alt="classroom visual">
+          </div>
+          <div class="visual-img visual-b">
+            <img src="assets/images/home-six/student-img5.png" alt="student visual">
+          </div>
+          <div class="visual-img visual-c">
+            <img src="assets/images/home-six/student-img6.png" alt="campus visual">
+          </div>
+        </div>
+      </section>
+
+      <section class="metrics-row fade-up delay-3">
+        <article class="metric-item" *ngFor="let item of metrics">
+          <h3>{{ item.value }}</h3>
+          <p>{{ item.label }}</p>
+        </article>
+      </section>
+
+      <section id="features" class="features-section">
+        <div class="section-head">
+          <p>Core Capabilities</p>
+          <h3>Everything your institute team needs to operate faster and smarter.</h3>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature-card depth-card" *ngFor="let feature of features">
+            <div class="feature-icon">
+              <iconify-icon [icon]="feature.icon"></iconify-icon>
+            </div>
+            <h4>{{ feature.title }}</h4>
+            <p>{{ feature.description }}</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="workflow" class="workflow-section">
+        <div class="section-head">
+          <p>Implementation Flow</p>
+          <h3>Launch your management workflow in three practical steps.</h3>
+        </div>
+
+        <div class="workflow-grid">
+          <article class="workflow-card depth-card" *ngFor="let step of launchSteps">
+            <span>{{ step.step }}</span>
+            <h4>{{ step.title }}</h4>
+            <p>{{ step.detail }}</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer id="contact" class="brand-footer">
+      <div class="footer-card">
+        <h3>Ready to run your institute with clarity?</h3>
+        <p>
+          Start with your team today and unify operations on
+          <strong>{{ config?.instituteName || 'Noshahi Institute Manager' }}</strong>.
+        </p>
+        <div class="hero-cta">
+          <a routerLink="/sign-in" class="btn btn-solid">Sign In</a>
+          <a routerLink="/sign-up" class="btn btn-outline">Create Account</a>
+        </div>
+      </div>
+
+      <p class="copyright">
+        Copyright (c) {{ currentYear }} {{ config?.instituteName || 'Noshahi Institute Manager' }}.
+        All rights reserved.
+      </p>
+    </footer>
+  </div>
+</ng-container>
