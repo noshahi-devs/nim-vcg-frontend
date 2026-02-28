@@ -28,6 +28,9 @@ export class SubjectAssignmentComponent implements OnInit {
     sectionId: null
   };
 
+  searchTerm: string = '';
+
+
   selectedClassId: number | null = null;
   loading: boolean = false;
   isSubmitting: boolean = false;
@@ -56,8 +59,8 @@ export class SubjectAssignmentComponent implements OnInit {
     // Load Teachers (Academic Staff)
     this.staffService.getAllStaffs().subscribe({
       next: (res) => {
-        const academicRoles = ['DepartmentChair', 'Professor', 'Instructor', 'Lecturer', 'TeachingAssistant', 'SpecialEducationTeacher', 'SubstituteTeacher'];
-        this.teachers = res.filter((s: any) => academicRoles.includes(s.designation));
+        // Strictly filter by the standardized 'Teacher' designation
+        this.teachers = (res || []).filter((s: any) => s.designation === 'Teacher');
       }
     });
 
@@ -67,6 +70,18 @@ export class SubjectAssignmentComponent implements OnInit {
     });
   }
 
+  get filteredAssignments(): SubjectAssignment[] {
+    const search = this.searchTerm.toLowerCase().trim();
+    if (!search) return this.assignments;
+
+    return this.assignments.filter(a =>
+      a.staff?.staffName?.toLowerCase().includes(search) ||
+      a.subject?.subjectName?.toLowerCase().includes(search) ||
+      a.section?.standard?.standardName?.toLowerCase().includes(search) ||
+      a.section?.sectionName?.toLowerCase().includes(search)
+    );
+  }
+
   onClassChange(): void {
     this.sections = [];
     this.subjects = [];
@@ -74,14 +89,18 @@ export class SubjectAssignmentComponent implements OnInit {
     this.newAssignment.subjectId = null;
 
     if (this.selectedClassId) {
-      this.loadSectionsDirect(this.selectedClassId);
-      this.loadSubjectsDirect(this.selectedClassId);
+      const selectedClass = this.classes.find(c => c.standardId == this.selectedClassId);
+      if (selectedClass) {
+        this.loadSectionsDirect(selectedClass.standardName);
+        this.loadSubjectsDirect(this.selectedClassId);
+      }
     }
   }
 
-  loadSectionsDirect(classId: number) {
+  loadSectionsDirect(className: string) {
     this.sectionService.getSections().subscribe(res => {
-      this.sections = res.filter((x: any) => x.standardId == classId || x.standard?.standardId == classId);
+      // Filter by className string since Section model doesn't have StandardId
+      this.sections = res.filter((x: any) => x.className === className);
     });
   }
 

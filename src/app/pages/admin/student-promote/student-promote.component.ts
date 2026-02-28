@@ -203,4 +203,14 @@ export class StudentPromoteComponent implements OnInit {
       this.selectedStudents = [];
     }, 1500);
   }
+
+  getSelectedClassName(): string {
+    const cls = this.classes.find(c => c.standardId === Number(this.selectedClassId));
+    return cls ? cls.standardName : 'All Classes';
+  }
+
+  getSelectedSectionName(): string {
+    const sec = this.sections.find(s => s.sectionId === Number(this.selectedSectionId));
+    return sec ? sec.sectionName : 'All Sections';
+  }
 }

@@ -91,7 +91,8 @@
                 <h3 class="section-title">Current Assignments</h3>
                 <div class="search-box">
                     <i class="bi bi-search"></i>
-                    <input type="text" class="form-control premium-input search-input" placeholder="Search..." />
+                    <input type="text" class="form-control premium-input search-input" [(ngModel)]="searchTerm"
+                        placeholder="Search teacher, subject, or class..." />
                 </div>
             </div>
 
@@ -113,13 +114,13 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr *ngIf="!loading && assignments.length === 0">
+                        <tr *ngIf="!loading && filteredAssignments.length === 0">
                             <td colspan="4" class="text-center py-4 empty-state">
                                 <i class="bi bi-inbox fs-1 text-muted"></i>
                                 <p class="mt-2 text-muted">No subject assignments found.</p>
                             </td>
                         </tr>
-                        <tr *ngFor="let assignment of assignments" class="table-row">
+                        <tr *ngFor="let assignment of filteredAssignments" class="table-row">
                             <td>
                                 <div class="user-info">
                                     <div class="avatar-placeholder">
