@@ -7,6 +7,7 @@ import { StaffService } from '../../../services/staff.service';
 import Swal from 'sweetalert2';
 import { Designation, Gender, Staff } from '../../../Models/staff';
 import { ImageUpload } from '../../../Models/StaticImageModel/imageUpload';
+import { AuthService } from '../../../SecurityModels/auth.service';
 
 declare var bootstrap: any;
 
@@ -19,9 +20,27 @@ declare var bootstrap: any;
   styleUrl: './staff-add.component.css'
 })
 export class StaffAddComponent implements AfterViewInit {
-  validateEmail() {
-    throw new Error('Method not implemented.');
+  formatPhone(event: any) {
+    let val = event.target.value.replace(/\D/g, '');
+    if (val.length > 11) val = val.substring(0, 11);
+    if (val.length > 4) val = val.substring(0, 4) + '-' + val.substring(4);
+    this.newStaff.contactNumber1 = val;
+    event.target.value = val;
   }
+
+  formatCnic(event: any) {
+    let val = event.target.value.replace(/\D/g, '');
+    if (val.length > 13) val = val.substring(0, 13);
+
+    if (val.length > 12) {
+      val = val.substring(0, 5) + '-' + val.substring(5, 12) + '-' + val.substring(12);
+    } else if (val.length > 5) {
+      val = val.substring(0, 5) + '-' + val.substring(5);
+    }
+    this.newStaff.cnic = val;
+    event.target.value = val;
+  }
+
   title = 'Add Staff';
   formSubmitted = false;
   selectedFile!: File;
@@ -46,6 +65,7 @@ export class StaffAddComponent implements AfterViewInit {
     customSubject: '',
     dob: '',
     email: '',
+    password: '',
     qualifications: '',
     status: '',
     permanentAddress: '',
@@ -55,7 +75,7 @@ export class StaffAddComponent implements AfterViewInit {
     imageUpload: new ImageUpload()
   };
 
-  constructor(private staffService: StaffService, private router: Router) {
+  constructor(private staffService: StaffService, private router: Router, private authService: AuthService) {
     this.setDefaultValues();
   }
 
@@ -134,12 +154,8 @@ export class StaffAddComponent implements AfterViewInit {
     }).then(async result => {
       if (result.isConfirmed) {
         const designationMap: { [key: string]: Designation } = {
-          'Instructor': Designation.Instructor,
           'Teacher': Designation.Instructor,
-          'Professor': Designation.Professor,
-          'Principal': Designation.Headmaster,
-          'Headmistress': Designation.Headmistress,
-          'Counselor': Designation.Counselor,
+          'Staff': Designation.Other,
           'Admin': Designation.Other,
           'Accountant': Designation.Other
         };
@@ -170,33 +186,71 @@ export class StaffAddComponent implements AfterViewInit {
 
         console.log('🚀 Sending staffData to API:', staffData);
 
-        this.staffService.addStaff(staffData).subscribe({
-          next: () => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Staff Added Successfully!',
-              showConfirmButton: false,
-              timer: 1500
+        const loginPayload = {
+          email: this.newStaff.email,
+          username: this.newStaff.email,
+          password: this.newStaff.password,
+          role: [this.newStaff.designation]
+        };
+
+        this.authService.register(loginPayload).subscribe({
+          next: (authRes) => {
+            console.log('Login credentials created successfully', authRes);
+            this.staffService.addStaff(staffData).subscribe({
+              next: () => {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Staff Profile and Login Created Successfully!',
+                  showConfirmButton: false,
+                  timer: 1500
+                });
+                this.router.navigate(['/staff-list']);
+              },
+              error: (err) => {
+                console.error('❌ Full error:', err);
+                let errorMessage = 'Something went wrong while creating staff profile!';
+                if (err.error) {
+                  if (typeof err.error === 'string') errorMessage = err.error;
+                  else if (err.error.message) errorMessage = err.error.message;
+                  else if (err.error.errors) {
+                    const errors = Object.values(err.error.errors).flat();
+                    errorMessage = errors.join(', ');
+                  } else errorMessage = JSON.stringify(err.error);
+                }
+
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Failed to Add Staff Profile',
+                  text: errorMessage,
+                  footer: `Status: ${err.status}`
+                });
+              }
             });
-            this.router.navigate(['/staff-list']);
           },
-          error: (err) => {
-            console.error('❌ Full error:', err);
-            let errorMessage = 'Something went wrong!';
-            if (err.error) {
-              if (typeof err.error === 'string') errorMessage = err.error;
-              else if (err.error.message) errorMessage = err.error.message;
-              else if (err.error.errors) {
-                const errors = Object.values(err.error.errors).flat();
-                errorMessage = errors.join(', ');
-              } else errorMessage = JSON.stringify(err.error);
+          error: (authErr) => {
+            console.error('Auth Registration error:', authErr);
+            let errMsg = 'Failed to create login credentials.';
+            if (authErr.status === 400) {
+              const backendErrors = authErr.error?.errors || authErr.error?.message;
+              if (typeof backendErrors === 'object') {
+                errMsg = Object.values(backendErrors).flat().join(', ');
+              } else {
+                errMsg = backendErrors || 'Invalid login details provided.';
+              }
+            } else if (authErr.status === 409) {
+              errMsg = 'An account with this email/username already exists.';
+            } else if (authErr.status === 500) {
+              errMsg = 'Internal server error while creating login.';
+            } else if (authErr.status === 0) {
+              errMsg = 'Unable to connect to the authentication server.';
+            } else {
+              errMsg = authErr.error?.message || 'Something went wrong with authentication.';
             }
 
             Swal.fire({
               icon: 'error',
-              title: 'Failed to Add Staff',
-              text: errorMessage,
-              footer: `Status: ${err.status}`
+              title: 'Login Creation Failed',
+              text: errMsg
             });
           }
         });

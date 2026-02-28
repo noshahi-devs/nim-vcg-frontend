@@ -129,12 +129,14 @@ import { PaymentDetailComponent } from './pages/accountant/payment-detail/paymen
 import { ThemeComponent } from './theme/theme.component';
 import { RoleAccessComponent } from './pages/admin/role-access/role-access.component';
 import { AssignRoleComponent } from './pages/admin/assign-role/assign-role.component';
+import { BrandingHomeComponent } from './pages/general/branding-home/branding-home.component';
 
 
 import { GeneralSettingsComponent } from './pages/admin/general-settings/general-settings.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
+  { path: '', component: BrandingHomeComponent, pathMatch: 'full' },
+  { path: 'home', component: BrandingHomeComponent },
   { path: 'sign-in', component: SignInComponent },
   { path: 'sign-up', component: SignUpComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
