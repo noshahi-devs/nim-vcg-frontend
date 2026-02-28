@@ -40,11 +40,11 @@ export class NewClassComponent implements OnInit {
   loadTeachers(): void {
     this.staffService.getAllStaffs().subscribe({
       next: (data) => {
-        // Filter those in Teacher department or with teacher-like designations
-        this.teachers = data.filter(s =>
-          s.department?.departmentName === 'Teacher' ||
-          (s.designation !== undefined && s.designation >= Designation.Professor && s.designation <= Designation.SubstituteTeacher)
-        );
+        // Filter staff with 'Teacher' designation or department
+        this.teachers = data.filter(s => {
+          const d = s.designation?.toString().toLowerCase();
+          return d === 'teacher' || s.designation === Designation.Teacher || s.department?.departmentName === 'Teacher';
+        });
         // If no filter works, just show all
         if (this.teachers.length === 0) {
           this.teachers = data;

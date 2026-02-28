@@ -55,8 +55,8 @@ export class AssignRoleComponent implements OnInit {
             error: () => {
                 // Dummy Data if Staff service fails or empty
                 this.staffList = [
-                    { staffId: 1, staffName: 'John Doe', designation: Designation.Instructor } as Staff,
-                    { staffId: 2, staffName: 'Jane Smith', designation: Designation.Lecturer } as Staff
+                    { staffId: 1, staffName: 'John Doe', designation: Designation.Teacher } as Staff,
+                    { staffId: 2, staffName: 'Jane Smith', designation: Designation.Teacher } as Staff
                 ];
             }
         });

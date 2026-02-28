@@ -25,7 +25,12 @@ export class StaffListComponent implements OnInit, AfterViewInit {
   defaultImage = 'assets/images/user-grid/user-grid-img2.png';
 
   get totalStaff(): number { return this.staffList.length; }
-  get teacherCount(): number { return this.staffList.filter(s => s.designation === 2).length; }
+  get teacherCount(): number {
+    return this.staffList.filter(s => {
+      const d = s.designation?.toString().toLowerCase();
+      return d === 'teacher' || s.designation === 0;
+    }).length;
+  }
   get departmentsCount(): number { return new Set(this.staffList.map(s => s.department?.departmentName || 'N/A')).size; }
 
   constructor(

@@ -154,10 +154,10 @@ export class StaffAddComponent implements AfterViewInit {
     }).then(async result => {
       if (result.isConfirmed) {
         const designationMap: { [key: string]: Designation } = {
-          'Teacher': Designation.Instructor,
-          'Staff': Designation.Other,
-          'Admin': Designation.Other,
-          'Accountant': Designation.Other
+          'Teacher': Designation.Teacher,
+          'Admin': Designation.Admin,
+          'Principal': Designation.Principal,
+          'Accountant': Designation.Accountant
         };
 
         const genderMap: { [key: string]: Gender } = {
@@ -176,7 +176,7 @@ export class StaffAddComponent implements AfterViewInit {
           email: this.newStaff.email || null,
           qualifications: this.newStaff.qualifications || null,
           joiningDate: this.joiningDateStr ? new Date(this.joiningDateStr) : undefined,
-          designation: designationMap[this.newStaff.designation] ?? Designation.Other,
+          designation: designationMap[this.newStaff.designation] ?? Designation.Teacher,
           permanentAddress: this.newStaff.permanentAddress || null,
           status: this.newStaff.status || null,
           imagePath: this.newStaff.profile,

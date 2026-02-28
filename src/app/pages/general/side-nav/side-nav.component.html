@@ -98,7 +98,9 @@
           <li><a routerLink="/subject-list" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> All Subjects</a></li>
           <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/subject-add" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-warning-main"></i> Assign Subject</a></li>
+                class="ri-circle-fill circle-icon text-warning-main"></i> Create Subject</a></li>
+          <li *ngIf="hasAnyRole(['Admin'])"><a routerLink="/subject-assignment" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-danger-main"></i> Assign Subject</a></li>
         </ul>
       </li>
 
