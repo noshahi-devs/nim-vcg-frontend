@@ -7,29 +7,40 @@
       <div class="v3-grid"></div>
     </div>
 
-    <!-- Professional Sticky Header -->
+    <!-- Premium Brand Header -->
     <header class="v3-header">
-      <div class="v3-container header-inner">
+      <div class="v3-header-strip">
+        <div class="v3-container strip-inner">
+          <p>
+            <iconify-icon icon="solar:verified-check-bold-duotone"></iconify-icon>
+            <span>Trusted by modern institutes for secure daily operations.</span>
+          </p>
+          <a href="#workflow">View onboarding timeline</a>
+        </div>
+      </div>
+
+      <div class="v3-container header-shell">
         <a class="v3-logo" routerLink="/">
           <div class="v3-logo-icon">
             <img [src]="config?.instituteLogo || 'assets/images/logo.png'" alt="logo">
           </div>
           <div class="v3-logo-content">
-            <span class="v3-logo-tag">PREMIUM ERP</span>
-            <h1>{{ config?.instituteName || 'Noshahi Institute Manager' }}</h1>
+            <span class="v3-logo-tag">Institute OS</span>
+            <h1 class="v3-brand-name">{{ formatInstituteName(config?.instituteName) }}</h1>
           </div>
         </a>
 
-        <nav class="v3-nav">
+        <nav class="v3-nav" aria-label="Primary">
           <a href="#vision" class="v3-nav-link">Vision</a>
           <a href="#solutions" class="v3-nav-link">Solutions</a>
+          <a href="#reviews" class="v3-nav-link">Reviews</a>
           <a href="#workflow" class="v3-nav-link">Workflow</a>
           <a href="#contact" class="v3-nav-link">Contact</a>
         </nav>
 
         <div class="v3-header-actions">
           <a routerLink="/sign-in" class="v3-btn btn-text">Log In</a>
-          <a routerLink="/sign-up" class="v3-btn btn-primary">Get Started</a>
+          <a routerLink="/sign-up" class="v3-btn btn-primary">Start Free</a>
         </div>
       </div>
     </header>
@@ -85,6 +96,9 @@
           <div class="v3-section-head">
             <span class="v3-badge-sub">CORE ECOSYSTEM</span>
             <h3>Engineered for Academic Scalability</h3>
+            <p class="v3-section-subcopy">
+              Every module is built for performance, clarity, and control so your teams can operate with confidence.
+            </p>
           </div>
 
           <div class="v3-grid-3">
@@ -95,6 +109,86 @@
               <h4>{{ feature.title }}</h4>
               <p>{{ feature.description }}</p>
             </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Client Reviews -->
+      <section
+        id="reviews"
+        class="v3-reviews section-padding"
+        (mousemove)="onReviewsMouseMove($event)"
+        (mouseleave)="onReviewsMouseLeave()"
+        [style.--cursor-x.px]="reviewsCursor.x"
+        [style.--cursor-y.px]="reviewsCursor.y"
+        [style.--cursor-opacity]="reviewsCursor.active ? 1 : 0">
+        <div class="v3-container">
+          <div class="v3-section-head center">
+            <span class="v3-badge-sub">CLIENT REVIEWS</span>
+            <h3>
+              Institutes trust NIM
+              <span>to run their daily operations</span>
+            </h3>
+          </div>
+
+          <div class="v3-review-carousel"
+            [style.--reviews-visible]="visibleReviewCards"
+            [style.--reviews-index]="reviewIndex">
+            <button
+              *ngIf="maxReviewIndex > 0"
+              class="v3-review-nav nav-prev"
+              type="button"
+              aria-label="Previous reviews"
+              (click)="prevReview()">
+              <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon>
+            </button>
+
+            <div class="v3-review-viewport">
+              <div class="v3-review-track">
+                <article class="v3-review-slide" *ngFor="let review of clientReviews">
+                  <div class="v3-review-card">
+                    <div class="v3-review-top">
+                      <div class="v3-review-avatar">{{ review.initials }}</div>
+                      <div class="v3-review-person">
+                        <h4>{{ review.name }}</h4>
+                        <p>{{ review.role }}</p>
+                      </div>
+                    </div>
+
+                    <p class="v3-review-quote">{{ review.quote }}</p>
+
+                    <div class="v3-review-bottom">
+                      <div class="v3-review-stars">
+                        <iconify-icon
+                          *ngFor="let rating of ratingScale"
+                          icon="solar:star-bold">
+                        </iconify-icon>
+                      </div>
+                      <span class="v3-review-result">{{ review.result }}</span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <button
+              *ngIf="maxReviewIndex > 0"
+              class="v3-review-nav nav-next"
+              type="button"
+              aria-label="Next reviews"
+              (click)="nextReview()">
+              <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
+            </button>
+          </div>
+
+          <div class="v3-review-dots" *ngIf="maxReviewIndex > 0">
+            <button
+              *ngFor="let dot of reviewDots; let i = index"
+              type="button"
+              [class.is-active]="i === reviewIndex"
+              [attr.aria-label]="'Go to review slide ' + (i + 1)"
+              (click)="goToReview(i)">
+            </button>
           </div>
         </div>
       </section>
@@ -120,8 +214,23 @@
       </section>
     </main>
 
-    <!-- Professional Corporate Footer -->
+    <!-- Premium Footer -->
     <footer id="contact" class="v3-footer">
+      <div class="v3-container footer-highlight">
+        <div class="footer-highlight-copy">
+          <span class="footer-badge">Campus Launch Desk</span>
+          <h3>Ready to digitize your institute operations?</h3>
+          <p>
+            Deploy admissions, fees, classes, and reporting in one branded workspace
+            built for principals, admins, and accountants.
+          </p>
+        </div>
+        <div class="footer-highlight-actions">
+          <a routerLink="/sign-up" class="v3-btn btn-primary">Create Workspace</a>
+          <a routerLink="/sign-in" class="v3-btn btn-outline-lg">Open Existing Account</a>
+        </div>
+      </div>
+
       <div class="v3-container footer-grid">
         <div class="footer-brand">
           <a class="v3-logo" routerLink="/">
@@ -129,47 +238,54 @@
               <img [src]="config?.instituteLogo || 'assets/images/logo.png'" alt="logo">
             </div>
             <div class="v3-logo-content">
-              <h1>{{ config?.instituteName || 'NIM' }}</h1>
+              <span class="v3-logo-tag">Institute ERP</span>
+              <h1 class="v3-brand-name footer-brand-name">{{ formatInstituteName(config?.instituteName) }}</h1>
             </div>
           </a>
           <p class="footer-desc">
             The intelligent operating system for modern institutes. Empowering staff,
-            engaging students, and clarifying finances with 3D-powered data.
+            engaging students, and giving finance teams complete visibility.
           </p>
           <div class="footer-social">
-            <a href="#"><iconify-icon icon="brandico:facebook"></iconify-icon></a>
-            <a href="#"><iconify-icon icon="brandico:twitter-bird"></iconify-icon></a>
-            <a href="#"><iconify-icon icon="brandico:linkedin"></iconify-icon></a>
+            <a href="#" aria-label="Facebook"><iconify-icon icon="brandico:facebook"></iconify-icon></a>
+            <a href="#" aria-label="Twitter"><iconify-icon icon="brandico:twitter-bird"></iconify-icon></a>
+            <a href="#" aria-label="LinkedIn"><iconify-icon icon="brandico:linkedin"></iconify-icon></a>
           </div>
         </div>
 
         <div class="footer-links">
-          <h4>Solutions</h4>
-          <a href="#">Admissions</a>
-          <a href="#">Finance</a>
-          <a href="#">Academia</a>
-          <a href="#">Attendance</a>
+          <h4>Platform</h4>
+          <a href="#solutions">Admissions</a>
+          <a href="#solutions">Finance</a>
+          <a href="#solutions">Academics</a>
+          <a href="#solutions">Attendance</a>
         </div>
 
         <div class="footer-links">
           <h4>Institute</h4>
-          <a href="#vision">About Us</a>
-          <a href="#workflow">Process</a>
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
+          <a href="#vision">About</a>
+          <a href="#workflow">Onboarding</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
         </div>
 
         <div class="footer-contact">
           <h4>Contact Center</h4>
-          <p><iconify-icon icon="solar:letter-bold-duotone"></iconify-icon> support&#64;noshahi.erp</p>
-          <p><iconify-icon icon="solar:phone-bold-duotone"></iconify-icon> +92 (300) 1234567</p>
+          <p>
+            <iconify-icon icon="solar:letter-bold-duotone"></iconify-icon>
+            <a href="mailto:support@noshahi.erp">support&#64;noshahi.erp</a>
+          </p>
+          <p>
+            <iconify-icon icon="solar:phone-bold-duotone"></iconify-icon>
+            <a href="tel:+923001234567">+92 (300) 1234567</a>
+          </p>
           <p><iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon> Digital Campus, NIM Hub</p>
         </div>
       </div>
 
       <div class="v3-copyright">
         <div class="v3-container copyright-inner">
-          <p>© {{ currentYear }} {{ config?.instituteName || 'Noshahi Institute Manager' }}. All rights reserved.</p>
+          <p>&copy; {{ currentYear }} {{ config?.instituteName || 'Noshahi Institute Manager' }}. All rights reserved.</p>
           <div class="v3-legal">
             <a href="#">System Privacy</a>
             <a href="#">Audit Logs</a>
