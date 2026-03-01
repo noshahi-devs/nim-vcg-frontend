@@ -27,6 +27,11 @@ export class SubjectAssignmentService {
     return this.http.get<SubjectAssignment[]>(this.apiUrl);
   }
 
+  // Alias for backward compatibility
+  getSubjectAssignments(): Observable<SubjectAssignment[]> {
+    return this.getAllAssignments();
+  }
+
   getAssignmentById(id: number): Observable<SubjectAssignment> {
     return this.http.get<SubjectAssignment>(`${this.apiUrl}/${id}`);
   }
@@ -41,6 +46,11 @@ export class SubjectAssignmentService {
 
   addAssignment(assignment: SubjectAssignment): Observable<SubjectAssignment> {
     return this.http.post<SubjectAssignment>(this.apiUrl, assignment);
+  }
+
+  // Alias for backward compatibility
+  assignSubject(assignment: SubjectAssignment): Observable<SubjectAssignment> {
+    return this.addAssignment(assignment);
   }
 
   updateAssignment(id: number, assignment: SubjectAssignment): Observable<any> {

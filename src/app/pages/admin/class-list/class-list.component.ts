@@ -45,6 +45,7 @@ export class ClassListComponent implements OnInit, AfterViewInit {
   isTeacher = false;
   staffId: number | null = null;
   assignedClassNames: string[] = [];
+  assignedSubjectIds: number[] = [];
   loading = false;
 
   constructor(
@@ -73,10 +74,16 @@ export class ClassListComponent implements OnInit, AfterViewInit {
             this.staffId = staff.staffId;
             this.loadTeacherAssignments();
           } else {
-            this.loadClasses();
+            // HARDENED: Prevent fallback
+            this.classList = [];
+            this.loading = false;
+            console.warn("Teacher staff record not found for email:", currentUser.email);
           }
         },
-        error: () => this.loadClasses()
+        error: () => {
+          this.classList = [];
+          this.loading = false;
+        }
       });
     } else {
       this.loadClasses();
@@ -94,6 +101,9 @@ export class ClassListComponent implements OnInit, AfterViewInit {
       sections: this.sectionService.getSections()
     }).subscribe({
       next: (res) => {
+        // Specific Subject IDs assigned
+        this.assignedSubjectIds = (res.assignments || []).map(a => a.subjectId);
+
         // Classes assigned
         const assignedClassNames = res.assignments.map(a => a.subject?.standard?.standardName
           || (a.section as any)?.className);
@@ -123,7 +133,15 @@ export class ClassListComponent implements OnInit, AfterViewInit {
       next: (data) => {
         this.classList = data;
         if (this.isTeacher) {
+          // Filter classes the teacher is involved in
           this.classList = this.classList.filter(c => this.assignedClassNames.includes(c.standardName));
+
+          // STRICT FILTERING: Filter the subjects array WITHIN each class
+          this.classList.forEach(classItem => {
+            if (classItem.subjects) {
+              classItem.subjects = classItem.subjects.filter(sub => this.assignedSubjectIds.includes(sub.subjectId));
+            }
+          });
         } else {
           // If not teacher, populate all unique section names for the dropdown
           this.sectionService.getSections().subscribe(secs => {

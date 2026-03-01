@@ -9,8 +9,9 @@ import { Subject } from '../../../Models/subject';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { SectionService } from '../../../services/section.service';
-import { SubjectAssignmentService } from '../../../services/subject-assignment.service';
-import { forkJoin } from 'rxjs';
+import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 
 declare var bootstrap: any;
@@ -35,6 +36,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   standards: string[] = [];
   subjectList: Subject[] = [];
   classes: string[];
+  assignedSubjectIds: number[] = [];
 
   constructor(
     private subjectService: SubjectService,
@@ -56,16 +58,23 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
     const currentUser = this.authService.userValue;
 
     if (isTeacher && currentUser?.email) {
-      this.staffService.getAllStaffs().subscribe({
+      this.staffService.getAllStaffs().pipe(
+        catchError(() => {
+          this.subjectList = [];
+          return of([]);
+        })
+      ).subscribe({
         next: (staffs) => {
           const staff = staffs.find(s => s.email?.toLowerCase() === currentUser.email?.toLowerCase());
           if (staff) {
             this.fetchAndFilterSubjects(staff.staffId);
           } else {
-            this.fetchAllSubjectsRaw();
+            // HARDENED: If teacher but no staff record found, show empty list, not everything
+            this.subjectList = [];
+            this.classes = [];
+            Swal.fire('Warning', 'Teacher record not found. Please contact administrator.', 'warning');
           }
-        },
-        error: () => this.fetchAllSubjectsRaw()
+        }
       });
     } else {
       this.fetchAllSubjectsRaw();
@@ -100,8 +109,11 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
 
         const allAssignedClassNames = [...new Set([...assignedSectionClassNames, ...assignedSubjectClassNames])];
 
-        // Filter subjects by those class names
-        this.subjectList = res.subjects.filter(s => allAssignedClassNames.includes(s.standard?.standardName || ''));
+        // Find specific subjects assigned to this teacher
+        this.assignedSubjectIds = (res.assignments || []).map(a => a.subjectId);
+
+        // STRICT FILTERING: Only show subjects specifically assigned to this teacher by ID
+        this.subjectList = res.subjects.filter(s => this.assignedSubjectIds.includes(s.subjectId));
         this.classes = allAssignedClassNames;
       },
       error: () => Swal.fire('Error', 'Failed to load filtered subjects', 'error')

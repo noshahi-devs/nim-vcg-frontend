@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { SectionService } from '../../../services/section.service';
-import { SubjectAssignmentService } from '../../../services/subject-assignment.service';
+import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
