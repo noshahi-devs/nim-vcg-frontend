@@ -6,6 +6,7 @@
     "wowdash": {
       "projectType": "application",
       "schematics": {},
+      
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -26,7 +27,7 @@
                 "input": "public"
               }
             ],
-           "styles": [
+            "styles": [
               "src/styles.css",
               "public/assets/css/remixicon.css",
               "public/assets/css/lib/bootstrap.min.css",
@@ -45,7 +46,6 @@
               "public/assets/css/lib/audioplayer.css",
               "public/assets/css/style.css"
             ],
-
             "scripts": [
               "/node_modules/jquery/dist/jquery.min.js",
               "public/assets/js/lib/bootstrap.bundle.min.js",
@@ -66,20 +66,18 @@
           },
           "configurations": {
             "production": {
-             
               "budgets": [
-  {
-    "type": "initial",
-    "maximumWarning": "5mb",
-    "maximumError": "7mb"
-  },
-  {
-    "type": "anyComponentStyle",
-    "maximumWarning": "10kb",
-    "maximumError": "20kb"
-  }
-],
-
+                {
+                  "type": "initial",
+                  "maximumWarning": "5mb",
+                  "maximumError": "7mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "10kb",
+                  "maximumError": "20kb"
+                }
+              ],
               "outputHashing": "all"
             },
             "development": {

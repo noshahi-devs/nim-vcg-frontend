@@ -133,6 +133,7 @@ import { BrandingHomeComponent } from './pages/general/branding-home/branding-ho
 
 
 import { GeneralSettingsComponent } from './pages/admin/general-settings/general-settings.component';
+import { SubjectAssignmentComponent } from './pages/admin/subject-assignment/subject-assignment.component';
 
 export const routes: Routes = [
   { path: '', component: BrandingHomeComponent, pathMatch: 'full' },
@@ -223,6 +224,7 @@ export const routes: Routes = [
       { path: 'subject', component: SubjectComponent, data: { roles: ['Admin'] } },
       { path: 'subject-add', component: SubjectAddComponent, data: { roles: ['Admin'] } },
       { path: 'subject-list', component: SubjectListComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
+      { path: 'subject-assignment', component: SubjectAssignmentComponent, data: { roles: ['Admin'] } },
 
       // Reports
       { path: 'report', component: ReportComponent, data: { roles: ['Admin', 'Principal', 'Accountant'] } },

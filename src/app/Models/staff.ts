@@ -29,7 +29,7 @@ export class Staff {
   department?: Department;
   staffSalaryId?: number;
   staffSalary?: StaffSalary;
-  staffExperiences: StaffExperience[]=[];
+  staffExperiences: StaffExperience[] = [];
 }
 
 export enum Gender {
@@ -39,36 +39,8 @@ export enum Gender {
 }
 
 export enum Designation {
-  Superintendent,
-  Headmaster,
-  Headmistress,
-  AssistantPrincipal,
-  Dean,
-  Director,
-  DepartmentChair,
-  Professor,
-  Instructor,
-  Lecturer,
-  TeachingAssistant,
-  SpecialEducationTeacher,
-  SubstituteTeacher,
-  Counselor,
-  Librarian,
-  MediaSpecialist,
-  LabTechnician,
-  ITSpecialist,
-  BusDriver,
-  LunchAide,
-  Custodian,
-  Registrar,
-  AdmissionsOfficer,
-  BusinessManager,
-  DevelopmentOfficer,
-  HumanResourcesManager,
-  Receptionist,
-  Coach,
-  SecurityGuard,
-  MaintenanceWorker,
-  FoodServiceWorker,
-  Other
+  Teacher,
+  Admin,
+  Principal,
+  Accountant
 }

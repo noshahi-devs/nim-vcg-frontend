@@ -84,8 +84,11 @@ export class ClassManagementComponent implements OnInit {
       sections: this.sectionService.getSections()
     }).pipe(finalize(() => this.loading = false)).subscribe({
       next: (res) => {
-        this.classes = res.classes || [];
         this.sections = res.sections || [];
+        this.classes = (res.classes || []).map(c => ({
+          ...c,
+          classTeacher: this.getClassTeacherName(c)
+        }));
         this.applyFilter();
       },
       error: () => Swal.fire('Error', 'Failed to load data', 'error')
@@ -99,11 +102,17 @@ export class ClassManagementComponent implements OnInit {
     }).pipe(finalize(() => this.loading = false)).subscribe({
       next: (res) => {
         // Filter sections by staffId
-        this.sections = (res.sections || []).filter(s => s.staffId === staffId);
+        const allSections = res.sections || [];
+        this.sections = allSections.filter(s => s.staffId === staffId);
 
         // Filter classes that have these sections
         const assignedClassNames = [...new Set(this.sections.map(s => s.className))];
-        this.classes = (res.classes || []).filter(c => assignedClassNames.includes(c.standardName));
+        this.classes = (res.classes || [])
+          .filter(c => assignedClassNames.includes(c.standardName))
+          .map(c => ({
+            ...c,
+            classTeacher: this.getClassTeacherNameOriginal(c, allSections)
+          }));
 
         this.applyFilter();
       },
@@ -111,9 +120,30 @@ export class ClassManagementComponent implements OnInit {
     });
   }
 
+  // Helper for filtering logic where this.sections is already filtered
+  private getClassTeacherNameOriginal(std: Standard, allSections: Section[]): string {
+    const classSections = allSections.filter(s => s.className === std.standardName);
+    const teachers = classSections
+      .map(s => s.classTeacher?.staffName)
+      .filter((name): name is string => !!name);
+
+    if (teachers.length === 0) return 'Unassigned';
+    return [...new Set(teachers)].join(', ');
+  }
+
 
   getSectionsForClass(std: Standard): Section[] {
     return this.sections.filter(s => s.className === std.standardName);
+  }
+
+  getClassTeacherName(std: Standard): string {
+    const classSections = this.getSectionsForClass(std);
+    const teachers = classSections
+      .map(s => s.classTeacher?.staffName)
+      .filter((name): name is string => !!name);
+
+    if (teachers.length === 0) return 'Unassigned';
+    return [...new Set(teachers)].join(', ');
   }
 
   applyFilter() {
