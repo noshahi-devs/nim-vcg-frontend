@@ -9,7 +9,8 @@ import { Section } from '../../../Models/section';
 import { Standard } from '../../../Models/standard';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
-import { forkJoin } from 'rxjs';
+import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
+import { forkJoin, finalize } from 'rxjs';
 import Swal from 'sweetalert2';
 
 
@@ -40,7 +41,8 @@ export class SectionListComponent implements OnInit {
     private sectionService: SectionService,
     private standardService: StandardService,
     private authService: AuthService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private assignmentService: SubjectAssignmentService
   ) { }
 
 
@@ -85,14 +87,24 @@ export class SectionListComponent implements OnInit {
   }
 
   private fetchAndFilterSections(staffId: number): void {
-    this.sectionService.getSections().subscribe({
-      next: (data) => {
-        this.sectionList = (data || []).filter(s => s.staffId === staffId);
-        this.loading = false;
+    forkJoin({
+      sections: this.sectionService.getSections(),
+      assignments: this.assignmentService.getAssignmentsByTeacher(staffId)
+    }).pipe(finalize(() => this.loading = false)).subscribe({
+      next: (res) => {
+        const classTeacherSections = res.sections.filter(s => s.staffId === staffId);
+        const assignedSectionIds = res.assignments.map(a => a.sectionId);
+        const subjectSections = res.sections.filter(s => assignedSectionIds.includes(s.sectionId));
+
+        // Combine sections uniquely
+        const uniqueSections = new Map<number, Section>();
+        classTeacherSections.forEach(s => uniqueSections.set(s.sectionId, s));
+        subjectSections.forEach(s => uniqueSections.set(s.sectionId, s));
+
+        this.sectionList = Array.from(uniqueSections.values());
       },
       error: (err) => {
         console.error('Error loading filtered sections:', err);
-        this.loading = false;
       }
     });
   }

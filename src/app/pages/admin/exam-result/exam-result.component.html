@@ -28,7 +28,8 @@
           <label class="field-label">Select Class (Required)</label>
           <select class="field-input" [(ngModel)]="selectedClassId" (change)="onClassChange()" name="class">
             <option [ngValue]="0">All Classes</option>
-            <option *ngFor="let cls of classes" [ngValue]="cls.standardId">{{ cls.standardName }}</option>
+            <option *ngFor="let cls of classes" [ngValue]="cls.standardId">{{ formatStandardName(cls.standardName) }}
+            </option>
           </select>
         </div>
 

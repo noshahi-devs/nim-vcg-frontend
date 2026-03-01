@@ -11,6 +11,7 @@ import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
+import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
 import { finalize, forkJoin } from 'rxjs';
 
 
@@ -58,7 +59,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     private standardService: StandardService,
     private sectionService: SectionService,
     public authService: AuthService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private assignmentService: SubjectAssignmentService
   ) { }
 
 
@@ -68,7 +70,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
   private checkTeacherContext() {
     this.loading = true;
-    this.isTeacher = this.authService.hasAnyRole(['Teacher']);
+    const roles: string[] = this.authService.roles || [];
+    this.isTeacher = roles.some(r => r.toLowerCase() === 'teacher');
     const currentUser = this.authService.userValue;
 
     if (this.isTeacher && currentUser?.email) {
@@ -95,9 +98,26 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   }
 
   private loadTeacherAssignments() {
-    this.sectionService.getSections().subscribe({
-      next: (sections) => {
-        this.assignedSections = sections.filter(s => s.staffId === this.staffId);
+    if (!this.staffId) {
+      this.loadAllData();
+      return;
+    }
+
+    forkJoin({
+      sections: this.sectionService.getSections(),
+      assignments: this.assignmentService.getAssignmentsByTeacher(this.staffId)
+    }).subscribe({
+      next: (res) => {
+        const classTeacherSections = res.sections.filter(s => s.staffId === this.staffId);
+        const assignedSectionIds = res.assignments.map(a => a.sectionId);
+        const subjectSections = res.sections.filter(s => assignedSectionIds.includes(s.sectionId));
+
+        // Combine sections uniquely
+        const uniqueSections = new Map<number, Section>();
+        classTeacherSections.forEach(s => uniqueSections.set(s.sectionId, s));
+        subjectSections.forEach(s => uniqueSections.set(s.sectionId, s));
+
+        this.assignedSections = Array.from(uniqueSections.values());
         this.assignedClassNames = [...new Set(this.assignedSections.map(s => s.className))];
         this.loadAllData();
       },
@@ -129,15 +149,21 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   }
 
   private applyTeacherFiltering() {
-    // 1. Filter section dropdown to only assigned sections
-    this.sectionList = this.sectionList.filter(s => s.staffId === this.staffId);
+    // 1. Filter section dropdown to only assigned sections (Unique by name)
+    const uniqueSecs = new Map<string, Section>();
+    this.assignedSections.forEach(s => uniqueSecs.set(s.sectionName, s));
+    this.sectionList = Array.from(uniqueSecs.values());
 
     // 2. Filter class dropdown to only classes that have assigned sections
     this.classList = this.classList.filter(c => this.assignedClassNames.includes(c.standardName));
 
     // 3. Filter student list to only those in assigned sections
     this.studentList = this.studentList.filter(s =>
-      this.assignedSections.some(sec => sec.className === this.getClassName(s.standardId) && sec.sectionName === s.section)
+      this.assignedSections.some(sec =>
+        (sec.className === this.getClassName(s.standardId)) &&
+        (sec.sectionCode === s.section || sec.sectionName === s.section ||
+          ((!s.section || s.section.trim() === '') && sec.sectionCode === 'A'))
+      )
     );
   }
 
@@ -190,8 +216,12 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     }
 
     if (this.filterSection) {
-      list = list.filter(s => s.section?.toLowerCase() === this.filterSection.toLowerCase() ||
-        s.section === this.filterSection);
+      list = list.filter(s =>
+        s.section?.toLowerCase() === this.filterSection.toLowerCase() ||
+        s.section === this.filterSection ||
+        ((!s.section || s.section.trim() === '') && (this.filterSection === 'A' || this.filterSection.includes('Section A'))) ||
+        this.sectionList.find(sec => sec.sectionName === this.filterSection)?.sectionCode === s.section
+      );
     }
 
     if (this.filterStatus) {
@@ -254,7 +284,6 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     return 'assets/images/user-grid/user-grid-img2.png';
   }
 
-
   // -------------------------------------------------------
   // Get Class Name by ID
   // -------------------------------------------------------
@@ -262,6 +291,37 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     if (!id) return 'N/A';
     const standard = this.classList.find(c => c.standardId === id);
     return standard ? standard.standardName : `Class ${id}`;
+  }
+
+
+  // -------------------------------------------------------
+  // Get Class & Section String (e.g., "Class 4 Section A")
+  // -------------------------------------------------------
+  getStudentDisplay(student: Student): string {
+    let className = this.getClassName(student.standardId);
+
+    // Convert "Class One", "Class Two", etc. to "Class 1", "Class 2"
+    const numberMap: { [key: string]: string } = {
+      'One': '1', 'Two': '2', 'Three': '3', 'Four': '4', 'Five': '5',
+      'Six': '6', 'Seven': '7', 'Eight': '8', 'Nine': '9', 'Ten': '10'
+    };
+
+    Object.keys(numberMap).forEach(word => {
+      if (className.includes(word)) {
+        className = className.replace(word, numberMap[word]);
+      }
+    });
+
+    let section = student.section;
+    // For teachers, if section is null, assume the assigned section (usually 'A')
+    if (this.isTeacher && (!section || section.trim() === '')) {
+      const assigned = this.assignedSections.find(sec => sec.className === this.getClassName(student.standardId));
+      if (assigned) {
+        section = assigned.sectionCode || 'A';
+      }
+    }
+
+    return section ? `${className} Section ${section}` : className;
   }
 
 

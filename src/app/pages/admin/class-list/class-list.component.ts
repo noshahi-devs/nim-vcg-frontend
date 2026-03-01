@@ -8,6 +8,11 @@ import { StandardService } from '../../../services/standard.service';
 
 declare var bootstrap: any;
 
+import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
+import { AuthService } from '../../../SecurityModels/auth.service';
+import { StaffService } from '../../../services/staff.service';
+import { forkJoin, finalize } from 'rxjs';
+
 @Component({
   selector: 'app-class-list',
   standalone: true,
@@ -31,17 +36,72 @@ export class ClassListComponent implements OnInit, AfterViewInit {
   get sumStudents(): number { return this.classList.reduce((acc, curr) => acc + (curr.students?.length || 0), 0); }
   get sumSubjects(): number { return this.classList.reduce((acc, curr) => acc + (curr.subjects?.length || 0), 0); }
 
-  constructor(private standardService: StandardService) { }
+  // Teacher specific context
+  isTeacher = false;
+  staffId: number | null = null;
+  assignedClassNames: string[] = [];
+  loading = false;
+
+  constructor(
+    private standardService: StandardService,
+    private authService: AuthService,
+    private staffService: StaffService,
+    private assignmentService: SubjectAssignmentService
+  ) { }
 
   ngOnInit(): void {
-    this.loadClasses();
+    this.checkTeacherContext();
+  }
+
+  private checkTeacherContext() {
+    this.loading = true;
+    const roles: string[] = this.authService.roles || [];
+    this.isTeacher = roles.some(r => r.toLowerCase() === 'teacher');
+    const currentUser = this.authService.userValue;
+
+    if (this.isTeacher && currentUser?.email) {
+      this.staffService.getAllStaffs().subscribe({
+        next: (staffs) => {
+          const staff = staffs.find(s => s.email?.toLowerCase() === currentUser.email?.toLowerCase());
+          if (staff) {
+            this.staffId = staff.staffId;
+            this.loadTeacherAssignments();
+          } else {
+            this.loadClasses();
+          }
+        },
+        error: () => this.loadClasses()
+      });
+    } else {
+      this.loadClasses();
+    }
+  }
+
+  private loadTeacherAssignments() {
+    if (!this.staffId) {
+      this.loadClasses();
+      return;
+    }
+
+    this.assignmentService.getAssignmentsByTeacher(this.staffId).subscribe({
+      next: (assignments) => {
+        const classes = assignments.map(a => a.subject?.standard?.standardName
+          || (a.section as any)?.className);
+        this.assignedClassNames = [...new Set(classes.filter(c => !!c))];
+        this.loadClasses();
+      },
+      error: () => this.loadClasses()
+    });
   }
 
   // **LOAD FROM REAL API**
   loadClasses() {
-    this.standardService.getStandards().subscribe({
+    this.standardService.getStandards().pipe(finalize(() => this.loading = false)).subscribe({
       next: (data) => {
         this.classList = data;
+        if (this.isTeacher) {
+          this.classList = this.classList.filter(c => this.assignedClassNames.includes(c.standardName));
+        }
       },
       error: (err) => {
         console.error("API Load Error:", err);

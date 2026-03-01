@@ -11,6 +11,7 @@ import { StaffService } from '../../../services/staff.service';
 import { SectionService } from '../../../services/section.service';
 import { Student } from '../../../Models/student';
 import { Standard } from '../../../Models/standard';
+import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
 
 import { finalize, forkJoin } from 'rxjs';
 
@@ -41,7 +42,8 @@ export class AttendanceComponent implements OnInit {
     private attendanceService: AttendanceService,
     private authService: AuthService,
     private staffService: StaffService,
-    private sectionService: SectionService
+    private sectionService: SectionService,
+    private assignmentService: SubjectAssignmentService
   ) { }
 
 
@@ -56,6 +58,21 @@ export class AttendanceComponent implements OnInit {
 
   setTodayDate(): void {
     this.selectedDate = new Date().toISOString().split('T')[0];
+  }
+
+  formatStandardName(name: string): string {
+    if (!name) return '';
+    const numberMap: { [key: string]: string } = {
+      'One': '1', 'Two': '2', 'Three': '3', 'Four': '4', 'Five': '5',
+      'Six': '6', 'Seven': '7', 'Eight': '8', 'Nine': '9', 'Ten': '10'
+    };
+    let formatted = name;
+    Object.keys(numberMap).forEach(word => {
+      if (formatted.includes(word)) {
+        formatted = formatted.replace(word, numberMap[word]);
+      }
+    });
+    return formatted;
   }
 
   /** ==========================
@@ -91,10 +108,23 @@ export class AttendanceComponent implements OnInit {
   }
 
   private filterStandardsForTeacher(allStandards: Standard[], staffId: number): void {
-    this.sectionService.getSections().subscribe({
-      next: (sections) => {
-        const assignedSections = (sections || []).filter(s => s.staffId === staffId);
-        const assignedClassNames = [...new Set(assignedSections.map(s => s.className))];
+    forkJoin({
+      sections: this.sectionService.getSections(),
+      assignments: this.assignmentService.getAssignmentsByTeacher(staffId)
+    }).subscribe({
+      next: (result) => {
+        const classTeacherSections = (result.sections || []).filter(s => s.staffId === staffId);
+        const subjectAssignedClassNames = (result.assignments || [])
+          .map(a => a.section?.className || a.subject?.standard?.standardName)
+          .filter(name => !!name);
+
+        const assignedClassNames = [
+          ...new Set([
+            ...classTeacherSections.map(s => s.className),
+            ...subjectAssignedClassNames
+          ])
+        ];
+
         this.standards = (allStandards || []).filter(c => assignedClassNames.includes(c.standardName));
       },
       error: () => this.standards = allStandards || []

@@ -33,6 +33,11 @@ export class StaffService {
     return this.http.get<Staff>(`${this.apiUrl}/${id}`, this.getAuthHeaders());
   }
 
+  // GET staff by email
+  getStaffByEmail(email: string): Observable<Staff> {
+    return this.http.get<Staff>(`${this.apiUrl}/ByEmail/${email}`, this.getAuthHeaders());
+  }
+
   // POST a new staff
   addStaff(staff: Staff): Observable<Staff> {
     return this.http.post<Staff>(this.apiUrl, staff, this.getAuthHeaders());

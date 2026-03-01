@@ -56,7 +56,7 @@
           <select class="form-select" [(ngModel)]="selectedClass" (change)="loadStudents()">
             <option value="">-- Choose Class --</option>
             <option *ngFor="let std of standards" [value]="std.standardName">
-              {{ std.standardName }}
+              {{ formatStandardName(std.standardName) }}
             </option>
           </select>
         </div>

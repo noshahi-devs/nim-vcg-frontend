@@ -96,7 +96,8 @@
             <select id="standardId" name="standardId" #standardId="ngModel" [(ngModel)]="markEntry.standardId"
               class="form-select radius-8 bg-base border-neutral-200 text-secondary-dark" required>
               <option value="0" disabled selected>-- Select Standard --</option>
-              <option *ngFor="let standard of standards" [value]="standard.standardId">{{ standard.standardName }}
+              <option *ngFor="let standard of standards" [value]="standard.standardId">
+                {{ formatStandardName(standard.standardName) }}
               </option>
             </select>
           </div>

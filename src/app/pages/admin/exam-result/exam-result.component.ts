@@ -9,8 +9,12 @@ import { StudentService } from '../../../services/student.service';
 import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
 import { Student } from '../../../Models/student';
-import { finalize } from 'rxjs/operators';
+import { finalize, forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../../SecurityModels/auth.service';
+import { StaffService } from '../../../services/staff.service';
+import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
+import { Staff } from '../../../Models/staff';
 
 @Component({
   selector: 'app-exam-result',
@@ -51,7 +55,10 @@ export class ExamResultComponent implements OnInit {
     private examService: ExamService,
     private standardService: StandardService,
     private sectionService: SectionService,
-    private studentService: StudentService
+    private studentService: StudentService,
+    private authService: AuthService,
+    private staffService: StaffService,
+    private assignmentService: SubjectAssignmentService
   ) { }
 
   ngOnInit() {
@@ -60,7 +67,56 @@ export class ExamResultComponent implements OnInit {
 
   loadInitialData() {
     this.loadExams();
-    this.loadClasses();
+
+    const isTeacher = this.authService.hasAnyRole(['Teacher']);
+    const currentUser = this.authService.userValue;
+
+    if (isTeacher && currentUser?.email) {
+      this.staffService.getStaffByEmail(currentUser.email).subscribe({
+        next: (staff: Staff) => {
+          this.currentStaffId = staff.staffId;
+          this.loadTeacherAssignments(staff.staffId);
+        },
+        error: () => this.loadClasses()
+      });
+    } else {
+      this.loadClasses();
+    }
+  }
+
+  currentStaffId: number | null = null;
+  assignedSections: SubjectAssignment[] = [];
+  assignedClassNames: string[] = [];
+
+  loadTeacherAssignments(staffId: number): void {
+    forkJoin({
+      allClasses: this.standardService.getStandards(),
+      assignments: this.assignmentService.getAssignmentsByTeacher(staffId),
+      sections: this.sectionService.getSections()
+    }).subscribe({
+      next: (result) => {
+        // Sections where staff is Class Teacher
+        const classTeacherSections = (result.sections || []).filter(s => s.staffId === staffId);
+
+        // Combine with subject assignments
+        const allAssignedSections = [
+          ...classTeacherSections.map(s => ({ sectionId: s.sectionId, sectionName: s.sectionName, className: s.className })),
+          ...(result.assignments || []).map(a => ({
+            sectionId: a.sectionId,
+            sectionName: a.section?.sectionName,
+            className: a.section?.className || a.subject?.standard?.standardName
+          }))
+        ];
+
+        // Unique classes
+        this.assignedClassNames = [...new Set(allAssignedSections.map(s => s.className).filter(name => !!name))];
+        this.classes = (result.allClasses || []).filter(c => this.assignedClassNames.includes(c.standardName));
+
+        // Store for section filtering
+        this.assignedSections = result.assignments || [];
+      },
+      error: () => this.loadClasses()
+    });
   }
 
   loadExams() {
@@ -151,11 +207,21 @@ export class ExamResultComponent implements OnInit {
     this.examResults = [];
 
     if (this.selectedClassId) {
-      // Filter sections if needed, or load all. Sections usually belong to a class in real apps.
+      const selectedClass = this.classes.find(c => c.standardId === this.selectedClassId);
+
       this.sectionService.getSections().subscribe({
         next: (res) => {
-          this.sections = res || [];
-          if (this.sections.length === 0) this.loadMockSections();
+          const allSections = res || [];
+          if (this.authService.hasAnyRole(['Teacher'])) {
+            this.sections = allSections.filter(s =>
+              s.className === selectedClass?.standardName &&
+              (s.staffId === this.currentStaffId ||
+                this.assignedSections.some(a => a.sectionId === s.sectionId))
+            );
+          } else {
+            this.sections = allSections.filter(s => s.className === selectedClass?.standardName);
+          }
+          if (this.sections.length === 0 && !res) this.loadMockSections();
         },
         error: (err) => {
           console.error('Failed to load sections', err);
@@ -177,11 +243,15 @@ export class ExamResultComponent implements OnInit {
   loadStudentsByClass() {
     this.studentService.GetStudents().subscribe({
       next: (res) => {
-        this.students = res || [];
-        if (this.students.length === 0) {
-          this.loadMockStudents();
+        const allStudents = res || [];
+        if (this.authService.hasAnyRole(['Teacher'])) {
+          this.students = allStudents.filter(s => s.standardId === this.selectedClassId);
+          // Further filter by assigned sections if section is selected
+          this.filterStudents();
+        } else {
+          this.students = allStudents.filter(s => s.standardId === this.selectedClassId);
+          this.filterStudents();
         }
-        this.filterStudents();
       },
       error: (err) => {
         console.error('Failed to load students', err);
@@ -301,5 +371,20 @@ export class ExamResultComponent implements OnInit {
     return this.resultStatus === 'PASS'
       ? 'bg-success-focus text-success-600 border border-success-main'
       : 'bg-danger-focus text-danger-600 border border-danger-main';
+  }
+
+  formatStandardName(name: string): string {
+    if (!name) return '';
+    const numberMap: { [key: string]: string } = {
+      'One': '1', 'Two': '2', 'Three': '3', 'Four': '4', 'Five': '5',
+      'Six': '6', 'Seven': '7', 'Eight': '8', 'Nine': '9', 'Ten': '10'
+    };
+    let formatted = name;
+    Object.keys(numberMap).forEach(word => {
+      if (formatted.includes(word)) {
+        formatted = formatted.replace(word, numberMap[word]);
+      }
+    });
+    return formatted;
   }
 }
