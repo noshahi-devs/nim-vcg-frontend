@@ -336,7 +336,34 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleSidebarActiveClass(event: NavigationEnd) {
-    $('html, body').scrollTop(0);
+    if (typeof window === 'undefined') return;
+
+    // Clear existing active states
+    $(".sidebar-menu a").removeClass("active-page");
+    $(".sidebar-menu .dropdown").removeClass("dropdown-open open");
+    $(".sidebar-menu .sidebar-submenu").slideUp(0);
+
+    const currentPath = window.location.pathname;
+
+    // Find the link matching the current path
+    const activeLink = $(".sidebar-menu a").filter(function () {
+      const routerLink = $(this).attr("routerlink");
+      return routerLink === currentPath;
+    });
+
+    if (activeLink.length > 0) {
+      activeLink.addClass("active-page");
+
+      // If it's inside a dropdown, open the parent
+      const parentDropdown = activeLink.closest(".dropdown");
+      if (parentDropdown.length > 0) {
+        parentDropdown.addClass("dropdown-open open");
+        parentDropdown.children(".sidebar-submenu").slideDown(0);
+      }
+    }
+
+    // Smooth scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   toggleTheme(): void {

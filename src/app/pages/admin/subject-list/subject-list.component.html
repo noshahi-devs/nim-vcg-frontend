@@ -59,7 +59,7 @@
         </select>
       </div>
 
-      <a routerLink="/subject-add" class="btn-add">
+      <a routerLink="/subject-add" class="btn-add" *ngIf="isAdminOrPrincipal()">
         <iconify-icon icon="ic:baseline-plus" class="icon text-xl"></iconify-icon>
         Add Subject
       </a>
@@ -72,12 +72,13 @@
         <div class="col-xxl-2 col-lg-3 col-md-4 col-sm-6" *ngFor="let subject of filteredSubjectList">
           <div class="student-card">
             <!-- Menu -->
-            <div class="dropdown position-absolute top-0 end-0 me-12 mt-12" style="z-index: 10;">
+            <div class="dropdown position-absolute top-0 end-0 me-12 mt-12" style="z-index: 10;"
+              *ngIf="isAdminOrPrincipal()">
               <button class="icon-btn-small" data-bs-toggle="dropdown">
                 <iconify-icon icon="entypo:dots-three-vertical"></iconify-icon>
               </button>
               <ul class="dropdown-menu p-12 border bg-base shadow">
-                <li>
+                <li *ngIf="isAdminOrPrincipal()">
                   <button type="button" class="dropdown-item px-16 py-8 text-danger d-flex align-items-center gap-10"
                     (click)="confirmDelete(subject)">
                     <iconify-icon icon="mdi:delete-outline"></iconify-icon> Delete
@@ -120,7 +121,7 @@
         </div>
         <h5 class="mt-3 mb-2">No Subjects Found</h5>
         <p class="text-muted">Register academic subjects to start grading.</p>
-        <a routerLink="/subject-add" class="btn-add mt-16">
+        <a routerLink="/subject-add" class="btn-add mt-16" *ngIf="isAdminOrPrincipal()">
           <iconify-icon icon="ic:baseline-plus"></iconify-icon>
           Add Subject
         </a>

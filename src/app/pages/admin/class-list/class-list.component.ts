@@ -11,6 +11,8 @@ declare var bootstrap: any;
 import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
+import { SectionService } from '../../../services/section.service';
+import { Section } from '../../../Models/section';
 import { forkJoin, finalize } from 'rxjs';
 
 @Component({
@@ -27,8 +29,11 @@ export class ClassListComponent implements OnInit, AfterViewInit {
   searchTerm = '';
   filterSection = '';
   classToDelete: Standard | null = null;
+  selectedClassForView: Standard | null = null;
+  selectedClassForEdit: any = {}; // Using any for local edit state
 
-  sections = ['A', 'B', 'C', 'D'];
+  sections: string[] = [];
+  assignedSections: Section[] = [];
 
   classList: Standard[] = [];
 
@@ -46,6 +51,7 @@ export class ClassListComponent implements OnInit, AfterViewInit {
     private standardService: StandardService,
     private authService: AuthService,
     private staffService: StaffService,
+    private sectionService: SectionService,
     private assignmentService: SubjectAssignmentService
   ) { }
 
@@ -83,11 +89,28 @@ export class ClassListComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.assignmentService.getAssignmentsByTeacher(this.staffId).subscribe({
-      next: (assignments) => {
-        const classes = assignments.map(a => a.subject?.standard?.standardName
+    forkJoin({
+      assignments: this.assignmentService.getAssignmentsByTeacher(this.staffId),
+      sections: this.sectionService.getSections()
+    }).subscribe({
+      next: (res) => {
+        // Classes assigned
+        const assignedClassNames = res.assignments.map(a => a.subject?.standard?.standardName
           || (a.section as any)?.className);
-        this.assignedClassNames = [...new Set(classes.filter(c => !!c))];
+        this.assignedClassNames = [...new Set(assignedClassNames.filter(c => !!c))];
+
+        // Sections assigned
+        const classTeacherSections = res.sections.filter(s => s.staffId === this.staffId);
+        const assignmentSectionIds = res.assignments.map(a => a.sectionId);
+        const subjectSections = res.sections.filter(s => assignmentSectionIds.includes(s.sectionId));
+
+        const uniqueSections = new Map<number, Section>();
+        classTeacherSections.forEach(s => uniqueSections.set(s.sectionId, s));
+        subjectSections.forEach(s => uniqueSections.set(s.sectionId, s));
+        this.assignedSections = Array.from(uniqueSections.values());
+
+        this.sections = [...new Set(this.assignedSections.map(s => s.sectionName))];
+
         this.loadClasses();
       },
       error: () => this.loadClasses()
@@ -101,6 +124,11 @@ export class ClassListComponent implements OnInit, AfterViewInit {
         this.classList = data;
         if (this.isTeacher) {
           this.classList = this.classList.filter(c => this.assignedClassNames.includes(c.standardName));
+        } else {
+          // If not teacher, populate all unique section names for the dropdown
+          this.sectionService.getSections().subscribe(secs => {
+            this.sections = [...new Set(secs.map(s => s.sectionName))];
+          });
         }
       },
       error: (err) => {
@@ -114,7 +142,16 @@ export class ClassListComponent implements OnInit, AfterViewInit {
     let list = this.classList;
 
     if (this.filterSection) {
-      list = list.filter(c => c.section === this.filterSection);
+      // Show classes that have this section
+      list = list.filter(c => {
+        // This logic depends on whether Standard has sections array or we look at assignedSections
+        // For now, if teacher, check assignedSections. If admin, it's trickier without full mapping.
+        // Assuming we want to filter by section name.
+        if (this.isTeacher) {
+          return this.assignedSections.some(s => s.className === c.standardName && s.sectionName === this.filterSection);
+        }
+        return true; // Admin sees all for now if we don't have the full mapping here
+      });
     }
 
     if (this.searchTerm) {
@@ -134,6 +171,38 @@ export class ClassListComponent implements OnInit, AfterViewInit {
     modal.show();
   }
 
+  // OPEN VIEW MODAL
+  openViewModal(classItem: Standard) {
+    this.selectedClassForView = classItem;
+    const modal = new bootstrap.Modal(document.getElementById('viewModal'));
+    modal.show();
+  }
+
+  // OPEN EDIT MODAL
+  openEditModal(classItem: Standard) {
+    this.selectedClassForEdit = { ...classItem };
+    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
+  }
+
+  // UPDATE CLASS
+  updateClass() {
+    if (!this.selectedClassForEdit) return;
+    this.loading = true;
+    this.standardService.updateStandard(this.selectedClassForEdit).subscribe({
+      next: () => {
+        this.loadClasses();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+        modal.hide();
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error("Update API Error:", err);
+        this.loading = false;
+      }
+    });
+  }
+
   // DELETE FROM REAL API
   deleteClass() {
     if (!this.classToDelete) return;
@@ -150,6 +219,10 @@ export class ClassListComponent implements OnInit, AfterViewInit {
         console.error("Delete API Error:", err);
       }
     });
+  }
+
+  isAdminOrPrincipal(): boolean {
+    return this.authService.hasAnyRole(['Admin', 'Principal']);
   }
 
   ngAfterViewInit() { }

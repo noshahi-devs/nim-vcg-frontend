@@ -59,7 +59,7 @@
         </select>
       </div>
 
-      <a routerLink="/newclass" class="btn-add">
+      <a routerLink="/newclass" class="btn-add" *ngIf="isAdminOrPrincipal()">
         <iconify-icon icon="ic:baseline-plus" class="icon text-xl"></iconify-icon>
         Add Class
       </a>
@@ -78,18 +78,18 @@
               </button>
               <ul class="dropdown-menu p-12 border bg-base shadow">
                 <li>
-                  <a class="dropdown-item px-16 py-8 d-flex align-items-center gap-10"
-                    [routerLink]="['/class-view', classItem.standardId]">
+                  <button type="button" class="dropdown-item px-16 py-8 d-flex align-items-center gap-10"
+                    (click)="openViewModal(classItem)">
                     <iconify-icon icon="mdi:eye-outline"></iconify-icon> View
-                  </a>
+                  </button>
                 </li>
-                <li>
-                  <a class="dropdown-item px-16 py-8 d-flex align-items-center gap-10"
-                    [routerLink]="['/class-edit', classItem.standardId]">
+                <li *ngIf="isAdminOrPrincipal()">
+                  <button type="button" class="dropdown-item px-16 py-8 d-flex align-items-center gap-10"
+                    (click)="openEditModal(classItem)">
                     <iconify-icon icon="mdi:pencil-outline"></iconify-icon> Edit
-                  </a>
+                  </button>
                 </li>
-                <li>
+                <li *ngIf="isAdminOrPrincipal()">
                   <button class="dropdown-item px-16 py-8 text-danger d-flex align-items-center gap-10"
                     (click)="confirmDelete(classItem)">
                     <iconify-icon icon="mdi:delete-outline"></iconify-icon> Delete
@@ -100,12 +100,12 @@
 
             <!-- Card Body -->
             <div class="p-16 text-center">
-              <div class="avatar-wrapper mb-12">
+              <div class="avatar-wrapper mb-12" (click)="openViewModal(classItem)" style="cursor: pointer;">
                 <img src="assets/images/user-grid/user-grid-img2.png" class="student-avatar" />
               </div>
 
-              <h6 class="student-name-title mb-8">
-                {{ classItem.standardName }}
+              <h6 class="student-name-title mb-8" (click)="openViewModal(classItem)" style="cursor: pointer;">
+                {{ classItem.standardName }} - Section {{ classItem.section || 'A' }}
               </h6>
 
               <div class="student-meta mb-12">
@@ -113,7 +113,8 @@
                   <iconify-icon icon="solar:book-bold-duotone"></iconify-icon>
                   Subjects: {{ classItem.subjects?.length || 0 }}
                   <a [routerLink]="['/subject-add']" [queryParams]="{ classId: classItem.standardId }"
-                    class="btn btn-sm btn-outline-primary py-0 px-6 ms-4" style="font-size:10px; border-radius:6px;">
+                    *ngIf="isAdminOrPrincipal()" class="btn btn-sm btn-outline-primary py-0 px-6 ms-4"
+                    style="font-size:10px; border-radius:6px;">
                     + Add
                   </a>
                 </span>
@@ -121,16 +122,17 @@
                   <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
                   Students: {{ classItem.students?.length || 0 }}
                   <a [routerLink]="['/student-add']" [queryParams]="{ classId: classItem.standardId }"
-                    class="btn btn-sm btn-outline-success py-0 px-6 ms-4" style="font-size:10px; border-radius:6px;">
+                    *ngIf="isAdminOrPrincipal()" class="btn btn-sm btn-outline-success py-0 px-6 ms-4"
+                    style="font-size:10px; border-radius:6px;">
                     + Add
                   </a>
                 </span>
               </div>
 
-              <a [routerLink]="['/class-view', classItem.standardId]" class="btn-view-details">
+              <button type="button" (click)="openViewModal(classItem)" class="btn-view-details">
                 View Details
                 <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -143,10 +145,98 @@
         </div>
         <h5 class="mt-3 mb-2">No Classes Found</h5>
         <p class="text-muted">Create your academic structure by adding classes.</p>
-        <a routerLink="/newclass" class="btn-add mt-16">
+        <a routerLink="/newclass" class="btn-add mt-16" *ngIf="isAdminOrPrincipal()">
           <iconify-icon icon="ic:baseline-plus"></iconify-icon>
           Add Class
         </a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- VIEW MODAL -->
+  <div class="modal fade" id="viewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content radius-12 shadow-lg border-0">
+        <div class="modal-header border-bottom-0 pb-0">
+          <h5 class="modal-title fw-bold text-primary-600">Class Information</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-24" *ngIf="selectedClassForView">
+          <div class="text-center mb-24">
+            <div
+              class="w-80-px h-80-px rounded-circle bg-primary-50 d-flex justify-content-center align-items-center text-primary-600 mx-auto mb-16 shadow-sm">
+              <iconify-icon icon="mdi:google-classroom" style="font-size: 40px;"></iconify-icon>
+            </div>
+            <h4 class="fw-bold mb-4">{{ selectedClassForView.standardName }}</h4>
+            <span class="badge bg-primary-100 text-primary-600 px-16 py-6 radius-pill">Academic Class</span>
+          </div>
+
+          <div class="row g-16">
+            <div class="col-6">
+              <div class="p-16 radius-8 bg-neutral-50 border border-neutral-100 text-center">
+                <h6 class="text-sm text-secondary-light mb-8">Subjects</h6>
+                <h4 class="fw-bold text-primary-600">{{ selectedClassForView.subjects?.length || 0 }}</h4>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-16 radius-8 bg-neutral-50 border border-neutral-100 text-center">
+                <h6 class="text-sm text-secondary-light mb-8">Students</h6>
+                <h4 class="fw-bold text-success-600">{{ selectedClassForView.students?.length || 0 }}</h4>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-24">
+            <h6 class="fw-bold text-secondary-dark mb-12 border-bottom pb-8">Registration Details</h6>
+            <div class="d-flex justify-content-between mb-8">
+              <span class="text-secondary-light">Standard ID:</span>
+              <span class="fw-medium">#{{ selectedClassForView.standardId }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-secondary-light">Section Prefix:</span>
+              <span class="fw-medium">{{ selectedClassForView.section || 'A' }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-top-0 pt-0">
+          <button type="button" class="btn btn-primary w-100 radius-8" data-bs-dismiss="modal">Close View</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT MODAL -->
+  <div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content radius-12 shadow-lg border-0">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Edit Class Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form #editForm="ngForm" (ngSubmit)="updateClass()" *ngIf="selectedClassForEdit">
+          <div class="modal-body p-24">
+            <div class="mb-20">
+              <label class="form-label fw-bold text-secondary-dark">Class Name <span
+                  class="text-danger">*</span></label>
+              <input type="text" name="standardName" [(ngModel)]="selectedClassForEdit.standardName" required
+                class="form-control radius-8 border-neutral-200 py-10" placeholder="e.g. Class Four">
+            </div>
+            <div class="mb-20">
+              <label class="form-label fw-bold text-secondary-dark">Default Section</label>
+              <input type="text" name="section" [(ngModel)]="selectedClassForEdit.section"
+                class="form-control radius-8 border-neutral-200 py-10" placeholder="e.g. A">
+            </div>
+          </div>
+          <div class="modal-footer bg-neutral-50 rounded-bottom-12">
+            <button type="button" class="btn btn-outline-secondary px-24 py-10 radius-8"
+              data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary px-32 py-10 radius-8 shadow-sm"
+              [disabled]="!editForm.valid || loading">
+              {{ loading ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

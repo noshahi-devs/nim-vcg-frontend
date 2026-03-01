@@ -140,4 +140,8 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
       error: () => Swal.fire('Error', 'Failed to delete subject', 'error')
     });
   }
+
+  isAdminOrPrincipal(): boolean {
+    return this.authService.hasAnyRole(['Admin', 'Principal']);
+  }
 }
