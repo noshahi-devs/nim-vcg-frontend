@@ -9,6 +9,7 @@ import { Subject } from '../../../Models/subject';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { SectionService } from '../../../services/section.service';
+import { SubjectAssignmentService } from '../../../services/subject-assignment.service';
 import { forkJoin } from 'rxjs';
 
 
@@ -39,7 +40,8 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
     private subjectService: SubjectService,
     private authService: AuthService,
     private staffService: StaffService,
-    private sectionService: SectionService
+    private sectionService: SectionService,
+    private subjectAssignmentService: SubjectAssignmentService
   ) { }
 
 
@@ -83,16 +85,24 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   private fetchAndFilterSubjects(staffId: number): void {
     forkJoin({
       subjects: this.subjectService.getSubjects(),
-      sections: this.sectionService.getSections()
+      sections: this.sectionService.getSections(),
+      assignments: this.subjectAssignmentService.getAssignmentsByTeacher(staffId)
     }).subscribe({
       next: (res) => {
         // Find sections assigned to this teacher
-        const assignedSections = (res.sections || []).filter(s => s.staffId === staffId);
-        const assignedClassNames = [...new Set(assignedSections.map(s => s.className))];
+        const assignedSectionClassNames = (res.sections || [])
+          .filter(s => s.staffId === staffId)
+          .map(s => s.className);
+
+        const assignedSubjectClassNames = (res.assignments || [])
+          .map(a => a.subject?.standard?.standardName)
+          .filter(name => !!name);
+
+        const allAssignedClassNames = [...new Set([...assignedSectionClassNames, ...assignedSubjectClassNames])];
 
         // Filter subjects by those class names
-        this.subjectList = res.subjects.filter(s => assignedClassNames.includes(s.standard?.standardName || ''));
-        this.classes = assignedClassNames;
+        this.subjectList = res.subjects.filter(s => allAssignedClassNames.includes(s.standard?.standardName || ''));
+        this.classes = allAssignedClassNames;
       },
       error: () => Swal.fire('Error', 'Failed to load filtered subjects', 'error')
     });

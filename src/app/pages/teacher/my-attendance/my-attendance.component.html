@@ -13,15 +13,32 @@
 
                 <div class="card-body p-32 text-center">
                     <div *ngIf="alreadyMarked; else markBtnArea" class="animate__animated animate__zoomIn">
-                        <div class="check-success-icon mx-auto mb-24">
-                            <iconify-icon icon="solar:check-circle-bold-duotone"
-                                class="text-success-600"></iconify-icon>
-                        </div>
-                        <h5 class="fw-bold text-success-600 mb-8">Attendance Recorded!</h5>
-                        <p class="text-secondary-light">You have successfully checked in for today.</p>
-                        <div class="badge bg-success-100 text-success-600 px-24 py-12 radius-12 text-md mt-16">
-                            Status: Present
-                        </div>
+                        <ng-container *ngIf="checkedOut; else checkOutArea">
+                            <div class="check-success-icon mx-auto mb-24">
+                                <iconify-icon icon="solar:check-circle-bold-duotone"
+                                    class="text-success-600"></iconify-icon>
+                            </div>
+                            <h5 class="fw-bold text-success-600 mb-8">Attendance Completed!</h5>
+                            <p class="text-secondary-light">You have successfully checked out for today.</p>
+                            <div class="badge bg-success-100 text-success-600 px-24 py-12 radius-12 text-md mt-16">
+                                Status: Present (Clocked Out)
+                            </div>
+                        </ng-container>
+                        <ng-template #checkOutArea>
+                            <div class="check-success-icon mx-auto mb-24">
+                                <iconify-icon icon="solar:user-check-bold-duotone"
+                                    class="text-primary-600"></iconify-icon>
+                            </div>
+                            <h5 class="fw-bold text-primary-600 mb-8">Checked In!</h5>
+                            <p class="text-secondary-light mb-24">You are currently checked in. Don't forget to check
+                                out when you leave.</p>
+
+                            <button (click)="markCheckOut()"
+                                class="btn btn-danger px-32 py-12 radius-8 fw-semibold animate__animated animate__pulse animate__infinite">
+                                <iconify-icon icon="solar:logout-3-bold-duotone" class="me-8"></iconify-icon>
+                                Confirm Check-Out
+                            </button>
+                        </ng-template>
                     </div>
 
                     <ng-template #markBtnArea>
@@ -58,6 +75,8 @@
                                     <th>Date</th>
                                     <th>Day</th>
                                     <th>Check-In Time</th>
+                                    <th>Check-Out Time</th>
+                                    <th>Hours</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -66,6 +85,9 @@
                                     <td class="fw-bold">{{ item.date | date:'mediumDate' }}</td>
                                     <td class="text-secondary-light">{{ item.date | date:'EEEE' }}</td>
                                     <td>{{ (item.date | date:'shortTime') || '--:--' }}</td>
+                                    <td>{{ item.checkOutTime ? (item.checkOutTime | date:'shortTime') : '--:--' }}</td>
+                                    <td>{{ item.checkOutTime ? calculateHours(item.date, item.checkOutTime) : '--' }}
+                                    </td>
                                     <td>
                                         <span class="badge" [class.bg-success-100]="item.isPresent"
                                             [class.text-success-600]="item.isPresent"

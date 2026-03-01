@@ -33,6 +33,10 @@ export class AttendanceService {
     return this.http.post<Attendance>(this.apiUrl, attendance, this.getAuthHeaders());
   }
 
+  checkOutStaff(attendance: Attendance): Observable<Attendance> {
+    return this.http.post<Attendance>(`${this.apiUrl}/CheckOut`, attendance, this.getAuthHeaders());
+  }
+
   getAttendanceListData(attendance: Attendance): Observable<AttList[]> {
     return this.http.get<AttList[]>(this.apiUrl + "/GetList/" + attendance.type, this.getAuthHeaders());
   }

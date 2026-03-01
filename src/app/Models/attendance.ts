@@ -5,6 +5,7 @@ export class Attendance {
   attendanceIdentificationNumber!: number;
   description?: string;
   isPresent!: boolean;
+  checkOutTime?: Date;
 }
 
 export enum AttendanceType {
