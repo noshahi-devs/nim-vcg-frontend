@@ -52,8 +52,14 @@ export class SubjectAssignmentComponent implements OnInit {
 
     // Load existing assignments
     this.assignmentService.getAllAssignments().subscribe({
-      next: (res) => this.assignments = res,
-      error: (err) => console.error("Failed to load assignments", err)
+      next: (res) => {
+        this.assignments = res;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error("Failed to load assignments", err);
+        this.loading = false;
+      }
     });
 
     // Load Teachers (Academic Staff)

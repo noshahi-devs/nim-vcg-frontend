@@ -283,10 +283,18 @@
     color: var(--danger-color);
 }
 
+.btn-danger-soft i {
+    color: var(--danger-color);
+}
+
 .btn-danger-soft:hover {
     background-color: var(--danger-color);
     color: white;
     transform: scale(1.05);
+}
+
+.btn-danger-soft:hover i {
+    color: white;
 }
 
 .empty-state {
