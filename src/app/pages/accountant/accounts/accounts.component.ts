@@ -164,22 +164,129 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   viewTransaction(transaction: any): void {
+    const isIncome = transaction.type === 'Income';
+    const amountClass = isIncome ? 'text-success-main' : 'text-danger-main';
+    const iconName = isIncome ? 'solar:check-circle-bold-duotone' : 'solar:info-circle-bold-duotone';
+    const statusColor = isIncome ? '#10b981' : '#ef4444';
+
     Swal.fire({
-      title: 'Transaction Details',
       html: `
-        <div class="text-start">
-          <p><strong>Transaction ID:</strong> ${transaction.transactionId}</p>
-          <p><strong>Date:</strong> ${new Date(transaction.date).toLocaleDateString()}</p>
-          <p><strong>Type:</strong> <span class="badge ${transaction.type === 'Income' ? 'bg-success' : 'bg-danger'}">${transaction.type}</span></p>
-          <p><strong>Category:</strong> ${transaction.category}</p>
-          <p><strong>Description:</strong> ${transaction.description}</p>
-          <hr>
-          <p class="mb-0 fs-5"><strong>Amount:</strong> <span class="fw-bold ${transaction.type === 'Income' ? 'text-success' : 'text-danger'}">${this.formatCurrency(transaction.type === 'Income' ? transaction.credit : transaction.debit)}</span></p>
+        <div class="modal-receipt-container">
+          <div class="receipt-header" style="background: ${statusColor}15; color: ${statusColor};">
+            <iconify-icon icon="${iconName}" style="font-size: 54px;"></iconify-icon>
+            <div class="receipt-title">TRANSACTION RECEIPT</div>
+            <div class="receipt-status">${isIncome ? 'Payment Received' : 'Expense Recorded'}</div>
+          </div>
+
+          <div class="receipt-body">
+            <div class="receipt-id-row">
+              <span class="label">Reference ID</span>
+              <span class="value">#${transaction.transactionId.toUpperCase()}</span>
+            </div>
+
+            <div class="receipt-divider"></div>
+
+            <div class="receipt-grid">
+              <div class="receipt-item">
+                <span class="label">Date & Time</span>
+                <span class="value">${new Date(transaction.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</span>
+              </div>
+              <div class="receipt-item text-end">
+                <span class="label">Category</span>
+                <span class="value">${transaction.category}</span>
+              </div>
+              <div class="receipt-item">
+                <span class="label">Payment Type</span>
+                <span class="value">${transaction.type}</span>
+              </div>
+              <div class="receipt-item text-end">
+                <span class="label">Status</span>
+                <span class="value text-success">Verified</span>
+              </div>
+            </div>
+
+            <div class="receipt-divider"></div>
+
+            <div class="receipt-memo">
+              <span class="label">Description / Memo</span>
+              <p class="memo-text">${transaction.description}</p>
+            </div>
+
+            <div class="receipt-total-box">
+              <div class="total-row">
+                <span>Subtotal</span>
+                <span>${this.formatCurrency(isIncome ? transaction.credit : transaction.debit)}</span>
+              </div>
+              <div class="total-row">
+                <span>Tax / Service Fee</span>
+                <span>$0.00</span>
+              </div>
+              <div class="receipt-divider" style="opacity: 0.1;"></div>
+              <div class="total-row grand-total ${amountClass}">
+                <span>Total Amount</span>
+                <span>${this.formatCurrency(isIncome ? transaction.credit : transaction.debit)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="receipt-footer">
+            <button class="receipt-btn btn-secondary" onclick="window.downloadReceipt('${transaction.transactionId}')">
+              <iconify-icon icon="solar:download-minimalistic-linear"></iconify-icon>
+              Download PDF
+            </button>
+            <button class="receipt-btn btn-primary" onclick="Swal.close()">
+              Done
+            </button>
+          </div>
         </div>
       `,
-      icon: 'info',
-      confirmButtonText: 'Close',
-      confirmButtonColor: '#6366f1'
+      showConfirmButton: false,
+      padding: '0',
+      width: '420px',
+      customClass: {
+        popup: 'modern-receipt-popup'
+      },
+      showClass: {
+        popup: 'animate__animated animate__fadeInUp animate__faster'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOutDown animate__faster'
+      },
+      didOpen: () => {
+        (window as any).downloadReceipt = (id: string) => {
+          Swal.showLoading();
+          setTimeout(() => {
+            Swal.hideLoading();
+            Swal.fire({
+              title: 'Success!',
+              text: 'Receipt has been downloaded successfully.',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false,
+              toast: true,
+              position: 'top-end'
+            });
+          }, 1500);
+        };
+      }
+    });
+  }
+
+  openPremiumPopup(): void {
+    Swal.fire({
+      title: 'Premium Account Details',
+      html: `<div class="premium-popup-content">
+        <p>This is a premium view popup with enhanced styling.</p>
+      </div>`,
+      showCloseButton: true,
+      showConfirmButton: false,
+      customClass: {
+        popup: 'modal-box',
+        title: 'modal-header-premium',
+        closeButton: 'modal-close-premium'
+      },
+      background: 'rgba(255,255,255,0.85)',
+      backdrop: 'rgba(15,23,42,0.6)'
     });
   }
 

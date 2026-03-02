@@ -1,3 +1,6 @@
+<div class="bg-orb orb-primary"></div>
+<div class="bg-orb orb-secondary"></div>
+
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
@@ -6,10 +9,7 @@
     <!-- Total Income -->
     <div class="stat-card">
       <div class="stat-icon-wrapper green">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="12" y1="1" x2="12" y2="23" />
-          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-        </svg>
+        <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
       </div>
       <div class="stat-content">
         <span class="stat-label">Total Income</span>
@@ -19,11 +19,8 @@
 
     <!-- Total Expenses -->
     <div class="stat-card">
-      <div class="stat-icon-wrapper orange">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M8 12h8" />
-        </svg>
+      <div class="stat-icon-wrapper red">
+        <iconify-icon icon="solar:card-transfer-bold-duotone"></iconify-icon>
       </div>
       <div class="stat-content">
         <span class="stat-label">Total Expenses</span>
@@ -33,17 +30,9 @@
 
     <!-- Profit / Loss -->
     <div class="stat-card">
-      <div class="stat-icon-wrapper" [ngClass]="dashboardData.profitLoss >= 0 ? 'blue' : 'orange'">
-        <svg *ngIf="dashboardData.profitLoss >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2">
-          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-          <polyline points="17 6 23 6 23 12" />
-        </svg>
-        <svg *ngIf="dashboardData.profitLoss < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2">
-          <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
-          <polyline points="17 18 23 18 23 12" />
-        </svg>
+      <div class="stat-icon-wrapper" [ngClass]="dashboardData.profitLoss >= 0 ? 'blue' : 'red'">
+        <iconify-icon
+          [icon]="dashboardData.profitLoss >= 0 ? 'solar:graph-up-bold-duotone' : 'solar:graph-down-bold-duotone'"></iconify-icon>
       </div>
       <div class="stat-content">
         <span class="stat-label">Profit / Loss</span>
@@ -51,16 +40,13 @@
       </div>
     </div>
 
-    <!-- Cash / Bank Balance -->
+    <!-- Available Balance -->
     <div class="stat-card">
-      <div class="stat-icon-wrapper blue">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="2" y="3" width="20" height="14" rx="2" />
-          <path d="M8 21h8M12 17v4" />
-        </svg>
+      <div class="stat-icon-wrapper indigo">
+        <iconify-icon icon="solar:bank-bold-duotone"></iconify-icon>
       </div>
       <div class="stat-content">
-        <span class="stat-label">Cash / Bank Balance</span>
+        <span class="stat-label">Available Balance</span>
         <h3 class="stat-value">{{ formatCurrency(dashboardData.cashBankBalance) }}</h3>
       </div>
     </div>
