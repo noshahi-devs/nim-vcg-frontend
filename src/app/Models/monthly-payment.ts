@@ -21,17 +21,10 @@ export class MonthlyPayment {
   sendSms?: boolean;
   printReceipt?: boolean;
 
-  //feeStructures: { feeStructureId: number }[] = [];
+  fees: Fee[] = [];
+  academicMonths: AcademicMonth[] = [];
 
-  fees: {
-    amount: number; feeId: number
-  }[] = [];
-  academicMonths: { monthId: number }[] = [];
-
-
-  paymentMonths: PaymentMonth[] = [];
-
-  paymentDetails: PaymentDetail[] = [];
-  dueBalances: DueBalance[] = [];
-  /*  balanceSheet: BalanceSheet[]=[];*/
+  paymentMonths: any[] = [];
+  paymentDetails: any[] = [];
+  dueBalances: any[] = [];
 }

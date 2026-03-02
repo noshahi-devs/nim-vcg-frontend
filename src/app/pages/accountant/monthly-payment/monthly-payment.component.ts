@@ -225,6 +225,7 @@ export class MonthlyPaymentComponent implements OnInit {
       academicMonths: [],
       waver: 0,
       amountPaid: 0,
+      totalFeeAmount: 0,
       paymentDate: new Date().toISOString().split('T')[0],
       paymentMethod: 'Cash',
       sendSms: true,
@@ -254,9 +255,10 @@ export class MonthlyPaymentComponent implements OnInit {
   savePayment() {
     if (this.form.invalid) return;
 
-    const payload = this.form.getRawValue(); // use getRawValue to include disabled fields if needed, simplified here
+    const payload = this.form.getRawValue();
     payload.totalAmount = this.form.get('totalAmount')?.value;
     payload.amountRemaining = payload.totalAmount - (payload.amountPaid || 0);
+    payload.totalFeeAmount = this.form.get('totalFeeAmount')?.value;
 
     if (this.isEditMode) {
       this.paymentService.updateMonthlyPayment(payload).subscribe({
@@ -265,7 +267,10 @@ export class MonthlyPaymentComponent implements OnInit {
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Updated!', text: 'Payment updated successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment.', confirmButtonColor: '#6366f1' })
+        error: (err) => {
+          console.error('Update Error:', err);
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment. ' + (err.error?.title || ''), confirmButtonColor: '#6366f1' });
+        }
       });
     } else {
       this.paymentService.createMonthlyPayment(payload).subscribe({
@@ -274,7 +279,10 @@ export class MonthlyPaymentComponent implements OnInit {
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Created!', text: 'Payment created successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment.', confirmButtonColor: '#6366f1' })
+        error: (err) => {
+          console.error('Create Error:', err);
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment. ' + (err.error?.title || ''), confirmButtonColor: '#6366f1' });
+        }
       });
     }
   }
@@ -320,7 +328,7 @@ export class MonthlyPaymentComponent implements OnInit {
   }
   toggleFee(fee: Fee, event: any) {
     let fees = [...(this.form.value.fees || [])];
-    if (event.target.checked) fees.push({ feeId: fee.feeId, amount: fee.amount, feeType: fee.feeType });
+    if (event.target.checked) fees.push(fee);
     else fees = fees.filter((f: any) => f.feeId !== fee.feeId);
     this.form.get('fees')!.setValue(fees);
     this.calculateAmounts();
@@ -331,9 +339,10 @@ export class MonthlyPaymentComponent implements OnInit {
   }
   toggleMonth(month: AcademicMonth, event: any) {
     let months = [...(this.form.value.academicMonths || [])];
-    if (event.target.checked) months.push({ monthId: month.monthId, monthName: month.monthName });
+    if (event.target.checked) months.push(month);
     else months = months.filter((m: any) => m.monthId !== month.monthId);
     this.form.get('academicMonths')!.setValue(months);
+    this.calculateAmounts();
   }
 
   // ----- Display helper functions -----
@@ -342,7 +351,7 @@ export class MonthlyPaymentComponent implements OnInit {
     return fees.map(f => `${f.feeType?.typeName} - ${f.amount}`).join(', ');
   }
 
-  getMonthString(months: { monthId: number; monthName?: string }[]): string {
+  getMonthString(months: AcademicMonth[]): string {
     if (!months || months.length === 0) return '';
     return months.map(m => m.monthName).join(', ');
   }
