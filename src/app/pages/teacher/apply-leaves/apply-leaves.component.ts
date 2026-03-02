@@ -3,9 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { LeaveService } from '../../../services/leave.service';
+import { StaffService } from '../../../services/staff.service';
+import { AuthService } from '../../../SecurityModels/auth.service';
 import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
+import { Designation } from '../../../Models/staff';
 import Swal from 'sweetalert2';
-import { finalize } from 'rxjs';
+import { finalize, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-apply-leaves',
@@ -19,9 +23,11 @@ export class ApplyLeavesComponent implements OnInit {
   title = 'Apply Leave';
 
   // Form fields
-  staffId = 1; // Default for demo
-  employeeName = 'Ali Hassan';
-  designation = 'Teacher';
+  // Form fields
+  staffId: number | null = null;
+  employeeName = '';
+  designation = '';
+  loadingProfile = false;
   leaveTypeStr = '';
   fromDate = '';
   toDate = '';
@@ -34,19 +40,43 @@ export class ApplyLeavesComponent implements OnInit {
   totalDays = 0;
   submitting = false;
 
-  constructor(private leaveService: LeaveService) { }
+  constructor(
+    private leaveService: LeaveService,
+    private authService: AuthService,
+    private staffService: StaffService
+  ) { }
 
   ngOnInit(): void {
     this.loadEmployeeInfo();
   }
 
   loadEmployeeInfo(): void {
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-      const user = JSON.parse(savedUser);
-      this.staffId = user.staffId || 1;
-      this.employeeName = user.name || 'Ali Hassan';
-      this.designation = user.designation || 'Teacher';
+    const currentUser = this.authService.userValue;
+    if (currentUser?.email) {
+      this.loadingProfile = true;
+      this.staffService.getStaffByEmail(currentUser.email).pipe(
+        finalize(() => this.loadingProfile = false),
+        catchError(err => {
+          console.error("Error loading staff profile:", err);
+          Swal.fire('Error', 'Could not load your profile data. Please contact support.', 'error');
+          return of(null);
+        })
+      ).subscribe(staff => {
+        if (staff) {
+          this.staffId = staff.staffId;
+          this.employeeName = staff.staffName || '';
+
+          if (staff.designation !== undefined && staff.designation !== null) {
+            const designationMap: { [key: number]: string } = {
+              [Designation.Teacher]: 'Teacher',
+              [Designation.Admin]: 'Admin',
+              [Designation.Principal]: 'Principal',
+              [Designation.Accountant]: 'Accountant'
+            };
+            this.designation = designationMap[staff.designation as number] || staff.designation.toString();
+          }
+        }
+      });
     }
   }
 
@@ -103,7 +133,7 @@ export class ApplyLeavesComponent implements OnInit {
 
     this.submitting = true;
     const leaveData: Leave = {
-      staffId: this.staffId,
+      staffId: this.staffId!,
       leaveType: LeaveType[this.leaveTypeStr as keyof typeof LeaveType],
       startDate: this.fromDate,
       endDate: this.toDate,

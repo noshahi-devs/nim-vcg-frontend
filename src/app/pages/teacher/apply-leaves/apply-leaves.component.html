@@ -18,6 +18,10 @@
             <h5 class="fw-bold mb-4 text-primary-light">New Leave Application</h5>
             <p class="text-secondary-light mb-0 text-sm">Fill out the details below to submit a time-off request.</p>
           </div>
+          <div *ngIf="loadingProfile" class="ms-auto">
+            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+            <span class="ms-8 text-sm text-secondary-light">Loading Profile...</span>
+          </div>
         </div>
 
         <div class="card-body p-32">
@@ -32,7 +36,7 @@
                   <div class="d-flex align-items-center gap-12 bg-base px-16 py-12 radius-8 border border-neutral-200">
                     <div
                       class="w-32-px h-32-px rounded-circle bg-primary-100 d-flex justify-content-center align-items-center text-primary-600 fw-bold">
-                      {{ employeeName.charAt(0) }}
+                      {{ employeeName ? employeeName.charAt(0) : '?' }}
                     </div>
                     <div>
                       <span class="d-block text-xs text-secondary-light fw-medium mb-2">Full Name</span>
@@ -162,10 +166,10 @@
                 </button>
                 <button type="submit"
                   class="btn btn-primary d-flex align-items-center gap-2 radius-8 px-32 py-10 fw-semibold"
-                  [disabled]="submitting">
+                  [disabled]="submitting || !staffId">
                   <span *ngIf="submitting" class="spinner-border spinner-border-sm" role="status"></span>
                   <iconify-icon *ngIf="!submitting" icon="solar:check-circle-bold" class="text-lg"></iconify-icon>
-                  <span>Confirm Submit</span>
+                  <span>{{ staffId ? 'Confirm Submit' : 'Wait for Profile...' }}</span>
                 </button>
               </div>
             </div>

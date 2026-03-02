@@ -3,9 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { LeaveService } from '../../../services/leave.service';
+import { StaffService } from '../../../services/staff.service';
+import { AuthService } from '../../../SecurityModels/auth.service';
 import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
 import Swal from 'sweetalert2';
-import { finalize } from 'rxjs';
+import { finalize, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-leaves',
@@ -20,8 +23,10 @@ export class MyLeavesComponent implements OnInit {
   Math = Math;
 
   // Current user
-  staffId = 1;
-  currentUserName = 'Ali Hassan';
+  // Current user
+  staffId: number | null = null;
+  currentUserName = '';
+  loadingProfile = false;
 
   // All leaves
   allLeaves: Leave[] = [];
@@ -39,8 +44,13 @@ export class MyLeavesComponent implements OnInit {
   // Sorting
   sortColumn = 'appliedDate';
   sortDirection: 'asc' | 'desc' = 'desc';
+  LeaveStatus = LeaveStatus; // For template access
 
-  constructor(private leaveService: LeaveService) { }
+  constructor(
+    private leaveService: LeaveService,
+    private authService: AuthService,
+    private staffService: StaffService
+  ) { }
 
   ngOnInit(): void {
     this.loadCurrentUser();
@@ -48,15 +58,27 @@ export class MyLeavesComponent implements OnInit {
   }
 
   loadCurrentUser(): void {
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-      const user = JSON.parse(savedUser);
-      this.staffId = user.staffId || 1;
-      this.currentUserName = user.name || 'Ali Hassan';
+    const currentUser = this.authService.userValue;
+    if (currentUser?.email) {
+      this.loadingProfile = true;
+      this.staffService.getStaffByEmail(currentUser.email).pipe(
+        finalize(() => this.loadingProfile = false),
+        catchError(err => {
+          console.error("Error loading staff profile:", err);
+          return of(null);
+        })
+      ).subscribe(staff => {
+        if (staff) {
+          this.staffId = staff.staffId;
+          this.currentUserName = staff.staffName || '';
+          this.loadMyLeaves();
+        }
+      });
     }
   }
 
   loadMyLeaves(): void {
+    if (this.staffId === null) return;
     this.loading = true;
     this.leaveService.getStaffLeaves(this.staffId)
       .pipe(finalize(() => this.loading = false))
@@ -77,17 +99,19 @@ export class MyLeavesComponent implements OnInit {
 
     // Status filter
     if (this.statusFilter !== 'All') {
-      const statusValue = LeaveStatus[this.statusFilter as keyof typeof LeaveStatus];
-      filtered = filtered.filter(leave => leave.status === statusValue);
+      filtered = filtered.filter(leave => {
+        const s = leave.status.toString();
+        return s === this.statusFilter || s === LeaveStatus[this.statusFilter as any];
+      });
     }
 
     // Search filter
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(leave =>
-        LeaveType[leave.leaveType].toLowerCase().includes(query) ||
-        leave.reason.toLowerCase().includes(query)
-      );
+      filtered = filtered.filter(leave => {
+        const typeName = this.getLeaveTypeName(leave.leaveType).toLowerCase();
+        return typeName.includes(query) || leave.reason.toLowerCase().includes(query);
+      });
     }
 
     // Apply sorting
@@ -119,16 +143,27 @@ export class MyLeavesComponent implements OnInit {
     this.applyFilters();
   }
 
-  getLeaveTypeName(type: number): string {
-    return LeaveType[type];
+  getLeaveTypeName(type: any): string {
+    if (type === null || type === undefined) return 'Other';
+    if (typeof type === 'string') {
+      if (!isNaN(Number(type))) return LeaveType[Number(type)] || type;
+      return type;
+    }
+    return LeaveType[type] || 'Other';
   }
 
-  getLeaveStatusName(status: number): string {
-    return LeaveStatus[status];
+  getLeaveStatusName(status: any): string {
+    if (status === null || status === undefined) return 'Unknown';
+    if (typeof status === 'string') {
+      if (!isNaN(Number(status))) return LeaveStatus[Number(status)] || status;
+      return status;
+    }
+    return LeaveStatus[status] || 'Unknown';
   }
 
-  getStatusClass(status: number): string {
-    switch (status) {
+  getStatusClass(status: any): string {
+    const s = this.normalizeStatus(status);
+    switch (s) {
       case LeaveStatus.Approved: return 'bg-success-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
       case LeaveStatus.Pending: return 'bg-warning-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
       case LeaveStatus.Rejected: return 'bg-danger-600 text-white px-24 py-4 radius-4 fw-medium text-sm';
@@ -136,13 +171,36 @@ export class MyLeavesComponent implements OnInit {
     }
   }
 
-  getStatusIcon(status: number): string {
-    switch (status) {
+  getStatusIcon(status: any): string {
+    const s = this.normalizeStatus(status);
+    switch (s) {
       case LeaveStatus.Approved: return 'solar:check-circle-bold';
       case LeaveStatus.Pending: return 'solar:clock-circle-bold';
       case LeaveStatus.Rejected: return 'solar:close-circle-bold';
       default: return 'solar:question-circle-bold';
     }
+  }
+
+  checkStatus(status: any, target: string | LeaveStatus): boolean {
+    if (status === null || status === undefined) return false;
+    const s = this.normalizeStatus(status);
+    if (typeof target === 'string') {
+      const targetEnum = LeaveStatus[target as keyof typeof LeaveStatus];
+      return s === targetEnum || (status as any) === target;
+    }
+    return s === target;
+  }
+
+  private normalizeStatus(status: any): LeaveStatus {
+    if (status === null || status === undefined) return -1 as any;
+    if (typeof status === 'number') return status;
+    const sStr = status.toString();
+    if (sStr === 'Pending' || sStr === '0') return LeaveStatus.Pending;
+    if (sStr === 'Approved' || sStr === '1') return LeaveStatus.Approved;
+    if (sStr === 'Rejected' || sStr === '2') return LeaveStatus.Rejected;
+    if (sStr === 'Cancelled' || sStr === '3') return LeaveStatus.Cancelled;
+    if (!isNaN(Number(sStr))) return Number(sStr);
+    return -1 as any;
   }
 
   getDurationDays(start: any, end: any): number {
@@ -157,16 +215,16 @@ export class MyLeavesComponent implements OnInit {
     return this.allLeaves.length;
   }
 
-  get pendingLeaves(): number {
-    return this.allLeaves.filter(l => l.status === LeaveStatus.Pending).length;
+  getpendingLeaves(): number {
+    return this.allLeaves.filter(l => this.normalizeStatus(l.status) === LeaveStatus.Pending).length;
   }
 
-  get approvedLeaves(): number {
-    return this.allLeaves.filter(l => l.status === LeaveStatus.Approved).length;
+  getapprovedLeaves(): number {
+    return this.allLeaves.filter(l => this.normalizeStatus(l.status) === LeaveStatus.Approved).length;
   }
 
-  get rejectedLeaves(): number {
-    return this.allLeaves.filter(l => l.status === LeaveStatus.Rejected).length;
+  getrejectedLeaves(): number {
+    return this.allLeaves.filter(l => this.normalizeStatus(l.status) === LeaveStatus.Rejected).length;
   }
 
   // Pagination
