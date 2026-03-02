@@ -300,3 +300,55 @@
 .empty-state {
     opacity: 0.6;
 }
+
+/* Multi-Select Styles */
+.multi-select-container {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: white;
+}
+
+.subject-checkbox-list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+.subject-checkbox-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.subject-checkbox-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.radius-8 {
+    border-radius: 8px;
+}
+
+.py-8 {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.px-12 {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+.gap-10 {
+    gap: 10px;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}

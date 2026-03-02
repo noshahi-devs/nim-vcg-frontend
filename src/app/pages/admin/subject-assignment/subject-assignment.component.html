@@ -48,7 +48,15 @@
                 <!-- Section Selection -->
                 <div class="form-group" *ngIf="selectedClassId">
                     <label>Select Section</label>
-                    <div class="select-wrapper">
+                    <div class="alert alert-warning py-8 px-12 d-flex align-items-center gap-10 radius-8 mb-12"
+                        *ngIf="missingSections">
+                        <iconify-icon icon="solar:info-circle-bold-duotone" class="text-xl"></iconify-icon>
+                        <div class="text-xs">
+                            No sections found. <a routerLink="/section-add"
+                                class="fw-bold text-decoration-underline">Create Section</a> before assigning.
+                        </div>
+                    </div>
+                    <div class="select-wrapper" *ngIf="!missingSections">
                         <select class="form-control premium-input" [(ngModel)]="newAssignment.sectionId"
                             name="sectionId" required>
                             <option [ngValue]="null" disabled selected>-- Select Section --</option>
@@ -60,24 +68,39 @@
                     </div>
                 </div>
 
-                <!-- Subject Selection -->
+                <!-- Subject Selection (Multi-Select) -->
                 <div class="form-group" *ngIf="selectedClassId">
-                    <label>Select Subject</label>
-                    <div class="select-wrapper">
-                        <select class="form-control premium-input" [(ngModel)]="newAssignment.subjectId"
-                            name="subjectId" required>
-                            <option [ngValue]="null" disabled selected>-- Select Subject --</option>
-                            <option *ngFor="let sub of subjects" [value]="sub.subjectId">
-                                {{ sub.subjectName }}
-                            </option>
-                        </select>
-                        <i class="bi bi-journal-text select-icon"></i>
+                    <label>Select Subjects</label>
+
+                    <div class="alert alert-warning py-8 px-12 d-flex align-items-center gap-10 radius-8 mb-12"
+                        *ngIf="missingSubjects">
+                        <iconify-icon icon="solar:info-circle-bold-duotone" class="text-xl"></iconify-icon>
+                        <div class="text-xs">
+                            No subjects found. <a routerLink="/subject-add"
+                                class="fw-bold text-decoration-underline">Create Subject</a> before assigning.
+                        </div>
+                    </div>
+
+                    <div class="multi-select-container glass-card p-12" *ngIf="!missingSubjects">
+                        <div class="d-flex align-items-center gap-10 mb-10 pb-8 border-bottom">
+                            <input type="checkbox" (change)="selectAllSubjects($event)" id="selectAll"
+                                class="form-check-input">
+                            <label for="selectAll" class="text-sm fw-bold mb-0">Select All Subjects</label>
+                        </div>
+                        <div class="subject-checkbox-list scroll-y" style="max-height: 200px; overflow-y: auto;">
+                            <div *ngFor="let sub of subjects" class="d-flex align-items-center gap-10 py-4">
+                                <input type="checkbox" [id]="'sub-' + sub.subjectId"
+                                    [checked]="isSubjectSelected(sub.subjectId)"
+                                    (change)="toggleSubjectSelection(sub.subjectId)" class="form-check-input">
+                                <label [for]="'sub-' + sub.subjectId" class="text-sm mb-0">{{ sub.subjectName }}</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary premium-btn mt-3"
-                    [disabled]="!assignmentForm.valid || isSubmitting">
-                    <span *ngIf="!isSubmitting">Assign Subject</span>
+                <button type="submit" class="btn btn-primary premium-btn mt-4"
+                    [disabled]="!assignmentForm.valid || isSubmitting || selectedSubjectIds.length === 0">
+                    <span *ngIf="!isSubmitting">Assign Selected Subjects ({{ selectedSubjectIds.length }})</span>
                     <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm" role="status"
                         aria-hidden="true"></span>
                 </button>

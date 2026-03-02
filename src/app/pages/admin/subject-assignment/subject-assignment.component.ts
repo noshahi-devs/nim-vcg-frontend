@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
 import { StaffService } from '../../../services/staff.service';
 import { StandardService } from '../../../services/standard.service';
@@ -24,16 +25,19 @@ export class SubjectAssignmentComponent implements OnInit {
 
   newAssignment: any = {
     staffId: null,
-    subjectId: null,
     sectionId: null
   };
 
+  selectedSubjectIds: number[] = [];
   searchTerm: string = '';
-
 
   selectedClassId: number | null = null;
   loading: boolean = false;
   isSubmitting: boolean = false;
+
+  // Missing data flags
+  missingSections: boolean = false;
+  missingSubjects: boolean = false;
 
   constructor(
     private assignmentService: SubjectAssignmentService,
@@ -65,7 +69,6 @@ export class SubjectAssignmentComponent implements OnInit {
     // Load Teachers (Academic Staff)
     this.staffService.getAllStaffs().subscribe({
       next: (res) => {
-        // Strictly filter by the standardized 'Teacher' designation
         this.teachers = (res || []).filter((s: any) => s.designation === 'Teacher');
       }
     });
@@ -92,7 +95,9 @@ export class SubjectAssignmentComponent implements OnInit {
     this.sections = [];
     this.subjects = [];
     this.newAssignment.sectionId = null;
-    this.newAssignment.subjectId = null;
+    this.selectedSubjectIds = [];
+    this.missingSections = false;
+    this.missingSubjects = false;
 
     if (this.selectedClassId) {
       const selectedClass = this.classes.find(c => c.standardId == this.selectedClassId);
@@ -105,38 +110,70 @@ export class SubjectAssignmentComponent implements OnInit {
 
   loadSectionsDirect(className: string) {
     this.sectionService.getSections().subscribe(res => {
-      // Filter by className string since Section model doesn't have StandardId
       this.sections = res.filter((x: any) => x.className === className);
+      this.missingSections = this.sections.length === 0;
     });
   }
 
   loadSubjectsDirect(classId: number) {
     this.subjectService.getSubjects().subscribe(res => {
       this.subjects = res.filter((x: any) => x.standardId == classId || x.standard?.standardId == classId);
+      this.missingSubjects = this.subjects.length === 0;
     });
   }
 
+  toggleSubjectSelection(subjectId: number) {
+    const index = this.selectedSubjectIds.indexOf(subjectId);
+    if (index > -1) {
+      this.selectedSubjectIds.splice(index, 1);
+    } else {
+      this.selectedSubjectIds.push(subjectId);
+    }
+  }
+
+  isSubjectSelected(subjectId: number): boolean {
+    return this.selectedSubjectIds.includes(subjectId);
+  }
+
+  selectAllSubjects(event: any) {
+    if (event.target.checked) {
+      this.selectedSubjectIds = this.subjects.map(s => s.subjectId);
+    } else {
+      this.selectedSubjectIds = [];
+    }
+  }
+
   assignSubject(): void {
-    if (!this.newAssignment.staffId || !this.newAssignment.subjectId || !this.newAssignment.sectionId) {
-      Swal.fire('Validation Error', 'Please select a Teacher, Section, and Subject before assigning.', 'warning');
+    if (!this.newAssignment.staffId || !this.newAssignment.sectionId || this.selectedSubjectIds.length === 0) {
+      Swal.fire('Validation Error', 'Please select a Teacher, Section, and at least one Subject.', 'warning');
       return;
     }
 
     this.isSubmitting = true;
-    this.assignmentService.addAssignment(this.newAssignment).subscribe({
+
+    // Create an array of requests for each selected subject
+    const requests = this.selectedSubjectIds.map(subId => {
+      return this.assignmentService.addAssignment({
+        staffId: this.newAssignment.staffId,
+        sectionId: this.newAssignment.sectionId,
+        subjectId: subId
+      } as any);
+    });
+
+    forkJoin(requests).subscribe({
       next: (res) => {
         this.isSubmitting = false;
-        Swal.fire('Assigned!', 'Subject assigned to teacher successfully.', 'success');
+        Swal.fire('Assigned!', `${res.length} subjects assigned successfully.`, 'success');
         this.loadInitialData(); // Refresh list
 
         // Reset form
-        this.newAssignment.subjectId = null;
+        this.selectedSubjectIds = [];
         this.newAssignment.sectionId = null;
         this.selectedClassId = null;
       },
       error: (err) => {
         this.isSubmitting = false;
-        let errMsg = 'Failed to assign subject.';
+        let errMsg = 'Failed to assign subjects.';
         if (err.error?.message) errMsg = err.error.message;
         Swal.fire('Error', errMsg, 'error');
       }
