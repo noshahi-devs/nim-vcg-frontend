@@ -10,6 +10,9 @@ export interface NotificationLog {
     notificationType: string;
     createdAt: string;
     isRead: boolean;
+    recipientName?: string;
+    recipientEmail?: string;
+    status?: string;
 }
 
 @Injectable({
