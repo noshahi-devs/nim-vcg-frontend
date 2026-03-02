@@ -9,11 +9,12 @@ import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
 import Swal from 'sweetalert2';
 import { finalize, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-my-leaves',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbComponent, RouterModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './my-leaves.component.html',
   styleUrl: './my-leaves.component.css'
