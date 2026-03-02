@@ -383,3 +383,13 @@ body {
 .receipt-btn.btn-primary:hover {
   background: #4f46e5;
 }
+
+/* ========================
+   GLOBAL COMPONENT OVERRIDES
+======================== */
+.stat-value {
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem) !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
