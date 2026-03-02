@@ -66,11 +66,11 @@
         </div>
       </div>
       <div class="col-md-5 d-flex justify-content-end align-items-end gap-2 flex-wrap">
-        <button class="btn-action-outline success" (click)="markAllPresent()" *ngIf="!hasRole('Admin')">
+        <button class="btn-action-outline success" (click)="markAllPresent()" *ngIf="canMarkAttendance">
           <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
           All Present
         </button>
-        <button class="btn-action-outline danger" (click)="markAllAbsent()" *ngIf="!hasRole('Admin')">
+        <button class="btn-action-outline danger" (click)="markAllAbsent()" *ngIf="canMarkAttendance">
           <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
           All Absent
         </button>
@@ -85,7 +85,7 @@
   <div class="table-glass-container">
     <div class="table-glass-header">
       <h5>Staff Attendance Sheet</h5>
-      <button class="btn-save-grad" (click)="saveAttendance()" *ngIf="!hasRole('Admin')">
+      <button class="btn-save-grad" (click)="saveAttendance()" *ngIf="canMarkAttendance">
         <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon>
         Push Attendance to Server
       </button>
@@ -137,19 +137,19 @@
             <td>
               <div class="status-toggle-group">
                 <button class="status-toggle-btn" [class.active-present]="staff.status === 'Present'"
-                  (click)="staff.status = 'Present'" [disabled]="hasRole('Admin')">Present</button>
+                  (click)="staff.status = 'Present'" [disabled]="!canMarkAttendance">Present</button>
                 <button class="status-toggle-btn" [class.active-absent]="staff.status === 'Absent'"
-                  (click)="staff.status = 'Absent'" [disabled]="hasRole('Admin')">Absent</button>
+                  (click)="staff.status = 'Absent'" [disabled]="!canMarkAttendance">Absent</button>
                 <button class="status-toggle-btn" [class.active-leave]="staff.status === 'Leave'"
-                  (click)="staff.status = 'Leave'" [disabled]="hasRole('Admin')">Leave</button>
+                  (click)="staff.status = 'Leave'" [disabled]="!canMarkAttendance">Leave</button>
                 <button class="status-toggle-btn" [class.active-late]="staff.status === 'Late'"
-                  (click)="staff.status = 'Late'" [disabled]="hasRole('Admin')">Late</button>
+                  (click)="staff.status = 'Late'" [disabled]="!canMarkAttendance">Late</button>
               </div>
             </td>
             <!-- Remarks -->
             <td class="pe-4">
               <input type="text" class="remarks-input" [(ngModel)]="staff.remarks" placeholder="Optional comments..."
-                [disabled]="hasRole('Admin')">
+                [disabled]="!canMarkAttendance">
             </td>
           </tr>
         </tbody>

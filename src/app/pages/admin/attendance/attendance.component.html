@@ -73,7 +73,7 @@
       </div>
 
       <div class="col-md-4 d-flex justify-content-end align-items-end gap-2 flex-wrap"
-        *ngIf="studentsLoaded && students.length">
+        *ngIf="studentsLoaded && students.length && canMarkAttendance">
         <button class="btn-action-outline success" (click)="markAllPresent()">
           <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
           All Present
@@ -90,7 +90,7 @@
   <div class="table-glass-container" *ngIf="studentsLoaded && students.length">
     <div class="table-glass-header">
       <h5>Daily Attendance Sheet</h5>
-      <div class="action-bar-glass" *ngIf="!hasRole('Admin')">
+      <div class="action-bar-glass" *ngIf="canMarkAttendance">
         <button class="btn-save-grad" (click)="saveAttendance()">
           <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon>
           Save Final Attendance
@@ -145,9 +145,9 @@
             <td class="text-end pe-4">
               <div class="status-toggle-group justify-content-end">
                 <button class="status-toggle-btn" [class.active-present]="student.status === 'Present'"
-                  (click)="student.status = 'Present'" [disabled]="hasRole('Admin')">Present</button>
+                  (click)="student.status = 'Present'" [disabled]="!canMarkAttendance">Present</button>
                 <button class="status-toggle-btn" [class.active-absent]="student.status === 'Absent'"
-                  (click)="student.status = 'Absent'" [disabled]="hasRole('Admin')">Absent</button>
+                  (click)="student.status = 'Absent'" [disabled]="!canMarkAttendance">Absent</button>
               </div>
             </td>
           </tr>

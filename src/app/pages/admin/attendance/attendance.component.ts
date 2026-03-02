@@ -37,6 +37,9 @@ export class AttendanceComponent implements OnInit {
   students: any[] = [];
   studentsLoaded = false;
 
+  /** PERMISSIONS */
+  canMarkAttendance = false;
+
   constructor(
     private standardService: StandardService,
     private attendanceService: AttendanceService,
@@ -50,6 +53,9 @@ export class AttendanceComponent implements OnInit {
   ngOnInit(): void {
     this.setTodayDate();
     this.loadStandards();
+
+    // Admin and Principal can purely view, only Teachers can mark
+    this.canMarkAttendance = this.authService.hasRole('Teacher');
   }
 
   hasRole(role: string): boolean {

@@ -29,6 +29,9 @@ export class StaffAttendanceComponent implements OnInit {
   staffMembers: (Staff & { status?: string; remarks?: string })[] = [];
   staffLoaded = false;
 
+  // Permissions
+  canMarkAttendance = false;
+
   // Pagination & Search
   itemsPerPage: number = 10;
   currentPage: number = 1;
@@ -43,6 +46,10 @@ export class StaffAttendanceComponent implements OnInit {
   ngOnInit(): void {
     this.setTodayDate();
     this.loadStaff();
+
+    // The user requested Admin and Principal only 'view' attendance.
+    // Teachers mark their own in the MyAttendanceComponent.
+    this.canMarkAttendance = false;
   }
 
   hasRole(role: string): boolean {
