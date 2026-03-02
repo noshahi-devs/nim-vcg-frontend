@@ -101,13 +101,13 @@
         </div>
 
         <div class="es-card-actions">
-          <a [routerLink]="['/section-view', sectionItem.sectionId]" class="es-action-btn view">
+          <button class="es-action-btn view" (click)="openViewModal(sectionItem)" title="View Details">
             <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> View
-          </a>
-          <a [routerLink]="['/section-edit', sectionItem.sectionId]" class="es-action-btn edit">
+          </button>
+          <button class="es-action-btn edit" (click)="openEditModal(sectionItem)" title="Edit Section">
             <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon> Edit
-          </a>
-          <button class="es-action-btn delete" (click)="confirmDelete(sectionItem)">
+          </button>
+          <button class="es-action-btn delete" (click)="confirmDelete(sectionItem)" title="Delete Section">
             <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
           </button>
         </div>
@@ -115,4 +115,104 @@
     </div>
   </div>
 
+  <!-- View Section Modal -->
+  <div class="modal fade" id="viewSectionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content premium-modal" *ngIf="selectedSection">
+        <div class="modal-header border-0 pb-0">
+          <div class="premium-header">
+            <iconify-icon icon="solar:door-open-bold-duotone" class="header-icon"></iconify-icon>
+            <h5 class="modal-title ms-2">Section Details</h5>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <div class="view-receipt">
+            <div class="receipt-item">
+              <span class="label">Section Name</span>
+              <span class="value">{{ selectedSection.sectionName }}</span>
+            </div>
+            <div class="receipt-item">
+              <span class="label">Class</span>
+              <span class="value text-primary">{{ selectedSection.className }}</span>
+            </div>
+            <div class="receipt-item">
+              <span class="label">Class Teacher</span>
+              <span class="value">{{ selectedSection.classTeacher?.staffName || 'Unassigned' }}</span>
+            </div>
+            <div class="receipt-item">
+              <span class="label">Room Number</span>
+              <span class="value">{{ selectedSection.roomNo }}</span>
+            </div>
+            <div class="receipt-item">
+              <span class="label">Total Capacity</span>
+              <span class="value badge bg-info">{{ selectedSection.capacity }} Students</span>
+            </div>
+            <div class="receipt-divider"></div>
+            <div class="receipt-footer">
+              <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
+              Campus Resource Verified
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Section Modal -->
+  <div class="modal fade" id="editSectionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content premium-modal" *ngIf="selectedSection">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Section</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form #editSectionForm="ngForm">
+            <div class="row">
+              <div class="col-md-6 mb-16">
+                <label class="form-label">Section Name</label>
+                <input type="text" class="form-control premium-input" [(ngModel)]="selectedSection.sectionName"
+                  name="sectionName" required />
+              </div>
+              <div class="col-md-6 mb-16">
+                <label class="form-label">Room Number</label>
+                <input type="text" class="form-control premium-input" [(ngModel)]="selectedSection.roomNo" name="roomNo"
+                  required />
+              </div>
+            </div>
+            <div class="mb-16">
+              <label class="form-label">Class</label>
+              <select class="form-select premium-input" [(ngModel)]="selectedSection.className" name="className"
+                required>
+                <option value="" disabled>Select Class</option>
+                <option *ngFor="let c of classes" [value]="c.standardName">{{ c.standardName }}</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-16">
+                <label class="form-label">Teacher</label>
+                <select class="form-select premium-input" [(ngModel)]="selectedSection.staffId" name="staffId">
+                  <option [ngValue]="null">Select Teacher</option>
+                  <option *ngFor="let s of allStaff" [value]="s.staffId">{{ s.staffName }}</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-16">
+                <label class="form-label">Capacity</label>
+                <input type="number" class="form-control premium-input" [(ngModel)]="selectedSection.capacity"
+                  name="capacity" required />
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary px-24" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary px-24" (click)="updateSection()" [disabled]="editLoading">
+            <span *ngIf="!editLoading">Save Changes</span>
+            <span *ngIf="editLoading">Updating...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

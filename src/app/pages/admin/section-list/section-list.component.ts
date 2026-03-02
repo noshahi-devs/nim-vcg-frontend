@@ -11,6 +11,7 @@ import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
 import { forkJoin, finalize } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
 
@@ -29,6 +30,9 @@ export class SectionListComponent implements OnInit {
   searchTerm = '';
   filterClass = '';
   loading = false;
+  selectedSection: Section | null = null;
+  editLoading = false;
+  allStaff: any[] = [];
 
   sectionList: Section[] = [];
   classes: Standard[] = [];
@@ -49,6 +53,14 @@ export class SectionListComponent implements OnInit {
   ngOnInit(): void {
     this.loadSections();
     this.loadClasses();
+    this.loadStaff();
+  }
+
+  loadStaff(): void {
+    this.staffService.getAllStaffs().subscribe({
+      next: (res) => this.allStaff = res,
+      error: () => console.error('Failed to load staff')
+    });
   }
 
   loadSections(): void {
@@ -163,6 +175,45 @@ export class SectionListComponent implements OnInit {
         console.error('Error deleting section:', err);
         Swal.fire('Error', 'Failed to delete section.', 'error');
       }
+    });
+  }
+
+  openViewModal(section: Section): void {
+    this.selectedSection = { ...section };
+    const modal = new bootstrap.Modal(document.getElementById('viewSectionModal'));
+    modal.show();
+  }
+
+  openEditModal(section: Section): void {
+    this.selectedSection = { ...section };
+    const modal = new bootstrap.Modal(document.getElementById('editSectionModal'));
+    modal.show();
+  }
+
+  updateSection(): void {
+    if (!this.selectedSection) return;
+    if (!this.selectedSection.sectionName || !this.selectedSection.className) {
+      Swal.fire('Error', 'Please fill required fields', 'error');
+      return;
+    }
+
+    this.editLoading = true;
+    this.sectionService.updateSection(this.selectedSection.sectionId, this.selectedSection).pipe(
+      finalize(() => this.editLoading = false)
+    ).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Updated!',
+          text: 'Section has been updated successfully.',
+          timer: 1500,
+          showConfirmButton: false
+        });
+        this.loadSections();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editSectionModal'));
+        modal?.hide();
+      },
+      error: () => Swal.fire('Error', 'Failed to update section', 'error')
     });
   }
 }

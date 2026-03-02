@@ -90,6 +90,12 @@
         </div>
 
         <div class="es-card-actions" *ngIf="isAdminOrPrincipal()">
+          <button class="es-action-btn view" (click)="openViewModal(subject)" title="View Details">
+            <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
+          </button>
+          <button class="es-action-btn edit" (click)="openEditModal(subject)" title="Edit Subject">
+            <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
+          </button>
           <button class="es-action-btn delete" (click)="confirmDelete(subject)" title="Delete Subject">
             <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
           </button>
@@ -99,22 +105,102 @@
   </div>
 
 
+  <!-- View Subject Modal -->
+  <div class="modal fade" id="viewSubjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content premium-modal">
+        <div class="modal-header border-0 pb-0">
+          <div class="premium-header">
+            <iconify-icon icon="solar:notebook-bold-duotone" class="header-icon"></iconify-icon>
+            <h5 class="modal-title ms-2">Subject Details</h5>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <div class="view-receipt">
+            <div class="receipt-item">
+              <span class="label">Subject Name</span>
+              <span class="value">{{ selectedSubject.subjectName }}</span>
+            </div>
+            <div class="receipt-item">
+              <span class="label">Course Code</span>
+              <span class="value">{{ selectedSubject.subjectCode }}</span>
+            </div>
+            <div class="receipt-item">
+              <span class="label">Assigned Class</span>
+              <span class="value text-primary">{{ selectedSubject.standard?.standardName }}</span>
+            </div>
+            <div class="receipt-divider"></div>
+            <div class="receipt-footer">
+              <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
+              Academic Record Verified
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Subject Modal -->
+  <div class="modal fade" id="editSubjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content premium-modal">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Subject</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form #editForm="ngForm">
+            <div class="mb-16">
+              <label class="form-label">Subject Name</label>
+              <input type="text" class="form-control premium-input" [(ngModel)]="selectedSubject.subjectName"
+                name="subjectName" required />
+            </div>
+            <div class="mb-16">
+              <label class="form-label">Subject Code</label>
+              <input type="number" class="form-control premium-input" [(ngModel)]="selectedSubject.subjectCode"
+                name="subjectCode" />
+            </div>
+            <div class="mb-16">
+              <label class="form-label">Class</label>
+              <select class="form-select premium-input" [(ngModel)]="selectedSubject.standardId" name="standardId"
+                required>
+                <option [ngValue]="null" disabled>Select Class</option>
+                <option *ngFor="let s of allStandards" [value]="s.standardId">{{ s.standardName }}</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary px-24" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary px-24" (click)="updateSubject()" [disabled]="editLoading">
+            <span *ngIf="!editLoading">Save Changes</span>
+            <span *ngIf="editLoading">Updating...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Delete Confirmation Modal -->
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content radius-12">
+      <div class="modal-content radius-12 shadow-lg">
         <div class="modal-header border-0">
           <h5 class="modal-title fw-semibold text-danger" id="deleteModalLabel">Confirm Delete</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body text-center">
-          <iconify-icon icon="mdi:alert-circle-outline" class="text-danger mb-3"
-            style="font-size: 48px;"></iconify-icon>
-          <p>Are you sure you want to delete <strong>{{ subjectToDelete?.subjectName }}</strong>?</p>
+        <div class="modal-body text-center py-24">
+          <div class="delete-icon-wrap mb-16">
+            <iconify-icon icon="solar:trash-bin-minimalistic-bold-duotone" class="text-danger"
+              style="font-size: 64px;"></iconify-icon>
+          </div>
+          <p class="mb-0">Are you sure you want to delete <strong>{{ subjectToDelete?.subjectName }}</strong>?</p>
+          <small class="text-secondary">This action cannot be undone.</small>
         </div>
-        <div class="modal-footer border-0 d-flex justify-content-center gap-2">
-          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger px-4" (click)="deleteSubject()">Yes, Delete</button>
+        <div class="modal-footer border-0 d-flex justify-content-center gap-3 pb-24">
+          <button type="button" class="btn btn-light px-32" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger px-32" (click)="deleteSubject()">Delete</button>
         </div>
       </div>
     </div>

@@ -11,7 +11,9 @@ import { StaffService } from '../../../services/staff.service';
 import { SectionService } from '../../../services/section.service';
 import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
 import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
+import { StandardService } from '../../../services/standard.service';
+import { Standard } from '../../../Models/standard';
 
 
 declare var bootstrap: any;
@@ -29,6 +31,9 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   searchTerm = '';
   filterClass = '';
   subjectToDelete: Subject | null = null;
+  selectedSubject: Subject = new Subject();
+  allStandards: Standard[] = [];
+  editLoading = false;
 
   get totalSubjects(): number { return this.subjectList.length; }
   get classesWithSubjectsCount(): number { return new Set(this.subjectList.map(s => s.standard?.standardId)).size; }
@@ -43,12 +48,21 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
     private authService: AuthService,
     private staffService: StaffService,
     private sectionService: SectionService,
-    private subjectAssignmentService: SubjectAssignmentService
+    private subjectAssignmentService: SubjectAssignmentService,
+    private standardService: StandardService
   ) { }
 
 
   ngOnInit(): void {
     this.loadSubjects();
+    this.loadStandards();
+  }
+
+  loadStandards(): void {
+    this.standardService.getStandards().subscribe({
+      next: (res) => this.allStandards = res,
+      error: () => console.error('Failed to load standards')
+    });
   }
 
   ngAfterViewInit(): void { }
@@ -165,5 +179,43 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
 
   isAdminOrPrincipal(): boolean {
     return this.authService.hasAnyRole(['Admin', 'Principal']);
+  }
+
+  openViewModal(subject: Subject): void {
+    this.selectedSubject = { ...subject };
+    const modal = new bootstrap.Modal(document.getElementById('viewSubjectModal'));
+    modal.show();
+  }
+
+  openEditModal(subject: Subject): void {
+    this.selectedSubject = { ...subject };
+    const modal = new bootstrap.Modal(document.getElementById('editSubjectModal'));
+    modal.show();
+  }
+
+  updateSubject(): void {
+    if (!this.selectedSubject.subjectName || !this.selectedSubject.standardId) {
+      Swal.fire('Error', 'Please fill all required fields', 'error');
+      return;
+    }
+
+    this.editLoading = true;
+    this.subjectService.updateSubject(this.selectedSubject).pipe(
+      finalize(() => this.editLoading = false)
+    ).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Updated!',
+          text: 'Subject has been updated successfully.',
+          timer: 1500,
+          showConfirmButton: false
+        });
+        this.loadSubjects();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editSubjectModal'));
+        modal?.hide();
+      },
+      error: () => Swal.fire('Error', 'Failed to update subject', 'error')
+    });
   }
 }
