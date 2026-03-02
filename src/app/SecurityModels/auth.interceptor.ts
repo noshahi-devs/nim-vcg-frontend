@@ -5,13 +5,20 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   req = rewriteApiUrl(req);
 
   const jwtToken = getJwtToken();
-  if (jwtToken) {
-    var cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    });
+  const campusId = getSelectedCampusId();
 
+  const headers: any = {};
+  if (jwtToken) {
+    headers['Authorization'] = `Bearer ${jwtToken}`;
+  }
+  if (campusId) {
+    headers['X-Campus-Id'] = campusId;
+  }
+
+  if (Object.keys(headers).length > 0) {
+    var cloned = req.clone({
+      setHeaders: headers,
+    });
     return next(cloned);
   }
   return next(req);
@@ -19,6 +26,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
 function getJwtToken(): string | null {
   return localStorage.getItem('JWT_TOKEN');
+}
+
+function getSelectedCampusId(): string | null {
+  const savedCampus = localStorage.getItem('selectedCampus');
+  if (savedCampus) {
+    try {
+      const campus = JSON.parse(savedCampus);
+      return campus.campusId.toString();
+    } catch {
+      return null;
+    }
+  }
+  return null;
 }
 
 function rewriteApiUrl(req: Parameters<HttpInterceptorFn>[0]) {

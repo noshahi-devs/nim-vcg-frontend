@@ -1,0 +1,19 @@
+.modal.show {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.radius-16 {
+    border-radius: 16px !important;
+}
+
+.radius-12 {
+    border-radius: 12px !important;
+}
+
+.radius-8 {
+    border-radius: 8px !important;
+}

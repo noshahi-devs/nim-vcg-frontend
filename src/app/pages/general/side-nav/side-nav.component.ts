@@ -184,6 +184,8 @@ import { NotificationService } from '../../../services/notification.service';
 import { MessageService } from '../../../services/message.service';
 import { Notification } from '../../../Models/notification';
 import { UserMessage } from '../../../Models/user-message';
+import { CampusService } from '../../../services/campus.service';
+import { Campus } from '../../../Models/campus';
 import $ from 'jquery';
 import { CommonModule, NgIf } from "@angular/common";
 
@@ -206,6 +208,9 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   unreadNotificationCount = 0;
   unreadMessageCount = 0;
 
+  campuses: Campus[] = [];
+  selectedCampus: Campus | null = null;
+
   get currentUser() {
     return this.authService.userValue;
   }
@@ -224,7 +229,8 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     private appConfig: AppConfigService,
     private staffService: StaffService,
     private notificationService: NotificationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private campusService: CampusService
   ) { }
 
   ngOnInit(): void {
@@ -274,6 +280,31 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     // ✅ Load Notifications & Messages
     this.loadNotifications();
     this.loadMessages();
+
+    // ✅ Load Campuses
+    this.loadCampuses();
+  }
+
+  loadCampuses() {
+    this.campusService.getCampuses().subscribe({
+      next: (data) => {
+        this.campuses = data;
+        this.selectedCampus = this.campusService.getSelectedCampus();
+
+        // If no campus selected, default to the first one available
+        if (!this.selectedCampus && data.length > 0) {
+          this.onCampusChange(data[0]);
+        }
+      },
+      error: (err) => console.error('Error loading campuses', err)
+    });
+  }
+
+  onCampusChange(campus: Campus) {
+    this.selectedCampus = campus;
+    this.campusService.setSelectedCampus(campus);
+    // Reload data or refresh page if needed
+    // window.location.reload(); 
   }
 
   loadNotifications() {
