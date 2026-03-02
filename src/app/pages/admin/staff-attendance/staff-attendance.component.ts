@@ -62,14 +62,17 @@ export class StaffAttendanceComponent implements OnInit {
   }
 
   loadStaff(): void {
-    this.staffService.getAllStaffs().subscribe({
-      next: (data: Staff[]) => {
-        // Add status & remarks dynamically
-        this.staffMembers = data.map(s => ({
-          ...s,
-          status: '',
-          remarks: ''
-        }));
+    this.attendanceService.getDailyStaffAttendance(this.selectedDate).subscribe({
+      next: (data: any[]) => {
+        // Map the backend report flat data back into staff array
+        this.staffMembers = data.map(record => ({
+          staffId: record.staffId,
+          staffName: record.staffName,
+          designation: record.designation,
+          status: record.status || '',
+          remarks: record.remarks || ''
+        })) as any[];
+
         this.staffLoaded = true;
       },
       error: (err) => {

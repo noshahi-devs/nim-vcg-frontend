@@ -50,6 +50,10 @@ export class AttendanceService {
     return this.http.get<any[]>(`${this.apiUrl}/Report/Student/${studentId}?startDate=${startDate}&endDate=${endDate}`, this.getAuthHeaders());
   }
 
+  getDailyStaffAttendance(date: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Report/StaffDaily?date=${date}`, this.getAuthHeaders());
+  }
+
   getStaffAttendanceReport(staffId: number, startDate: string, endDate: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/Report/Staff/${staffId}?startDate=${startDate}&endDate=${endDate}`, this.getAuthHeaders());
   }
