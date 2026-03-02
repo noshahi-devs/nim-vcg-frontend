@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
 import { StaffService } from '../../../services/staff.service';
@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
   selector: 'app-subject-assignment',
   standalone: true,
   imports: [CommonModule, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './subject-assignment.component.html',
   styleUrl: './subject-assignment.component.css'
 })

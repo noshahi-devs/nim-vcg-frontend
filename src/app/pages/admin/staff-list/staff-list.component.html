@@ -1,147 +1,111 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- ===================== STATS CARDS ===================== -->
-  <div class="stats-row" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
-    <div class="stat-card">
-      <div class="stat-icon-wrapper blue">
-        <iconify-icon icon="mdi:account-hard-hat-outline" class="text-2xl"></iconify-icon>
-      </div>
-      <div class="stat-content">
-        <span class="stat-label">Total Staff</span>
-        <h3 class="stat-value">{{ totalStaff }}</h3>
-      </div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-icon-wrapper green">
-        <iconify-icon icon="mdi:school-outline" class="text-2xl"></iconify-icon>
-      </div>
-      <div class="stat-content">
-        <span class="stat-label">Teachers</span>
-        <h3 class="stat-value">{{ teacherCount }}</h3>
-      </div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-icon-wrapper orange">
-        <iconify-icon icon="mdi:office-building-outline" class="text-2xl"></iconify-icon>
-      </div>
-      <div class="stat-content">
-        <span class="stat-label">Departments</span>
-        <h3 class="stat-value">{{ departmentsCount }}</h3>
-      </div>
-    </div>
-  </div>
-
-  <div class="fee-card">
-    <!-- HEADER / FILTER BAR -->
-    <div class="fee-card-header">
-      <div class="header-left">
-        <div class="show-entries">
-          <span>Show</span>
-          <select class="entries-select">
-            <option>10</option>
-            <option>25</option>
-            <option>50</option>
-          </select>
+  <div class="es-page">
+    <!-- ── Stats Row ── -->
+    <div class="stats-row" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <iconify-icon icon="solar:user-speak-bold-duotone"></iconify-icon>
         </div>
-
-        <div class="search-wrapper">
-          <iconify-icon icon="ion:search-outline" class="search-icon"></iconify-icon>
-          <input type="text" class="search-input" name="search" [(ngModel)]="searchTerm"
-            placeholder="Search staff profile...">
+        <div class="stat-info">
+          <span class="stat-label">Total Staff</span>
+          <span class="stat-value">{{ totalStaff }}</span>
         </div>
       </div>
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <iconify-icon icon="solar:square-academic-cap-bold-duotone"></iconify-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Teachers</span>
+          <span class="stat-value">{{ teacherCount }}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <iconify-icon icon="solar:buildings-bold-duotone"></iconify-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Departments</span>
+          <span class="stat-value">{{ departmentsCount }}</span>
+        </div>
+      </div>
+    </div>
 
-      <a routerLink="/staff-add" class="btn-add" *ngIf="authService.hasRole('Admin')">
-        <iconify-icon icon="ic:baseline-plus" class="icon text-xl"></iconify-icon>
+    <!-- ── Top Bar ── -->
+    <div class="es-topbar">
+      <div class="es-topbar-left">
+        <div class="es-search-wrap">
+          <iconify-icon icon="solar:magnifer-linear" class="es-search-icon"></iconify-icon>
+          <input class="es-search-input" type="text" [(ngModel)]="searchTerm" placeholder="Search staff members..." />
+        </div>
+      </div>
+      <a routerLink="/staff-add" class="es-add-btn" *ngIf="authService.hasRole('Admin')">
+        <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon>
         Add Staff
       </a>
     </div>
 
-    <!-- BODY -->
-    <div class="fee-card-body p-24">
-      <!-- Loading State -->
-      <div *ngIf="loading" class="col-12 text-center py-40">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="mt-2 text-secondary-light">Fetching staff records...</p>
+    <!-- ── Empty State ── -->
+    <div class="es-empty" *ngIf="!loading && filteredStaffList.length === 0">
+      <div class="es-empty-icon">
+        <iconify-icon icon="solar:user-heart-bold-duotone"></iconify-icon>
       </div>
+      <h5>No Staff Found</h5>
+      <p>Register new team members to start managing your institute.</p>
+      <a routerLink="/staff-add" class="es-add-btn" *ngIf="authService.hasRole('Admin')">
+        <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon>
+        Add Staff
+      </a>
+    </div>
 
-      <div class="row gy-4" *ngIf="!loading && filteredStaffList.length > 0">
-        <!-- STAFF CARD -->
-        <div class="col-xxl-2 col-lg-3 col-md-4 col-sm-6" *ngFor="let staff of filteredStaffList">
-          <div class="student-card">
-            <!-- Dropdown -->
-            <div class="dropdown position-absolute top-0 end-0 me-12 mt-12" style="z-index: 10;">
-              <button type="button" data-bs-toggle="dropdown" class="icon-btn-small">
-                <iconify-icon icon="entypo:dots-three-vertical"></iconify-icon>
-              </button>
-              <ul class="dropdown-menu p-12 border bg-base shadow">
-                <li>
-                  <a class="dropdown-item px-16 py-8 d-flex align-items-center gap-10"
-                    [routerLink]="['/staff-view-profile', staff.staffId]">
-                    <iconify-icon icon="mdi:eye-outline"></iconify-icon> View
-                  </a>
-                </li>
-                <li *ngIf="authService.hasRole('Admin')">
-                  <a class="dropdown-item px-16 py-8 d-flex align-items-center gap-10"
-                    [routerLink]="['/staff-edit-profile', staff.staffId]">
-                    <iconify-icon icon="mdi:pencil-outline"></iconify-icon> Edit
-                  </a>
-                </li>
-                <li *ngIf="authService.hasRole('Admin')">
-                  <button type="button" class="dropdown-item px-16 py-8 text-danger d-flex align-items-center gap-10"
-                    (click)="confirmDelete(staff)">
-                    <iconify-icon icon="mdi:delete-outline"></iconify-icon> Delete
-                  </button>
-                </li>
-              </ul>
-            </div>
+    <!-- ── Loading State ── -->
+    <div class="es-empty" *ngIf="loading">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-12">Fetching staff records...</p>
+    </div>
 
-            <!-- Staff Info -->
-            <div class="p-16 text-center">
-              <div class="avatar-wrapper mb-12">
-                <img [src]="staff.imagePath || defaultImage" class="student-avatar" />
-              </div>
+    <!-- ── Staff Grid ── -->
+    <div class="es-grid" *ngIf="!loading && filteredStaffList.length > 0">
+      <div class="es-card" *ngFor="let staff of filteredStaffList">
+        <div class="es-card-accent"></div>
 
-              <h6 class="student-name-title mb-4">
-                {{ staff.staffName }}
-              </h6>
+        <div class="es-card-head">
+          <div class="es-avatar-wrap">
+            <img [src]="staff.imagePath || defaultImage" class="es-avatar" />
+          </div>
+          <h6 class="es-card-title">{{ staff.staffName }}</h6>
+          <span class="es-card-subtitle">{{ getDesignationName(staff.designation) }}</span>
+        </div>
 
-              <div class="student-meta mb-12">
-                <span class="meta-item">
-                  <iconify-icon icon="mdi:briefcase-outline"></iconify-icon>
-                  {{ getDesignationName(staff.designation) }}
-                </span>
-                <span class="meta-item" *ngIf="staff.department">
-                  <iconify-icon icon="mdi:domain"></iconify-icon>
-                  {{ staff.department.departmentName }}
-                </span>
-              </div>
-
-              <a [routerLink]="['/staff-view-profile', staff.staffId]" class="btn-view-details">
-                View Profile
-                <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
-              </a>
-            </div>
+        <div class="es-meta-grid">
+          <div class="es-meta-pill">
+            <iconify-icon icon="solar:buildings-linear"></iconify-icon>
+            <span class="es-meta-label">Department</span>
+            <span class="es-meta-value">{{ staff.department?.departmentName || 'N/A' }}</span>
+          </div>
+          <div class="es-meta-pill">
+            <iconify-icon icon="solar:phone-bold-duotone"></iconify-icon>
+            <span class="es-meta-label">Contact</span>
+            <span class="es-meta-value text-xs">{{ staff.contactNumber1 || 'N/A' }}</span>
           </div>
         </div>
-      </div>
 
-      <!-- Empty State -->
-      <div *ngIf="!loading && filteredStaffList.length === 0" class="empty-state-wrapper">
-        <div class="empty-icon-box">
-          <iconify-icon icon="mdi:account-off-outline"></iconify-icon>
+        <div class="es-card-actions">
+          <a [routerLink]="['/staff-view-profile', staff.staffId]" class="es-action-btn view">
+            <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> Profile
+          </a>
+          <a [routerLink]="['/staff-edit-profile', staff.staffId]" class="es-action-btn edit"
+            *ngIf="authService.hasRole('Admin')">
+            <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon> Edit
+          </a>
+          <button class="es-action-btn delete" (click)="confirmDelete(staff)" *ngIf="authService.hasRole('Admin')">
+            <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+          </button>
         </div>
-        <h5 class="mt-3 mb-2">No Staff Found</h5>
-        <p class="text-muted">Register new team members to seeing them here.</p>
-        <a routerLink="/staff-add" class="btn-add mt-16" *ngIf="authService.hasRole('Admin')">
-          <iconify-icon icon="ic:baseline-plus"></iconify-icon>
-          Add Staff
-        </a>
       </div>
     </div>
   </div>
