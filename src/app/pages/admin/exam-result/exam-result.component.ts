@@ -30,6 +30,8 @@ export class ExamResultComponent implements OnInit {
   examResults: ExamResult[] = [];
   displayResults: any[] = [];
   loading = false;
+  noResultsFound = false;
+  hasSearched = false;
 
   // Filters
   selectedExamId: number = 0;
@@ -287,64 +289,45 @@ export class ExamResultComponent implements OnInit {
     }
 
     this.loading = true;
+    this.hasSearched = true;
+    this.noResultsFound = false;
+    this.examResults = [];
+    this.displayResults = [];
+
     this.examService
       .getResultByStudent(this.selectedStudentId, this.selectedExamId)
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (res) => {
           if (res && res.subjects && res.subjects.length > 0) {
-            // Normalize subjects
-            this.displayResults = res.subjects.map(s => ({
-              ...s,
-              percentage: this.examService.calculatePercentage(s.obtainedMarks, s.totalMarks),
-              isPassed: s.obtainedMarks >= (s.totalMarks * 0.5)
+            // Map backend fields to frontend model
+            this.displayResults = (res.subjects as any[]).map((s: any) => ({
+              subjectName: s.subjectName || s.SubjectName || 'N/A',
+              totalMarks: s.totalMarks ?? s.TotalMarks ?? 0,
+              obtainedMarks: s.obtainedMarks ?? s.ObtainedMarks ?? s.obtainedScore ?? s.ObtainedScore ?? 0,
+              grade: s.grade || s.Grade || '—',
+              percentage: this.examService.calculatePercentage(
+                s.obtainedMarks ?? s.ObtainedMarks ?? s.obtainedScore ?? 0,
+                s.totalMarks ?? s.TotalMarks ?? 0
+              ),
+              isPassed: (s.status || s.Status || '').toLowerCase() === 'passed' || (s.grade || s.Grade || 'F') !== 'F'
             }));
             this.examResults = [res];
+            this.calculateSummary();
           } else {
-            this.loadMockResults();
+            this.noResultsFound = true;
+            this.examResults = [];
+            this.displayResults = [];
           }
-          this.calculateSummary();
         },
         error: () => {
-          this.loadMockResults();
+          this.noResultsFound = true;
+          this.examResults = [];
+          this.displayResults = [];
         }
       });
   }
 
-  loadMockResults() {
-    const student = this.filteredStudents.find(s => s.studentId === this.selectedStudentId);
-    this.examResults = [
-      {
-        resultId: 1,
-        examId: this.selectedExamId,
-        studentId: this.selectedStudentId,
-        studentName: student?.studentName || 'Student',
-        rollNo: student?.admissionNo?.toString() || '000',
-        subjectId: 1,
-        subjectName: 'Mathematics',
-        totalMarks: 100,
-        obtainedMarks: 85,
-        grade: 'A',
-        percentage: 85,
-        isPassed: true
-      },
-      {
-        resultId: 2,
-        examId: this.selectedExamId,
-        studentId: this.selectedStudentId,
-        studentName: student?.studentName || 'Student',
-        rollNo: student?.admissionNo?.toString() || '000',
-        subjectName: 'English',
-        totalMarks: 100,
-        obtainedMarks: 78,
-        grade: 'B',
-        percentage: 78,
-        isPassed: true
-      }
-    ];
-    this.displayResults = [...this.examResults];
-    this.calculateSummary();
-  }
 
   calculateSummary() {
     this.totalMarks = this.displayResults.reduce((sum, r) => sum + (r.totalMarks || 0), 0);

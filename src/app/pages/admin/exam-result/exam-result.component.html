@@ -74,8 +74,8 @@
     <p class="mt-3 text-secondary-light fw-medium">Analyzing student performance...</p>
   </div>
 
-  <!-- Empty State -->
-  <div *ngIf="!loading && examResults.length === 0" class="fee-card mb-24">
+  <!-- Empty State: Initial (nothing searched yet) -->
+  <div *ngIf="!loading && !hasSearched" class="fee-card mb-24">
     <div class="fee-card-body p-80 text-center">
       <div class="empty-state">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -92,8 +92,26 @@
     </div>
   </div>
 
+  <!-- Empty State: Searched but No Results Found -->
+  <div *ngIf="!loading && hasSearched && noResultsFound" class="fee-card mb-24">
+    <div class="fee-card-body p-80 text-center">
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: #f59e0b;">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <h5 style="margin: 16px 0 8px; color: #1e293b; font-weight: 700;">No Results Available</h5>
+        <p style="margin: 0 auto; max-width: 440px; color: #64748b;">
+          No exam results have been recorded for the selected student and exam yet.
+          Results will appear here once marks are entered and grades are calculated by the admin.
+        </p>
+      </div>
+    </div>
+  </div>
+
   <!-- Results Component -->
-  <div *ngIf="!loading && examResults.length > 0">
+  <div *ngIf="!loading && !noResultsFound && examResults.length > 0">
 
     <!-- Action Menu -->
     <div class="d-flex justify-content-end gap-3 mb-24">
