@@ -215,7 +215,7 @@
       <div class="hero-content">
         <div class="hero-left">
           <div class="teacher-avatar-ring">
-            <div class="teacher-avatar">{{ getInitials(authService.userValue?.username || 'Admin') }}</div>
+            <div class="teacher-avatar">{{ getInitials(adminFullName) }}</div>
             <div class="avatar-status-dot"></div>
           </div>
           <div class="hero-text">
@@ -223,7 +223,7 @@
               <iconify-icon icon="solar:crown-bold-duotone" class="greeting-icon" style="color:#f59e0b;"></iconify-icon>
               {{ greeting }}
             </div>
-            <h2 class="hero-name">{{ authService.userValue?.username || 'Administrator' }}</h2>
+            <h2 class="hero-name">{{ adminFullName }}</h2>
             <p class="hero-role">
               <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
               Management Portal &nbsp;·&nbsp;

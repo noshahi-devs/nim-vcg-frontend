@@ -179,6 +179,7 @@ import { Subscription } from 'rxjs';
 import { ThemeService } from '../../../services/theme.service';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { AppConfigService } from '../../../services/app-config.service';
+import { StaffService } from '../../../services/staff.service';
 import $ from 'jquery';
 import { CommonModule, NgIf } from "@angular/common";
 
@@ -201,6 +202,8 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.authService.userValue;
   }
 
+  displayName: string = '';
+
   private routerSubscription!: Subscription;
   private readonly eventNamespace = ".sideNav";
 
@@ -210,7 +213,8 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private themeService: ThemeService,
     private authService: AuthService,
-    private appConfig: AppConfigService
+    private appConfig: AppConfigService,
+    private staffService: StaffService
   ) { }
 
   ngOnInit(): void {
@@ -221,6 +225,20 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // ✅ Load roles
     this.roles = this.authService.roles;
+
+    // Set fallback display name
+    this.displayName = this.currentUser?.fullName || this.currentUser?.username || 'User';
+
+    if (this.currentUser?.email && !this.currentUser?.fullName) {
+      this.staffService.getStaffByEmail(this.currentUser.email).subscribe({
+        next: (staff) => {
+          if (staff && staff.staffName) {
+            this.displayName = staff.staffName;
+          }
+        },
+        error: () => { }
+      });
+    }
 
     // ✅ Theme setup
     const localStorageTheme = localStorage.getItem('theme');

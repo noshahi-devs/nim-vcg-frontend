@@ -91,6 +91,7 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
   ];
 
   overviewStats: any[] = [];
+  adminFullName: string = '';
 
   constructor(
     private dashboardService: DashboardService,
@@ -189,6 +190,19 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
     this.dashboardService.getChartData().subscribe(data => { this.updateHistoricalCharts(data); });
     this.dashboardService.getStudentDistribution().subscribe(data => { this.updateDonutChart(data); });
     this.dashboardService.getWeeklyAdmissions().subscribe(data => { this.updateBarChart(data); });
+
+    const user = this.authService.userValue;
+    this.adminFullName = user?.fullName || user?.username || 'Administrator';
+    if (user?.email && !user?.fullName) {
+      this.staffService.getStaffByEmail(user.email).subscribe({
+        next: (staff) => {
+          if (staff && staff.staffName) {
+            this.adminFullName = staff.staffName;
+          }
+        },
+        error: () => { }
+      });
+    }
   }
 
   updateTeacherChart() {
