@@ -134,6 +134,7 @@ import { BrandingHomeComponent } from './pages/general/branding-home/branding-ho
 
 import { GeneralSettingsComponent } from './pages/admin/general-settings/general-settings.component';
 import { SubjectAssignmentComponent } from './pages/admin/subject-assignment/subject-assignment.component';
+import { BroadcastComponent } from './pages/general/broadcast/broadcast.component';
 
 export const routes: Routes = [
   { path: '', component: BrandingHomeComponent, pathMatch: 'full' },
@@ -232,6 +233,7 @@ export const routes: Routes = [
 
       // Communications & Messaging
       { path: 'email', component: EmailComponent, data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
+      { path: 'broadcast', component: BroadcastComponent, data: { roles: ['Admin', 'Principal'] } },
 
       // User Management
       { path: 'users-list', component: ListComponent, data: { roles: ['Admin'] } },

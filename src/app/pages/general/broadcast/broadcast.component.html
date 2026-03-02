@@ -1,0 +1,143 @@
+<div class="dashboard-main-body">
+    <app-breadcrumb [title]="'Communications / Broadcast'" [main-title]="'Broadcast'"></app-breadcrumb>
+
+    <div class="row gy-4">
+        <!-- ===== Compose Broadcast Card ===== -->
+        <div class="col-lg-5 col-xl-4">
+            <div class="broadcast-compose-card card p-0 overflow-hidden">
+                <div class="broadcast-card-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="broadcast-icon-wrap">
+                            <iconify-icon icon="solar:notification-lines-bold-duotone" class="text-white"
+                                style="font-size:28px;"></iconify-icon>
+                        </div>
+                        <div>
+                            <h5 class="text-white mb-1 fw-bold">Send Broadcast</h5>
+                            <p class="text-white mb-0 opacity-75 text-sm">Notify all users or specific roles</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-24">
+                    <form (ngSubmit)="sendBroadcast()" #broadcastForm="ngForm">
+                        <div class="mb-20">
+                            <label class="broadcast-label">Target Audience</label>
+                            <div class="role-pills">
+                                <button type="button" *ngFor="let role of availableRoles" class="role-pill"
+                                    [class.active]="selectedRoles.includes(role)" (click)="toggleRole(role)">
+                                    <iconify-icon [icon]="getRoleIcon(role)" class="me-1"></iconify-icon>
+                                    {{ role }}
+                                </button>
+                            </div>
+                            <p class="text-xs text-secondary-light mt-8">
+                                <span *ngIf="selectedRoles.length === 0">Select one or more roles. Leave empty to notify
+                                    everyone.</span>
+                                <span *ngIf="selectedRoles.length > 0">Notifying: <strong>{{ selectedRoles.join(', ')
+                                        }}</strong></span>
+                            </p>
+                        </div>
+
+                        <div class="mb-20">
+                            <label class="broadcast-label">Notification Title</label>
+                            <input type="text" class="broadcast-input" name="title" [(ngModel)]="broadcastData.title"
+                                placeholder="e.g. School Closed Tomorrow" required maxlength="100">
+                        </div>
+
+                        <div class="mb-20">
+                            <label class="broadcast-label">Message</label>
+                            <textarea class="broadcast-input" name="message" [(ngModel)]="broadcastData.message"
+                                rows="5" placeholder="Write your broadcast message here..." required></textarea>
+                        </div>
+
+                        <div class="mb-20">
+                            <label class="broadcast-label">Priority</label>
+                            <div class="priority-selector">
+                                <button type="button" class="priority-btn"
+                                    [class.active]="broadcastData.priority === 'normal'"
+                                    (click)="broadcastData.priority = 'normal'">
+                                    <iconify-icon icon="carbon:circle-dash"></iconify-icon> Normal
+                                </button>
+                                <button type="button" class="priority-btn warning"
+                                    [class.active]="broadcastData.priority === 'important'"
+                                    (click)="broadcastData.priority = 'important'">
+                                    <iconify-icon icon="material-symbols:warning-outline"></iconify-icon> Important
+                                </button>
+                                <button type="button" class="priority-btn danger"
+                                    [class.active]="broadcastData.priority === 'urgent'"
+                                    (click)="broadcastData.priority = 'urgent'">
+                                    <iconify-icon icon="material-symbols:emergency-outline"></iconify-icon> Urgent
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="broadcast-submit-btn"
+                            [disabled]="!broadcastForm.form.valid || sending">
+                            <iconify-icon
+                                [icon]="sending ? 'eos-icons:loading' : 'ion:paper-plane-outline'"></iconify-icon>
+                            {{ sending ? 'Sending...' : 'Send Broadcast' }}
+                        </button>
+                    </form>
+
+                    <!-- Success Message -->
+                    <div *ngIf="successMsg" class="broadcast-success mt-16">
+                        <iconify-icon icon="material-symbols:check-circle-outline"></iconify-icon>
+                        {{ successMsg }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Broadcast History ===== -->
+        <div class="col-lg-7 col-xl-8">
+            <div class="card p-0 overflow-hidden h-100">
+                <div class="card-header p-20 d-flex align-items-center justify-content-between border-bottom">
+                    <h5 class="fw-bold mb-0 text-primary-light">
+                        <iconify-icon icon="mdi:history" class="me-2"></iconify-icon>
+                        Broadcast History
+                    </h5>
+                    <button class="btn btn-outline-secondary btn-sm" (click)="loadLogs()">
+                        <iconify-icon icon="material-symbols:refresh" class="me-1"></iconify-icon>Refresh
+                    </button>
+                </div>
+
+                <!-- Loading Skeleton -->
+                <div *ngIf="loadingLogs" class="p-20">
+                    <div *ngFor="let i of [1,2,3]" class="broadcast-log-skeleton mb-16">
+                        <div class="skeleton-line"
+                            style="width:60%; height:14px; border-radius:6px; margin-bottom:8px;"></div>
+                        <div class="skeleton-line"
+                            style="width:90%; height:10px; border-radius:6px; margin-bottom:4px;"></div>
+                        <div class="skeleton-line" style="width:40%; height:10px; border-radius:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- Log List -->
+                <div class="broadcast-log-scroll" *ngIf="!loadingLogs">
+                    <div *ngIf="logs.length === 0" class="broadcast-empty">
+                        <iconify-icon icon="solar:notification-lines-bold-duotone"
+                            style="font-size:52px; opacity:0.2;"></iconify-icon>
+                        <p>No broadcasts sent yet</p>
+                    </div>
+
+                    <div *ngFor="let log of logs" class="broadcast-log-item">
+                        <div class="log-type-badge"
+                            [class]="'badge-' + (log.notificationType?.toLowerCase() || 'broadcast')">
+                            <iconify-icon icon="solar:notification-lines-bold-duotone"></iconify-icon>
+                        </div>
+                        <div class="log-body">
+                            <div class="log-header">
+                                <span class="log-title">{{ log.title }}</span>
+                                <span class="log-time">{{ log.createdAt | date:'MMM d, h:mm a' }}</span>
+                            </div>
+                            <p class="log-message">{{ log.message }}</p>
+                            <div class="log-meta">
+                                <span class="log-type-tag">{{ log.notificationType || 'Broadcast' }}</span>
+                                <span *ngIf="log.isRead" class="log-read-tag">Read</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

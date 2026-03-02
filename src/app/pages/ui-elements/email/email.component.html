@@ -1,315 +1,246 @@
 <div class="dashboard-main-body">
-  <app-breadcrumb [title]="'Components / Email'" [main-title]="'Email'"></app-breadcrumb>
+  <app-breadcrumb [title]="'Communications / Inbox'" [main-title]="'Messaging'"></app-breadcrumb>
 
-  <div class="row gy-4">
-    <div class="col-xxl-3">
-      <div class="card h-100 p-0">
-        <div class="card-body p-24">
-          <button type="button"
-            class="btn btn-primary text-sm btn-sm px-12 py-12 w-100 radius-8 d-flex align-items-center gap-2 mb-16"
-            data-bs-toggle="modal" data-bs-target="#exampleModal">
-            <iconify-icon icon="fa6-regular:square-plus" class="icon text-lg line-height-1"></iconify-icon>
-            Compose
+  <div class="messaging-layout">
+
+    <!-- ===== Left Sidebar ===== -->
+    <div class="msg-sidebar">
+      <button class="compose-btn" data-bs-toggle="modal" data-bs-target="#composeModal">
+        <iconify-icon icon="fa6-solid:pen-to-square"></iconify-icon>
+        Compose
+      </button>
+
+      <div class="folder-label">Folders</div>
+      <nav class="folder-nav">
+        <div class="folder-item" [class.active]="activeFolder === 'inbox'" (click)="switchFolder('inbox')">
+          <span class="d-flex align-items-center gap-2">
+            <span class="folder-icon"><iconify-icon icon="uil:envelope"></iconify-icon></span>
+            Inbox
+          </span>
+          <span *ngIf="getUnreadCount() > 0" class="badge-count">{{ getUnreadCount() }}</span>
+        </div>
+
+        <div class="folder-item" [class.active]="activeFolder === 'sent'" (click)="switchFolder('sent')">
+          <span class="d-flex align-items-center gap-2">
+            <span class="folder-icon"><iconify-icon icon="ion:paper-plane-outline"></iconify-icon></span>
+            Sent
+          </span>
+        </div>
+
+        <div class="folder-item" [class.active]="activeFolder === 'starred'" (click)="switchFolder('starred')">
+          <span class="d-flex align-items-center gap-2">
+            <span class="folder-icon"><iconify-icon icon="ph:star-bold"></iconify-icon></span>
+            Starred
+          </span>
+        </div>
+
+        <div class="folder-item" [class.active]="activeFolder === 'bin'" (click)="switchFolder('bin')">
+          <span class="d-flex align-items-center gap-2">
+            <span class="folder-icon"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></span>
+            Trash
+          </span>
+        </div>
+      </nav>
+
+      <div class="divider"></div>
+
+      <div class="folder-label">Labels</div>
+      <nav class="folder-nav">
+        <div class="folder-item">
+          <span class="d-flex align-items-center gap-2">
+            <span class="w-8-px h-8-px rounded-circle"
+              style="background:#6366f1; display:inline-block; min-width:8px;"></span>
+            Internal
+          </span>
+        </div>
+        <div class="folder-item">
+          <span class="d-flex align-items-center gap-2">
+            <span class="w-8-px h-8-px rounded-circle"
+              style="background:#10b981; display:inline-block; min-width:8px;"></span>
+            Announcements
+          </span>
+        </div>
+        <div class="folder-item">
+          <span class="d-flex align-items-center gap-2">
+            <span class="w-8-px h-8-px rounded-circle"
+              style="background:#f59e0b; display:inline-block; min-width:8px;"></span>
+            Important
+          </span>
+        </div>
+      </nav>
+
+    </div>
+
+    <!-- ===== Message List Panel ===== -->
+    <div class="msg-list-panel">
+      <div class="msg-list-header">
+        <h5 class="text-capitalize">{{ activeFolder }}</h5>
+        <div class="d-flex gap-2">
+          <button class="detail-action-btn" title="Refresh" (click)="loadMessages()">
+            <iconify-icon icon="material-symbols:refresh"></iconify-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="msg-search-bar">
+        <div class="search-input">
+          <iconify-icon icon="ion:search-outline" style="color:#aaa; font-size:16px;"></iconify-icon>
+          <input type="text" placeholder="Search messages..." [(ngModel)]="searchQuery" (input)="filterMessages()">
+        </div>
+      </div>
+
+      <!-- Loading Skeletons -->
+      <div class="msg-list-scroll" *ngIf="loading">
+        <div class="skeleton-item" *ngFor="let i of [1,2,3,4,5]">
+          <div class="skeleton-avatar"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line shorter"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line short"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message List -->
+      <div class="msg-list-scroll" *ngIf="!loading">
+        <div *ngIf="filteredMessages.length === 0" class="msg-empty"
+          style="padding: 40px 20px; flex-direction: column;">
+          <iconify-icon icon="uil:envelope" style="font-size: 48px; color: #d1d5db;"></iconify-icon>
+          <p class="text-secondary-light text-sm mt-12">No messages in {{ activeFolder }}</p>
+        </div>
+
+        <div *ngFor="let msg of filteredMessages" class="msg-item" [class.active]="selectedMessage?.id === msg.id"
+          [class.unread]="!msg.isRead && activeFolder === 'inbox'" (click)="selectMessage(msg)">
+
+          <div class="avatar">
+            {{ getInitial(msg.senderId) }}
+          </div>
+
+          <div class="msg-item-body">
+            <div class="msg-item-top">
+              <span class="msg-item-name">
+                {{ activeFolder === 'sent' ? ('To: ' + (msg.receiverId | slice:0:12)) : msg.senderId }}
+              </span>
+              <span class="msg-item-time">{{ msg.createdAt | date:'MMM d' }}</span>
+            </div>
+            <div class="msg-item-subject">{{ msg.subject }}</div>
+            <div class="msg-item-preview">{{ msg.content | slice:0:55 }}...</div>
+          </div>
+
+          <button class="star-btn" [class.starred]="msg.isStarred" (click)="toggleStar(msg, $event)" title="Star">
+            <iconify-icon [icon]="msg.isStarred ? 'ph:star-fill' : 'ph:star'"></iconify-icon>
           </button>
 
-          <div class="mt-16">
-            <ul>
-              <li class="mb-4" [class.item-active]="activeFolder === 'inbox'">
-                <a (click)="switchFolder('inbox')"
-                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light cursor-pointer">
-                  <span class="d-flex align-items-center gap-10 justify-content-between w-100">
-                    <span class="d-flex align-items-center gap-10">
-                      <span class="icon text-xxl line-height-1 d-flex"><iconify-icon icon="uil:envelope"
-                          class="icon line-height-1"></iconify-icon></span>
-                      <span class="fw-semibold">Inbox</span>
-                    </span>
-                  </span>
-                </a>
-              </li>
-              <li class="mb-4" [class.item-active]="activeFolder === 'starred'">
-                <a (click)="switchFolder('starred')"
-                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light cursor-pointer">
-                  <span class="d-flex align-items-center gap-10 justify-content-between w-100">
-                    <span class="d-flex align-items-center gap-10">
-                      <span class="icon text-xxl line-height-1 d-flex"><iconify-icon icon="ph:star-bold"
-                          class="icon line-height-1"></iconify-icon></span>
-                      <span class="fw-semibold">Starred</span>
-                    </span>
-                  </span>
-                </a>
-              </li>
-              <li class="mb-4" [class.item-active]="activeFolder === 'sent'">
-                <a (click)="switchFolder('sent')"
-                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light cursor-pointer">
-                  <span class="d-flex align-items-center gap-10 justify-content-between w-100">
-                    <span class="d-flex align-items-center gap-10">
-                      <span class="icon text-xxl line-height-1 d-flex"><iconify-icon icon="ion:paper-plane-outline"
-                          class="icon line-height-1"></iconify-icon></span>
-                      <span class="fw-semibold">Sent</span>
-                    </span>
-                  </span>
-                </a>
-              </li>
-              <li class="mb-4" [class.item-active]="activeFolder === 'bin'">
-                <a (click)="switchFolder('bin')"
-                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light cursor-pointer">
-                  <span class="d-flex align-items-center gap-10 justify-content-between w-100">
-                    <span class="d-flex align-items-center gap-10">
-                      <span class="icon text-xxl line-height-1 d-flex"><iconify-icon
-                          icon="material-symbols:delete-outline" class="icon line-height-1"></iconify-icon></span>
-                      <span class="fw-semibold">Bin</span>
-                    </span>
-                  </span>
-                </a>
-              </li>
-            </ul>
-            <div class="mt-24">
-              <h6 class="text-lg fw-semibold text-primary-light mb-16">TAGS</h6>
-              <ul>
-                <li class="mb-20">
-                  <span class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10">
-                    <span class="w-8-px h-8-px bg-primary-600 rounded-circle"></span>
-                    Personal
-                  </span>
-                </li>
-                <li class="mb-20">
-                  <span class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10">
-                    <span class="w-8-px h-8-px bg-lilac-600 rounded-circle"></span>
-                    Social
-                  </span>
-                </li>
-                <li class="mb-20">
-                  <span class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10">
-                    <span class="w-8-px h-8-px bg-success-600 rounded-circle"></span>
-                    Promotions
-                  </span>
-                </li>
-                <li class="mb-20">
-                  <span class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10">
-                    <span class="w-8-px h-8-px bg-warning-600 rounded-circle"></span>
-                    Business
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
+          <span *ngIf="!msg.isRead && activeFolder === 'inbox'" class="unread-dot"></span>
         </div>
       </div>
     </div>
-    <div class="col-xxl-9">
-      <div class="card h-100 p-0 email-card">
-        <div class="card-header border-bottom bg-base py-16 px-24">
-          <div class="d-flex flex-wrap align-items-center justify-content-between gap-4">
-            <div class="d-flex align-items-center gap-3">
-              <div class="form-check style-check d-flex align-items-center">
-                <input class="form-check-input radius-4 border input-form-dark" type="checkbox" name="checkbox"
-                  id="selectAll" />
-                <div class="dropdown line-height-1">
-                  <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="line-height-1 d-flex">
-                    <iconify-icon icon="typcn:arrow-sorted-down" class="icon line-height-1"></iconify-icon>
-                  </button>
-                  <ul class="dropdown-menu p-12 border bg-base shadow">
-                    <li>
-                      <button type="button"
-                        class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal" data-bs-target="#exampleModalView">
-                        All
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button"
-                        class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal" data-bs-target="#exampleModalEdit">
-                        None
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button"
-                        class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal" data-bs-target="#exampleModalEdit">
-                        Read
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button"
-                        class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal" data-bs-target="#exampleModalEdit">
-                        Unread
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button"
-                        class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal" data-bs-target="#exampleModalEdit">
-                        Starred
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button"
-                        class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal" data-bs-target="#exampleModalEdit">
-                        Unstarred
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <button type="button" class="delete-button d-none text-secondary-light text-xl d-flex">
-                <iconify-icon icon="material-symbols:delete-outline" class="icon line-height-1"></iconify-icon>
-              </button>
-              <button type="button" class="reload-button text-secondary-light text-xl d-flex">
-                <iconify-icon icon="tabler:reload" class="icon"></iconify-icon>
-              </button>
-              <div class="dropdown">
-                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex">
-                  <iconify-icon icon="entypo:dots-three-vertical" class="icon text-secondary-light"></iconify-icon>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-lg p-12 border bg-base shadow">
-                  <li>
-                    <button type="button"
-                      class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900 d-flex align-items-center gap-10"
-                      data-bs-toggle="modal" data-bs-target="#exampleModalView">
-                      <iconify-icon icon="gravity-ui:envelope-open" class="icon text-lg line-height-1"></iconify-icon>
-                      Mark all as read
-                    </button>
-                  </li>
-                  <li>
-                    <p class="ms-40 mt-8 text-secondary-light mb-0">
-                      Select messages to see more actions
-                    </p>
-                  </li>
-                </ul>
-              </div>
-              <form class="navbar-search d-lg-block d-none">
-                <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search" />
-                <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
-              </form>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-              <span class="text-secondary-light line-height-1">1-12 of 1,253</span>
-              <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                  <li class="page-item">
-                    <a class="page-link d-flex bg-base border text-secondary-light text-xl"
-                      href="javascript:void(0)"><iconify-icon icon="iconamoon:arrow-left-2" class="icon"></iconify-icon>
-                    </a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link d-flex bg-base border text-secondary-light text-xl"
-                      href="javascript:void(0)"><iconify-icon icon="iconamoon:arrow-right-2"
-                        class="icon"></iconify-icon>
-                    </a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-          </div>
-        </div>
-        <div class="card-body p-0">
-          <ul class="overflow-x-auto" *ngIf="!selectedMessage">
-            <div *ngIf="messages.length === 0" class="p-24 text-center text-secondary-light">
-              No messages found.
-            </div>
 
-            <li *ngFor="let msg of messages" (click)="selectMessage(msg)"
-              class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-              [class.bg-neutral-50]="msg.isRead">
-              <div class="form-check style-check d-flex align-items-center" (click)="$event.stopPropagation()">
-                <input class="form-check-input radius-4 border border-neutral-400" type="checkbox" name="checkbox" />
-              </div>
-              <button type="button" (click)="toggleStar(msg, $event)"
-                class="starred-button icon text-xl line-height-1 d-flex" [class.active]="msg.isStarred">
-                <iconify-icon *ngIf="!msg.isStarred" icon="ph:star"
-                  class="icon-outline line-height-1 text-secondary-light"></iconify-icon>
-                <iconify-icon *ngIf="msg.isStarred" icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"></iconify-icon>
-              </button>
-              <span class="text-primary-light fw-medium text-md text-line-1 w-190-px">{{ msg.senderId ===
-                authService.userValue?.id ? 'To: ' + msg.receiverId : msg.senderId }}</span>
-              <span class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px">{{ msg.subject }} - <span
-                  class="text-secondary-light">{{ msg.content | slice:0:100 }}...</span></span>
-              <span class="text-primary-light fw-medium min-w-max-content ms-auto">{{ msg.createdAt | date:'shortTime'
-                }}</span>
+    <!-- ===== Detail Panel ===== -->
+    <div class="msg-detail-panel">
 
-              <button (click)="deleteMessage(msg.id, $event)" class="btn btn-sm text-danger ms-3">
-                <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
-              </button>
-            </li>
-          </ul>
-
-          <!-- Message Details -->
-          <div *ngIf="selectedMessage" class="p-24">
-            <div class="d-flex align-items-center justify-content-between mb-24">
-              <button (click)="selectedMessage = null"
-                class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
-                <iconify-icon icon="iconamoon:arrow-left-2"></iconify-icon> Back
-              </button>
-              <div class="d-flex gap-2">
-                <button (click)="toggleStar(selectedMessage, $event)" class="btn btn-sm">
-                  <iconify-icon [icon]="selectedMessage.isStarred ? 'ph:star-fill' : 'ph:star'"
-                    [class.text-warning-600]="selectedMessage.isStarred"></iconify-icon>
-                </button>
-                <button (click)="deleteMessage(selectedMessage.id, $event)" class="btn btn-sm text-danger">
-                  <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
-                </button>
-              </div>
-            </div>
-
-            <div class="card p-24 border shadow-none">
-              <div class="d-flex align-items-center gap-3 mb-16">
-                <img src="assets/images/user.png" class="w-48-px h-48-px rounded-circle" alt="">
-                <div>
-                  <h6 class="mb-0">{{ selectedMessage.senderId }}</h6>
-                  <span class="text-xs text-secondary-light">To: {{ selectedMessage.receiverId }}</span>
-                </div>
-                <span class="ms-auto text-sm text-secondary-light">{{ selectedMessage.createdAt | date:'medium'
-                  }}</span>
-              </div>
-              <h5 class="mb-16">{{ selectedMessage.subject }}</h5>
-              <div class="message-content text-secondary-light line-height-2">
-                {{ selectedMessage.content }}
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- Empty state -->
+      <div *ngIf="!selectedMessage" class="msg-empty">
+        <iconify-icon icon="uil:envelope-open"></iconify-icon>
+        <p>Select a message to read</p>
       </div>
+
+      <!-- Message Detail -->
+      <ng-container *ngIf="selectedMessage">
+        <!-- Header -->
+        <div class="msg-detail-header">
+          <button class="detail-action-btn" (click)="selectedMessage = null" title="Back">
+            <iconify-icon icon="iconamoon:arrow-left-2"></iconify-icon>
+          </button>
+          <h5 class="msg-detail-subject flex-1 mx-3 mb-0">{{ selectedMessage.subject }}</h5>
+          <div class="msg-detail-actions">
+            <button class="detail-action-btn" [class.starred]="selectedMessage.isStarred"
+              (click)="toggleStar(selectedMessage, $event)" title="Star">
+              <iconify-icon [icon]="selectedMessage.isStarred ? 'ph:star-fill' : 'ph:star'"></iconify-icon>
+            </button>
+            <button class="detail-action-btn" title="Reply" (click)="replyTo(selectedMessage)">
+              <iconify-icon icon="uil:reply"></iconify-icon>
+            </button>
+            <button class="detail-action-btn danger" (click)="deleteMessage(selectedMessage.id, $event)" title="Delete">
+              <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="msg-detail-meta">
+          <div class="meta-avatar">{{ getInitial(selectedMessage.senderId) }}</div>
+          <div class="meta-info">
+            <div class="meta-name">{{ selectedMessage.senderId }}</div>
+            <div class="meta-to">To: {{ selectedMessage.receiverId }}</div>
+          </div>
+          <div class="meta-time">{{ selectedMessage.createdAt | date:'medium' }}</div>
+        </div>
+
+        <!-- Body -->
+        <div class="msg-detail-body">
+          {{ selectedMessage.content }}
+        </div>
+
+        <!-- Quick Reply -->
+        <div class="p-16 border-top" *ngIf="showReplyBox">
+          <div class="mb-10 d-flex align-items-center justify-content-between">
+            <span class="fw-semibold text-sm text-primary-light">Quick Reply</span>
+            <button class="detail-action-btn" (click)="showReplyBox = false"><iconify-icon
+                icon="radix-icons:cross-2"></iconify-icon></button>
+          </div>
+          <textarea class="form-control mb-10" rows="3" placeholder="Type your reply..."
+            [(ngModel)]="replyContent"></textarea>
+          <button class="btn btn-primary btn-sm" (click)="sendReply(selectedMessage)">
+            <iconify-icon icon="ion:paper-plane-outline" class="me-1"></iconify-icon> Send Reply
+          </button>
+        </div>
+      </ng-container>
+
     </div>
   </div>
 </div>
 
-<!-- Compose Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+<!-- ===== Compose Modal ===== -->
+<div class="modal fade compose-modal" id="composeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header border-bottom">
-        <h5 class="modal-title" id="exampleModalLabel">New Message</h5>
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <iconify-icon icon="fa6-solid:pen-to-square" class="me-2"></iconify-icon>
+          New Message
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form (ngSubmit)="onSubmitCompose()" #composeForm="ngForm">
         <div class="modal-body">
           <div class="mb-16">
-            <label class="form-label fw-semibold text-primary-light">Recipient</label>
+            <label class="form-label">To (Recipient)</label>
             <select class="form-select" name="receiverId" [(ngModel)]="newMessage.receiverId" required>
-              <option value="">Select Recipient</option>
-              <option *ngFor="let staff of allStaff" [value]="staff.staffId">{{ staff.staffName }} ({{ staff.email ||
-                'No email' }})</option>
+              <option value="">— Select Recipient —</option>
+              <option *ngFor="let staff of allStaff" [value]="staff.staffId">
+                {{ staff.staffName }} — {{ staff.email || 'No email' }}
+              </option>
             </select>
           </div>
           <div class="mb-16">
-            <label class="form-label fw-semibold text-primary-light">Subject</label>
+            <label class="form-label">Subject</label>
             <input type="text" class="form-control" name="subject" [(ngModel)]="newMessage.subject"
-              placeholder="Enter subject" required>
+              placeholder="Enter message subject" required>
           </div>
-          <div class="mb-16">
-            <label class="form-label fw-semibold text-primary-light">Message</label>
-            <textarea class="form-control" name="content" [(ngModel)]="newMessage.content" rows="10"
-              placeholder="Type your message here..." required></textarea>
+          <div class="mb-8">
+            <label class="form-label">Message</label>
+            <textarea class="form-control" name="content" [(ngModel)]="newMessage.content" rows="8"
+              placeholder="Write your message here..." required></textarea>
           </div>
         </div>
-        <div class="modal-footer border-top">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" [disabled]="!composeForm.form.valid"
-            data-bs-dismiss="modal">Send Message</button>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" [disabled]="!composeForm.form.valid"
+            data-bs-dismiss="modal">
+            <iconify-icon icon="ion:paper-plane-outline" class="me-1"></iconify-icon>
+            Send Message
+          </button>
         </div>
       </form>
     </div>

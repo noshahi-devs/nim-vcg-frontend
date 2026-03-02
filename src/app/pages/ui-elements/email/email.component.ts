@@ -21,8 +21,12 @@ export class EmailComponent implements OnInit {
   title = 'Messages';
   activeFolder: 'inbox' | 'sent' | 'starred' | 'bin' = 'inbox';
   messages: UserMessage[] = [];
+  filteredMessages: UserMessage[] = [];
   selectedMessage: UserMessage | null = null;
   loading = false;
+  searchQuery = '';
+  showReplyBox = false;
+  replyContent = '';
 
   // Compose
   allStaff: Staff[] = [];
@@ -48,7 +52,7 @@ export class EmailComponent implements OnInit {
     let obs$;
     if (this.activeFolder === 'inbox') obs$ = this.messageService.getInbox();
     else if (this.activeFolder === 'sent') obs$ = this.messageService.getSent();
-    else if (this.activeFolder === 'starred') obs$ = this.messageService.getInbox(); // Filter local for now or add endpoint
+    else if (this.activeFolder === 'starred') obs$ = this.messageService.getInbox();
     else obs$ = this.messageService.getInbox();
 
     obs$.subscribe({
@@ -58,6 +62,7 @@ export class EmailComponent implements OnInit {
         } else {
           this.messages = data;
         }
+        this.filteredMessages = [...this.messages];
         this.loading = false;
       },
       error: () => this.loading = false
@@ -71,11 +76,24 @@ export class EmailComponent implements OnInit {
   switchFolder(folder: any) {
     this.activeFolder = folder;
     this.selectedMessage = null;
+    this.showReplyBox = false;
+    this.searchQuery = '';
     this.loadMessages();
+  }
+
+  filterMessages() {
+    const q = this.searchQuery.toLowerCase();
+    this.filteredMessages = this.messages.filter(m =>
+      m.subject?.toLowerCase().includes(q) ||
+      m.senderId?.toLowerCase().includes(q) ||
+      m.content?.toLowerCase().includes(q)
+    );
   }
 
   selectMessage(msg: UserMessage) {
     this.selectedMessage = msg;
+    this.showReplyBox = false;
+    this.replyContent = '';
     if (!msg.isRead && msg.receiverId === this.authService.userValue?.id) {
       this.messageService.markAsRead(msg.id).subscribe(() => {
         msg.isRead = true;
@@ -94,17 +112,44 @@ export class EmailComponent implements OnInit {
     event.stopPropagation();
     this.messageService.deleteMessage(id).subscribe(() => {
       this.messages = this.messages.filter(m => m.id !== id);
+      this.filteredMessages = this.filteredMessages.filter(m => m.id !== id);
       if (this.selectedMessage?.id === id) this.selectedMessage = null;
     });
   }
 
   onSubmitCompose() {
     if (!this.newMessage.receiverId || !this.newMessage.subject || !this.newMessage.content) return;
-
     this.messageService.sendMessage(this.newMessage).subscribe(() => {
       this.newMessage = { receiverId: '', subject: '', content: '' };
-      // Close modal logic usually via ViewChild or simply reloading
       this.loadMessages();
     });
+  }
+
+  replyTo(msg: UserMessage) {
+    this.showReplyBox = true;
+    this.replyContent = '';
+    setTimeout(() => document.querySelector('textarea')?.focus(), 100);
+  }
+
+  sendReply(msg: UserMessage) {
+    if (!this.replyContent.trim()) return;
+    const reply: Partial<UserMessage> = {
+      receiverId: msg.senderId,
+      subject: 'Re: ' + msg.subject,
+      content: this.replyContent
+    };
+    this.messageService.sendMessage(reply).subscribe(() => {
+      this.replyContent = '';
+      this.showReplyBox = false;
+    });
+  }
+
+  getUnreadCount(): number {
+    return this.messages.filter(m => !m.isRead).length;
+  }
+
+  getInitial(userId: string): string {
+    if (!userId) return '?';
+    return userId.charAt(0).toUpperCase();
   }
 }
