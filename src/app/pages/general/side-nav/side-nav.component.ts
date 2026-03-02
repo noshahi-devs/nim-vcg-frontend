@@ -180,6 +180,10 @@ import { ThemeService } from '../../../services/theme.service';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { AppConfigService } from '../../../services/app-config.service';
 import { StaffService } from '../../../services/staff.service';
+import { NotificationService } from '../../../services/notification.service';
+import { MessageService } from '../../../services/message.service';
+import { Notification } from '../../../Models/notification';
+import { UserMessage } from '../../../Models/user-message';
 import $ from 'jquery';
 import { CommonModule, NgIf } from "@angular/common";
 
@@ -197,6 +201,10 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   currentThemeSetting: string = 'light';
   roles: string[] = [];
   config: any;
+  notifications: Notification[] = [];
+  messages: UserMessage[] = [];
+  unreadNotificationCount = 0;
+  unreadMessageCount = 0;
 
   get currentUser() {
     return this.authService.userValue;
@@ -214,7 +222,9 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     private themeService: ThemeService,
     private authService: AuthService,
     private appConfig: AppConfigService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private notificationService: NotificationService,
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -259,6 +269,42 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
       if (event instanceof NavigationEnd) {
         this.handleSidebarActiveClass(event);
       }
+    });
+
+    // ✅ Load Notifications & Messages
+    this.loadNotifications();
+    this.loadMessages();
+  }
+
+  loadNotifications() {
+    this.notificationService.getNotifications().subscribe({
+      next: (data) => {
+        this.notifications = data;
+        this.unreadNotificationCount = data.filter(n => !n.isRead).length;
+      },
+      error: (err) => console.error('Error loading notifications', err)
+    });
+  }
+
+  loadMessages() {
+    this.messageService.getInbox().subscribe({
+      next: (data) => {
+        this.messages = data;
+        this.unreadMessageCount = data.filter(m => !m.isRead).length;
+      },
+      error: (err) => console.error('Error loading messages', err)
+    });
+  }
+
+  markNotificationAsRead(id: number) {
+    this.notificationService.markAsRead(id).subscribe(() => {
+      this.loadNotifications();
+    });
+  }
+
+  markMessageAsRead(id: number) {
+    this.messageService.markAsRead(id).subscribe(() => {
+      this.loadMessages();
     });
   }
   hasRole(role: string): boolean {

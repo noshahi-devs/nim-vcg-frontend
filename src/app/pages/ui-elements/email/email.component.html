@@ -1,151 +1,64 @@
 <div class="dashboard-main-body">
-  <app-breadcrumb
-    [title]="'Components / Email'"
-    [main-title]="'Email'"
-  ></app-breadcrumb>
+  <app-breadcrumb [title]="'Components / Email'" [main-title]="'Email'"></app-breadcrumb>
 
   <div class="row gy-4">
     <div class="col-xxl-3">
       <div class="card h-100 p-0">
         <div class="card-body p-24">
-          <button
-            type="button"
+          <button type="button"
             class="btn btn-primary text-sm btn-sm px-12 py-12 w-100 radius-8 d-flex align-items-center gap-2 mb-16"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
-          >
-            <iconify-icon
-              icon="fa6-regular:square-plus"
-              class="icon text-lg line-height-1"
-            ></iconify-icon>
+            data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <iconify-icon icon="fa6-regular:square-plus" class="icon text-lg line-height-1"></iconify-icon>
             Compose
           </button>
 
           <div class="mt-16">
             <ul>
-              <li class="item-active mb-4">
-                <a
-                  routerLink="/email"
-                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light"
-                >
-                  <span
-                    class="d-flex align-items-center gap-10 justify-content-between w-100"
-                  >
+              <li class="mb-4" [class.item-active]="activeFolder === 'inbox'">
+                <a (click)="switchFolder('inbox')"
+                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light cursor-pointer">
+                  <span class="d-flex align-items-center gap-10 justify-content-between w-100">
                     <span class="d-flex align-items-center gap-10">
-                      <span class="icon text-xxl line-height-1 d-flex"
-                        ><iconify-icon
-                          icon="uil:envelope"
-                          class="icon line-height-1"
-                        ></iconify-icon
-                      ></span>
+                      <span class="icon text-xxl line-height-1 d-flex"><iconify-icon icon="uil:envelope"
+                          class="icon line-height-1"></iconify-icon></span>
                       <span class="fw-semibold">Inbox</span>
                     </span>
-                    <span class="fw-medium">800</span>
                   </span>
                 </a>
               </li>
-              <li class="mb-4">
-                <a
-                  routerLink="/starred"
-                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light"
-                >
-                  <span
-                    class="d-flex align-items-center gap-10 justify-content-between w-100"
-                  >
+              <li class="mb-4" [class.item-active]="activeFolder === 'starred'">
+                <a (click)="switchFolder('starred')"
+                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light cursor-pointer">
+                  <span class="d-flex align-items-center gap-10 justify-content-between w-100">
                     <span class="d-flex align-items-center gap-10">
-                      <span class="icon text-xxl line-height-1 d-flex"
-                        ><iconify-icon
-                          icon="ph:star-bold"
-                          class="icon line-height-1"
-                        ></iconify-icon
-                      ></span>
+                      <span class="icon text-xxl line-height-1 d-flex"><iconify-icon icon="ph:star-bold"
+                          class="icon line-height-1"></iconify-icon></span>
                       <span class="fw-semibold">Starred</span>
                     </span>
-                    <span class="fw-medium">250</span>
                   </span>
                 </a>
               </li>
-              <li class="mb-4">
-                <a
-                  routerLink="/email"
-                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light"
-                >
-                  <span
-                    class="d-flex align-items-center gap-10 justify-content-between w-100"
-                  >
+              <li class="mb-4" [class.item-active]="activeFolder === 'sent'">
+                <a (click)="switchFolder('sent')"
+                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light cursor-pointer">
+                  <span class="d-flex align-items-center gap-10 justify-content-between w-100">
                     <span class="d-flex align-items-center gap-10">
-                      <span class="icon text-xxl line-height-1 d-flex"
-                        ><iconify-icon
-                          icon="ion:paper-plane-outline"
-                          class="icon line-height-1"
-                        ></iconify-icon
-                      ></span>
+                      <span class="icon text-xxl line-height-1 d-flex"><iconify-icon icon="ion:paper-plane-outline"
+                          class="icon line-height-1"></iconify-icon></span>
                       <span class="fw-semibold">Sent</span>
                     </span>
-                    <span class="fw-medium">80</span>
                   </span>
                 </a>
               </li>
-              <li class="mb-4">
-                <a
-                  routerLink="/email"
-                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light"
-                >
-                  <span
-                    class="d-flex align-items-center gap-10 justify-content-between w-100"
-                  >
+              <li class="mb-4" [class.item-active]="activeFolder === 'bin'">
+                <a (click)="switchFolder('bin')"
+                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light cursor-pointer">
+                  <span class="d-flex align-items-center gap-10 justify-content-between w-100">
                     <span class="d-flex align-items-center gap-10">
-                      <span class="icon text-xxl line-height-1 d-flex"
-                        ><iconify-icon
-                          icon="lucide:pencil"
-                          class="icon line-height-1"
-                        ></iconify-icon
-                      ></span>
-                      <span class="fw-semibold">Draft</span>
-                    </span>
-                    <span class="fw-medium">50</span>
-                  </span>
-                </a>
-              </li>
-              <li class="mb-4">
-                <a
-                  routerLink="/email"
-                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light"
-                >
-                  <span
-                    class="d-flex align-items-center gap-10 justify-content-between w-100"
-                  >
-                    <span class="d-flex align-items-center gap-10">
-                      <span class="icon text-xxl line-height-1 d-flex"
-                        ><iconify-icon
-                          icon="ph:warning-bold"
-                          class="icon line-height-1"
-                        ></iconify-icon
-                      ></span>
-                      <span class="fw-semibold">Spam</span>
-                    </span>
-                    <span class="fw-medium">30</span>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a
-                  routerLink="/email"
-                  class="bg-hover-primary-50 px-12 py-8 w-100 radius-8 text-secondary-light"
-                >
-                  <span
-                    class="d-flex align-items-center gap-10 justify-content-between w-100"
-                  >
-                    <span class="d-flex align-items-center gap-10">
-                      <span class="icon text-xxl line-height-1 d-flex"
-                        ><iconify-icon
-                          icon="material-symbols:delete-outline"
-                          class="icon line-height-1"
-                        ></iconify-icon
-                      ></span>
+                      <span class="icon text-xxl line-height-1 d-flex"><iconify-icon
+                          icon="material-symbols:delete-outline" class="icon line-height-1"></iconify-icon></span>
                       <span class="fw-semibold">Bin</span>
                     </span>
-                    <span class="fw-medium">20</span>
                   </span>
                 </a>
               </li>
@@ -154,42 +67,26 @@
               <h6 class="text-lg fw-semibold text-primary-light mb-16">TAGS</h6>
               <ul>
                 <li class="mb-20">
-                  <span
-                    class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10"
-                  >
-                    <span
-                      class="w-8-px h-8-px bg-primary-600 rounded-circle"
-                    ></span>
+                  <span class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10">
+                    <span class="w-8-px h-8-px bg-primary-600 rounded-circle"></span>
                     Personal
                   </span>
                 </li>
                 <li class="mb-20">
-                  <span
-                    class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10"
-                  >
-                    <span
-                      class="w-8-px h-8-px bg-lilac-600 rounded-circle"
-                    ></span>
+                  <span class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10">
+                    <span class="w-8-px h-8-px bg-lilac-600 rounded-circle"></span>
                     Social
                   </span>
                 </li>
                 <li class="mb-20">
-                  <span
-                    class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10"
-                  >
-                    <span
-                      class="w-8-px h-8-px bg-success-600 rounded-circle"
-                    ></span>
+                  <span class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10">
+                    <span class="w-8-px h-8-px bg-success-600 rounded-circle"></span>
                     Promotions
                   </span>
                 </li>
                 <li class="mb-20">
-                  <span
-                    class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10"
-                  >
-                    <span
-                      class="w-8-px h-8-px bg-warning-600 rounded-circle"
-                    ></span>
+                  <span class="line-height-1 fw-medium text-secondary-light text-sm d-flex align-items-center gap-10">
+                    <span class="w-8-px h-8-px bg-warning-600 rounded-circle"></span>
                     Business
                   </span>
                 </li>
@@ -202,134 +99,77 @@
     <div class="col-xxl-9">
       <div class="card h-100 p-0 email-card">
         <div class="card-header border-bottom bg-base py-16 px-24">
-          <div
-            class="d-flex flex-wrap align-items-center justify-content-between gap-4"
-          >
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-4">
             <div class="d-flex align-items-center gap-3">
               <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border input-form-dark"
-                  type="checkbox"
-                  name="checkbox"
-                  id="selectAll"
-                />
+                <input class="form-check-input radius-4 border input-form-dark" type="checkbox" name="checkbox"
+                  id="selectAll" />
                 <div class="dropdown line-height-1">
-                  <button
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    class="line-height-1 d-flex"
-                  >
-                    <iconify-icon
-                      icon="typcn:arrow-sorted-down"
-                      class="icon line-height-1"
-                    ></iconify-icon>
+                  <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="line-height-1 d-flex">
+                    <iconify-icon icon="typcn:arrow-sorted-down" class="icon line-height-1"></iconify-icon>
                   </button>
                   <ul class="dropdown-menu p-12 border bg-base shadow">
                     <li>
-                      <button
-                        type="button"
+                      <button type="button"
                         class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal"
-                        data-bs-target="#exampleModalView"
-                      >
+                        data-bs-toggle="modal" data-bs-target="#exampleModalView">
                         All
                       </button>
                     </li>
                     <li>
-                      <button
-                        type="button"
+                      <button type="button"
                         class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal"
-                        data-bs-target="#exampleModalEdit"
-                      >
+                        data-bs-toggle="modal" data-bs-target="#exampleModalEdit">
                         None
                       </button>
                     </li>
                     <li>
-                      <button
-                        type="button"
+                      <button type="button"
                         class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal"
-                        data-bs-target="#exampleModalEdit"
-                      >
+                        data-bs-toggle="modal" data-bs-target="#exampleModalEdit">
                         Read
                       </button>
                     </li>
                     <li>
-                      <button
-                        type="button"
+                      <button type="button"
                         class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal"
-                        data-bs-target="#exampleModalEdit"
-                      >
+                        data-bs-toggle="modal" data-bs-target="#exampleModalEdit">
                         Unread
                       </button>
                     </li>
                     <li>
-                      <button
-                        type="button"
+                      <button type="button"
                         class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal"
-                        data-bs-target="#exampleModalEdit"
-                      >
+                        data-bs-toggle="modal" data-bs-target="#exampleModalEdit">
                         Starred
                       </button>
                     </li>
                     <li>
-                      <button
-                        type="button"
+                      <button type="button"
                         class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900"
-                        data-bs-toggle="modal"
-                        data-bs-target="#exampleModalEdit"
-                      >
+                        data-bs-toggle="modal" data-bs-target="#exampleModalEdit">
                         Unstarred
                       </button>
                     </li>
                   </ul>
                 </div>
               </div>
-              <button
-                type="button"
-                class="delete-button d-none text-secondary-light text-xl d-flex"
-              >
-                <iconify-icon
-                  icon="material-symbols:delete-outline"
-                  class="icon line-height-1"
-                ></iconify-icon>
+              <button type="button" class="delete-button d-none text-secondary-light text-xl d-flex">
+                <iconify-icon icon="material-symbols:delete-outline" class="icon line-height-1"></iconify-icon>
               </button>
-              <button
-                type="button"
-                class="reload-button text-secondary-light text-xl d-flex"
-              >
+              <button type="button" class="reload-button text-secondary-light text-xl d-flex">
                 <iconify-icon icon="tabler:reload" class="icon"></iconify-icon>
               </button>
               <div class="dropdown">
-                <button
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                  class="d-flex"
-                >
-                  <iconify-icon
-                    icon="entypo:dots-three-vertical"
-                    class="icon text-secondary-light"
-                  ></iconify-icon>
+                <button type="button" data-bs-toggle="dropdown" aria-expanded="false" class="d-flex">
+                  <iconify-icon icon="entypo:dots-three-vertical" class="icon text-secondary-light"></iconify-icon>
                 </button>
-                <ul
-                  class="dropdown-menu dropdown-menu-lg p-12 border bg-base shadow"
-                >
+                <ul class="dropdown-menu dropdown-menu-lg p-12 border bg-base shadow">
                   <li>
-                    <button
-                      type="button"
+                    <button type="button"
                       class="dropdown-item px-16 py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900 d-flex align-items-center gap-10"
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModalView"
-                    >
-                      <iconify-icon
-                        icon="gravity-ui:envelope-open"
-                        class="icon text-lg line-height-1"
-                      ></iconify-icon>
+                      data-bs-toggle="modal" data-bs-target="#exampleModalView">
+                      <iconify-icon icon="gravity-ui:envelope-open" class="icon text-lg line-height-1"></iconify-icon>
                       Mark all as read
                     </button>
                   </li>
@@ -341,42 +181,23 @@
                 </ul>
               </div>
               <form class="navbar-search d-lg-block d-none">
-                <input
-                  type="text"
-                  class="bg-base h-40-px w-auto"
-                  name="search"
-                  placeholder="Search"
-                />
-                <iconify-icon
-                  icon="ion:search-outline"
-                  class="icon"
-                ></iconify-icon>
+                <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search" />
+                <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
               </form>
             </div>
             <div class="d-flex align-items-center gap-3">
-              <span class="text-secondary-light line-height-1"
-                >1-12 of 1,253</span
-              >
+              <span class="text-secondary-light line-height-1">1-12 of 1,253</span>
               <nav aria-label="Page navigation example">
                 <ul class="pagination">
                   <li class="page-item">
-                    <a
-                      class="page-link d-flex bg-base border text-secondary-light text-xl"
-                      href="javascript:void(0)"
-                      ><iconify-icon
-                        icon="iconamoon:arrow-left-2"
-                        class="icon"
-                      ></iconify-icon>
+                    <a class="page-link d-flex bg-base border text-secondary-light text-xl"
+                      href="javascript:void(0)"><iconify-icon icon="iconamoon:arrow-left-2" class="icon"></iconify-icon>
                     </a>
                   </li>
                   <li class="page-item">
-                    <a
-                      class="page-link d-flex bg-base border text-secondary-light text-xl"
-                      href="javascript:void(0)"
-                      ><iconify-icon
-                        icon="iconamoon:arrow-right-2"
-                        class="icon"
-                      ></iconify-icon>
+                    <a class="page-link d-flex bg-base border text-secondary-light text-xl"
+                      href="javascript:void(0)"><iconify-icon icon="iconamoon:arrow-right-2"
+                        class="icon"></iconify-icon>
                     </a>
                   </li>
                 </ul>
@@ -385,461 +206,112 @@
           </div>
         </div>
         <div class="card-body p-0">
-          <ul class="overflow-x-auto">
-            <li
+          <ul class="overflow-x-auto" *ngIf="!selectedMessage">
+            <div *ngIf="messages.length === 0" class="p-24 text-center text-secondary-light">
+              No messages found.
+            </div>
+
+            <li *ngFor="let msg of messages" (click)="selectMessage(msg)"
               class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-            >
-              <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border border-neutral-400"
-                  type="checkbox"
-                  name="checkbox"
-                />
+              [class.bg-neutral-50]="msg.isRead">
+              <div class="form-check style-check d-flex align-items-center" (click)="$event.stopPropagation()">
+                <input class="form-check-input radius-4 border border-neutral-400" type="checkbox" name="checkbox" />
               </div>
-              <button
-                type="button"
-                class="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-              >
-                <iconify-icon
-                  icon="ph:star"
-                  class="icon-outline line-height-1"
-                ></iconify-icon>
-                <iconify-icon
-                  icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"
-                ></iconify-icon>
+              <button type="button" (click)="toggleStar(msg, $event)"
+                class="starred-button icon text-xl line-height-1 d-flex" [class.active]="msg.isStarred">
+                <iconify-icon *ngIf="!msg.isStarred" icon="ph:star"
+                  class="icon-outline line-height-1 text-secondary-light"></iconify-icon>
+                <iconify-icon *ngIf="msg.isStarred" icon="ph:star-fill"
+                  class="icon-fill line-height-1 text-warning-600"></iconify-icon>
               </button>
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                >Jerome Bell</a
-              >
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px"
-                >Aliquam pulvinar vestibulum blandit. Donec sed nisl libero.
-                Fusce dignissim luctus sem eu dapibus. Aliquam pulvinar
-                vestibulum blandit. Donec sed nisl libero. Fusce dignissim
-                luctus sem eu dapibus</a
-              >
-              <span
-                class="text-primary-light fw-medium min-w-max-content ms-auto"
-                >6:07 AM</span
-              >
-            </li>
-            <li
-              class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-            >
-              <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border border-neutral-400"
-                  type="checkbox"
-                  name="checkbox"
-                />
-              </div>
-              <button
-                type="button"
-                class="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-              >
-                <iconify-icon
-                  icon="ph:star"
-                  class="icon-outline line-height-1"
-                ></iconify-icon>
-                <iconify-icon
-                  icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"
-                ></iconify-icon>
+              <span class="text-primary-light fw-medium text-md text-line-1 w-190-px">{{ msg.senderId ===
+                authService.userValue?.id ? 'To: ' + msg.receiverId : msg.senderId }}</span>
+              <span class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px">{{ msg.subject }} - <span
+                  class="text-secondary-light">{{ msg.content | slice:0:100 }}...</span></span>
+              <span class="text-primary-light fw-medium min-w-max-content ms-auto">{{ msg.createdAt | date:'shortTime'
+                }}</span>
+
+              <button (click)="deleteMessage(msg.id, $event)" class="btn btn-sm text-danger ms-3">
+                <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
               </button>
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                >Kristin Watson</a
-              >
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px"
-                >Aliquam pulvinar vestibulum blandit. Donec sed nisl libero.
-                Fusce dignissim luctus sem eu dapibus. Aliquam pulvinar
-                vestibulum blandit. Donec sed nisl libero. Fusce dignissim
-                luctus sem eu dapibus</a
-              >
-              <span
-                class="text-primary-light fw-medium min-w-max-content ms-auto"
-                >6:07 AM</span
-              >
-            </li>
-            <li
-              class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-            >
-              <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border border-neutral-400"
-                  type="checkbox"
-                  name="checkbox"
-                />
-              </div>
-              <button
-                type="button"
-                class="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-              >
-                <iconify-icon
-                  icon="ph:star"
-                  class="icon-outline line-height-1"
-                ></iconify-icon>
-                <iconify-icon
-                  icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"
-                ></iconify-icon>
-              </button>
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                >Cody Fisher</a
-              >
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px"
-                >Aliquam pulvinar vestibulum blandit. Donec sed nisl libero.
-                Fusce dignissim luctus sem eu dapibus. Aliquam pulvinar
-                vestibulum blandit. Donec sed nisl libero. Fusce dignissim
-                luctus sem eu dapibus</a
-              >
-              <span
-                class="text-primary-light fw-medium min-w-max-content ms-auto"
-                >6:07 AM</span
-              >
-            </li>
-            <li
-              class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-            >
-              <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border border-neutral-400"
-                  type="checkbox"
-                  name="checkbox"
-                />
-              </div>
-              <button
-                type="button"
-                class="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-              >
-                <iconify-icon
-                  icon="ph:star"
-                  class="icon-outline line-height-1"
-                ></iconify-icon>
-                <iconify-icon
-                  icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"
-                ></iconify-icon>
-              </button>
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                >Dianne Russell</a
-              >
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px"
-                >Aliquam pulvinar vestibulum blandit. Donec sed nisl libero.
-                Fusce dignissim luctus sem eu dapibus. Aliquam pulvinar
-                vestibulum blandit. Donec sed nisl libero. Fusce dignissim
-                luctus sem eu dapibus</a
-              >
-              <span
-                class="text-primary-light fw-medium min-w-max-content ms-auto"
-                >6:07 AM</span
-              >
-            </li>
-            <li
-              class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-            >
-              <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border border-neutral-400"
-                  type="checkbox"
-                  name="checkbox"
-                />
-              </div>
-              <button
-                type="button"
-                class="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-              >
-                <iconify-icon
-                  icon="ph:star"
-                  class="icon-outline line-height-1"
-                ></iconify-icon>
-                <iconify-icon
-                  icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"
-                ></iconify-icon>
-              </button>
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                >Floyd Miles</a
-              >
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px"
-                >Aliquam pulvinar vestibulum blandit. Donec sed nisl libero.
-                Fusce dignissim luctus sem eu dapibus. Aliquam pulvinar
-                vestibulum blandit. Donec sed nisl libero. Fusce dignissim
-                luctus sem eu dapibus</a
-              >
-              <span
-                class="text-primary-light fw-medium min-w-max-content ms-auto"
-                >6:07 AM</span
-              >
-            </li>
-            <li
-              class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-            >
-              <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border border-neutral-400"
-                  type="checkbox"
-                  name="checkbox"
-                />
-              </div>
-              <button
-                type="button"
-                class="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-              >
-                <iconify-icon
-                  icon="ph:star"
-                  class="icon-outline line-height-1"
-                ></iconify-icon>
-                <iconify-icon
-                  icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"
-                ></iconify-icon>
-              </button>
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                >Devon Lane</a
-              >
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px"
-                >Aliquam pulvinar vestibulum blandit. Donec sed nisl libero.
-                Fusce dignissim luctus sem eu dapibus. Aliquam pulvinar
-                vestibulum blandit. Donec sed nisl libero. Fusce dignissim
-                luctus sem eu dapibus</a
-              >
-              <span
-                class="text-primary-light fw-medium min-w-max-content ms-auto"
-                >6:07 AM</span
-              >
-            </li>
-            <li
-              class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-            >
-              <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border border-neutral-400"
-                  type="checkbox"
-                  name="checkbox"
-                />
-              </div>
-              <button
-                type="button"
-                class="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-              >
-                <iconify-icon
-                  icon="ph:star"
-                  class="icon-outline line-height-1"
-                ></iconify-icon>
-                <iconify-icon
-                  icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"
-                ></iconify-icon>
-              </button>
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                >Dianne Russell</a
-              >
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px"
-                >Aliquam pulvinar vestibulum blandit. Donec sed nisl libero.
-                Fusce dignissim luctus sem eu dapibus. Aliquam pulvinar
-                vestibulum blandit. Donec sed nisl libero. Fusce dignissim
-                luctus sem eu dapibus</a
-              >
-              <span
-                class="text-primary-light fw-medium min-w-max-content ms-auto"
-                >6:07 AM</span
-              >
-            </li>
-            <li
-              class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-            >
-              <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border border-neutral-400"
-                  type="checkbox"
-                  name="checkbox"
-                />
-              </div>
-              <button
-                type="button"
-                class="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-              >
-                <iconify-icon
-                  icon="ph:star"
-                  class="icon-outline line-height-1"
-                ></iconify-icon>
-                <iconify-icon
-                  icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"
-                ></iconify-icon>
-              </button>
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                >Annette Black</a
-              >
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px"
-                >Aliquam pulvinar vestibulum blandit. Donec sed nisl libero.
-                Fusce dignissim luctus sem eu dapibus. Aliquam pulvinar
-                vestibulum blandit. Donec sed nisl libero. Fusce dignissim
-                luctus sem eu dapibus</a
-              >
-              <span
-                class="text-primary-light fw-medium min-w-max-content ms-auto"
-                >6:07 AM</span
-              >
-            </li>
-            <li
-              class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-            >
-              <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border border-neutral-400"
-                  type="checkbox"
-                  name="checkbox"
-                />
-              </div>
-              <button
-                type="button"
-                class="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-              >
-                <iconify-icon
-                  icon="ph:star"
-                  class="icon-outline line-height-1"
-                ></iconify-icon>
-                <iconify-icon
-                  icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"
-                ></iconify-icon>
-              </button>
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                >Bessie Cooper</a
-              >
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px"
-                >Aliquam pulvinar vestibulum blandit. Donec sed nisl libero.
-                Fusce dignissim luctus sem eu dapibus. Aliquam pulvinar
-                vestibulum blandit. Donec sed nisl libero. Fusce dignissim
-                luctus sem eu dapibus</a
-              >
-              <span
-                class="text-primary-light fw-medium min-w-max-content ms-auto"
-                >6:07 AM</span
-              >
-            </li>
-            <li
-              class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-            >
-              <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border border-neutral-400"
-                  type="checkbox"
-                  name="checkbox"
-                />
-              </div>
-              <button
-                type="button"
-                class="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-              >
-                <iconify-icon
-                  icon="ph:star"
-                  class="icon-outline line-height-1"
-                ></iconify-icon>
-                <iconify-icon
-                  icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"
-                ></iconify-icon>
-              </button>
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                >Courtney Henry</a
-              >
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px"
-                >Aliquam pulvinar vestibulum blandit. Donec sed nisl libero.
-                Fusce dignissim luctus sem eu dapibus. Aliquam pulvinar
-                vestibulum blandit. Donec sed nisl libero. Fusce dignissim
-                luctus sem eu dapibus</a
-              >
-              <span
-                class="text-primary-light fw-medium min-w-max-content ms-auto"
-                >6:07 AM</span
-              >
-            </li>
-            <li
-              class="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
-            >
-              <div class="form-check style-check d-flex align-items-center">
-                <input
-                  class="form-check-input radius-4 border border-neutral-400"
-                  type="checkbox"
-                  name="checkbox"
-                />
-              </div>
-              <button
-                type="button"
-                class="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-              >
-                <iconify-icon
-                  icon="ph:star"
-                  class="icon-outline line-height-1"
-                ></iconify-icon>
-                <iconify-icon
-                  icon="ph:star-fill"
-                  class="icon-fill line-height-1 text-warning-600"
-                ></iconify-icon>
-              </button>
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                >Wade Warren</a
-              >
-              <a
-                routerLink="/veiw-details"
-                class="text-primary-light fw-medium mb-0 text-line-1 max-w-740-px"
-                >Aliquam pulvinar vestibulum blandit. Donec sed nisl libero.
-                Fusce dignissim luctus sem eu dapibus. Aliquam pulvinar
-                vestibulum blandit. Donec sed nisl libero. Fusce dignissim
-                luctus sem eu dapibus</a
-              >
-              <span
-                class="text-primary-light fw-medium min-w-max-content ms-auto"
-                >6:07 AM</span
-              >
             </li>
           </ul>
+
+          <!-- Message Details -->
+          <div *ngIf="selectedMessage" class="p-24">
+            <div class="d-flex align-items-center justify-content-between mb-24">
+              <button (click)="selectedMessage = null"
+                class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
+                <iconify-icon icon="iconamoon:arrow-left-2"></iconify-icon> Back
+              </button>
+              <div class="d-flex gap-2">
+                <button (click)="toggleStar(selectedMessage, $event)" class="btn btn-sm">
+                  <iconify-icon [icon]="selectedMessage.isStarred ? 'ph:star-fill' : 'ph:star'"
+                    [class.text-warning-600]="selectedMessage.isStarred"></iconify-icon>
+                </button>
+                <button (click)="deleteMessage(selectedMessage.id, $event)" class="btn btn-sm text-danger">
+                  <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="card p-24 border shadow-none">
+              <div class="d-flex align-items-center gap-3 mb-16">
+                <img src="assets/images/user.png" class="w-48-px h-48-px rounded-circle" alt="">
+                <div>
+                  <h6 class="mb-0">{{ selectedMessage.senderId }}</h6>
+                  <span class="text-xs text-secondary-light">To: {{ selectedMessage.receiverId }}</span>
+                </div>
+                <span class="ms-auto text-sm text-secondary-light">{{ selectedMessage.createdAt | date:'medium'
+                  }}</span>
+              </div>
+              <h5 class="mb-16">{{ selectedMessage.subject }}</h5>
+              <div class="message-content text-secondary-light line-height-2">
+                {{ selectedMessage.content }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Compose Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title" id="exampleModalLabel">New Message</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form (ngSubmit)="onSubmitCompose()" #composeForm="ngForm">
+        <div class="modal-body">
+          <div class="mb-16">
+            <label class="form-label fw-semibold text-primary-light">Recipient</label>
+            <select class="form-select" name="receiverId" [(ngModel)]="newMessage.receiverId" required>
+              <option value="">Select Recipient</option>
+              <option *ngFor="let staff of allStaff" [value]="staff.staffId">{{ staff.staffName }} ({{ staff.email ||
+                'No email' }})</option>
+            </select>
+          </div>
+          <div class="mb-16">
+            <label class="form-label fw-semibold text-primary-light">Subject</label>
+            <input type="text" class="form-control" name="subject" [(ngModel)]="newMessage.subject"
+              placeholder="Enter subject" required>
+          </div>
+          <div class="mb-16">
+            <label class="form-label fw-semibold text-primary-light">Message</label>
+            <textarea class="form-control" name="content" [(ngModel)]="newMessage.content" rows="10"
+              placeholder="Type your message here..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer border-top">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" [disabled]="!composeForm.form.valid"
+            data-bs-dismiss="modal">Send Message</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

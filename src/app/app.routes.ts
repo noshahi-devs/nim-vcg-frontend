@@ -230,6 +230,9 @@ export const routes: Routes = [
       { path: 'report', component: ReportComponent, data: { roles: ['Admin', 'Principal', 'Accountant'] } },
       { path: 'class-wise-report', component: ClassWiseReportComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
 
+      // Communications & Messaging
+      { path: 'email', component: EmailComponent, data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
+
       // User Management
       { path: 'users-list', component: ListComponent, data: { roles: ['Admin'] } },
       { path: 'role-access', component: RoleAccessComponent, data: { roles: ['Admin'] } },

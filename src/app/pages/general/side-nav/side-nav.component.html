@@ -275,6 +275,22 @@
         </ul>
       </li>
 
+
+      <!-- Communications -->
+      <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
+        <a href="javascript:void(0)" routerLinkActive="active-page">
+          <iconify-icon icon="mdi:message-outline" class="menu-icon"></iconify-icon>
+          <span>Communications</span>
+          <span *ngIf="unreadMessageCount > 0" class="badge bg-danger ms-auto">{{ unreadMessageCount }}</span>
+        </a>
+        <ul class="sidebar-submenu">
+          <li><a routerLink="/email" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Inbox</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/broadcast" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Broadcast</a></li>
+        </ul>
+      </li>
+
     </ul>
   </div>
 
@@ -422,113 +438,41 @@
                   <h6 class="text-lg text-primary-light fw-semibold mb-0">Message</h6>
                 </div>
                 <span
-                  class="text-primary-600 fw-semibold text-lg w-40-px h-40-px rounded-circle bg-base d-flex justify-content-center align-items-center">05</span>
+                  class="text-primary-600 fw-semibold text-lg w-40-px h-40-px rounded-circle bg-base d-flex justify-content-center align-items-center">{{
+                  unreadMessageCount }}</span>
               </div>
 
               <div class="max-h-400-px overflow-y-auto scroll-sm pe-4">
 
-                <a href="javascript:void(0)"
-                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
+                <div *ngIf="messages.length === 0" class="px-24 py-12 text-center text-secondary-light">
+                  No new messages
+                </div>
+
+                <a *ngFor="let msg of messages.slice(0, 5)" routerLink="/email" (click)="markMessageAsRead(msg.id)"
+                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between"
+                  [class.bg-neutral-50]="msg.isRead">
                   <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
                     <span class="w-40-px h-40-px rounded-circle flex-shrink-0 position-relative">
-                      <img src="assets/images/notification/profile-3.png" alt="">
-                      <span
+                      <img src="assets/images/user.png" alt="" class="rounded-circle">
+                      <span *ngIf="!msg.isRead"
                         class="w-8-px h-8-px bg-success-main rounded-circle position-absolute end-0 bottom-0"></span>
                     </span>
                     <div>
-                      <h6 class="text-md fw-semibold mb-4">Kathryn Murphy</h6>
-                      <p class="mb-0 text-sm text-secondary-light text-w-100-px">hey! there i’m...</p>
+                      <h6 class="text-md fw-semibold mb-4">{{ msg.subject }}</h6>
+                      <p class="mb-0 text-sm text-secondary-light text-w-100-px">{{ msg.content | slice:0:30 }}...</p>
                     </div>
                   </div>
                   <div class="d-flex flex-column align-items-end">
-                    <span class="text-sm text-secondary-light flex-shrink-0">12:30 PM</span>
-                    <span
-                      class="mt-4 text-xs text-base w-16-px h-16-px d-flex justify-content-center align-items-center bg-warning-main rounded-circle">8</span>
+                    <span class="text-sm text-secondary-light flex-shrink-0">{{ msg.createdAt | date:'shortTime'
+                      }}</span>
                   </div>
                 </a>
 
-                <a href="javascript:void(0)"
-                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
-                  <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                    <span class="w-40-px h-40-px rounded-circle flex-shrink-0 position-relative">
-                      <img src="assets/images/notification/profile-4.png" alt="">
-                      <span
-                        class="w-8-px h-8-px  bg-neutral-300 rounded-circle position-absolute end-0 bottom-0"></span>
-                    </span>
-                    <div>
-                      <h6 class="text-md fw-semibold mb-4">Kathryn Murphy</h6>
-                      <p class="mb-0 text-sm text-secondary-light text-w-100-px">hey! there i’m...</p>
-                    </div>
-                  </div>
-                  <div class="d-flex flex-column align-items-end">
-                    <span class="text-sm text-secondary-light flex-shrink-0">12:30 PM</span>
-                    <span
-                      class="mt-4 text-xs text-base w-16-px h-16-px d-flex justify-content-center align-items-center bg-warning-main rounded-circle">2</span>
-                  </div>
-                </a>
 
-                <a href="javascript:void(0)"
-                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between bg-neutral-50">
-                  <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                    <span class="w-40-px h-40-px rounded-circle flex-shrink-0 position-relative">
-                      <img src="assets/images/notification/profile-5.png" alt="">
-                      <span
-                        class="w-8-px h-8-px bg-success-main rounded-circle position-absolute end-0 bottom-0"></span>
-                    </span>
-                    <div>
-                      <h6 class="text-md fw-semibold mb-4">Kathryn Murphy</h6>
-                      <p class="mb-0 text-sm text-secondary-light text-w-100-px">hey! there i’m...</p>
-                    </div>
-                  </div>
-                  <div class="d-flex flex-column align-items-end">
-                    <span class="text-sm text-secondary-light flex-shrink-0">12:30 PM</span>
-                    <span
-                      class="mt-4 text-xs text-base w-16-px h-16-px d-flex justify-content-center align-items-center bg-neutral-400 rounded-circle">0</span>
-                  </div>
-                </a>
-
-                <a href="javascript:void(0)"
-                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between bg-neutral-50">
-                  <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                    <span class="w-40-px h-40-px rounded-circle flex-shrink-0 position-relative">
-                      <img src="assets/images/notification/profile-6.png" alt="">
-                      <span class="w-8-px h-8-px bg-neutral-300 rounded-circle position-absolute end-0 bottom-0"></span>
-                    </span>
-                    <div>
-                      <h6 class="text-md fw-semibold mb-4">Kathryn Murphy</h6>
-                      <p class="mb-0 text-sm text-secondary-light text-w-100-px">hey! there i’m...</p>
-                    </div>
-                  </div>
-                  <div class="d-flex flex-column align-items-end">
-                    <span class="text-sm text-secondary-light flex-shrink-0">12:30 PM</span>
-                    <span
-                      class="mt-4 text-xs text-base w-16-px h-16-px d-flex justify-content-center align-items-center bg-neutral-400 rounded-circle">0</span>
-                  </div>
-                </a>
-
-                <a href="javascript:void(0)"
-                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
-                  <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                    <span class="w-40-px h-40-px rounded-circle flex-shrink-0 position-relative">
-                      <img src="assets/images/notification/profile-7.png" alt="">
-                      <span
-                        class="w-8-px h-8-px bg-success-main rounded-circle position-absolute end-0 bottom-0"></span>
-                    </span>
-                    <div>
-                      <h6 class="text-md fw-semibold mb-4">Kathryn Murphy</h6>
-                      <p class="mb-0 text-sm text-secondary-light text-w-100-px">hey! there i’m...</p>
-                    </div>
-                  </div>
-                  <div class="d-flex flex-column align-items-end">
-                    <span class="text-sm text-secondary-light flex-shrink-0">12:30 PM</span>
-                    <span
-                      class="mt-4 text-xs text-base w-16-px h-16-px d-flex justify-content-center align-items-center bg-warning-main rounded-circle">8</span>
-                  </div>
-                </a>
 
               </div>
               <div class="text-center py-12 px-16">
-                <a href="javascript:void(0)" class="text-primary-600 fw-semibold text-md">See All Message</a>
+                <a routerLink="/email" class="text-primary-600 fw-semibold text-md">See All Message</a>
               </div>
             </div>
           </div>
@@ -546,89 +490,40 @@
                   <h6 class="text-lg text-primary-light fw-semibold mb-0">Notifications</h6>
                 </div>
                 <span
-                  class="text-primary-600 fw-semibold text-lg w-40-px h-40-px rounded-circle bg-base d-flex justify-content-center align-items-center">05</span>
+                  class="text-primary-600 fw-semibold text-lg w-40-px h-40-px rounded-circle bg-base d-flex justify-content-center align-items-center">{{
+                  unreadNotificationCount }}</span>
               </div>
 
               <div class="max-h-400-px overflow-y-auto scroll-sm pe-4">
-                <a href="javascript:void(0)"
-                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
+                <div *ngIf="notifications.length === 0" class="px-24 py-12 text-center text-secondary-light">
+                  No new notifications
+                </div>
+
+                <a *ngFor="let notify of notifications.slice(0, 5)" href="javascript:void(0)"
+                  (click)="markNotificationAsRead(notify.id)"
+                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between"
+                  [class.bg-neutral-50]="notify.isRead">
                   <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
                     <span
                       class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                      <iconify-icon icon="bitcoin-icons:verify-outline" class="icon text-xxl"></iconify-icon>
+                      <iconify-icon
+                        [icon]="notify.notificationType === 'Broadcast' ? 'solar:notification-lines-duotone' : 'bitcoin-icons:verify-outline'"
+                        class="icon text-xxl"></iconify-icon>
                     </span>
                     <div>
-                      <h6 class="text-md fw-semibold mb-4">Congratulations</h6>
-                      <p class="mb-0 text-sm text-secondary-light text-w-200-px">Your profile has been Verified. Your
-                        profile has been Verified</p>
+                      <h6 class="text-md fw-semibold mb-4">{{ notify.title }}</h6>
+                      <p class="mb-0 text-sm text-secondary-light text-w-200-px">{{ notify.message }}</p>
                     </div>
                   </div>
-                  <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
+                  <span class="text-sm text-secondary-light flex-shrink-0">{{ notify.createdAt | date:'shortTime'
+                    }}</span>
                 </a>
 
-                <a href="javascript:void(0)"
-                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between bg-neutral-50">
-                  <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                    <span
-                      class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                      <img src="assets/images/notification/profile-1.png" alt="">
-                    </span>
-                    <div>
-                      <h6 class="text-md fw-semibold mb-4">Ronald Richards</h6>
-                      <p class="mb-0 text-sm text-secondary-light text-w-200-px">You can stitch between artboards</p>
-                    </div>
-                  </div>
-                  <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                </a>
 
-                <a href="javascript:void(0)"
-                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
-                  <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                    <span
-                      class="w-44-px h-44-px bg-info-subtle text-info-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                      AM
-                    </span>
-                    <div>
-                      <h6 class="text-md fw-semibold mb-4">Arlene McCoy</h6>
-                      <p class="mb-0 text-sm text-secondary-light text-w-200-px">Invite you to prototyping</p>
-                    </div>
-                  </div>
-                  <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                </a>
-
-                <a href="javascript:void(0)"
-                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between bg-neutral-50">
-                  <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                    <span
-                      class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                      <img src="assets/images/notification/profile-2.png" alt="">
-                    </span>
-                    <div>
-                      <h6 class="text-md fw-semibold mb-4">Annette Black</h6>
-                      <p class="mb-0 text-sm text-secondary-light text-w-200-px">Invite you to prototyping</p>
-                    </div>
-                  </div>
-                  <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                </a>
-
-                <a href="javascript:void(0)"
-                  class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
-                  <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                    <span
-                      class="w-44-px h-44-px bg-info-subtle text-info-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                      DR
-                    </span>
-                    <div>
-                      <h6 class="text-md fw-semibold mb-4">Darlene Robertson</h6>
-                      <p class="mb-0 text-sm text-secondary-light text-w-200-px">Invite you to prototyping</p>
-                    </div>
-                  </div>
-                  <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                </a>
               </div>
 
               <div class="text-center py-12 px-16">
-                <a href="javascript:void(0)" class="text-primary-600 fw-semibold text-md">See All Notification</a>
+                <a routerLink="/notifications" class="text-primary-600 fw-semibold text-md">See All Notification</a>
               </div>
 
             </div>

@@ -1,17 +1,15 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Notification } from '../Models/notification';
 
 export interface NotificationLog {
     id: number;
-    recipientEmail: string;
-    recipientName: string;
-    subject: string;
+    title: string;
+    message: string;
     notificationType: string;
-    status: string;
-    errorMessage?: string;
     createdAt: string;
-    sentAt?: string;
+    isRead: boolean;
 }
 
 @Injectable({
@@ -29,15 +27,22 @@ export class NotificationService {
         };
     }
 
+    getNotifications(): Observable<Notification[]> {
+        return this.http.get<Notification[]>(this.apiUrl, this.getAuthHeaders());
+    }
+
+    markAsRead(id: number): Observable<any> {
+        const url = `${this.apiUrl}/${id}/read`;
+        return this.http.patch(url, {}, this.getAuthHeaders());
+    }
+
+    broadcast(notification: Partial<Notification>): Observable<any> {
+        const url = `${this.apiUrl}/broadcast`;
+        return this.http.post(url, notification, this.getAuthHeaders());
+    }
+
     getLogs(): Observable<NotificationLog[]> {
-        return this.http.get<NotificationLog[]>(`${this.apiUrl}/logs`, this.getAuthHeaders());
-    }
-
-    sendCustomEmail(request: any): Observable<any> {
-        return this.http.post(`${this.apiUrl}/send-custom`, request, this.getAuthHeaders());
-    }
-
-    testConnection(): Observable<any> {
-        return this.http.post(`${this.apiUrl}/test-connection`, {}, this.getAuthHeaders());
+        const url = `${this.apiUrl}/logs`;
+        return this.http.get<NotificationLog[]>(url, this.getAuthHeaders());
     }
 }
