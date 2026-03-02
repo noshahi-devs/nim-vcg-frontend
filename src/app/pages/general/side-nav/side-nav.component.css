@@ -89,22 +89,22 @@
     opacity: 0.95;
 }
 
-:host ::ng-deep .sidebar-menu li.dropdown > a::after {
+:host ::ng-deep .sidebar-menu li.dropdown>a::after {
     color: inherit;
     opacity: 0.8;
 }
 
-:host ::ng-deep .sidebar-menu li > a.active-page,
-:host ::ng-deep .sidebar-menu li.dropdown.dropdown-open > a,
-:host ::ng-deep .sidebar-menu li.dropdown.open > a {
+:host ::ng-deep .sidebar-menu li>a.active-page,
+:host ::ng-deep .sidebar-menu li.dropdown.dropdown-open>a,
+:host ::ng-deep .sidebar-menu li.dropdown.open>a {
     background: var(--sidebar-active-bg);
     color: var(--sidebar-active-text);
     box-shadow: 0 10px 20px rgba(49, 46, 129, 0.2);
 }
 
-:host ::ng-deep .sidebar-menu li > a.active-page:hover,
-:host ::ng-deep .sidebar-menu li.dropdown.dropdown-open > a:hover,
-:host ::ng-deep .sidebar-menu li.dropdown.open > a:hover {
+:host ::ng-deep .sidebar-menu li>a.active-page:hover,
+:host ::ng-deep .sidebar-menu li.dropdown.dropdown-open>a:hover,
+:host ::ng-deep .sidebar-menu li.dropdown.open>a:hover {
     color: var(--sidebar-active-text);
 }
 

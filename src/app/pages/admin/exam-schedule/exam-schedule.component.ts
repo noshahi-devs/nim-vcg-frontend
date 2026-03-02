@@ -39,7 +39,7 @@ export class ExamScheduleComponent implements OnInit {
   isEditMode = false;
 
   selectedSchedule: ExamScheduleVm | null = null;
-  Math = Math;
+  public Math: any = Math;
 
   constructor(
     private service: ExamScheduleService,
@@ -178,6 +178,14 @@ export class ExamScheduleComponent implements OnInit {
         });
       }
     });
+  }
+
+  getDaysDifference(startDate: any, endDate: any): number {
+    if (!startDate || !endDate) return 0;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end days
   }
 
   closeDialog() {

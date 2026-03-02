@@ -1,0 +1,647 @@
+﻿
+> wowdash@0.0.0 build
+> ng build
+
+[33mÔØ»[39m Building...
+[32mÔ£ö[39m Building...
+[1mInitial chunk files[22m  [2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mmain-MO7E5GGM.js[39m     [2m | [22m[2mmain[22m         [2m | [22m  [36m2.69 MB[39m[2m | [22m              [36m411.41 kB[39m
+[32mscripts-2N32MFGH.js[39m  [2m | [22m[2mscripts[22m      [2m | [22m[36m929.16 kB[39m[2m | [22m              [36m248.82 kB[39m
+[32mstyles-PQWNHQBD.css[39m  [2m | [22m[2mstyles[22m       [2m | [22m[36m729.14 kB[39m[2m | [22m               [36m77.07 kB[39m
+[32mchunk-NLBOHPFZ.js[39m    [2m | [22m[2m-[22m            [2m | [22m [36m49.51 kB[39m[2m | [22m               [36m14.20 kB[39m
+[32mpolyfills-B6TNHZQ6.js[39m[2m | [22m[2mpolyfills[22m    [2m | [22m [36m34.58 kB[39m[2m | [22m               [36m11.32 kB[39m
+
+[1m [22m                    [2m | [22m[1mInitial total[22m[2m | [22m  [1m4.44 MB[22m[2m | [22m              [1m762.82 kB[22m
+
+[1mLazy chunk files[22m     [2m | [22m[1mNames[22m        [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-GW2G4AFQ.js[39m    [2m | [22m[2mindex[22m        [2m | [22m  [36m4.29 kB[39m[2m | [22m                [36m1.38 kB[39m
+
+Application bundle generation failed. [39.631 seconds]
+
+node.exe : 
+[1m[33m[33mÔû▓ [43;
+33m[[43;30mWARNING[43
+;33m][0m 
+[1mTS-998113: 
+RouterLink is not used 
+within the template of 
+PaymentDetailComponent
+[0m [1m[35m[plugin 
+angular-compiler][0m
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: ([1m[33m[33   
+ mÔ...r-compiler][    
+0m:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+
+    src/app/pages/accou
+ntant/payment-detail/pa
+yment-detail.component.
+ts:18:81:
+[37m      18 Ôöé 
+...FormsModule, 
+ReactiveFormsModule, 
+BreadcrumbComponent, 
+[32mRouterLink[37m]
+         ÔòÁ           
+                       
+                       
+  [32m~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mTS-998113: 
+BreadcrumbComponent is 
+not used within the 
+template of StaffManage
+LoginComponent[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/admin
+/staff-manage-login/sta
+ff-manage-login.compone
+nt.ts:26:39:
+[37m      26 Ôöé   
+imports: 
+[CommonModule, 
+FormsModule, [32mBread
+crumbComponent[37m],
+         ÔòÁ           
+                       
+      [32m~~~~~~~~~~~~
+~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mTS-998113: 
+RouterLink is not used 
+within the template of 
+StudentViewComponent[0
+m [1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/admin
+/student-view/student-v
+iew.component.ts:20:47:
+[37m      20 Ôöé   
+imports: 
+[BreadcrumbComponent, 
+CommonModule, 
+[32mRouterLink[37m],
+         ÔòÁ           
+                       
+              
+[32m~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mTS-998113: 
+RouterLink is not used 
+within the template of 
+SignInComponent[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/auth/
+sign-in/sign-in.compone
+nt.ts:74:66:
+[37m      74 Ôöé ...[R
+eactiveFormsModule, 
+FormsModule, 
+CommonModule, NgIf, 
+[32mRouterLink[37m]
+         ÔòÁ           
+                       
+                       
+  [32m~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mTS-998113: 
+RouterLink is not used 
+within the template of 
+ExamAnalyticsComponent
+[0m [1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/pages/princ
+ipal/exam-analytics/exa
+m-analytics.component.t
+s:16:39:
+[37m      16 Ôöé 
+...rts: [CommonModule, 
+FormsModule, 
+[32mRouterLink[37m, 
+BreadcrumbComponent],
+         ÔòÁ           
+                       
+   [32m~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mTS-998113: All 
+imports are unused[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/theme/theme
+.component.ts:7:2:
+[37m      7 Ôöé   
+[32mimports[37m: 
+[BreadcrumbComponent],
+        ÔòÁ   
+[32m~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mDuplicate key 
+"CY" in object 
+literal[0m 
+[duplicate-object-key]
+
+    angular:script/glob
+al:scripts.js:42:92930:
+[37m      42 Ôöé ..., 
+"name": "Czech 
+Republic" }, 
+[32m"CY"[37m: { 
+"path": 
+"M505.03,193.75l-...
+         ÔòÁ           
+                       
+[32m~~~~[0m
+
+  The original key 
+"CY" is here:
+
+    angular:script/glob
+al:scripts.js:42:30812:
+[37m      42 Ôöé 
+...5,0.17Z", "name": 
+"Kosovo" }, 
+[32m"CY"[37m: { 
+"path": 
+"M503.54,192.92l0...
+         ÔòÁ           
+                       
+[32m~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mDuplicate key 
+"SO" in object 
+literal[0m 
+[duplicate-object-key]
+
+    angular:script/glob
+al:scripts.js:42:99517:
+[37m      42 Ôöé 
+...8Z", "name": "North 
+Korea" }, 
+[32m"SO"[37m: { 
+"path": 
+"M543.8,256.48l0....
+         ÔòÁ           
+                       
+[32m~~~~[0m
+
+  The original key 
+"SO" is here:
+
+    angular:script/glob
+al:scripts.js:42:29882:
+[37m      42 Ôöé 
+....14,0.65Z", "name": 
+"Oman" }, 
+[32m"SO"[37m: { 
+"path": 
+"M543.2,261.06l-1...
+         ÔòÁ           
+                       
+[32m~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/acco
+untant/accounts/account
+s.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/gene
+ral/dashboard/dashboard
+.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 82 
+bytes with a total of 
+10.08 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/prin
+cipal/student-attendanc
+e-report/student-attend
+ance-report.component.c
+ss exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/acco
+untant/expense-manage/e
+xpense-manage.component
+.css exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/prin
+cipal/exam-analytics/ex
+am-analytics.component.
+css exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/teac
+her/marks-entry/marks-e
+ntry.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/acco
+untant/fee/fee.componen
+t.css exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 168 
+bytes with a total of 
+10.17 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/acco
+untant/collect-fee/coll
+ect-fee.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/teac
+her/my-leaves/my-leaves
+.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/prin
+cipal/report/report.com
+ponent.css exceeded 
+maximum budget. Budget 
+10.00 kB was not met 
+by 5.74 kB with a 
+total of 15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/acco
+untant/profit-loss/prof
+it-loss.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/admi
+n/exam-schedule-standar
+ds-create/exam-schedule
+-standards-create.compo
+nent.css exceeded 
+maximum budget. Budget 
+10.00 kB was not met 
+by 5.74 kB with a 
+total of 15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/acco
+untant/accounts-ledger/
+accounts-ledger.compone
+nt.css exceeded 
+maximum budget. Budget 
+10.00 kB was not met 
+by 5.74 kB with a 
+total of 15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/acco
+untant/other-payment/ot
+her-payment.component.c
+ss exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/admi
+n/exam-schedule/exam-sc
+hedule.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 597 
+bytes with a total of 
+10.60 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/admi
+n/exam/exam.component.c
+ss exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 6.68 
+kB with a total of 
+16.68 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/prin
+cipal/staff-attendance-
+report/staff-attendance
+-report.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/acco
+untant/generate-fee-inv
+oice/generate-fee-invoi
+ce.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 2.07 
+kB with a total of 
+12.07 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/admi
+n/exam-schedule-standar
+ds-list/exam-schedule-s
+tandards-list.component
+.css exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 6.68 
+kB with a total of 
+16.68 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/admi
+n/exam-result/exam-resu
+lt.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/acco
+untant/income-manage/in
+come-manage.component.c
+ss exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/acco
+untant/bank-cash/bank-c
+ash.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 5.74 
+kB with a total of 
+15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/admi
+n/auto-grade-calculatio
+n/auto-grade-calculatio
+n.component.css 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 6.68 
+kB with a total of 
+16.68 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1msrc/app/pages/acco
+untant/monthly-payment/
+monthly-payment.compone
+nt.css exceeded 
+maximum budget. Budget 
+10.00 kB was not met 
+by 5.74 kB with a 
+total of 15.74 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mcss-inline-fonts:h
+ttps://fonts.googleapis
+.com/css2?family=Manrop
+e:wght@600;700;800&fami
+ly=Plus+Jakarta+Sans:wg
+ht@400;500;600;700;800&
+family=Sora:wght@600;70
+0;800&display=swap 
+exceeded maximum 
+budget. Budget 10.00 
+kB was not met by 
+28.63 kB with a total 
+of 38.63 kB.[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mModule 
+'sweetalert2' used by '
+src/app/pages/teacher/m
+y-attendance/my-attenda
+nce.component.ts' is 
+not ESM[0m
+
+  CommonJS or AMD 
+dependencies can cause 
+optimization bailouts.
+  For more information 
+see: [4mhttps://angula
+r.dev/tools/cli/build#c
+onfiguring-commonjs-dep
+endencies[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mModule 'jquery' 
+used by 'src/app/pages/
+general/side-nav/side-n
+av.component.ts' is 
+not ESM[0m
+
+  CommonJS or AMD 
+dependencies can cause 
+optimization bailouts.
+  For more information 
+see: [4mhttps://angula
+r.dev/tools/cli/build#c
+onfiguring-commonjs-dep
+endencies[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1mModule 
+'apexcharts' used by 'n
+ode_modules/ng-apexchar
+ts/fesm2020/ng-apexchar
+ts.mjs' is not ESM[0m
+
+  CommonJS or AMD 
+dependencies can cause 
+optimization bailouts.
+  For more information 
+see: [4mhttps://angula
+r.dev/tools/cli/build#c
+onfiguring-commonjs-dep
+endencies[0m
+
+
+[33mÔû▓ [43;33m[[43;
+30mWARNING[43;33m][0m
+ [1m4 rules skipped 
+due to selector errors:
+  
+.form-floating>~label 
+-> Did not expect 
+successive traversals.
+  
+.form-floating>~label 
+-> Did not expect 
+successive traversals.
+  .btn-group>+.btn -> 
+Did not expect 
+successive traversals.
+  .btn-group>+.btn -> 
+Did not expect 
+successive 
+traversals.[0m
+
+[39m[22m
+[1m[31m[31mX [41;31
+m[[41;97mERROR[41;31m
+][0m [1mcss-inline-fo
+nts:https://fonts.googl
+eapis.com/css2?family=M
+anrope:wght@600;700;800
+&family=Plus+Jakarta+Sa
+ns:wght@400;500;600;700
+;800&family=Sora:wght@6
+00;700;800&display=swap
+ exceeded maximum 
+budget. Budget 20.00 
+kB was not met by 
+18.63 kB with a total 
+of 38.63 kB.[0m
+
+[39m[22m
