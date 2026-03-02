@@ -65,15 +65,17 @@
             <iconify-icon icon="solar:book-bold-duotone" class="title-icon" style="color:#6366f1;"></iconify-icon>
             My Subjects
           </div>
-          <span class="t-badge" style="background:rgba(99,102,241,0.1);color:#6366f1;">{{ teacherSubjects.length }}
-            total</span>
+          <span class="t-badge" style="background:rgba(99,102,241,0.1);color:#6366f1;">{{ teacherSubjectPills.length }}
+            assigned</span>
         </div>
-        <div class="subjects-list" *ngIf="teacherSubjects.length > 0; else noSubjects">
-          <div class="subject-pill" *ngFor="let sub of teacherSubjects; let i = index"
+        <div class="subjects-list" *ngIf="teacherSubjectPills.length > 0; else noSubjects">
+          <div class="subject-pill" *ngFor="let sub of teacherSubjectPills; let i = index"
             [style.animation-delay]="(i * 0.07) + 's'">
             <span class="subject-dot"
               [ngStyle]="{'background': ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ec4899','#8b5cf6'][i % 6]}"></span>
-            {{ sub }}
+            <span class="pill-subject">{{ sub.label }}</span>
+            <span class="pill-class" *ngIf="sub.className">{{ sub.className }}<span *ngIf="sub.sectionName"> · {{
+                sub.sectionName }}</span></span>
           </div>
         </div>
         <ng-template #noSubjects>
@@ -92,15 +94,16 @@
             My Classes & Sections
           </div>
         </div>
-        <div class="classes-sections-grid" *ngIf="teacherClasses.length > 0; else noClasses">
-          <div *ngFor="let cls of teacherClasses; let i = index" class="class-section-item"
+        <div class="classes-sections-grid" *ngIf="classSectionMap.length > 0; else noClasses">
+          <div *ngFor="let item of classSectionMap; let i = index" class="class-section-item"
             [style.animation-delay]="(i * 0.09) + 's'">
             <div class="class-badge">
               <iconify-icon icon="solar:buildings-bold-duotone"></iconify-icon>
-              {{ cls }}
+              {{ item.className }}
             </div>
             <div class="section-tags">
-              <span class="section-tag" *ngFor="let sec of teacherSections">{{ sec }}</span>
+              <span class="section-tag" *ngFor="let sec of item.sections">{{ sec }}</span>
+              <span class="section-tag" *ngIf="item.sections.length === 0" style="opacity:0.5;">—</span>
             </div>
           </div>
         </div>
@@ -113,7 +116,7 @@
       </div>
 
       <!-- ── Subject Distribution Donut ── -->
-      <div class="t-card chart-card" *ngIf="teacherSubjects.length > 0">
+      <div class="t-card chart-card" *ngIf="teacherSubjectPills.length > 0">
         <div class="t-card-header">
           <div class="t-card-title">
             <iconify-icon icon="solar:chart-bold-duotone" class="title-icon" style="color:#10b981;"></iconify-icon>

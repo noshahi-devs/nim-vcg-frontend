@@ -34,9 +34,9 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
   isTeacher = false;
   currentStaff: Staff | null = null;
   assignments: SubjectAssignment[] = [];
-  teacherSubjects: string[] = [];
+  teacherSubjectPills: { label: string; className: string; sectionName: string }[] = [];
   teacherClasses: string[] = [];
-  teacherSections: string[] = [];
+  classSectionMap: { className: string; sections: string[] }[] = [];
   totalStudents = 0;
 
   // Time & Greeting
@@ -109,28 +109,35 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
             this.assignments = assignments || [];
             const classTeacherSections = (sections || []).filter((s: any) => s.staffId === staff.staffId);
 
-            const subjectNames = new Set<string>();
+            // Build one pill per assignment (not deduplicated by subject name)
+            this.teacherSubjectPills = this.assignments.map(a => ({
+              label: a.subject?.subjectName || 'Unknown Subject',
+              className: a.section?.className || '',
+              sectionName: a.section?.sectionName || ''
+            }));
+
+            // Unique class names
             const classNames = new Set<string>();
-            const sectionNames = new Set<string>();
-
-            this.assignments.forEach(a => {
-              if (a.subject?.subjectName) subjectNames.add(a.subject.subjectName);
-              if (a.section?.className) classNames.add(a.section.className);
-              if (a.section?.sectionName) sectionNames.add(a.section.sectionName);
-            });
-
-            classTeacherSections.forEach((s: any) => {
-              if (s.className) classNames.add(s.className);
-              if (s.sectionName) sectionNames.add(s.sectionName);
-            });
-
-            this.teacherSubjects = [...subjectNames];
+            this.assignments.forEach(a => { if (a.section?.className) classNames.add(a.section.className); });
+            classTeacherSections.forEach((s: any) => { if (s.className) classNames.add(s.className); });
             this.teacherClasses = [...classNames];
-            this.teacherSections = [...sectionNames];
 
-            this.teacherStats[0].value = this.teacherSubjects.length;
+            // Map each class → its assigned sections (only sections for that class)
+            this.classSectionMap = this.teacherClasses.map(cls => {
+              const secs = new Set<string>();
+              this.assignments
+                .filter(a => a.section?.className === cls && a.section?.sectionName)
+                .forEach(a => secs.add(a.section!.sectionName!));
+              classTeacherSections
+                .filter((s: any) => s.className === cls && s.sectionName)
+                .forEach((s: any) => secs.add(s.sectionName));
+              return { className: cls, sections: [...secs] };
+            });
+
+            // Stats
+            this.teacherStats[0].value = this.teacherSubjectPills.length;  // total assignments
             this.teacherStats[1].value = this.teacherClasses.length;
-            this.teacherStats[2].value = this.teacherSections.length;
+            this.teacherStats[2].value = this.classSectionMap.reduce((n, c) => n + c.sections.length, 0);
 
             this.updateTeacherChart();
           }
@@ -148,10 +155,11 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
 
   updateTeacherChart() {
     const subjectColors = ['#6366f1', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+    const pills = this.teacherSubjectPills;
     this.donutChartOptions = {
-      series: this.teacherSubjects.map((_, i) => Math.floor(Math.random() * 30 + 10)),
-      colors: subjectColors.slice(0, this.teacherSubjects.length),
-      labels: this.teacherSubjects,
+      series: pills.map((_, i) => Math.floor(Math.random() * 30 + 10)),
+      colors: subjectColors.slice(0, pills.length),
+      labels: pills.map(p => p.label + (p.className ? ' · ' + p.className : '')),
       chart: { type: 'donut', height: 240, sparkline: { enabled: false } },
       legend: { show: true, position: 'bottom', fontSize: '12px' },
       plotOptions: { pie: { donut: { size: '65%' } } },

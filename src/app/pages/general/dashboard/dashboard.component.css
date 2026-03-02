@@ -458,6 +458,21 @@
     flex-shrink: 0;
 }
 
+.pill-subject {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.pill-class {
+    font-size: 11px;
+    color: #64748b;
+    background: #f1f5f9;
+    border-radius: 6px;
+    padding: 1px 7px;
+    margin-left: 2px;
+    font-weight: 600;
+}
+
 /* Classes & Sections */
 .classes-sections-grid {
     display: flex;
