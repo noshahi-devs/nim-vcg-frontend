@@ -203,186 +203,175 @@
   </ng-container>
 
   <!-- ════════════════════════════════════════════════════════════════
-       ADMIN / PRINCIPAL / OTHER ROLES DASHBOARD
+       ADMIN / PRINCIPAL / ACCOUNTANT DASHBOARD
   ════════════════════════════════════════════════════════════════ -->
   <ng-container *ngIf="!isTeacher">
 
-    <div class="row row-cols-xxxl-5 row-cols-lg-3 row-cols-sm-2 row-cols-1 gy-4">
-      <div class="col">
-        <div class="card shadow-none border bg-gradient-start-1 h-100">
-          <div class="card-body p-20">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-              <div>
-                <p class="fw-medium text-primary-light mb-1">Total Students</p>
-                <h6 class="mb-0">{{ stats?.totalStudents || 0 }}</h6>
-              </div>
-              <div class="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
-                <iconify-icon icon="ph:student-fill" class="text-white text-2xl mb-0"></iconify-icon>
-              </div>
+    <!-- Hero Banner for Management -->
+    <div class="teacher-hero-banner management-hero">
+      <div class="hero-bg-orb orb-1"></div>
+      <div class="hero-bg-orb orb-2"></div>
+      <div class="hero-bg-orb orb-3"></div>
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="teacher-avatar-ring">
+            <div class="teacher-avatar">{{ getInitials(authService.userValue?.username || 'Admin') }}</div>
+            <div class="avatar-status-dot"></div>
+          </div>
+          <div class="hero-text">
+            <div class="greeting-chip">
+              <iconify-icon icon="solar:crown-bold-duotone" class="greeting-icon" style="color:#f59e0b;"></iconify-icon>
+              {{ greeting }}
             </div>
-            <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
-              <span class="d-inline-flex align-items-center gap-1 text-success-main"><iconify-icon icon="bxs:up-arrow"
-                  class="text-xs"></iconify-icon>+85</span>
-              New admissions this month
+            <h2 class="hero-name">{{ authService.userValue?.username || 'Administrator' }}</h2>
+            <p class="hero-role">
+              <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
+              Management Portal &nbsp;·&nbsp;
+              <iconify-icon icon="solar:buildings-bold-duotone"></iconify-icon>
+              Vision College Gojra
             </p>
           </div>
         </div>
-      </div>
-      <div class="col" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
-        <div class="card shadow-none border bg-gradient-start-2 h-100">
-          <div class="card-body p-20">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-              <div>
-                <p class="fw-medium text-primary-light mb-1">Total Teachers</p>
-                <h6 class="mb-0">{{ stats?.totalTeachers || 0 }}</h6>
-              </div>
-              <div class="w-50-px h-50-px bg-purple rounded-circle d-flex justify-content-center align-items-center">
-                <iconify-icon icon="mdi:teacher" class="text-white text-2xl mb-0"></iconify-icon>
-              </div>
-            </div>
-            <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
-              <span class="d-inline-flex align-items-center gap-1 text-success-main"><iconify-icon icon="bxs:up-arrow"
-                  class="text-xs"></iconify-icon>+5</span>
-              New staff this month
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
-        <div class="card shadow-none border bg-gradient-start-3 h-100">
-          <div class="card-body p-20">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-              <div>
-                <p class="fw-medium text-primary-light mb-1">Total Classes</p>
-                <h6 class="mb-0">{{ stats?.totalClasses || 0 }}</h6>
-              </div>
-              <div class="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
-                <iconify-icon icon="mdi:google-classroom" class="text-white text-2xl mb-0"></iconify-icon>
-              </div>
-            </div>
-            <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
-              <span class="d-inline-flex align-items-center gap-1 text-success-main"><iconify-icon icon="bxs:up-arrow"
-                  class="text-xs"></iconify-icon>+3</span>
-              New classes this semester
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col" *ngIf="authService.hasAnyRole(['Admin', 'Accountant'])">
-        <div class="card shadow-none border bg-gradient-start-4 h-100">
-          <div class="card-body p-20">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-              <div>
-                <p class="fw-medium text-primary-light mb-1">Fee Collection</p>
-                <h6 class="mb-0">{{ stats?.incomeThisMonth || 0 | currency }}</h6>
-              </div>
-              <div
-                class="w-50-px h-50-px bg-success-main rounded-circle d-flex justify-content-center align-items-center">
-                <iconify-icon icon="mdi:cash-multiple" class="text-white text-2xl mb-0"></iconify-icon>
-              </div>
-            </div>
-            <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
-              <span class="d-inline-flex align-items-center gap-1 text-success-main"><iconify-icon icon="bxs:up-arrow"
-                  class="text-xs"></iconify-icon>+$35,000</span>
-              This month collection
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col" *ngIf="authService.hasAnyRole(['Admin', 'Accountant'])">
-        <div class="card shadow-none border bg-gradient-start-5 h-100">
-          <div class="card-body p-20">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-              <div>
-                <p class="fw-medium text-primary-light mb-1">Total Expenses</p>
-                <h6 class="mb-0">{{ stats?.expenseThisMonth || 0 | currency }}</h6>
-              </div>
-              <div class="w-50-px h-50-px bg-red rounded-circle d-flex justify-content-center align-items-center">
-                <iconify-icon icon="mdi:cash-remove" class="text-white text-2xl mb-0"></iconify-icon>
-              </div>
-            </div>
-            <p class="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
-              <span class="d-inline-flex align-items-center gap-1 text-danger-main"><iconify-icon icon="bxs:up-arrow"
-                  class="text-xs"></iconify-icon>+$12,000</span>
-              This month expenses
-            </p>
+        <div class="hero-right">
+          <div class="live-clock">
+            <div class="clock-time">{{ currentTime }}</div>
+            <div class="clock-date">{{ currentDate }}</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="row gy-4 mt-1">
+    <!-- ─── Management Stat Cards ─── -->
+    <div class="teacher-stats-grid">
+      <div class="t-stat-card" *ngFor="let s of overviewStats; let i = index"
+        [style.animation-delay]="(i * 0.08) + 's'">
+        <div class="t-stat-icon" [ngStyle]="{ background: s.bg, color: s.color }">
+          <iconify-icon [icon]="s.icon"></iconify-icon>
+        </div>
+        <div class="t-stat-info">
+          <span class="t-stat-label">{{ s.label }}</span>
+          <span class="t-stat-value" [ngStyle]="{ color: s.color }">
+            {{ s.isCurrency ? (s.value | currency) : (s.value || 0) }}
+          </span>
+        </div>
+        <div class="t-stat-bar" [ngStyle]="{ background: s.color }"></div>
+      </div>
+    </div>
+
+    <!-- ─── Charts Row ─── -->
+    <div class="row gy-4 mb-28">
       <div class="col-xxl-6 col-xl-12" *ngIf="authService.hasAnyRole(['Admin', 'Accountant'])">
-        <div class="card h-100">
-          <div class="card-body">
-            <div class="d-flex flex-wrap align-items-center justify-content-between">
-              <h6 class="text-lg mb-0">Fee Collection Statistics</h6>
-              <select class="form-select bg-base form-select-sm w-auto">
-                <option>Yearly</option>
-                <option>Monthly</option>
-                <option>Weekly</option>
-                <option>Today</option>
-              </select>
+        <div class="t-card h-100">
+          <div class="t-card-header">
+            <div class="t-card-title">
+              <iconify-icon icon="solar:wallet-money-bold-duotone" class="title-icon"
+                style="color:#6366f1;"></iconify-icon>
+              Fee Collection Statistics
             </div>
-            <div class="d-flex flex-wrap align-items-center gap-2 mt-8">
-              <h6 class="mb-0">$125,000</h6>
-              <span
-                class="text-sm fw-semibold rounded-pill bg-success-focus text-success-main border br-success px-8 py-4 line-height-1 d-flex align-items-center gap-1">10%
-                <iconify-icon icon="bxs:up-arrow" class="text-xs"></iconify-icon></span>
-              <span class="text-xs fw-medium">+ $4,200 Per Day</span>
-            </div>
-            <div id="chart" class="pt-28 apexcharts-tooltip-style-1" style="min-height: 279px;">
-              <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
-                [yaxis]="chartOptions.yaxis" [stroke]="chartOptions.stroke" [markers]="chartOptions.markers"
-                [tooltip]="chartOptions.tooltip" [dataLabels]="chartOptions.dataLabels" [grid]="chartOptions.grid">
-              </apx-chart>
-            </div>
+            <span class="t-badge" style="background:rgba(99,102,241,0.1);color:#6366f1;">Yearly Trends</span>
+          </div>
+          <div id="chart" class="apexcharts-tooltip-style-1">
+            <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
+              [yaxis]="chartOptions.yaxis" [stroke]="chartOptions.stroke" [markers]="chartOptions.markers"
+              [tooltip]="chartOptions.tooltip" [dataLabels]="chartOptions.dataLabels" [grid]="chartOptions.grid">
+            </apx-chart>
           </div>
         </div>
       </div>
+
       <div class="col-xxl-3 col-xl-6">
-        <div class="card h-100 radius-8 border">
-          <div class="card-body p-24">
-            <h6 class="mb-12 fw-semibold text-lg mb-16">Student Enrollment</h6>
-            <div class="d-flex align-items-center gap-2 mb-20">
-              <h6 class="fw-semibold mb-0">1,250</h6>
-              <p class="text-sm mb-0">
-                <span
-                  class="bg-danger-focus border br-danger px-8 py-2 rounded-pill fw-semibold text-danger-main text-sm d-inline-flex align-items-center gap-1">10%<iconify-icon
-                    icon="iconamoon:arrow-down-2-fill" class="icon"></iconify-icon></span>
-                + 3 Per Day
-              </p>
+        <div class="t-card h-100">
+          <div class="t-card-header">
+            <div class="t-card-title">
+              <iconify-icon icon="solar:user-plus-bold-duotone" class="title-icon"
+                style="color:#0ea5e9;"></iconify-icon>
+              Recent Admissions
             </div>
-            <div id="barChart" class="barChart">
-              <apx-chart [series]="barChartOptions.series" [chart]="barChartOptions.chart"
-                [xaxis]="barChartOptions.xaxis" [yaxis]="barChartOptions.yaxis" [fill]="barChartOptions.fill"
-                [grid]="barChartOptions.grid" [plotOptions]="barChartOptions.plotOptions"
-                [dataLabels]="barChartOptions.dataLabels">
-              </apx-chart>
-            </div>
+          </div>
+          <div id="barChart" class="barChart">
+            <apx-chart [series]="barChartOptions.series" [chart]="barChartOptions.chart" [xaxis]="barChartOptions.xaxis"
+              [yaxis]="barChartOptions.yaxis" [fill]="barChartOptions.fill" [grid]="barChartOptions.grid"
+              [plotOptions]="barChartOptions.plotOptions" [dataLabels]="barChartOptions.dataLabels">
+            </apx-chart>
           </div>
         </div>
       </div>
+
       <div class="col-xxl-3 col-xl-6">
-        <div class="card h-100 radius-8 border-0 overflow-hidden">
-          <div class="card-body p-24">
-            <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
-              <h6 class="mb-2 fw-bold text-lg">Student Overview</h6>
-              <select class="form-select form-select-sm w-auto bg-base border text-secondary-light">
-                <option>Today</option>
-                <option>Weekly</option>
-                <option>Monthly</option>
-                <option>Yearly</option>
-              </select>
-            </div>
-            <div id="userOverviewDonutChart" class="apexcharts-tooltip-z-none">
-              <apx-chart [series]="donutChartOptions.series" [chart]="donutChartOptions.chart"
-                [colors]="donutChartOptions.colors" [legend]="donutChartOptions.legend"
-                [labels]="donutChartOptions.labels">
-              </apx-chart>
+        <div class="t-card h-100">
+          <div class="t-card-header">
+            <div class="t-card-title">
+              <iconify-icon icon="solar:chart-bold-duotone" class="title-icon" style="color:#10b981;"></iconify-icon>
+              Student Distribution
             </div>
           </div>
+          <div id="userOverviewDonutChart" class="apexcharts-tooltip-z-none">
+            <apx-chart [series]="donutChartOptions.series" [chart]="donutChartOptions.chart"
+              [colors]="donutChartOptions.colors" [legend]="donutChartOptions.legend"
+              [labels]="donutChartOptions.labels">
+            </apx-chart>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ─── Role-Based Quick Actions ─── -->
+    <div class="quick-actions-section">
+      <div class="section-header">
+        <h5 class="section-title">
+          <iconify-icon icon="solar:magic-stick-3-bold-duotone" style="color:#f59e0b;"></iconify-icon>
+          Management Quick Actions
+        </h5>
+        <p class="section-subtitle">Shortcut tools for your specific role</p>
+      </div>
+
+      <!-- Admin Actions Grid -->
+      <div class="quick-actions-grid mb-20" *ngIf="authService.hasRole('Admin')">
+        <a class="quick-action-tile" *ngFor="let action of adminQuickActions; let i = index" [routerLink]="action.route"
+          [style.animation-delay]="(i * 0.06) + 's'">
+          <div class="qa-glow" [ngStyle]="{ background: action.color + '33' }"></div>
+          <div class="qa-icon" [ngStyle]="{ background: action.color + '20', color: action.color }">
+            <iconify-icon [icon]="action.icon"></iconify-icon>
+          </div>
+          <div class="qa-text">
+            <span class="qa-label">{{ action.label }}</span>
+            <span class="qa-desc">{{ action.description }}</span>
+          </div>
+          <iconify-icon icon="solar:alt-arrow-right-linear" class="qa-arrow"></iconify-icon>
+        </a>
+      </div>
+
+      <!-- Principal Actions (if not admin) -->
+      <div class="quick-actions-grid mb-20" *ngIf="authService.hasRole('Principal') && !authService.hasRole('Admin')">
+        <a class="quick-action-tile" *ngFor="let action of principalQuickActions; let i = index"
+          [routerLink]="action.route" [style.animation-delay]="(i * 0.06) + 's'">
+          <div class="qa-glow" [ngStyle]="{ background: action.color + '33' }"></div>
+          <div class="qa-icon" [ngStyle]="{ background: action.color + '20', color: action.color }">
+            <iconify-icon [icon]="action.icon"></iconify-icon>
+          </div>
+          <div class="qa-text">
+            <span class="qa-label">{{ action.label }}</span>
+            <span class="qa-desc">{{ action.description }}</span>
+          </div>
+          <iconify-icon icon="solar:alt-arrow-right-linear" class="qa-arrow"></iconify-icon>
+        </a>
+      </div>
+
+      <!-- Accountant Actions (if not admin/principal) -->
+      <div class="quick-actions-grid mb-20"
+        *ngIf="authService.hasRole('Accountant') && !authService.hasAnyRole(['Admin','Principal'])">
+        <a class="quick-action-tile" *ngFor="let action of accountantQuickActions; let i = index"
+          [routerLink]="action.route" [style.animation-delay]="(i * 0.06) + 's'">
+          <div class="qa-glow" [ngStyle]="{ background: action.color + '33' }"></div>
+          <div class="qa-icon" [ngStyle]="{ background: action.color + '20', color: action.color }">
+            <iconify-icon [icon]="action.icon"></iconify-icon>
+          </div>
+          <div class="qa-text">
+            <span class="qa-label">{{ action.label }}</span>
+            <span class="qa-desc">{{ action.description }}</span>
+          </div>
+          <iconify-icon icon="solar:alt-arrow-right-linear" class="qa-arrow"></iconify-icon>
+        </a>
       </div>
     </div>
 

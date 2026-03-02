@@ -63,6 +63,35 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
     { label: 'Apply Leave', icon: 'solar:pen-new-round-bold-duotone', route: '/apply-leave', color: '#8b5cf6', description: 'Submit new leave request' },
   ];
 
+  adminQuickActions = [
+    { label: 'Add Student', icon: 'solar:user-plus-bold-duotone', route: '/student-add', color: '#6366f1', description: 'Register new student' },
+    { label: 'Add Staff', icon: 'solar:user-speak-bold-duotone', route: '/staff-add', color: '#0ea5e9', description: 'Register new team member' },
+    { label: 'Classes', icon: 'solar:buildings-bold-duotone', route: '/class-list', color: '#10b981', description: 'Manage class structure' },
+    { label: 'Assignments', icon: 'solar:book-2-bold-duotone', route: '/subject-assignment', color: '#f59e0b', description: 'Link subjects to staff' },
+    { label: 'User Roles', icon: 'solar:shield-keyhole-bold-duotone', route: '/role-access', color: '#ec4899', description: 'Manage permissions' },
+    { label: 'Settings', icon: 'solar:settings-bold-duotone', route: '/settings', color: '#8b5cf6', description: 'Global app configurations' },
+  ];
+
+  principalQuickActions = [
+    { label: 'Class Reports', icon: 'solar:document-bold-duotone', route: '/class-wise-report', color: '#6366f1', description: 'View performance by class' },
+    { label: 'Exam Analytics', icon: 'solar:chart-bold-duotone', route: '/exam-analytics', color: '#0ea5e9', description: 'Deep dive into results' },
+    { label: 'Manage Leaves', icon: 'solar:calendar-date-bold-duotone', route: '/manage-leaves', color: '#10b981', description: 'Review staff absences' },
+    { label: 'Staff Attendance', icon: 'solar:user-check-bold-duotone', route: '/staff-attendance', color: '#f59e0b', description: 'Daily staff presence list' },
+    { label: 'Student List', icon: 'solar:users-group-rounded-bold-duotone', route: '/student-list', color: '#ec4899', description: 'Browse student records' },
+    { label: 'Staff List', icon: 'solar:user-speak-bold-duotone', route: '/staff-list', color: '#8b5cf6', description: 'Browse team directory' },
+  ];
+
+  accountantQuickActions = [
+    { label: 'Fee Collection', icon: 'solar:wallet-money-bold-duotone', route: '/collect-fee', color: '#6366f1', description: 'Record student payments' },
+    { label: 'Generate Invoice', icon: 'solar:bill-list-bold-duotone', route: '/generate-fee-invoice', color: '#0ea5e9', description: 'Create new billing records' },
+    { label: 'Expenses', icon: 'solar:card-send-bold-duotone', route: '/expense-manage', color: '#10b981', description: 'Manage outflow records' },
+    { label: 'Salary Slip', icon: 'solar:plain-2-bold-duotone', route: '/salary-slip', color: '#f59e0b', description: 'View staff payroll slips' },
+    { label: 'Accounts', icon: 'solar:document-text-bold-duotone', route: '/accounts-ledger', color: '#ec4899', description: 'View financial ledger' },
+    { label: 'Wallet', icon: 'solar:wallet-bold-duotone', route: '/wallet', color: '#8b5cf6', description: 'Manage digital transactions' },
+  ];
+
+  overviewStats: any[] = [];
+
   constructor(
     private dashboardService: DashboardService,
     public authService: AuthService,
@@ -147,7 +176,16 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   loadAdminData() {
-    this.dashboardService.getStats().subscribe(data => { this.stats = data; });
+    this.dashboardService.getStats().subscribe(data => {
+      this.stats = data;
+      this.overviewStats = [
+        { label: 'Total Students', value: data.totalStudents, icon: 'solar:users-group-rounded-bold-duotone', color: '#6366f1', bg: 'rgba(99,102,241,0.12)' },
+        { label: 'Total Teachers', value: data.totalTeachers, icon: 'solar:user-speak-bold-duotone', color: '#0ea5e9', bg: 'rgba(14,165,233,0.12)' },
+        { label: 'Income (Month)', value: data.incomeThisMonth, icon: 'solar:wallet-money-bold-duotone', color: '#10b981', bg: 'rgba(16,185,129,0.12)', isCurrency: true },
+        { label: 'Expenses (Month)', value: data.expenseThisMonth, icon: 'solar:card-send-bold-duotone', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)', isCurrency: true },
+        { label: 'Total Classes', value: data.totalClasses, icon: 'solar:buildings-bold-duotone', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' }
+      ];
+    });
     this.dashboardService.getChartData().subscribe(data => { this.updateHistoricalCharts(data); });
     this.dashboardService.getStudentDistribution().subscribe(data => { this.updateDonutChart(data); });
     this.dashboardService.getWeeklyAdmissions().subscribe(data => { this.updateBarChart(data); });
