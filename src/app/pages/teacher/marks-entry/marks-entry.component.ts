@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, NgForm, FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 import { finalize } from 'rxjs';
 
 
@@ -212,4 +212,5 @@ export class MarksEntryComponent implements OnInit {
     return formatted;
   }
 }
+
 

@@ -5,7 +5,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { RouterModule } from '@angular/router';
 import { LeaveService } from '../../../services/leave.service';
 import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -133,4 +133,5 @@ export class LeaveComponent implements OnInit {
     if (page >= 1 && page <= this.totalPages) this.currentPage = page;
   }
 }
+
 

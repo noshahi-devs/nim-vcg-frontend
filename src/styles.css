@@ -391,3 +391,313 @@ body {
   text-overflow: ellipsis !important;
   overflow: hidden !important;
 }
+
+/* ========================
+   GLOBAL SWEETALERT REDESIGN
+======================== */
+.swal2-popup.nim-swal-popup {
+  width: min(92vw, 520px) !important;
+  border-radius: 22px !important;
+  border: 1px solid rgba(72, 108, 234, 0.2) !important;
+  position: relative;
+  overflow: hidden !important;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at top right, rgba(72, 108, 234, 0.16), transparent 40%),
+    linear-gradient(165deg, #ffffff, #f8fbff) !important;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25) !important;
+  padding: 1.15rem 1.2rem 1rem !important;
+}
+
+.swal2-popup.nim-swal-popup::before {
+  content: "";
+  position: absolute;
+  inset: -120% auto auto -35%;
+  width: 70%;
+  height: 300%;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.62) 38%,
+    rgba(255, 255, 255, 0.15) 54%,
+    transparent 68%
+  );
+  transform: rotate(12deg);
+  animation: nimPopupShine 5.8s linear infinite;
+  z-index: 0;
+}
+
+.swal2-popup.nim-swal-popup > * {
+  position: relative;
+  z-index: 1;
+}
+
+.swal2-title.nim-swal-title {
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.55rem !important;
+}
+
+.swal2-html-container.nim-swal-html {
+  font-size: 0.96rem !important;
+  color: #475569 !important;
+  line-height: 1.55 !important;
+  margin: 0.2rem 0 0.4rem !important;
+}
+
+.swal2-actions.nim-swal-actions {
+  width: 100%;
+  gap: 10px;
+  margin: 1rem 0 0.15rem !important;
+}
+
+.swal2-actions.nim-swal-actions .nim-swal-btn {
+  min-width: 118px;
+  height: 42px;
+  border-radius: 11px;
+  border: 0;
+  position: relative;
+  overflow: hidden;
+  padding: 0 16px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.swal2-actions.nim-swal-actions .nim-swal-btn:focus-visible {
+  outline: 2px solid rgba(72, 108, 234, 0.45);
+  outline-offset: 1px;
+}
+
+.swal2-actions.nim-swal-actions .nim-swal-btn:hover {
+  transform: translateY(-1px) scale(1.015);
+  filter: brightness(0.98);
+}
+
+.swal2-actions.nim-swal-actions .nim-swal-btn:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.swal2-actions.nim-swal-actions .nim-swal-btn::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: translate(-50%, -50%);
+  transition: width 0.36s ease, height 0.36s ease, opacity 0.36s ease;
+  opacity: 0;
+}
+
+.swal2-actions.nim-swal-actions .nim-swal-btn:hover::after {
+  width: 210px;
+  height: 210px;
+  opacity: 0.65;
+}
+
+.swal2-actions.nim-swal-actions .nim-swal-confirm {
+  color: #ffffff;
+  background: linear-gradient(135deg, #486cea, #355bd4);
+  box-shadow: 0 10px 20px rgba(72, 108, 234, 0.32);
+}
+
+.swal2-actions.nim-swal-actions .nim-swal-cancel {
+  color: #334155;
+  background: #f1f5f9;
+  border: 1px solid #dbe5f5;
+}
+
+.swal2-actions.nim-swal-actions .nim-swal-deny {
+  color: #ffffff;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.28);
+}
+
+.swal2-popup.nim-swal-popup .swal2-close.nim-swal-close {
+  color: #64748b;
+  font-size: 1.7rem;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.swal2-popup.nim-swal-popup .swal2-close.nim-swal-close:hover {
+  color: #0f172a;
+  transform: rotate(90deg) scale(1.04);
+}
+
+.swal2-icon.swal2-success {
+  border-color: rgba(34, 197, 94, 0.45) !important;
+}
+
+.swal2-icon.swal2-warning {
+  border-color: rgba(245, 158, 11, 0.45) !important;
+  color: #d97706 !important;
+}
+
+.swal2-icon.swal2-error {
+  border-color: rgba(239, 68, 68, 0.45) !important;
+  color: #dc2626 !important;
+}
+
+.swal2-icon.swal2-info,
+.swal2-icon.swal2-question {
+  border-color: rgba(72, 108, 234, 0.45) !important;
+  color: #486cea !important;
+}
+
+.swal2-popup.nim-swal-popup .swal2-icon {
+  animation: nimIconPulse 1.8s ease-in-out infinite;
+}
+
+.swal2-popup.nim-swal-toast {
+  border-radius: 14px !important;
+  border: 1px solid rgba(72, 108, 234, 0.2) !important;
+  background: linear-gradient(135deg, #ffffff, #f5f9ff) !important;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.16) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.swal2-popup.nim-swal-toast:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 36px rgba(15, 23, 42, 0.22) !important;
+}
+
+.swal2-title.nim-swal-toast-title {
+  color: #0f172a !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+}
+
+.swal2-html-container.nim-swal-toast-html {
+  color: #475569 !important;
+  font-size: 0.84rem !important;
+}
+
+.swal2-container .swal2-timer-progress-bar {
+  background: linear-gradient(90deg, #486cea, #6c8bff) !important;
+  opacity: 0.95 !important;
+}
+
+.swal2-container.swal2-backdrop-show {
+  animation: nimBackdropIn 0.22s ease;
+  backdrop-filter: blur(2px);
+}
+
+@keyframes nimSwalIn {
+  0% {
+    transform: translateY(16px) scale(0.965);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes nimSwalOut {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(10px) scale(0.98);
+    opacity: 0;
+  }
+}
+
+.nim-swal-show {
+  animation: nimSwalIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nim-swal-hide {
+  animation: nimSwalOut 0.18s ease;
+}
+
+.swal2-popup.nim-swal-show .nim-swal-title {
+  animation: nimReveal 0.32s ease 0.05s both;
+}
+
+.swal2-popup.nim-swal-show .nim-swal-html {
+  animation: nimReveal 0.34s ease 0.09s both;
+}
+
+.swal2-popup.nim-swal-show .nim-swal-actions {
+  animation: nimReveal 0.36s ease 0.13s both;
+}
+
+@keyframes nimPopupShine {
+  0% {
+    transform: translateX(-35%) rotate(12deg);
+    opacity: 0.2;
+  }
+
+  35% {
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: translateX(205%) rotate(12deg);
+    opacity: 0.1;
+  }
+}
+
+@keyframes nimReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes nimIconPulse {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-2px) scale(1.03);
+  }
+}
+
+@keyframes nimBackdropIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nim-swal-show,
+  .nim-swal-hide,
+  .swal2-popup.nim-swal-popup .swal2-icon,
+  .swal2-popup.nim-swal-popup::before,
+  .swal2-popup.nim-swal-show .nim-swal-title,
+  .swal2-popup.nim-swal-show .nim-swal-html,
+  .swal2-popup.nim-swal-show .nim-swal-actions {
+    animation: none !important;
+  }
+
+  .swal2-actions.nim-swal-actions .nim-swal-btn,
+  .swal2-popup.nim-swal-toast {
+    transition: none !important;
+  }
+}

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AccountsService, ProfitLossReport } from '../../../services/accounts.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 
 @Component({
   selector: 'app-profit-loss',
@@ -115,4 +115,5 @@ export class ProfitLossComponent implements OnInit {
     return this.report.netProfit >= 0 ? 'Net Profit' : 'Net Loss';
   }
 }
+
 

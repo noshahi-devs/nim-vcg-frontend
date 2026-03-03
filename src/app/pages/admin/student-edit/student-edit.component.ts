@@ -9,7 +9,7 @@ import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 
 declare var $: any;
 
@@ -148,4 +148,5 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
   }
 
 }
+
 

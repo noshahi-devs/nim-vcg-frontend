@@ -1,216 +1,294 @@
-<div class="dashboard-main-body">
-  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-    <h6 class="fw-semibold mb-0">Manage Logins</h6>
-    <ul class="d-flex align-items-center gap-2">
-      <li class="fw-medium">
-        <a routerLink="/dashboard" class="d-flex align-items-center gap-1 hover-text-primary">
-          <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
-          Dashboard
-        </a>
-      </li>
-      <li>-</li>
-      <li class="fw-medium">Manage Logins</li>
-    </ul>
-  </div>
-
-  <div class="fee-card h-100 p-0">
-    <div
-      class="fee-card-header premium-header border-bottom d-flex align-items-center flex-wrap gap-3 justify-content-between">
-      <div class="d-flex align-items-center flex-wrap gap-3">
-        <span class="text-md fw-medium text-white mb-0">Show</span>
-        <select class="entries-select w-auto ps-12 py-6 radius-12 h-40-px" [(ngModel)]="rowsPerPage"
-          (change)="currentPage = 1">
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
-        </select>
-        <div class="search-wrapper">
-          <iconify-icon icon="ion:search-outline" class="search-icon"></iconify-icon>
-          <input type="text" class="search-input w-auto" [(ngModel)]="searchTerm" (input)="searchLogins()"
-            placeholder="Search by Name, Email, Role..." />
-        </div>
-      </div>
-
-      <button type="button" (click)="openAddDialog()"
-        class="btn-primary-gradient text-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
-        <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-        Add New Login
-      </button>
-    </div>
-
-    <div class="fee-card-body p-0">
-      <div class="table-wrapper m-0 pb-0" style="border: none;">
-        <table class="fee-table">
-          <thead>
-            <tr>
-              <th scope="col">S.L</th>
-              <th scope="col">Full Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Role</th>
-              <th scope="col">Campus</th>
-              <th scope="col">Phone</th>
-              <th scope="col" class="text-center">Status</th>
-              <th scope="col">Created On</th>
-              <th scope="col" class="text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="table-row" *ngFor="let login of paginatedLogins; let i = index">
-              <td><span class="fw-semibold text-secondary">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</span></td>
-              <td><span class="fw-semibold text-primary">{{ login.name }}</span></td>
-              <td><span class="text-secondary">{{ login.email }}</span></td>
-              <td><span class="amount-chip partial px-12 py-4 radius-4 fw-medium text-sm">{{ login.role }}</span></td>
-              <td><span class="text-secondary">{{ login.campus }}</span></td>
-              <td><span class="text-secondary">{{ login.phone }}</span></td>
-              <td class="text-center">
-                <span *ngIf="login.status === 'Active' || login.status === 'active'"
-                  class="amount-chip paid px-24 py-4 radius-4 fw-medium text-sm">Active</span>
-                <span *ngIf="login.status === 'Inactive' || login.status === 'inactive'"
-                  class="amount-chip pending px-24 py-4 radius-4 fw-medium text-sm">Inactive</span>
-              </td>
-              <td><span class="text-secondary">{{ login.createdOn }}</span></td>
-              <td class="text-center">
-                <div class="d-flex align-items-center gap-10 justify-content-center">
-                  <button type="button" (click)="openEditDialog(login)" class="icon-btn edit-btn" title="Edit">
-                    <iconify-icon icon="lucide:edit"></iconify-icon>
-                  </button>
-                  <button type="button" (click)="confirmDelete(login)" class="icon-btn delete-btn" title="Delete">
-                    <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr *ngIf="paginatedLogins.length === 0">
-              <td colspan="9" class="empty-state">
-                <div class="empty-content">
-                  <iconify-icon icon="mdi:account-off-outline" class="text-4xl mb-2"></iconify-icon>
-                  <p>No logins found.</p>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 p-24">
-        <span class="text-muted">Showing {{ paginatedLogins.length > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0 }} to
-          {{ Math.min(currentPage * rowsPerPage, filteredLogins.length) }} of {{ filteredLogins.length }} entries</span>
-        <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
-          <li class="page-item">
-            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)"
-              style="cursor: pointer;">
-              <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
-            </a>
-          </li>
-          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
-            <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.bg-primary-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
-              [class.bg-neutral-200]="currentPage !== i + 1" [class.text-secondary-light]="currentPage !== i + 1"
-              (click)="changePage(i + 1)" href="javascript:void(0)" style="cursor: pointer;">
-              {{ i + 1 }}
-            </a>
-          </li>
-          <li class="page-item">
-            <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-              [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
-              href="javascript:void(0)" style="cursor: pointer;">
-              <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
-            </a>
-          </li>
-        </ul>
+<div class="dashboard-main-body sml-page">
+  <section class="sml-hero">
+    <div class="sml-hero-content">
+      <p class="sml-eyebrow">Admin Console</p>
+      <h2>Staff Login Management</h2>
+      <p>Create, review, and control access accounts for your staff team from one place.</p>
+      <div class="sml-hero-meta">
+        <span>{{ totalLogins }} total accounts</span>
+        <span>{{ activeLogins }} active</span>
+        <span>{{ inactiveLogins }} inactive</span>
       </div>
     </div>
-  </div>
+
+    <button type="button" (click)="openAddDialog()" class="sml-cta-btn">
+      <iconify-icon icon="ic:baseline-plus"></iconify-icon>
+      Add New Login
+    </button>
+  </section>
+
+  <section class="sml-stats">
+    <article class="sml-stat-card">
+      <div class="sml-stat-icon total">
+        <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
+      </div>
+      <div>
+        <p class="sml-stat-label">Total Logins</p>
+        <h4>{{ totalLogins }}</h4>
+      </div>
+    </article>
+
+    <article class="sml-stat-card">
+      <div class="sml-stat-icon active">
+        <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
+      </div>
+      <div>
+        <p class="sml-stat-label">Active Accounts</p>
+        <h4>{{ activeLogins }}</h4>
+      </div>
+    </article>
+
+    <article class="sml-stat-card">
+      <div class="sml-stat-icon inactive">
+        <iconify-icon icon="solar:shield-cross-bold-duotone"></iconify-icon>
+      </div>
+      <div>
+        <p class="sml-stat-label">Inactive Accounts</p>
+        <h4>{{ inactiveLogins }}</h4>
+      </div>
+    </article>
+  </section>
+
+  <section class="sml-panel sml-controls">
+    <div class="sml-control-group">
+      <label for="rows" class="sml-label">Show</label>
+      <select id="rows" class="entries-select" [(ngModel)]="rowsPerPage" (change)="currentPage = 1">
+        <option [value]="10">10</option>
+        <option [value]="25">25</option>
+        <option [value]="50">50</option>
+      </select>
+      <span class="sml-muted">entries</span>
+    </div>
+
+    <div class="search-wrapper">
+      <iconify-icon icon="ion:search-outline" class="search-icon"></iconify-icon>
+      <input
+        type="text"
+        class="search-input"
+        [(ngModel)]="searchTerm"
+        (input)="searchLogins()"
+        placeholder="Search by name, email, role, campus"
+      />
+    </div>
+  </section>
+
+  <section class="sml-panel sml-table-panel">
+    <div class="sml-table-head">
+      <h5>Login Directory</h5>
+      <span>{{ filteredLogins.length }} records</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="sml-table">
+        <thead>
+          <tr>
+            <th>S.L</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Campus</th>
+            <th>Phone</th>
+            <th class="text-center">Status</th>
+            <th>Created On</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr class="table-row" *ngFor="let login of paginatedLogins; let i = index">
+            <td>{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
+            <td class="fw-semibold text-dark">{{ login.name }}</td>
+            <td>{{ login.email }}</td>
+            <td>
+              <span class="role-pill">{{ login.role }}</span>
+            </td>
+            <td>{{ login.campus }}</td>
+            <td>{{ login.phone }}</td>
+            <td class="text-center">
+              <span *ngIf="login.status?.toLowerCase() === 'active'" class="status-pill active">Active</span>
+              <span *ngIf="login.status?.toLowerCase() === 'inactive'" class="status-pill inactive">Inactive</span>
+            </td>
+            <td>{{ login.createdOn }}</td>
+            <td class="text-center">
+              <div class="sml-actions">
+                <button type="button" (click)="openEditDialog(login)" class="icon-btn edit-btn" title="Edit">
+                  <iconify-icon icon="lucide:edit"></iconify-icon>
+                </button>
+                <button type="button" (click)="confirmDelete(login)" class="icon-btn delete-btn" title="Delete">
+                  <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="loading">
+            <td colspan="9" class="empty-state">
+              <div class="empty-content">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p>Loading logins...</p>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!loading && paginatedLogins.length === 0">
+            <td colspan="9" class="empty-state">
+              <div class="empty-content">
+                <iconify-icon icon="mdi:account-off-outline" class="empty-icon"></iconify-icon>
+                <p>No logins found.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sml-pagination-wrap">
+      <span class="sml-muted">
+        Showing {{ paginatedLogins.length > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0 }}
+        to {{ Math.min(currentPage * rowsPerPage, filteredLogins.length) }} of {{ filteredLogins.length }} entries
+      </span>
+
+      <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
+        <li class="page-item">
+          <a
+            class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+            [class.disabled]="currentPage === 1"
+            (click)="changePage(currentPage - 1)"
+            href="javascript:void(0)"
+            style="cursor: pointer;"
+          >
+            <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
+          </a>
+        </li>
+
+        <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
+          <a
+            class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+            [class.bg-primary-600]="currentPage === i + 1"
+            [class.text-white]="currentPage === i + 1"
+            [class.bg-neutral-200]="currentPage !== i + 1"
+            [class.text-secondary-light]="currentPage !== i + 1"
+            (click)="changePage(i + 1)"
+            href="javascript:void(0)"
+            style="cursor: pointer;"
+          >
+            {{ i + 1 }}
+          </a>
+        </li>
+
+        <li class="page-item">
+          <a
+            class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+            [class.disabled]="currentPage === totalPages"
+            (click)="changePage(currentPage + 1)"
+            href="javascript:void(0)"
+            style="cursor: pointer;"
+          >
+            <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
 </div>
 
-<!-- Login Management Modal -->
-<div class="modal fade" [class.show]="showDialog" [style.display]="showDialog ? 'block' : 'none'" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content fee-card p-0" style="background: transparent;">
-      <div class="fee-card-header premium-header border-bottom d-flex justify-content-between align-items-center"
-        style="border-radius: 16px 16px 0 0;">
-        <h1 class="modal-title fs-5 text-white mb-0">{{ isEditMode ? 'Edit Login' : 'Add New Login' }}</h1>
-        <button type="button" class="btn-close" (click)="closeDialog()" aria-label="Close"
-          style="filter: invert(1);"></button>
+<!-- Add / Edit Modal -->
+<div
+  class="modal fade sml-modal"
+  [class.show]="showDialog"
+  [style.display]="showDialog ? 'block' : 'none'"
+  tabindex="-1"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="modal-dialog modal-dialog-centered sml-modal-dialog">
+    <div class="modal-content sml-modal-card">
+      <div class="sml-modal-header">
+        <div class="sml-modal-title-wrap">
+          <span class="sml-modal-badge">{{ isEditMode ? 'Edit Access' : 'New Access' }}</span>
+          <h1 class="sml-modal-title">{{ isEditMode ? 'Edit Login' : 'Create New Login' }}</h1>
+          <p class="sml-modal-subtitle">
+            {{ isEditMode ? 'Update account details, role and status for this staff member.' : 'Create a secure staff login account with role and campus access.' }}
+          </p>
+        </div>
+        <button type="button" class="sml-close-btn" (click)="closeDialog()" aria-label="Close">
+          <iconify-icon icon="material-symbols:close-rounded"></iconify-icon>
+        </button>
       </div>
 
-      <div class="fee-card-body p-24" style="border-radius: 0 0 16px 16px; background: var(--bg-body-bg);">
+      <div class="sml-modal-body">
         <form (ngSubmit)="saveLogin()">
-          <div class="row gy-4">
-            <div class="col-md-6 form-group-premium">
+          <div class="sml-form-grid">
+            <div class="sml-field">
               <label class="field-label">Full Name <span class="text-danger-600">*</span></label>
-              <input type="text" class="field-input" [(ngModel)]="loginForm.name" name="name" placeholder="Enter Name"
-                required />
+              <input type="text" class="field-input" [(ngModel)]="loginForm.name" name="name" placeholder="Enter full name" required />
             </div>
 
-            <div class="col-md-6 form-group-premium">
+            <div class="sml-field">
               <label class="field-label">Username / Email <span class="text-danger-600">*</span></label>
-              <input type="email" class="field-input" [(ngModel)]="loginForm.email" name="email"
-                placeholder="Enter Email Address" required />
+              <input type="email" class="field-input" [(ngModel)]="loginForm.email" name="email" placeholder="Enter email address" required />
             </div>
 
-            <div class="col-md-6 form-group-premium" *ngIf="!isEditMode">
+            <div class="sml-field" *ngIf="!isEditMode">
               <label class="field-label">Password <span class="text-danger-600">*</span></label>
-              <input type="password" class="field-input" [(ngModel)]="loginForm.password" name="password"
-                placeholder="Enter Password" />
+              <input type="password" class="field-input" [(ngModel)]="loginForm.password" name="password" placeholder="Enter password" />
             </div>
 
-            <div class="col-md-6 form-group-premium" *ngIf="!isEditMode">
+            <div class="sml-field" *ngIf="!isEditMode">
               <label class="field-label">Confirm Password <span class="text-danger-600">*</span></label>
-              <input type="password" class="field-input" [(ngModel)]="confirmPassword" name="confirmPassword"
-                placeholder="Confirm Password" />
+              <input type="password" class="field-input" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm password" />
             </div>
 
-            <div class="col-md-6 form-group-premium">
+            <div class="sml-field">
               <label class="field-label">Role <span class="text-danger-600">*</span></label>
-              <div class="select-wrapper w-100 position-relative">
+              <div class="select-wrapper">
                 <select class="field-input" [(ngModel)]="loginForm.role" name="role" required>
-                  <option value="">Select Role</option>
+                  <option value="">Select role</option>
                   <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
                 </select>
                 <iconify-icon icon="mdi:chevron-down" class="select-icon"></iconify-icon>
               </div>
             </div>
 
-            <div class="col-md-6 form-group-premium">
+            <div class="sml-field">
               <label class="field-label">Campus <span class="text-danger-600">*</span></label>
-              <div class="select-wrapper w-100 position-relative">
+              <div class="select-wrapper">
                 <select class="field-input" [(ngModel)]="loginForm.campus" name="campus" required>
-                  <option value="">Select Campus</option>
+                  <option value="">Select campus</option>
                   <option *ngFor="let campus of campuses" [value]="campus.value">{{ campus.label }}</option>
                 </select>
                 <iconify-icon icon="mdi:chevron-down" class="select-icon"></iconify-icon>
               </div>
             </div>
 
-            <div class="col-md-6 form-group-premium">
+            <div class="sml-field">
               <label class="field-label">Phone <span class="text-danger-600">*</span></label>
-              <input type="text" class="field-input" [(ngModel)]="loginForm.phone" name="phone"
-                placeholder="Enter Phone Number" required />
+              <input type="text" class="field-input" [(ngModel)]="loginForm.phone" name="phone" placeholder="Enter phone number" required />
             </div>
 
-            <div class="col-md-6 form-group-premium">
+            <div class="sml-field sml-status-field">
               <label class="field-label">Status <span class="text-danger-600">*</span></label>
-              <div class="d-flex align-items-center flex-wrap gap-28 mt-2">
-                <div class="form-check checked-success d-flex align-items-center gap-2">
-                  <input class="form-check-input" type="radio" [(ngModel)]="loginForm.status" name="status" id="active"
-                    value="Active" />
-                  <label class="form-check-label text-secondary text-sm" for="active">Active</label>
-                </div>
-                <div class="form-check checked-danger d-flex align-items-center gap-2">
-                  <input class="form-check-input" type="radio" [(ngModel)]="loginForm.status" name="status"
-                    id="inactive" value="Inactive" />
-                  <label class="form-check-label text-secondary text-sm" for="inactive">Inactive</label>
-                </div>
+              <div class="sml-status-group">
+                <label class="sml-status-option" [class.is-active]="loginForm.status === 'Active'" for="sml-status-active">
+                  <input class="sml-status-input" type="radio" [(ngModel)]="loginForm.status" name="status" id="sml-status-active" value="Active" />
+                  <span class="sml-status-dot"></span>
+                  <span>Active</span>
+                </label>
+                <label class="sml-status-option" [class.is-inactive]="loginForm.status === 'Inactive'" for="sml-status-inactive">
+                  <input class="sml-status-input" type="radio" [(ngModel)]="loginForm.status" name="status" id="sml-status-inactive" value="Inactive" />
+                  <span class="sml-status-dot"></span>
+                  <span>Inactive</span>
+                </label>
               </div>
             </div>
+          </div>
 
-            <div class="col-12 d-flex justify-content-end gap-3 mt-4">
-              <button type="button" (click)="closeDialog()" class="btn-cancel px-4 py-2 radius-8">Cancel</button>
-              <button type="submit" class="btn-primary-gradient px-4 py-2 radius-8 d-flex align-items-center gap-2">
-                <iconify-icon
-                  [icon]="isEditMode ? 'mdi:content-save-edit-outline' : 'mdi:content-save-outline'"></iconify-icon>
+          <div class="sml-modal-footer">
+            <p class="sml-modal-note">Fields marked with * are required.</p>
+            <div class="sml-modal-actions">
+              <button type="button" (click)="closeDialog()" class="sml-btn sml-btn-ghost">Cancel</button>
+              <button type="submit" class="sml-btn sml-btn-primary">
+                <iconify-icon [icon]="isEditMode ? 'mdi:content-save-edit-outline' : 'mdi:content-save-outline'"></iconify-icon>
                 {{ isEditMode ? 'Update Login' : 'Save Login' }}
               </button>
             </div>
@@ -221,5 +299,4 @@
   </div>
 </div>
 
-<!-- Modal Backdrop -->
-<div class="modal-backdrop fade" [class.show]="showDialog" *ngIf="showDialog" (click)="closeDialog()"></div>
+<div class="modal-backdrop fade sml-modal-backdrop" [class.show]="showDialog" *ngIf="showDialog" (click)="closeDialog()"></div>

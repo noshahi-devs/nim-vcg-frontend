@@ -4,7 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { StaffService } from '../../../services/staff.service';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 import { Designation, Gender, Staff } from '../../../Models/staff';
 import { ImageUpload } from '../../../Models/StaticImageModel/imageUpload';
 import { AuthService } from '../../../SecurityModels/auth.service';
@@ -264,4 +264,5 @@ export class StaffAddComponent implements AfterViewInit {
 
   ngAfterViewInit(): void { }
 }
+
 

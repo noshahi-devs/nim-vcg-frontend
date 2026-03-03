@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserManagementService, User } from '../../../services/user-management.service';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 
 declare var bootstrap: any;
 
@@ -68,6 +68,18 @@ export class StaffManageLoginComponent implements OnInit {
   currentPage: number = 1;
 
   loading = false;
+
+  get totalLogins(): number {
+    return this.logins.length;
+  }
+
+  get activeLogins(): number {
+    return this.logins.filter(x => x.status?.toLowerCase() === 'active').length;
+  }
+
+  get inactiveLogins(): number {
+    return this.logins.filter(x => x.status?.toLowerCase() === 'inactive').length;
+  }
 
   constructor(private userService: UserManagementService, private router: Router) { }
 
@@ -139,7 +151,7 @@ export class StaffManageLoginComponent implements OnInit {
 
   // Dialog Methods
   openAddDialog(): void {
-    this.router.navigate(['/sign-up']);
+    this.router.navigate(['/staff-add']);
   }
 
   openEditDialog(login: Login): void {
@@ -234,6 +246,7 @@ export class StaffManageLoginComponent implements OnInit {
   searchLogins(): void {
     if (!this.searchTerm.trim()) {
       this.filteredLogins = [...this.logins];
+      this.currentPage = 1;
       return;
     }
 
@@ -244,6 +257,8 @@ export class StaffManageLoginComponent implements OnInit {
       login.role.toLowerCase().includes(search) ||
       login.campus.toLowerCase().includes(search)
     );
+
+    this.currentPage = 1;
   }
 
   // Pagination
@@ -263,4 +278,5 @@ export class StaffManageLoginComponent implements OnInit {
     }
   }
 }
+
 

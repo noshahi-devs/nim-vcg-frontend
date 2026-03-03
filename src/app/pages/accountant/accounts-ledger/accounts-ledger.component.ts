@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AccountsService, Transaction } from '../../../services/accounts.service';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 
 @Component({
   selector: 'app-accounts-ledger',
@@ -116,4 +116,5 @@ export class AccountsLedgerComponent implements OnInit {
     return balance >= 0 ? 'text-success-main' : 'text-danger-main';
   }
 }
+
 

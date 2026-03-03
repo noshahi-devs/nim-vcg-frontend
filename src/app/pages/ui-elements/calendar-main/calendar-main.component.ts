@@ -1,6 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
-import  Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import  Swal from '../../../swal';
 declare var $: any;
 @Component({
   selector: 'app-calendar-main',
@@ -181,4 +181,5 @@ ngOnInit(): void {
 
   }
 }
+
 

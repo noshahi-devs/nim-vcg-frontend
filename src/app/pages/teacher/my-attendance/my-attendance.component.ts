@@ -4,7 +4,7 @@ import { AuthService } from '../../../SecurityModels/auth.service';
 import { AttendanceService } from '../../../services/attendance.service';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { StaffService } from '../../../services/staff.service';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 
 @Component({
     selector: 'app-my-attendance',
@@ -191,4 +191,5 @@ export class MyAttendanceComponent implements OnInit {
             ':' + pad(date.getSeconds());
     }
 }
+
 

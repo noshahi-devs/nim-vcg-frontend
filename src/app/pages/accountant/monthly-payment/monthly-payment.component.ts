@@ -10,7 +10,7 @@ import { MonthlyPaymentService } from '../../../services/monthly-payment.service
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 
 @Component({
   selector: 'app-monthly-payment',
@@ -367,4 +367,5 @@ export class MonthlyPaymentComponent implements OnInit {
     return months.map((m: any) => m.monthName).join(', ');
   }
 }
+
 

@@ -9,7 +9,7 @@ import { ImageUpload } from '../../../Models/StaticImageModel/imageUpload';
 import { StandardService } from '../../../services/standard.service';
 import { Standard } from '../../../Models/standard';
 import { OnInit } from '@angular/core';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 
 declare var bootstrap: any;
 
@@ -220,4 +220,5 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void { }
 }
+
 

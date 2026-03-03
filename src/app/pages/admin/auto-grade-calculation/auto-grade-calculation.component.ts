@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { ExamService, GradeScale, Exam } from '../../../services/exam.service';
 import { finalize } from 'rxjs/operators';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 
 @Component({
   selector: 'app-auto-grade-calculation',
@@ -324,4 +324,5 @@ export class AutoGradeCalculationComponent implements OnInit {
     }
   }
 }
+
 

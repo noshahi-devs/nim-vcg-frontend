@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import { DueBalanceService, DueBalance } from '../../../services/due-balance.service';
-import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
+import Swal from '../../../swal';
 
 interface FeeDefaulter {
   feeId: number;
@@ -237,4 +237,5 @@ export class FeeDefaultersComponent implements OnInit {
     this.applyFilters();
   }
 }
+
 
