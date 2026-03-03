@@ -1,0 +1,208 @@
+<div class="dashboard-main-body">
+    <app-breadcrumb [title]="'My Profile'" [main-title]="'Dashboard'"></app-breadcrumb>
+
+    <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="height: 400px;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <div *ngIf="error" class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error && studentData" class="profile-container animate-fade-in">
+        <!-- Premium Header Area -->
+        <div class="profile-header-banner">
+            <div class="banner-overlay"></div>
+            <div class="header-content p-4 d-flex align-items-end gap-4 flex-wrap">
+                <div class="profile-avatar-wrapper shadow-lg">
+                    <img [src]="getStudentImage()" alt="Student" class="profile-img">
+                    <div class="initials-fallback" *ngIf="!studentData?.imageUpload?.imageData">
+                        {{ getInitials(studentData?.studentName) }}
+                    </div>
+                </div>
+                <div class="profile-main-info flex-grow-1">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <h1 class="text-white mb-0 fw-bold">{{ studentData?.studentName }}</h1>
+                        <span class="badge status-pill active-status">Active Student</span>
+                    </div>
+                    <div class="meta-info d-flex gap-4 flex-wrap">
+                        <span class="meta-item">
+                            <iconify-icon icon="solar:diploma-bold-duotone"></iconify-icon>
+                            {{ studentData?.standard?.standardName || 'Class N/A' }} ({{ studentData?.section || 'Sec
+                            N/A' }})
+                        </span>
+                        <span class="meta-item">
+                            <iconify-icon icon="solar:ticket-bold-duotone"></iconify-icon>
+                            Adm No: {{ studentData?.admissionNo }}
+                        </span>
+                        <span class="meta-item">
+                            <iconify-icon icon="solar:user-id-bold-duotone"></iconify-icon>
+                            Roll No: {{ studentData?.studentId }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-1">
+            <!-- Left Column: Personal Highlights -->
+            <div class="col-lg-4">
+                <div class="p-card sticky-sidebar">
+                    <div class="card-section">
+                        <h5 class="section-title">
+                            <iconify-icon icon="solar:user-circle-bold-duotone" class="text-primary"></iconify-icon>
+                            Quick Overview
+                        </h5>
+                        <div class="overview-list">
+                            <div class="overview-item">
+                                <span class="label">Gender</span>
+                                <span class="value">{{ studentData?.studentGender || 'N/A' }}</span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="label">Blood Group</span>
+                                <span class="value">{{ studentData?.studentBloodGroup || 'N/A' }}</span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="label">Date of Birth</span>
+                                <span class="value">{{ studentData?.studentDOB | date:'mediumDate' }}</span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="label">Religion</span>
+                                <span class="value">{{ studentData?.studentReligion || 'N/A' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-section mt-4">
+                        <h5 class="section-title">
+                            <iconify-icon icon="solar:phone-bold-duotone" class="text-success"></iconify-icon>
+                            Contact Info
+                        </h5>
+                        <div class="contact-links">
+                            <a [href]="'tel:' + studentData?.studentContactNumber1" class="contact-link">
+                                <div class="link-icon bg-success-subtle text-success">
+                                    <iconify-icon icon="solar:phone-calling-bold"></iconify-icon>
+                                </div>
+                                <div class="link-text">
+                                    <span class="caption">Primary Phone</span>
+                                    <span class="text">{{ studentData?.studentContactNumber1 || 'N/A' }}</span>
+                                </div>
+                            </a>
+                            <a [href]="'mailto:' + studentData?.studentEmail" class="contact-link mt-3">
+                                <div class="link-icon bg-info-subtle text-info">
+                                    <iconify-icon icon="solar:letter-bold"></iconify-icon>
+                                </div>
+                                <div class="link-text">
+                                    <span class="caption">Email Address</span>
+                                    <span class="text">{{ studentData?.studentEmail || 'N/A' }}</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Detailed Sections -->
+            <div class="col-lg-8">
+                <!-- Academic Details -->
+                <div class="p-card mb-4 highlight-card-blue">
+                    <h5 class="section-title mb-4 border-0">
+                        <iconify-icon icon="solar:notebook-bold-duotone"></iconify-icon>
+                        Academic Status
+                    </h5>
+                    <div class="row row-cols-1 row-cols-md-2 g-4">
+                        <div class="col">
+                            <div class="p-info-tile">
+                                <span class="t-label">Current Standard</span>
+                                <span class="t-value">{{ studentData?.standard?.standardName || 'N/A' }}</span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="p-info-tile">
+                                <span class="t-label">Section</span>
+                                <span class="t-value">{{ studentData?.section || 'Not Assigned' }}</span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="p-info-tile">
+                                <span class="t-label">Admission Number</span>
+                                <span class="t-value">#{{ studentData?.admissionNo }}</span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="p-info-tile">
+                                <span class="t-label">Enrollment Number</span>
+                                <span class="t-value">{{ studentData?.enrollmentNo || 'N/A' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guardian Details -->
+                <div class="p-card mb-4">
+                    <h5 class="section-title mb-4">
+                        <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"
+                            class="text-purple"></iconify-icon>
+                        Guardian & Family
+                    </h5>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="guardian-item">
+                                <iconify-icon icon="solar:user-bold" class="item-icon"></iconify-icon>
+                                <div class="item-content">
+                                    <span class="item-label">Father's Name</span>
+                                    <span class="item-value">{{ studentData?.fatherName || 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="guardian-item">
+                                <iconify-icon icon="solar:card-id-bold" class="item-icon"></iconify-icon>
+                                <div class="item-content">
+                                    <span class="item-label">Father's NID</span>
+                                    <span class="item-value">{{ studentData?.fatherNID || 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="guardian-item">
+                                <iconify-icon icon="solar:user-speak-bold" class="item-icon"></iconify-icon>
+                                <div class="item-content">
+                                    <span class="item-label">Mother's Name</span>
+                                    <span class="item-value">{{ studentData?.motherName || 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="guardian-item">
+                                <iconify-icon icon="solar:shield-user-bold" class="item-icon"></iconify-icon>
+                                <div class="item-content">
+                                    <span class="item-label">Local Guardian</span>
+                                    <span class="item-value">{{ studentData?.localGuardianName || 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Section -->
+                <div class="p-card">
+                    <h5 class="section-title mb-4">
+                        <iconify-icon icon="solar:map-point-bold-duotone" class="text-danger"></iconify-icon>
+                        Address Details
+                    </h5>
+                    <div class="address-box mb-4">
+                        <h6 class="address-type text-success">Current Address</h6>
+                        <p class="mb-0 text-neutral-600">{{ studentData?.temporaryAddress || 'N/A' }}</p>
+                    </div>
+                    <div class="address-box">
+                        <h6 class="address-type text-primary">Permanent Address</h6>
+                        <p class="mb-0 text-neutral-600">{{ studentData?.permanentAddress || 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

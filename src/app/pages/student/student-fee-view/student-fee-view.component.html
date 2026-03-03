@@ -1,0 +1,147 @@
+<div class="dashboard-main-body">
+    <app-breadcrumb [title]="'My Fee Portal'" [main-title]="'Financials'"></app-breadcrumb>
+
+    <!-- Top Stats Bar (Matching Dashboard) -->
+    <div class="teacher-stats-grid mb-24 animate-fade-in">
+        <div class="t-stat-card">
+            <div class="t-stat-icon" style="background: rgba(99, 102, 241, 0.12); color: #6366f1;">
+                <iconify-icon icon="solar:wallet-bold-duotone"></iconify-icon>
+            </div>
+            <div class="t-stat-info">
+                <span class="t-stat-label">Net Payable</span>
+                <span class="t-stat-value" style="color: #6366f1;">{{ stats.netPayable | currency:'PKR':'symbol':'1.0-0'
+                    }}</span>
+            </div>
+            <div class="t-stat-bar" style="background: #6366f1; width: 100%;"></div>
+        </div>
+
+        <div class="t-stat-card">
+            <div class="t-stat-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
+                <iconify-icon icon="solar:check-read-bold-duotone"></iconify-icon>
+            </div>
+            <div class="t-stat-info">
+                <span class="t-stat-label">Total Paid</span>
+                <span class="t-stat-value" style="color: #10b981;">{{ stats.totalPaid | currency:'PKR':'symbol':'1.0-0'
+                    }}</span>
+            </div>
+            <div class="t-stat-bar" style="background: #10b981; width: 100%;"></div>
+        </div>
+
+        <div class="t-stat-card">
+            <div class="t-stat-icon" style="background: rgba(239, 68, 68, 0.12); color: #ef4444;">
+                <iconify-icon icon="solar:danger-bold-duotone"></iconify-icon>
+            </div>
+            <div class="t-stat-info">
+                <span class="t-stat-label">Outstanding Balance</span>
+                <span class="t-stat-value" style="color: #ef4444;">{{ stats.totalDue | currency:'PKR':'symbol':'1.0-0'
+                    }}</span>
+            </div>
+            <div class="t-stat-bar" style="background: #ef4444; width: 100%;"></div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="row gy-4">
+        <!-- Monthly Fee History -->
+        <div class="col-12 animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="t-card">
+                <div class="t-card-header">
+                    <div class="t-card-title">
+                        <iconify-icon icon="solar:history-bold-duotone" class="title-icon"
+                            style="color:#6366f1;"></iconify-icon>
+                        Monthly Fee History
+                    </div>
+                    <span class="t-badge" style="background:rgba(99,102,241,0.1);color:#6366f1;">{{
+                        monthlyPayments.length }} Records</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="premium-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Months</th>
+                                <th>Total Fee</th>
+                                <th>Paid</th>
+                                <th>Remaining</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let payment of monthlyPayments">
+                                <td>{{ payment.paymentDate | date:'mediumDate' }}</td>
+                                <td>
+                                    <span class="month-pill" *ngFor="let m of payment.paymentMonths">
+                                        {{ m.monthName }}
+                                    </span>
+                                </td>
+                                <td>{{ payment.totalAmount | number }}</td>
+                                <td class="text-success font-weight-bold">{{ payment.amountPaid | number }}</td>
+                                <td [class.text-danger]="payment.amountRemaining > 0">{{ payment.amountRemaining |
+                                    number }}</td>
+                                <td>
+                                    <span class="status-badge" [ngClass]="getStatusClass(payment.amountRemaining)">
+                                        {{ getStatusLabel(payment.amountRemaining) }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="monthlyPayments.length === 0 && !loading">
+                                <td colspan="6" class="text-center py-4 text-muted">No monthly fee records found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Payments -->
+        <div class="col-12 animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="t-card">
+                <div class="t-card-header">
+                    <div class="t-card-title">
+                        <iconify-icon icon="solar:bill-list-bold-duotone" class="title-icon"
+                            style="color:#0ea5e9;"></iconify-icon>
+                        Other Fees & Charges
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="premium-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Paid</th>
+                                <th>Remaining</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let payment of otherPayments">
+                                <td>{{ payment.paymentDate | date:'mediumDate' }}</td>
+                                <td>
+                                    <span class="desc-pill" *ngFor="let d of payment.otherPaymentDetails">
+                                        {{ d.feeName }}
+                                    </span>
+                                </td>
+                                <td>{{ payment.totalAmount | number }}</td>
+                                <td class="text-success">{{ payment.amountPaid | number }}</td>
+                                <td [class.text-danger]="payment.amountRemaining > 0">{{ payment.amountRemaining |
+                                    number }}</td>
+                                <td>
+                                    <span class="status-badge" [ngClass]="getStatusClass(payment.amountRemaining)">
+                                        {{ getStatusLabel(payment.amountRemaining) }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="otherPayments.length === 0 && !loading">
+                                <td colspan="6" class="text-center py-4 text-muted">No other payment records found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

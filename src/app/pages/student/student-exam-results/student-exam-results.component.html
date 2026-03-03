@@ -1,0 +1,156 @@
+<div class="dashboard-main-body">
+    <app-breadcrumb [title]="'My Exam Results'" [main-title]="'Academic'"></app-breadcrumb>
+
+    <!-- Filter Section -->
+    <div class="t-card mb-24 animate-fade-in">
+        <div class="t-card-header">
+            <div class="t-card-title">
+                <iconify-icon icon="solar:filter-bold-duotone" class="title-icon" style="color:#6366f1;"></iconify-icon>
+                Select Examination
+            </div>
+        </div>
+        <div class="t-card-body p-24">
+            <div class="row align-items-end gx-3">
+                <div class="col-md-5">
+                    <label class="form-label fw-semibold text-secondary-light">Select Exam Result</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-base border-end-0">
+                            <iconify-icon icon="solar:clipboard-list-line-duotone"
+                                class="text-xl text-primary-light"></iconify-icon>
+                        </span>
+                        <select class="form-select border-start-0 ps-0 text-md" [(ngModel)]="selectedExamId"
+                            (change)="onExamChange()">
+                            <option value="0">--- Choose Exam ---</option>
+                            <option *ngFor="let exam of exams" [value]="exam.examId">{{ exam.examName }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2" *ngIf="loading">
+                    <div class="d-flex align-items-center gap-2 text-primary-600 fw-medium">
+                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Container -->
+    <div *ngIf="displayResults.length > 0; else noResults" class="animate-fade-in">
+
+        <!-- Stats Summary -->
+        <div class="teacher-stats-grid mb-24">
+            <div class="t-stat-card">
+                <div class="t-stat-icon" style="background: rgba(99, 102, 241, 0.12); color: #6366f1;">
+                    <iconify-icon icon="solar:chart-square-bold-duotone"></iconify-icon>
+                </div>
+                <div class="t-stat-info">
+                    <span class="t-stat-label">Marks Obtained</span>
+                    <span class="t-stat-value" style="color: #6366f1;">{{ obtainedMarks }} / {{ totalMarks }}</span>
+                </div>
+                <div class="t-stat-bar" style="background: #6366f1; width: 100%;"></div>
+            </div>
+
+            <div class="t-stat-card">
+                <div class="t-stat-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
+                    <iconify-icon icon="solar:ranking-bold-duotone"></iconify-icon>
+                </div>
+                <div class="t-stat-info">
+                    <span class="t-stat-label">Percentage</span>
+                    <span class="t-stat-value" style="color: #10b981;">{{ percentage | number:'1.1-2' }}%</span>
+                </div>
+                <div class="t-stat-bar" style="background: #10b981; width: 100%;"></div>
+            </div>
+
+            <div class="t-stat-card">
+                <div class="t-stat-icon" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;">
+                    <iconify-icon icon="solar:medal-star-bold-duotone"></iconify-icon>
+                </div>
+                <div class="t-stat-info">
+                    <span class="t-stat-label">Overall Grade</span>
+                    <span class="t-stat-value" style="color: #f59e0b;">{{ overallGrade }}</span>
+                </div>
+                <div class="t-stat-bar" style="background: #f59e0b; width: 100%;"></div>
+            </div>
+
+            <div class="t-stat-card">
+                <div class="t-stat-icon"
+                    [style.background]="status === 'Pass' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)'"
+                    [style.color]="status === 'Pass' ? '#10b981' : '#ef4444'">
+                    <iconify-icon
+                        [icon]="status === 'Pass' ? 'solar:check-circle-bold-duotone' : 'solar:close-circle-bold-duotone'"></iconify-icon>
+                </div>
+                <div class="t-stat-info">
+                    <span class="t-stat-label">Result Status</span>
+                    <span class="t-stat-value" [style.color]="status === 'Pass' ? '#10b981' : '#ef4444'">{{ status
+                        }}</span>
+                </div>
+                <div class="t-stat-bar" [style.background]="status === 'Pass' ? '#10b981' : '#ef4444'"
+                    style="width: 100%;"></div>
+            </div>
+        </div>
+
+        <!-- Detailed Marks Table -->
+        <div class="t-card">
+            <div class="t-card-header">
+                <div class="t-card-title">
+                    <iconify-icon icon="solar:document-text-bold-duotone" class="title-icon"
+                        style="color:#0ea5e9;"></iconify-icon>
+                    Subject Wise Performance
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="premium-table">
+                    <thead>
+                        <tr>
+                            <th>Subject Name</th>
+                            <th>Total Marks</th>
+                            <th>Obtained Marks</th>
+                            <th>Percentage</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of displayResults">
+                            <td class="fw-semibold">{{ row.subjectName }}</td>
+                            <td>{{ row.totalMarks }}</td>
+                            <td>{{ row.obtainedMarks }}</td>
+                            <td>{{ (row.obtainedMarks / row.totalMarks * 100) | number:'1.1-1' }}%</td>
+                            <td>
+                                <span class="badge radius-8 px-16 py-8" [ngClass]="getGradeBadgeClass(row.grade)">
+                                    {{ row.grade }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <ng-template #noResults>
+        <div *ngIf="hasSearched && !loading" class="t-card text-center py-5 animate-fade-in">
+            <iconify-icon icon="solar:document-add-bold-duotone" class="text-neutral-300 mb-3"
+                style="font-size: 80px;"></iconify-icon>
+            <h4 class="text-secondary-light">No Results Found</h4>
+            <p class="text-neutral-500">We couldn't find any results for the selected exam. Please contact your
+                instructor.</p>
+        </div>
+
+        <div *ngIf="!hasSearched && !loading" class="animate-fade-in mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div
+                        class="alert bg-primary-50 border-primary-100 text-primary-600 radius-12 d-flex align-items-center gap-3">
+                        <iconify-icon icon="solar:info-circle-bold-duotone" class="text-2xl"></iconify-icon>
+                        <div>
+                            <strong>Getting Started:</strong> Please select an exam from the dropdown above to view your
+                            detailed performance report.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</div>

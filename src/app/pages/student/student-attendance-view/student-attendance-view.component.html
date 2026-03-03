@@ -1,0 +1,139 @@
+<div class="dashboard-main-body">
+    <app-breadcrumb [title]="'My Attendance'" [main-title]="'Dashboard'"></app-breadcrumb>
+
+    <!-- Top Stats Bar (Matching Dashboard) -->
+    <div class="teacher-stats-grid mb-24 animate-fade-in">
+        <div class="t-stat-card">
+            <div class="t-stat-icon" style="background: rgba(99, 102, 241, 0.12); color: #6366f1;">
+                <iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>
+            </div>
+            <div class="t-stat-info">
+                <span class="t-stat-label">Total Days</span>
+                <span class="t-stat-value" style="color: #6366f1;">{{ totalDays }}</span>
+            </div>
+            <div class="t-stat-bar" style="background: #6366f1; width: 100%;"></div>
+        </div>
+
+        <div class="t-stat-card">
+            <div class="t-stat-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
+                <iconify-icon icon="solar:user-check-bold-duotone"></iconify-icon>
+            </div>
+            <div class="t-stat-info">
+                <span class="t-stat-label">Present</span>
+                <span class="t-stat-value" style="color: #10b981;">{{ presentDays }}</span>
+            </div>
+            <div class="t-stat-bar" style="background: #10b981; width: 100%;"></div>
+        </div>
+
+        <div class="t-stat-card">
+            <div class="t-stat-icon" style="background: rgba(239, 68, 68, 0.12); color: #ef4444;">
+                <iconify-icon icon="solar:user-cross-bold-duotone"></iconify-icon>
+            </div>
+            <div class="t-stat-info">
+                <span class="t-stat-label">Absent</span>
+                <span class="t-stat-value" style="color: #ef4444;">{{ absentDays }}</span>
+            </div>
+            <div class="t-stat-bar" style="background: #ef4444; width: 100%;"></div>
+        </div>
+
+        <div class="t-stat-card">
+            <div class="t-stat-icon" style="background: rgba(14, 165, 233, 0.12); color: #0ea5e9;">
+                <iconify-icon icon="solar:chart-square-bold-duotone"></iconify-icon>
+            </div>
+            <div class="t-stat-info">
+                <span class="t-stat-label">Attendance %</span>
+                <span class="t-stat-value" style="color: #0ea5e9;">{{ attendancePercentage | number:'1.1-1' }}%</span>
+            </div>
+            <div class="t-stat-bar" style="background: #0ea5e9; width: 100%;"></div>
+        </div>
+    </div>
+
+    <div class="row gy-4">
+        <!-- Calendar View -->
+        <div class="col-lg-5">
+            <div class="p-card h-100">
+                <div class="p-card-header d-flex justify-content-between align-items-center mb-24">
+                    <h5 class="mb-0 fw-bold">Attendance Calendar</h5>
+                    <div class="calendar-nav">
+                        <button (click)="prevMonth()" class="btn-icon">
+                            <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon>
+                        </button>
+                        <span class="month-label fw-bold">{{ monthNames[currentDate.getMonth()] }} {{
+                            currentDate.getFullYear() }}</span>
+                        <button (click)="nextMonth()" class="btn-icon">
+                            <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="weekday">Sun</div>
+                    <div class="weekday">Mon</div>
+                    <div class="weekday">Tue</div>
+                    <div class="weekday">Wed</div>
+                    <div class="weekday">Thu</div>
+                    <div class="weekday">Fri</div>
+                    <div class="weekday">Sat</div>
+
+                    <div *ngFor="let dayObj of calendarDays" class="calendar-day" [ngClass]="{
+                             'today': dayObj.isToday,
+                             'present': dayObj.status === 'present',
+                             'absent': dayObj.status === 'absent',
+                             'empty': dayObj.day === null
+                         }">
+                        {{ dayObj.day }}
+                    </div>
+                </div>
+
+                <div class="calendar-legend mt-4 pt-3 border-top">
+                    <div class="legend-item"><span class="dot present"></span> Present</div>
+                    <div class="legend-item"><span class="dot absent"></span> Absent</div>
+                    <div class="legend-item"><span class="dot today"></span> Today</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="col-lg-7">
+            <div class="p-card">
+                <div class="p-card-header mb-24">
+                    <h5 class="mb-0 fw-bold">Recent History (90 Days)</h5>
+                </div>
+
+                <div *ngIf="loading" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+
+                <div *ngIf="!loading && attendanceHistory.length === 0" class="text-center py-5">
+                    <iconify-icon icon="solar:document-text-outline" class="text-muted opacity-20 mb-3"
+                        style="font-size: 64px;"></iconify-icon>
+                    <p class="text-muted">No attendance records found.</p>
+                </div>
+
+                <div class="table-responsive" *ngIf="!loading && attendanceHistory.length > 0">
+                    <table class="premium-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let record of attendanceHistory">
+                                <td class="fw-bold">{{ record.date | date:'fullDate' }}</td>
+                                <td>
+                                    <span class="status-badge"
+                                        [ngClass]="(record.isPresent || record.status === 'Present') ? 'status-present' : 'status-absent'">
+                                        {{ (record.isPresent || record.status === 'Present') ? 'Present' : 'Absent' }}
+                                    </span>
+                                </td>
+                                <td class="text-muted">{{ record.remarks || 'No remarks' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

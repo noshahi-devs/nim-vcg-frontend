@@ -1,0 +1,308 @@
+/* ── Stat Cards Grid (Matching Dashboard) ── */
+.teacher-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 1200px) {
+    .teacher-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .teacher-stats-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+.t-stat-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    animation: statFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes statFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.t-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    border-color: #c7d2fe;
+}
+
+.t-stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.t-stat-card:hover .t-stat-icon {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.t-stat-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.t-stat-label {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.t-stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-top: 2px;
+}
+
+.t-stat-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    border-radius: 0 2px 2px 0;
+    transition: width 0.4s ease 0.3s;
+}
+
+.t-stat-card:hover .t-stat-bar {
+    width: 100%;
+}
+
+/* Card Styling */
+.p-card {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+}
+
+/* Calendar Grid */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.weekday {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    padding-bottom: 12px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.calendar-day.empty {
+    background: transparent;
+    pointer-events: none;
+}
+
+.calendar-day.today {
+    border: 2px solid #6366f1;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+}
+
+.calendar-day.present {
+    background: #ecfdf5;
+    color: #10b981;
+}
+
+.calendar-day.absent {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+/* Calendar Navigation */
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #f1f5f9;
+    padding: 4px 12px;
+    border-radius: 100px;
+}
+
+.month-label {
+    min-width: 140px;
+    text-align: center;
+}
+
+.btn-icon {
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+    color: #64748b;
+    transition: background 0.2s;
+}
+
+.btn-icon:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+/* Legend */
+.calendar-legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.legend-item {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot.present {
+    background: #10b981;
+}
+
+.dot.absent {
+    background: #ef4444;
+}
+
+.dot.today {
+    border: 2px solid #6366f1;
+}
+
+/* Table Styling */
+.premium-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.premium-table th {
+    padding: 12px 16px;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.premium-table tr {
+    transition: transform 0.2s;
+}
+
+.premium-table td {
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+}
+
+.premium-table td:first-child {
+    border-radius: 12px 0 0 12px;
+}
+
+.premium-table td:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-present {
+    background: #ecfdf5;
+    color: #10b981;
+}
+
+.status-absent {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+/* Animation */
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-grid {
+        gap: 4px;
+    }
+
+    .calendar-day {
+        font-size: 12px;
+    }
+
+    .month-label {
+        min-width: 100px;
+        font-size: 14px;
+    }
+}

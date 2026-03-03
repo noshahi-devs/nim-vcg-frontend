@@ -81,6 +81,9 @@ import { VeiwDetailsComponent } from './pages/ui-elements/veiw-details/veiw-deta
 import { VideoGeneratorComponent } from './pages/ui-elements/video-generator/video-generator.component';
 import { VideosComponent } from './pages/general/videos/videos.component';
 import { ViewProfileComponent } from './pages/general/view-profile/view-profile.component';
+import { StudentProfileComponent } from './pages/student/student-profile/student-profile.component';
+import { StudentAttendanceViewComponent } from './pages/student/student-attendance-view/student-attendance-view.component';
+import { StudentFeeViewComponent } from './pages/student/student-fee-view/student-fee-view.component';
 import { VoiceGeneratorComponent } from './pages/ui-elements/voice-generator/voice-generator.component';
 import { WalletComponent } from './pages/accountant/wallet/wallet.component';
 import { WidgetsComponent } from './pages/ui-elements/widgets/widgets.component';
@@ -137,6 +140,7 @@ import { SubjectAssignmentComponent } from './pages/admin/subject-assignment/sub
 import { BroadcastComponent } from './pages/general/broadcast/broadcast.component';
 import { CampusManagementComponent } from './pages/admin/campus-management/campus-management.component';
 import { StudentDashboardComponent } from './pages/student/student-dashboard/student-dashboard.component';
+import { StudentExamResultsComponent } from './pages/student/student-exam-results/student-exam-results.component';
 
 export const routes: Routes = [
   { path: '', component: BrandingHomeComponent, pathMatch: 'full' },
@@ -183,6 +187,10 @@ export const routes: Routes = [
       { path: 'student-view/:id', component: StudentViewComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
       { path: 'student-edit/:id', component: StudentEditComponent, data: { roles: ['Admin'] } },
       { path: 'student-promote', component: StudentPromoteComponent, data: { roles: ['Admin'] } },
+      { path: 'student-profile', component: StudentProfileComponent, data: { roles: ['Student'] } },
+      { path: 'student-attendance-view', component: StudentAttendanceViewComponent, data: { roles: ['Student'] } },
+      { path: 'student-fee-view', component: StudentFeeViewComponent, data: { roles: ['Student'] } },
+      { path: 'student-exam-results', component: StudentExamResultsComponent, data: { roles: ['Student'] } },
 
       // Fee & Finance
       { path: 'fee', component: FeeComponent, data: { roles: ['Admin', 'Accountant'] } },
