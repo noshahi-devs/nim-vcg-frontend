@@ -2,7 +2,6 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { UserManagementService, User } from '../../../services/user-management.service';
 import Swal from 'sweetalert2';
 
@@ -23,7 +22,7 @@ interface Login {
 @Component({
   selector: 'app-staff-manage-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbComponent],
+  imports: [CommonModule, FormsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './staff-manage-login.component.html',
   styleUrls: ['./staff-manage-login.component.css']

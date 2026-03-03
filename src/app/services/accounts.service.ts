@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface Income {
   id: number;
@@ -67,13 +68,13 @@ export interface DashboardData {
 @Injectable({ providedIn: 'root' })
 export class AccountsService {
 
-  private apiUrl = 'http://localhost:5257/api';
+  private apiUrl = `${environment.apiBaseUrl}/api`;
 
   constructor(private http: HttpClient) { }
 
   // Helper function to add token header
   private getAuthHeaders() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
     return {
       headers: { Authorization: `Bearer ${token}` }
     };

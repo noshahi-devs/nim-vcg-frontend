@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface BankAccount {
     bankAccountId: number;
@@ -17,13 +18,13 @@ export interface BankAccount {
     providedIn: 'root'
 })
 export class BankAccountService {
-    private apiUrl = 'http://localhost:5257/api/BankAccounts';
+    private apiUrl = `${environment.apiBaseUrl}/api/BankAccounts`;
 
     constructor(private http: HttpClient) { }
 
     // Helper function to add token header
     private getAuthHeaders() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
         return {
             headers: { Authorization: `Bearer ${token}` }
         };

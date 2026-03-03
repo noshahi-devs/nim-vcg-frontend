@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Mark } from '../Models/marks';
+import { environment } from '../../environments/environment';
 
 /*const baseUrl = 'http://localhost:5000/api/Marks';*/ 
 
@@ -11,7 +12,7 @@ import { Mark } from '../Models/marks';
 
 export class MarksService {
 
-  private apiUrl = 'http://localhost:5257/api/Marks';
+  private apiUrl = `${environment.apiBaseUrl}/api/Marks`;
 
   constructor(private http: HttpClient) { }
 

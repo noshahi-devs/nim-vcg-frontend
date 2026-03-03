@@ -4,8 +4,9 @@ import { Router } from "@angular/router";
 import { BehaviorSubject, EMPTY, Observable, switchMap, tap, throwError } from "rxjs";
 import { AuthRequest } from "./auth-request";
 import { AppRole, AppUser, AuthResponse } from "./auth-response";
+import { environment } from '../../environments/environment';
 
-const API_URL = "http://localhost:5257/api/users/";
+const API_URL = `${environment.apiBaseUrl}/api/users/`;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

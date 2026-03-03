@@ -1,10 +1,8 @@
 :root {
-  --primary-color: #800020;
-  /* Maroon */
-  --primary-light: #a52a2a;
-  --secondary-color: #ffd700;
-  /* Gold */
-  --accent-color: #ff4500;
+  --primary-color: var(--primary-600, #487fff);
+  --primary-light: var(--primary-700, #486cea);
+  --secondary-color: var(--warning-600, #ff9f29);
+  --accent-color: var(--cyan, #00b8f2);
   --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
   --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   --glass-bg: rgba(255, 255, 255, 0.82);

@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap');
 
 :host {
-  --v3-primary: #2563eb;
-  --v3-primary-deep: #1e40af;
-  --v3-accent: #0ea5e9;
+  --v3-primary: var(--primary-600, #487fff);
+  --v3-primary-deep: var(--primary-700, #486cea);
+  --v3-accent: var(--cyan, #00b8f2);
   --v3-bg: #ffffff;
   --v3-bg-alt: #f8fafc;
   --v3-ink: #0f172a;

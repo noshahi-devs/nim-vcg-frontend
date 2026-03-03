@@ -1,9 +1,9 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'app-student-fee-view',
@@ -24,7 +24,7 @@ export class StudentFeeViewComponent implements OnInit {
     monthlyPayments: any[] = [];
     otherPayments: any[] = [];
 
-    private apiUrl = environment.apiBaseUrl || 'http://localhost:5257/api';
+    private apiUrl = `${environment.apiBaseUrl}/api`;
 
     constructor(
         private http: HttpClient,

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 // ============= INTERFACES/MODELS =============
 
@@ -118,7 +119,7 @@ export interface SubjectAnalytics {
   providedIn: 'root'
 })
 export class ExamService {
-  private apiUrl = 'http://localhost:5257/api';
+  private apiUrl = `${environment.apiBaseUrl}/api`;
 
   constructor(private http: HttpClient) { }
 

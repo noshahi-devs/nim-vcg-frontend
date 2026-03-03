@@ -1,23 +1,29 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Subject } from '../Models/subject';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SubjectService {
-  getSubjectsByStandard(selectedStandardId: number) {
-    throw new Error('Method not implemented.');
+  getSubjectsByStandard(selectedStandardId: number): Observable<Subject[]> {
+    return this.getSubjects().pipe(
+      map(subjects => subjects.filter(s =>
+        s.standardId === selectedStandardId ||
+        s.standard?.standardId === selectedStandardId
+      ))
+    );
   }
 
-  private apiUrl = 'http://localhost:5257/api/Subjects';
+  private apiUrl = `${environment.apiBaseUrl}/api/Subjects`;
 
   constructor(private http: HttpClient) { }
 
   // Helper function to add token header
   private getAuthHeaders() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
     return {
       headers: { Authorization: `Bearer ${token}` }
     };

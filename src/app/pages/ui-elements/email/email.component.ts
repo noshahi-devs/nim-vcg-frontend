@@ -1,5 +1,4 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +11,7 @@ import { Staff } from '../../../Models/staff';
 @Component({
   selector: 'app-email',
   standalone: true,
-  imports: [RouterLink, BreadcrumbComponent, CommonModule, FormsModule],
+  imports: [BreadcrumbComponent, CommonModule, FormsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './email.component.html',
   styleUrl: './email.component.css'

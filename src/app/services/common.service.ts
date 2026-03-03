@@ -7,19 +7,20 @@ import { FeeType } from '../Models/feetype';
 import { DueBalance } from '../Models/due-balance';
 import { MonthlyPayment } from '../Models/monthly-payment';
 import { OthersPayment } from '../Models/other-payment';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonServices {
-  private apiUrl = 'http://localhost:5257/api/';
-  private apiUrl3 = 'http://localhost:5257/api/Common';
-  private apiUrl2 = 'http://localhost:5257/api/Common/Frequency';
+  private apiUrl = `${environment.apiBaseUrl}/api/`;
+  private apiUrl3 = `${environment.apiBaseUrl}/api/Common`;
+  private apiUrl2 = `${environment.apiBaseUrl}/api/Common/Frequency`;
   constructor(private http: HttpClient) { }
 
   // Helper function to add token header
   private getAuthHeaders() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
     return {
       headers: { Authorization: `Bearer ${token}` }
     };
@@ -55,7 +56,7 @@ export class CommonServices {
   }
 
   getDueBalance(studentId: number): Observable<DueBalance> {
-    return this.http.get<DueBalance>(`http://localhost:5257/api/Common/DueBalances/${studentId}`, this.getAuthHeaders());
+    return this.http.get<DueBalance>(`${this.apiUrl3}/DueBalances/${studentId}`, this.getAuthHeaders());
   }
 
   getAllPaymentsByStudentId(studentId: number): Observable<MonthlyPayment[]> {

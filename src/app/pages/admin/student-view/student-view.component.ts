@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StudentService } from '../../../services/student.service';
 import { StandardService } from '../../../services/standard.service';
@@ -17,7 +17,7 @@ declare var $: any;
 @Component({
   selector: 'app-student-view',
   standalone: true,
-  imports: [BreadcrumbComponent, CommonModule, RouterLink],
+  imports: [BreadcrumbComponent, CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './student-view.component.html',
   styleUrl: './student-view.component.css'

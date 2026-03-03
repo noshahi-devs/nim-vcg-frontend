@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Notification } from '../Models/notification';
+import { environment } from '../../environments/environment';
 
 export interface NotificationLog {
     id: number;
@@ -19,7 +20,7 @@ export interface NotificationLog {
     providedIn: 'root'
 })
 export class NotificationService {
-    private apiUrl = 'http://localhost:5257/api/Notifications';
+    private apiUrl = `${environment.apiBaseUrl}/api/Notifications`;
 
     constructor(private http: HttpClient) { }
 

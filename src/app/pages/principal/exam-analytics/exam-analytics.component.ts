@@ -6,14 +6,13 @@ import { SectionService } from '../../../services/section.service';
 import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-exam-analytics',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, FormsModule, RouterLink, BreadcrumbComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbComponent],
   templateUrl: './exam-analytics.component.html',
   styleUrls: ['./exam-analytics.component.css']
 })

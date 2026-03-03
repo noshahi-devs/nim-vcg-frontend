@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface DueBalance {
     dueBalanceId: number;
@@ -21,12 +22,12 @@ export interface DueBalance {
     providedIn: 'root'
 })
 export class DueBalanceService {
-    private apiUrl = 'http://localhost:5257/api/DueBalances';
+    private apiUrl = `${environment.apiBaseUrl}/api/DueBalances`;
 
     constructor(private http: HttpClient) { }
 
     private getAuthHeaders() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
         return {
             headers: { Authorization: `Bearer ${token}` }
         };

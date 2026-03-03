@@ -2,17 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserMessage } from '../Models/user-message';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class MessageService {
-    private apiUrl = 'http://localhost:5257/api/UserMessages';
+    private apiUrl = `${environment.apiBaseUrl}/api/UserMessages`;
 
     constructor(private http: HttpClient) { }
 
     private getAuthHeaders() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
         return {
             headers: { Authorization: `Bearer ${token}` }
         };

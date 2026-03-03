@@ -2,17 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AcademicYear } from '../Models/academic-year';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AcademicYearService {
-    private apiUrl = 'http://localhost:5257/api/AcademicYears';
+    private apiUrl = `${environment.apiBaseUrl}/api/AcademicYears`;
 
     constructor(private http: HttpClient) { }
 
     private getAuthHeaders() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
         return new HttpHeaders({
             Authorization: `Bearer ${token}`
         });

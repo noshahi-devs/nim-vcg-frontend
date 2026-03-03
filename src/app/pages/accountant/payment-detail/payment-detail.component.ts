@@ -7,7 +7,6 @@ import { MonthlyPayment } from '../../../Models/monthly-payment';
 import { OthersPayment } from '../../../Models/other-payment';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
-import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-payment-detail',
@@ -15,7 +14,7 @@ import { RouterLink } from "@angular/router";
   templateUrl: './payment-detail.component.html',
   styleUrls: ['./payment-detail.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, BreadcrumbComponent, RouterLink]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, BreadcrumbComponent]
 
 })
 export class PaymentDetailComponent implements OnInit {

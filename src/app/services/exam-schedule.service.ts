@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ExamScheduleVm } from '../Models/exam-schedule-vm';
 import { GetExamScheduleOptionsResponse } from '../Models/get-exam-schedule-options-response';
 import { ExamSchedule } from '../Models/exam-schedule';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class ExamScheduleService {
 
   // Helper function to add token header
   private getAuthHeaders() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
     return {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -23,7 +24,7 @@ export class ExamScheduleService {
     };
   }
 
-  apiUrl: string = "http://localhost:5257/api/ExamSchedules";
+  apiUrl: string = `${environment.apiBaseUrl}/api/ExamSchedules`;
 
   public GetExamSchedules(): Observable<ExamScheduleVm[]> {
     return this.http.get<ExamScheduleVm[]>(this.apiUrl, this.getAuthHeaders());

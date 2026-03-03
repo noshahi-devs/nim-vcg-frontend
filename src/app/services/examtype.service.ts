@@ -32,7 +32,7 @@
 //   }
 
 
-//   apiUrl: string = "http://localhost:5257/api/ExamTypes";
+//   apiUrl: string = `${environment.apiBaseUrl}/api/ExamTypes`;
 
 
 //   public GetdbsExamType(): Observable<Examtype[]> {
@@ -66,6 +66,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Examtype } from '../Models/examtype';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -74,11 +75,11 @@ export class ExamtypeService {
 
   constructor(private http: HttpClient) { }
 
-  apiUrl: string = 'http://localhost:5257/api/ExamTypes';
+  apiUrl: string = `${environment.apiBaseUrl}/api/ExamTypes`;
 
   // Helper function to add token header
   private getAuthHeaders() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
     return {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',

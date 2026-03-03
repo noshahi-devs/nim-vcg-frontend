@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface User {
     id: string;
@@ -24,19 +25,19 @@ export interface RegisterRequest {
     providedIn: 'root'
 })
 export class UserManagementService {
-    private apiUrl = 'http://localhost:5257/api/Users';
+    private apiUrl = `${environment.apiBaseUrl}/api/Users`;
 
     constructor(private http: HttpClient) { }
 
     private getAuthHeaders() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
         return {
             headers: { Authorization: `Bearer ${token}` }
         };
     }
 
     getAllUsers(): Observable<User[]> {
-        return this.http.get<User[]>('http://localhost:5257/GetUsers', this.getAuthHeaders());
+        return this.http.get<User[]>(`${environment.apiBaseUrl}/GetUsers`, this.getAuthHeaders());
     }
 
     registerUser(user: RegisterRequest): Observable<any> {
@@ -52,6 +53,6 @@ export class UserManagementService {
     }
 
     getAllRoles(): Observable<any[]> {
-        return this.http.get<any[]>('http://localhost:5257/GetRoles', this.getAuthHeaders());
+        return this.http.get<any[]>(`${environment.apiBaseUrl}/GetRoles`, this.getAuthHeaders());
     }
 }

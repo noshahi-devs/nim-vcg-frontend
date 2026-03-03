@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OthersPayment } from '../Models/other-payment';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OtherPaymentService {
 
-  private apiUrl = 'http://localhost:5257/api/OthersPayments';
+  private apiUrl = `${environment.apiBaseUrl}/api/OthersPayments`;
 
   constructor(private http: HttpClient) { }
 

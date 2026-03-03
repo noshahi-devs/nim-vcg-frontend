@@ -4,13 +4,14 @@ import { ExamScheduleStandardVm } from '../Models/exam-schedule-standard-vm';
 import { Observable } from 'rxjs';
 import { CreateExamScheduleStandardVM } from '../Models/create-exam-schedule-standard-vm';
 import { UpdateExamScheduleStandardVM } from '../Models/update-exam-schedule-standard-vm';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExamScheduleStandardService {
-  getAll() {
-    throw new Error('Method not implemented.');
+  getAll(): Observable<ExamScheduleStandardVm[]> {
+    return this.GetExamScheduleStandards();
   }
 
   constructor(private http: HttpClient) { }
@@ -28,7 +29,7 @@ export class ExamScheduleStandardService {
 
     })
   }
-  apiUrl: string = "http://localhost:5257/api/ExamScheduleStandards";
+  apiUrl: string = `${environment.apiBaseUrl}/api/ExamScheduleStandards`;
 
 
   public GetExamScheduleStandards(): Observable<ExamScheduleStandardVm[]> {

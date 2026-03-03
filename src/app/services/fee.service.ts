@@ -2,18 +2,19 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Fee } from '../Models/fee';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeeService {
-  private apiUrl = 'http://localhost:5257/api/Fees';
+  private apiUrl = `${environment.apiBaseUrl}/api/Fees`;
 
   constructor(private http: HttpClient) { }
 
   // Helper function to add token header
   private getAuthHeaders() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
     return {
       headers: { Authorization: `Bearer ${token}` }
     };

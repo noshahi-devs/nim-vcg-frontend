@@ -2,19 +2,20 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { StaffSalary } from '../Models/staff-salary';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StaffSalaryService {
 
-  private apiUrl = 'http://localhost:5257/api/StaffSalaries';
+  private apiUrl = `${environment.apiBaseUrl}/api/StaffSalaries`;
 
   constructor(private http: HttpClient) { }
 
   // Helper function to add token header
   private getAuthHeaders() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
     return {
       headers: { Authorization: `Bearer ${token}` }
     };

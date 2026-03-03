@@ -3,12 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Campus } from '../Models/campus';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CampusService {
-    private apiUrl = 'http://localhost:5257/api/Campuses';
+    private apiUrl = `${environment.apiBaseUrl}/api/Campuses`;
 
     private currentCampusSubject = new BehaviorSubject<Campus | null>(null);
     public currentCampus$ = this.currentCampusSubject.asObservable();
@@ -21,7 +22,7 @@ export class CampusService {
     }
 
     private getAuthHeaders() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
         return new HttpHeaders({
             Authorization: `Bearer ${token}`
         });

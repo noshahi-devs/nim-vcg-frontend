@@ -59,7 +59,7 @@
 
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { AuthResponse } from '../../../SecurityModels/auth-response';
 import { CommonModule, NgIf } from '@angular/common';
@@ -71,7 +71,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./sign-in.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule, NgIf, RouterLink]
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, NgIf]
 })
 export class SignInComponent {
   signInForm: FormGroup;
