@@ -701,3 +701,242 @@ body {
     transition: none !important;
   }
 }
+
+/* ===========================
+   Unified Add/Edit/View Popup
+   =========================== */
+:root {
+  --nim-popup-primary: #486cea;
+  --nim-popup-primary-deep: #355bd4;
+  --nim-popup-header-dark: #0f172a;
+  --nim-popup-border: #dbe5ff;
+}
+
+html body .modal-overlay {
+  background: rgba(15, 23, 42, 0.58) !important;
+  backdrop-filter: blur(3px);
+  animation: nimPopupBackdropIn 0.2s ease;
+  z-index: 1055 !important;
+}
+
+html body .modal-box {
+  width: min(94vw, 980px) !important;
+  max-height: min(90vh, 900px) !important;
+  overflow: auto !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(219, 229, 255, 0.9) !important;
+  background: #ffffff !important;
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.35) !important;
+  animation: nimPopupCardIn 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html body .modal-header-premium {
+  position: relative;
+  padding: 18px 20px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
+  background: linear-gradient(
+    135deg,
+    var(--nim-popup-header-dark),
+    var(--nim-popup-primary-deep),
+    var(--nim-popup-primary)
+  ) !important;
+  color: #ffffff !important;
+}
+
+html body .modal-header-premium .header-gradient {
+  background: radial-gradient(circle at right, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0)) !important;
+  opacity: 1 !important;
+}
+
+html body .modal-title-premium,
+html body .modal-subtitle-premium {
+  color: #ffffff !important;
+}
+
+html body .modal-title-premium {
+  font-weight: 800 !important;
+  letter-spacing: 0.01em;
+}
+
+html body .modal-subtitle-premium {
+  opacity: 0.9 !important;
+}
+
+html body .modal-icon-premium {
+  background: linear-gradient(135deg, var(--nim-popup-primary), var(--nim-popup-primary-deep)) !important;
+  box-shadow: 0 8px 20px rgba(72, 108, 234, 0.3) !important;
+  color: #ffffff !important;
+}
+
+html body .modal-close-premium {
+  border: 1px solid rgba(255, 255, 255, 0.38) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+html body .modal-close-premium:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-1px);
+}
+
+html body .modal-body-premium {
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%) !important;
+  padding: 20px !important;
+}
+
+html body .modal-footer-premium {
+  background: #ffffff !important;
+  border-top: 1px solid #e5edff !important;
+  padding: 14px 20px !important;
+}
+
+html body .form-group-premium .field-label,
+html body .field-label {
+  color: #475569 !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+}
+
+html body .field-input,
+html body .field-select,
+html body .modal-box input[type="text"],
+html body .modal-box input[type="email"],
+html body .modal-box input[type="password"],
+html body .modal-box input[type="number"],
+html body .modal-box input[type="date"],
+html body .modal-box select {
+  min-height: 44px !important;
+  border-radius: 11px !important;
+  border: 1.5px solid var(--nim-popup-border) !important;
+  background: #ffffff !important;
+  color: #1e293b !important;
+  box-shadow: none !important;
+}
+
+html body .field-input:focus,
+html body .field-select:focus,
+html body .modal-box input:focus,
+html body .modal-box select:focus {
+  border-color: var(--nim-popup-primary) !important;
+  box-shadow: 0 0 0 4px rgba(72, 108, 234, 0.15) !important;
+}
+
+html body .select-wrapper-premium,
+html body .select-wrapper {
+  position: relative;
+}
+
+html body .field-chevron,
+html body .select-icon {
+  color: #94a3b8 !important;
+}
+
+html body .btn-primary-gradient,
+html body .sml-btn-primary {
+  background: linear-gradient(135deg, var(--nim-popup-primary), var(--nim-popup-primary-deep)) !important;
+  border: 0 !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 24px rgba(72, 108, 234, 0.28) !important;
+}
+
+html body .btn-primary-gradient:hover,
+html body .sml-btn-primary:hover {
+  color: #ffffff !important;
+  filter: brightness(0.98);
+}
+
+html body .btn-ghost,
+html body .btn-cancel,
+html body .sml-btn-ghost {
+  background: #e2e8f0 !important;
+  color: #334155 !important;
+  border: 0 !important;
+}
+
+html body .btn-ghost:hover,
+html body .btn-cancel:hover,
+html body .sml-btn-ghost:hover {
+  background: #cbd5e1 !important;
+  color: #1e293b !important;
+}
+
+/* Bootstrap modal alignment for remaining add/edit/view popups */
+html body .modal .modal-content {
+  border: 1px solid rgba(219, 229, 255, 0.95) !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.35) !important;
+}
+
+html body .modal .modal-header {
+  background: linear-gradient(
+    135deg,
+    var(--nim-popup-header-dark),
+    var(--nim-popup-primary-deep),
+    var(--nim-popup-primary)
+  ) !important;
+  color: #ffffff !important;
+  border-bottom: 0 !important;
+}
+
+html body .modal .modal-header .modal-title {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+html body .modal .modal-header .btn-close {
+  filter: invert(1) brightness(1.7) !important;
+  opacity: 0.9 !important;
+}
+
+html body .modal .modal-body {
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%) !important;
+}
+
+html body .modal .modal-footer {
+  border-top: 1px solid #e5edff !important;
+  background: #ffffff !important;
+}
+
+html body .modal-backdrop.show {
+  background: rgba(15, 23, 42, 0.58) !important;
+  backdrop-filter: blur(3px);
+  opacity: 1 !important;
+}
+
+@keyframes nimPopupCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes nimPopupBackdropIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  html body .modal-box {
+    width: calc(100vw - 16px) !important;
+    max-height: calc(100vh - 20px) !important;
+    border-radius: 14px !important;
+  }
+
+  html body .modal-header-premium,
+  html body .modal-body-premium,
+  html body .modal-footer-premium {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+}

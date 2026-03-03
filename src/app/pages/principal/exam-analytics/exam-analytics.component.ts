@@ -14,7 +14,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, FormsModule, BreadcrumbComponent],
   templateUrl: './exam-analytics.component.html',
-  styleUrls: ['./exam-analytics.component.css']
+  styleUrl: './exam-analytics.component.css'
 })
 export class ExamAnalyticsComponent implements OnInit {
   title = 'Exam Analytics';
