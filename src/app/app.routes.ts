@@ -136,6 +136,7 @@ import { GeneralSettingsComponent } from './pages/admin/general-settings/general
 import { SubjectAssignmentComponent } from './pages/admin/subject-assignment/subject-assignment.component';
 import { BroadcastComponent } from './pages/general/broadcast/broadcast.component';
 import { CampusManagementComponent } from './pages/admin/campus-management/campus-management.component';
+import { StudentDashboardComponent } from './pages/student/student-dashboard/student-dashboard.component';
 
 export const routes: Routes = [
   { path: '', component: BrandingHomeComponent, pathMatch: 'full' },
@@ -150,6 +151,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent, data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
+      { path: 'student-dashboard', component: StudentDashboardComponent, data: { roles: ['Student'] } },
 
       // Class Management
       { path: 'class-list', component: ClassListComponent, data: { roles: ['Admin', 'Principal'] } },

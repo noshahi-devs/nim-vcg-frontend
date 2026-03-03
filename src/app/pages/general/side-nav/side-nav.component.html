@@ -12,6 +12,40 @@
   </div>
   <div class="sidebar-menu-area">
     <ul class="sidebar-menu" id="sidebar-menu">
+      <!-- Student Menu -->
+      <li *ngIf="authService.hasAnyRole(['Student'])" class="sidebar-menu-group-title">STUDENT</li>
+      <li *ngIf="authService.hasAnyRole(['Student'])">
+        <a routerLink="/student-dashboard" routerLinkActive="active-page">
+          <iconify-icon icon="solar:widget-bold-duotone" class="menu-icon"></iconify-icon>
+          <span>My Dashboard</span>
+        </a>
+      </li>
+      <li *ngIf="authService.hasAnyRole(['Student'])">
+        <a routerLink="/student-profile" routerLinkActive="active-page">
+          <iconify-icon icon="solar:user-bold-duotone" class="menu-icon"></iconify-icon>
+          <span>My Profile</span>
+        </a>
+      </li>
+      <li *ngIf="authService.hasAnyRole(['Student'])">
+        <a routerLink="/student-attendance-view" routerLinkActive="active-page">
+          <iconify-icon icon="solar:user-check-bold-duotone" class="menu-icon"></iconify-icon>
+          <span>My Attendance</span>
+        </a>
+      </li>
+      <li *ngIf="authService.hasAnyRole(['Student'])">
+        <a routerLink="/student-fees" routerLinkActive="active-page">
+          <iconify-icon icon="solar:wallet-money-bold-duotone" class="menu-icon"></iconify-icon>
+          <span>My Fees</span>
+        </a>
+      </li>
+      <li *ngIf="authService.hasAnyRole(['Student'])">
+        <a routerLink="/student-exam-results" routerLinkActive="active-page">
+          <iconify-icon icon="solar:chart-bold-duotone" class="menu-icon"></iconify-icon>
+          <span>My Exam Results</span>
+        </a>
+      </li>
+
+      <li class="sidebar-menu-group-title">MENU</li>
 
 
 

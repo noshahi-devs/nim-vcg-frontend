@@ -1,0 +1,83 @@
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    border-radius: 16px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
+}
+
+.welcome-text {
+    font-weight: 700;
+    color: #1a202c;
+}
+
+.icon-container {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-primary-soft {
+    background-color: rgba(66, 153, 225, 0.1);
+}
+
+.bg-success-soft {
+    background-color: rgba(72, 187, 120, 0.1);
+}
+
+.bg-danger-soft {
+    background-color: rgba(245, 101, 101, 0.1);
+}
+
+.bg-info-soft {
+    background-color: rgba(66, 224, 235, 0.1);
+}
+
+.bg-primary-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.fs-huge {
+    font-size: 3rem;
+}
+
+.font-small {
+    font-size: 0.85rem;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.table thead th {
+    background-color: rgba(0, 0, 0, 0.02);
+    border-top: none;
+}
+
+.badge {
+    padding: 0.5em 0.8em;
+    border-radius: 6px;
+    font-weight: 600;
+}

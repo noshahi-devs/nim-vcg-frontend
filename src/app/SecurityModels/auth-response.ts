@@ -6,6 +6,7 @@ export interface AuthResponse {
   token: string;
   roles: string[];
   permissions: string[];
+  studentId?: number;
 }
 
 export class AppUser {

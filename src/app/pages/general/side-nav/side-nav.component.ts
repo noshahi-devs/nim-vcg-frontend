@@ -225,7 +225,7 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private router: Router,
     private themeService: ThemeService,
-    private authService: AuthService,
+    public authService: AuthService,
     private appConfig: AppConfigService,
     private staffService: StaffService,
     private notificationService: NotificationService,
