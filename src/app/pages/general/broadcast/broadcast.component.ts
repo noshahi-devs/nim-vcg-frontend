@@ -14,12 +14,16 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 })
 export class BroadcastComponent implements OnInit {
 
-    availableRoles = ['Admin', 'Principal', 'Teacher', 'Accountant'];
+    availableRoles = ['Admin', 'Principal', 'Teacher', 'Accountant', 'Student'];
     selectedRoles: string[] = [];
     sending = false;
     successMsg = '';
     loadingLogs = false;
     logs: NotificationLog[] = [];
+    assignedSections: any[] = [];
+    selectedSectionIds: number[] = [];
+    selectedSubjectIds: number[] = [];
+    isTeacher = false;
 
     broadcastData = {
         title: '',
@@ -31,6 +35,55 @@ export class BroadcastComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadLogs();
+        this.filterRolesForUser();
+    }
+
+    private filterRolesForUser() {
+        const user = JSON.parse(localStorage.getItem('JWT_USER') || '{}');
+        const roles = user.roles || [];
+        this.isTeacher = roles.includes('Teacher') && !roles.includes('Admin') && !roles.includes('Principal');
+
+        if (this.isTeacher) {
+            this.availableRoles = ['Student'];
+            this.loadMySections();
+        }
+    }
+
+    loadMySections() {
+        this.notificationService.getMySections().subscribe({
+            next: (sections) => this.assignedSections = sections,
+            error: (err) => console.error('Error loading sections', err)
+        });
+    }
+
+    toggleSection(sectionId: number) {
+        const idx = this.selectedSectionIds.indexOf(sectionId);
+        if (idx >= 0) {
+            this.selectedSectionIds.splice(idx, 1);
+        } else {
+            this.selectedSectionIds.push(sectionId);
+        }
+    }
+
+    toggleSubject(subjectId: number) {
+        const idx = this.selectedSubjectIds.indexOf(subjectId);
+        if (idx >= 0) {
+            this.selectedSubjectIds.splice(idx, 1);
+        } else {
+            this.selectedSubjectIds.push(subjectId);
+        }
+    }
+
+    getUniqueSubjects() {
+        const subjects: any[] = [];
+        const seen = new Set();
+        this.assignedSections.forEach(s => {
+            if (!seen.has(s.subjectId)) {
+                seen.add(s.subjectId);
+                subjects.push({ id: s.subjectId, name: s.subjectName });
+            }
+        });
+        return subjects;
     }
 
     toggleRole(role: string) {
@@ -52,7 +105,10 @@ export class BroadcastComponent implements OnInit {
             message: this.broadcastData.message,
             notificationType: this.broadcastData.priority === 'urgent' ? 'Urgent' :
                 this.broadcastData.priority === 'important' ? 'Important' : 'Broadcast',
-            link: ''
+            link: '',
+            targetRoles: this.selectedRoles,
+            targetSectionIds: this.selectedSectionIds,
+            targetSubjectIds: this.selectedSubjectIds
         };
 
         this.notificationService.broadcast(payload).subscribe({
@@ -87,7 +143,8 @@ export class BroadcastComponent implements OnInit {
             'Admin': 'mdi:shield-account',
             'Principal': 'mdi:account-tie',
             'Teacher': 'mdi:teach',
-            'Accountant': 'mdi:calculator'
+            'Accountant': 'mdi:calculator',
+            'Student': 'mdi:account-school'
         };
         return icons[role] || 'mdi:account';
     }

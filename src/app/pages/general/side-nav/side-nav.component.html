@@ -322,8 +322,9 @@
         <ul class="sidebar-submenu">
           <li><a routerLink="/email" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Inbox</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/broadcast" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-warning-main"></i> Broadcast</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/broadcast"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Broadcast</a>
+          </li>
         </ul>
       </li>
 
@@ -620,7 +621,7 @@
               </div>
               <ul class="to-top-list">
                 <li>
-                  <a routerLink="/view-profile"
+                  <a [routerLink]="hasRole('Student') ? '/student-profile' : '/view-profile'"
                     class="dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
                     <iconify-icon icon="solar:user-linear" class="icon text-xl"></iconify-icon> My Profile</a>
                 </li>

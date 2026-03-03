@@ -186,6 +186,7 @@ import { Notification } from '../../../Models/notification';
 import { UserMessage } from '../../../Models/user-message';
 import { CampusService } from '../../../services/campus.service';
 import { Campus } from '../../../Models/campus';
+import { StudentService } from '../../../services/student.service';
 import $ from 'jquery';
 import { CommonModule, NgIf } from "@angular/common";
 
@@ -230,7 +231,8 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     private staffService: StaffService,
     private notificationService: NotificationService,
     private messageService: MessageService,
-    private campusService: CampusService
+    private campusService: CampusService,
+    private studentService: StudentService
   ) { }
 
   ngOnInit(): void {
@@ -245,7 +247,19 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     // Set fallback display name
     this.displayName = this.currentUser?.fullName || this.currentUser?.username || 'User';
 
-    if (this.currentUser?.email && !this.currentUser?.fullName) {
+    if (this.hasRole('Student')) {
+      const studentId = this.currentUser?.studentId || Number(this.currentUser?.id);
+      if (!isNaN(studentId)) {
+        this.studentService.GetStudent(studentId).subscribe({
+          next: (student) => {
+            if (student && student.studentName) {
+              this.displayName = student.studentName;
+            }
+          },
+          error: () => { }
+        });
+      }
+    } else if (this.currentUser?.email && !this.currentUser?.fullName) {
       this.staffService.getStaffByEmail(this.currentUser.email).subscribe({
         next: (staff) => {
           if (staff && staff.staffName) {

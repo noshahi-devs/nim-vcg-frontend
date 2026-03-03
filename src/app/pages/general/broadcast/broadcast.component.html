@@ -21,7 +21,7 @@
                 <div class="card-body p-24">
                     <form (ngSubmit)="sendBroadcast()" #broadcastForm="ngForm">
                         <div class="mb-20">
-                            <label class="broadcast-label">Target Audience</label>
+                            <label class="broadcast-label">Target Audience Roles</label>
                             <div class="role-pills">
                                 <button type="button" *ngFor="let role of availableRoles" class="role-pill"
                                     [class.active]="selectedRoles.includes(role)" (click)="toggleRole(role)">
@@ -29,6 +29,49 @@
                                     {{ role }}
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- Targeted Subjects (Teachers Only) -->
+                        <div class="mb-20" *ngIf="isTeacher && getUniqueSubjects().length > 0">
+                            <label class="broadcast-label">Target Subjects</label>
+                            <div class="role-pills">
+                                <button type="button" *ngFor="let subject of getUniqueSubjects()"
+                                    class="role-pill subject-pill"
+                                    [class.active]="selectedSubjectIds.includes(subject.id)"
+                                    (click)="toggleSubject(subject.id)">
+                                    <iconify-icon icon="solar:book-bookmark-bold-duotone" class="me-1"></iconify-icon>
+                                    {{ subject.name }}
+                                </button>
+                            </div>
+                            <p class="text-xs text-secondary-light mt-8">
+                                <span *ngIf="selectedSubjectIds.length === 0">Select subjects to notify students of
+                                    their performance.</span>
+                                <span *ngIf="selectedSubjectIds.length > 0">Targeting Students in: <strong>{{
+                                        selectedSubjectIds.length }} subjects</strong></span>
+                            </p>
+                        </div>
+
+                        <!-- Targeted Sections (Teachers Only) -->
+                        <div class="mb-20" *ngIf="isTeacher && assignedSections.length > 0">
+                            <label class="broadcast-label">Target Sections</label>
+                            <div class="role-pills">
+                                <button type="button" *ngFor="let section of assignedSections"
+                                    class="role-pill section-pill"
+                                    [class.active]="selectedSectionIds.includes(section.sectionId)"
+                                    (click)="toggleSection(section.sectionId)">
+                                    <iconify-icon icon="mdi:google-classroom" class="me-1"></iconify-icon>
+                                    {{ section.className }} - {{ section.sectionName }}
+                                </button>
+                            </div>
+                            <p class="text-xs text-secondary-light mt-8">
+                                <span *ngIf="selectedSectionIds.length === 0">You can also select specific
+                                    classes.</span>
+                                <span *ngIf="selectedSectionIds.length > 0">Targeting: <strong>{{
+                                        selectedSectionIds.length }} sections</strong></span>
+                            </p>
+                        </div>
+
+                        <div class="mb-20" *ngIf="!isTeacher">
                             <p class="text-xs text-secondary-light mt-8">
                                 <span *ngIf="selectedRoles.length === 0">Select one or more roles. Leave empty to notify
                                     everyone.</span>

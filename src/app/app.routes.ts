@@ -244,7 +244,7 @@ export const routes: Routes = [
 
       // Communications & Messaging
       { path: 'email', component: EmailComponent, data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
-      { path: 'broadcast', component: BroadcastComponent, data: { roles: ['Admin', 'Principal'] } },
+      { path: 'broadcast', component: BroadcastComponent, data: { roles: ['Admin', 'Principal', 'Teacher'] } },
 
       // User Management
       { path: 'users-list', component: ListComponent, data: { roles: ['Admin'] } },
