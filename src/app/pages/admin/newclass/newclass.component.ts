@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { StandardService } from '../../../services/standard.service';
 import { StaffService } from '../../../services/staff.service';
 import { Standard } from '../../../Models/standard';
@@ -125,3 +125,4 @@ export class NewClassComponent implements OnInit {
     });
   }
 }
+

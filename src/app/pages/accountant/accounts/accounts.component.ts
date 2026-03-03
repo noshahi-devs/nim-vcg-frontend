@@ -4,7 +4,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { AccountsService, DashboardData } from '../../../services/accounts.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AuthService } from '../../../SecurityModels/auth.service';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { Subscription, interval } from 'rxjs';
 
 @Component({
@@ -308,3 +308,4 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
   }
 }
+

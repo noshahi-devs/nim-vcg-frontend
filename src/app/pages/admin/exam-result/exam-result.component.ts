@@ -10,7 +10,7 @@ import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
 import { Student } from '../../../Models/student';
 import { finalize, forkJoin } from 'rxjs';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
@@ -371,3 +371,4 @@ export class ExamResultComponent implements OnInit {
     return formatted;
   }
 }
+

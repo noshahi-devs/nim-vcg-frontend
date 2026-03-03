@@ -6,7 +6,7 @@ import { ExamScheduleService } from '../../../services/exam-schedule.service';
 import { ExamScheduleVm } from '../../../Models/exam-schedule-vm';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AuthService } from '../../../SecurityModels/auth.service';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -195,3 +195,4 @@ export class ExamScheduleComponent implements OnInit {
     this.form.reset();
   }
 }
+

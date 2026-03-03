@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserManagementService, User } from '../../../services/user-management.service';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 declare var bootstrap: any;
 
@@ -263,3 +263,4 @@ export class StaffManageLoginComponent implements OnInit {
     }
   }
 }
+

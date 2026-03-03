@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, CUSTOM_ELEMENTS_SCHEMA } from '@angul
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { SubjectService } from '../../../services/subject.service';
 import { Subject } from '../../../Models/subject';
@@ -219,3 +219,4 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
     });
   }
 }
+

@@ -3,7 +3,7 @@
 // // import { FormsModule } from '@angular/forms';
 // // import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 // // import { AccountsService, Income } from '../services/accounts.service';
-// // import Swal from 'sweetalert2';
+// // import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 // // @Component({
 // //   selector: 'app-income-manage',
@@ -178,7 +178,7 @@
 
 // import { Component, OnInit } from '@angular/core';
 // import { AccountsService, Income } from '../services/accounts.service';
-// import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 // @Component({
 //   selector: 'app-income-manage',
@@ -340,7 +340,7 @@
 
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { AccountsService, Income } from '../../../services/accounts.service';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
@@ -518,3 +518,4 @@ export class IncomeManageComponent implements OnInit {
     return `${classes[source] || 'bg-secondary-focus text-secondary-600'} px-12 py-4 radius-4 fw-medium text-sm`;
   }
 }
+

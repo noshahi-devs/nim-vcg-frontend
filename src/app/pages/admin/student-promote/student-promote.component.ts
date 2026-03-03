@@ -9,7 +9,7 @@ import { SectionService } from '../../../services/section.service';
 import { Student } from '../../../Models/student';
 import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -214,3 +214,4 @@ export class StudentPromoteComponent implements OnInit {
     return sec ? sec.sectionName : 'All Sections';
   }
 }
+

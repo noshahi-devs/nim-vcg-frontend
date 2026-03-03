@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { ExamScheduleStandardService } from '../../../services/exam-schedule-standard.service';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { finalize } from 'rxjs';
 
 declare var bootstrap: any;
@@ -157,3 +157,4 @@ export class ExamScheduleStandardsListComponent implements OnInit {
     }
   }
 }
+

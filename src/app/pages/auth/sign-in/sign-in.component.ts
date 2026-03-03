@@ -63,7 +63,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { AuthResponse } from '../../../SecurityModels/auth-response';
 import { CommonModule, NgIf } from '@angular/common';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 @Component({
   selector: 'app-sign-in',
@@ -181,3 +181,4 @@ export class SignInComponent {
   get email() { return this.signInForm.get('email'); }
   get password() { return this.signInForm.get('password'); }
 }
+

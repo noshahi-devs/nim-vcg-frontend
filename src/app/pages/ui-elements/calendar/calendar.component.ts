@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import  Swal from 'sweetalert2';
+import  Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 
 declare var $: any;
@@ -184,3 +184,4 @@ export class CalendarComponent implements OnInit {
   }
 
 }
+

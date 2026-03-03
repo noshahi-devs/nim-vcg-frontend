@@ -2,7 +2,6 @@
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
   <div class="es-page">
-    <!-- ── Stats Row ── -->
     <div class="stats-row" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
       <div class="stat-card">
         <div class="stat-icon blue">
@@ -33,7 +32,6 @@
       </div>
     </div>
 
-    <!-- ── Top Bar ── -->
     <div class="es-topbar">
       <div class="es-topbar-left">
         <div class="es-search-wrap">
@@ -47,7 +45,6 @@
       </a>
     </div>
 
-    <!-- ── Empty State ── -->
     <div class="es-empty" *ngIf="!loading && filteredStaffList.length === 0">
       <div class="es-empty-icon">
         <iconify-icon icon="solar:user-heart-bold-duotone"></iconify-icon>
@@ -60,7 +57,6 @@
       </a>
     </div>
 
-    <!-- ── Loading State ── -->
     <div class="es-empty" *ngIf="loading">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -68,17 +64,21 @@
       <p class="mt-12">Fetching staff records...</p>
     </div>
 
-    <!-- ── Staff Grid ── -->
     <div class="es-grid" *ngIf="!loading && filteredStaffList.length > 0">
       <div class="es-card" *ngFor="let staff of filteredStaffList">
         <div class="es-card-accent"></div>
+
+        <div class="es-card-top">
+          <span class="es-id-chip">Staff #{{ staff.staffId }}</span>
+          <span class="es-role-chip">{{ getDesignationName(staff.designation) }}</span>
+        </div>
 
         <div class="es-card-head">
           <div class="es-avatar-wrap">
             <img [src]="staff.imagePath || defaultImage" class="es-avatar" />
           </div>
           <h6 class="es-card-title">{{ staff.staffName }}</h6>
-          <span class="es-card-subtitle">{{ getDesignationName(staff.designation) }}</span>
+          <span class="es-card-subtitle">{{ staff.email || 'No email provided' }}</span>
         </div>
 
         <div class="es-meta-grid">
@@ -98,8 +98,7 @@
           <a [routerLink]="['/staff-view-profile', staff.staffId]" class="es-action-btn view">
             <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> Profile
           </a>
-          <a [routerLink]="['/staff-edit-profile', staff.staffId]" class="es-action-btn edit"
-            *ngIf="authService.hasRole('Admin')">
+          <a [routerLink]="['/staff-edit-profile', staff.staffId]" class="es-action-btn edit" *ngIf="authService.hasRole('Admin')">
             <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon> Edit
           </a>
           <button class="es-action-btn delete" (click)="confirmDelete(staff)" *ngIf="authService.hasRole('Admin')">

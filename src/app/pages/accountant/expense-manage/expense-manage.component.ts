@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AccountsService, Expense } from '../../../services/accounts.service';
 import { AuthService } from '../../../SecurityModels/auth.service';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 @Component({
   selector: 'app-expense-manage',
@@ -183,3 +183,4 @@ export class ExpenseManageComponent implements OnInit {
     return `${classes[type] || 'bg-secondary-focus text-secondary-600'} px-12 py-4 radius-4 fw-medium text-sm`;
   }
 }
+

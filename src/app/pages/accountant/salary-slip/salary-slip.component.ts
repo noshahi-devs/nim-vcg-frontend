@@ -1,7 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { StaffSalaryService } from '../../../services/staff-salary.service';
 import { StaffService } from '../../../services/staff.service';
@@ -408,4 +408,5 @@ export class SalarySlipComponent implements OnInit {
     });
   }
 }
+
 

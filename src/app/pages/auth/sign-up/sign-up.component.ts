@@ -71,7 +71,7 @@ import { AuthService } from '../../../SecurityModels/auth.service';
 import { Router, RouterLink } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 @Component({
   selector: 'app-sign-up',
   standalone: true,
@@ -164,4 +164,5 @@ export class SignUpComponent {
   }
 
 }
+
 

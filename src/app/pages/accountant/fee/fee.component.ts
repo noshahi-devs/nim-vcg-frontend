@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { FeeTypeService } from '../../../services/feetype.service';
 import { FeeType } from '../../../Models/feetype';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 @Component({
   selector: 'app-fee',
@@ -164,3 +164,4 @@ export class FeeComponent implements OnInit {
     this.form.reset();
   }
 }
+

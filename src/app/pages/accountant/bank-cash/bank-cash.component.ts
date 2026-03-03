@@ -2,7 +2,7 @@ import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { BankAccount, BankAccountService } from '../../../services/bank-account.service';
 import { PaymentGatewaySetting, PaymentGatewayService } from '../../../services/payment-gateway.service';
 
@@ -216,3 +216,4 @@ export class BankCashComponent implements OnInit {
     return new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', minimumFractionDigits: 0 }).format(amount);
   }
 }
+

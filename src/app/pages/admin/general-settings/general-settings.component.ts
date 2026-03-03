@@ -6,7 +6,7 @@ import { NotificationService, NotificationLog } from '../../../services/notifica
 import { AcademicYearService } from '../../../services/academic-year.service';
 import { AcademicYear } from '../../../Models/academic-year';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 @Component({
     selector: 'app-general-settings',
@@ -153,3 +153,4 @@ export class GeneralSettingsComponent implements OnInit {
         this.activeTab = tab;
     }
 }
+

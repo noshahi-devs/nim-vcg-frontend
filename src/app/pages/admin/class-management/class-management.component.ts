@@ -10,7 +10,7 @@ import { Section } from '../../../Models/section';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { finalize, forkJoin } from 'rxjs';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 
 @Component({
@@ -227,3 +227,4 @@ export class ClassManagementComponent implements OnInit {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 }
+

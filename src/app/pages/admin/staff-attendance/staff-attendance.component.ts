@@ -1,7 +1,7 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { StaffService } from '../../../services/staff.service';
 import { AttendanceService } from '../../../services/attendance.service';
 import { Staff } from '../../../Models/staff';
@@ -197,3 +197,4 @@ export class StaffAttendanceComponent implements OnInit {
     return { present, absent, unmarked, total: this.staffMembers.length };
   }
 }
+

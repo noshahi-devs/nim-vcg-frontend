@@ -10,7 +10,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OthersPayment } from '../../../Models/other-payment';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 @Component({
   selector: 'app-other-payment',
@@ -331,3 +331,4 @@ export class OtherPaymentComponent implements OnInit {
     return months.map((m: any) => m.monthName).join(', ');
   }
 }
+

@@ -5,7 +5,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { LeaveService } from '../../../services/leave.service';
 import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
 import { AuthService } from '../../../SecurityModels/auth.service';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { finalize } from 'rxjs';
 
 declare var bootstrap: any;
@@ -233,3 +233,4 @@ export class LeaveManageComponent implements OnInit {
     }
   }
 }
+

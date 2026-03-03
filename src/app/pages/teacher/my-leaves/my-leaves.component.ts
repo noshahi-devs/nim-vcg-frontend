@@ -6,7 +6,7 @@ import { LeaveService } from '../../../services/leave.service';
 import { StaffService } from '../../../services/staff.service';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { finalize, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { RouterModule } from '@angular/router';
@@ -244,3 +244,4 @@ export class MyLeavesComponent implements OnInit {
     }
   }
 }
+

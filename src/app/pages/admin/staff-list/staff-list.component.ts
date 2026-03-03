@@ -7,7 +7,7 @@ import { StaffService } from '../../../services/staff.service';
 import { Designation } from '../../../Models/staff';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../SecurityModels/auth.service';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 @Component({
   selector: 'app-staff-list',
@@ -112,3 +112,4 @@ export class StaffListComponent implements OnInit, AfterViewInit {
     // Legacy jQuery removal if it causes issues, but keeping for now as it doesn't hurt
   }
 }
+

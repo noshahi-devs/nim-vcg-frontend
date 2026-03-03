@@ -7,7 +7,7 @@ import { SectionService } from '../../../services/section.service';
 import { SubjectService } from '../../../services/subject.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 @Component({
   selector: 'app-subject-assignment',
@@ -203,3 +203,4 @@ export class SubjectAssignmentComponent implements OnInit {
     });
   }
 }
+

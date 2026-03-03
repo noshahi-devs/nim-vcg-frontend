@@ -6,7 +6,7 @@ import { StaffService } from '../../../services/staff.service';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { Staff, Designation } from '../../../Models/staff';
 import { Role } from '../../../Models/role';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 @Component({
     selector: 'app-assign-role',
@@ -94,3 +94,4 @@ export class AssignRoleComponent implements OnInit {
         });
     }
 }
+

@@ -8,7 +8,7 @@ import { StandardService } from '../../../services/standard.service';
 import { Fee } from '../../../Models/fee';
 import { FeeType } from '../../../Models/feetype';
 import { Standard } from '../../../Models/standard';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 @Component({
   selector: 'app-generate-fee-invoice',
@@ -201,3 +201,4 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     }
   }
 }
+

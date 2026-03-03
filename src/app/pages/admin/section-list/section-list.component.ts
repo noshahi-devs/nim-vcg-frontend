@@ -12,7 +12,7 @@ import { StaffService } from '../../../services/staff.service';
 import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
 import { forkJoin, finalize } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 
 
 declare var bootstrap: any;
@@ -217,3 +217,4 @@ export class SectionListComponent implements OnInit {
     });
   }
 }
+

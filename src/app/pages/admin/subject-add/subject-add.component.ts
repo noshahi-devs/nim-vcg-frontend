@@ -3,7 +3,7 @@ import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { SubjectService } from '../../../services/subject.service';
 import { Subject } from '../../../Models/subject';
@@ -111,3 +111,4 @@ export class SubjectAddComponent implements OnInit {
       .catch(() => Swal.fire('Error', 'Failed to save subjects', 'error'));
   }
 }
+

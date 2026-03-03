@@ -1,6 +1,6 @@
 // import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
-// import $ from 'jquery';
+// declare const $: any;
 // import { Subscription } from 'rxjs';
 // import { ThemeService } from '../services/theme.service';
 // import { AuthService } from '../SecurityModels/auth.service';
@@ -187,7 +187,7 @@ import { UserMessage } from '../../../Models/user-message';
 import { CampusService } from '../../../services/campus.service';
 import { Campus } from '../../../Models/campus';
 import { StudentService } from '../../../services/student.service';
-import $ from 'jquery';
+declare const $: any;
 import { CommonModule, NgIf } from "@angular/common";
 
 @Component({
@@ -499,3 +499,4 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     $("body").removeClass("overlay-active");
   }
 }
+
