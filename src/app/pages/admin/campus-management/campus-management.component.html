@@ -1,115 +1,114 @@
-<div class="row gy-4">
-    <div class="col-lg-12">
-        <div class="card p-0 radius-12 overflow-hidden block-email-wrapper">
-            <div
-                class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
-                <h6 class="text-lg fw-semibold mb-0">Campus Management</h6>
-                <button (click)="openAddModal()"
-                    class="btn btn-primary-600 radius-8 px-20 py-11 d-flex align-items-center gap-2">
-                    <iconify-icon icon="lucide:plus" class="text-xl"></iconify-icon>
-                    Add Campus
-                </button>
-            </div>
-            <div class="card-body p-24">
-                <div class="table-responsive scroll-sm">
-                    <table class="table bordered-table sm-table mb-0">
-                        <thead>
-                            <tr>
-                                <th scope="col">Name</th>
-                                <th scope="col">Code</th>
-                                <th scope="col">Contact</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Status</th>
-                                <th scope="col" class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let campus of campuses">
-                                <td>{{ campus.campusName }}</td>
-                                <td>{{ campus.campusCode }}</td>
-                                <td>{{ campus.contactNumber }}</td>
-                                <td>{{ campus.email }}</td>
-                                <td>
-                                    <span
-                                        [class]="campus.isActive ? 'badge bg-success-focus text-success-main' : 'badge bg-danger-focus text-danger-main'">
-                                        {{ campus.isActive ? 'Active' : 'Inactive' }}
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <div class="d-flex align-items-center justify-content-center gap-2">
-                                        <button (click)="openEditModal(campus)"
-                                            class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-flex justify-content-center align-items-center">
-                                            <iconify-icon icon="lucide:edit"></iconify-icon>
-                                        </button>
-                                        <button (click)="deleteCampus(campus.campusId)"
-                                            class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-flex justify-content-center align-items-center">
-                                            <iconify-icon icon="lucide:trash-2"></iconify-icon>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+<div class="dashboard-main-body campus-page">
+  <section class="campus-hero">
+    <div class="campus-hero-content">
+      <p class="campus-eyebrow">Administration</p>
+      <h2>Campus Management</h2>
+      <p>Manage institute campuses, their contact details, and activation status from one place.</p>
+      <div class="campus-hero-meta">
+        <span>{{ campuses.length }} total campuses</span>
+      </div>
     </div>
+    <button type="button" (click)="openAddModal()" class="campus-cta-btn">
+      <iconify-icon icon="lucide:plus"></iconify-icon>
+      Add Campus
+    </button>
+  </section>
+
+  <section class="campus-panel">
+    <div class="campus-table-wrap">
+      <table class="campus-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let campus of campuses">
+            <td><span class="campus-name">{{ campus.campusName }}</span></td>
+            <td>{{ campus.campusCode }}</td>
+            <td>{{ campus.contactNumber || 'N/A' }}</td>
+            <td>{{ campus.email || 'N/A' }}</td>
+            <td class="text-center">
+              <span class="campus-status" [class.active]="campus.isActive" [class.inactive]="!campus.isActive">
+                {{ campus.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="text-center">
+              <div class="campus-actions">
+                <button type="button" (click)="openEditModal(campus)" class="icon-btn edit-btn" title="Edit Campus">
+                  <iconify-icon icon="lucide:edit"></iconify-icon>
+                </button>
+                <button type="button" (click)="deleteCampus(campus.campusId)" class="icon-btn delete-btn" title="Delete Campus">
+                  <iconify-icon icon="lucide:trash-2"></iconify-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="campuses.length === 0">
+            <td colspan="6" class="campus-empty">
+              <iconify-icon icon="solar:buildings-bold-duotone"></iconify-icon>
+              <p>No campuses found.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1"
-    role="dialog">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content radius-16 bg-base p-24">
-            <div class="modal-header border-0 p-0 mb-24">
-                <h6 class="text-lg fw-semibold mb-0">{{ isEditMode ? 'Edit' : 'Add' }} Campus</h6>
-                <button type="button" class="btn-close" (click)="closeModal()"></button>
+<!-- Add / Edit Campus Modal -->
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content radius-16 bg-base p-24">
+      <div class="modal-header border-0 p-0 mb-20">
+        <h6 class="text-lg fw-semibold mb-0">{{ isEditMode ? 'Edit Campus' : 'Add Campus' }}</h6>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <div class="modal-body p-0">
+        <form #campusForm="ngForm">
+          <div class="row gy-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary-light">Campus Name</label>
+              <input type="text" class="form-control radius-8" name="campusName" [(ngModel)]="selectedCampus.campusName" required placeholder="Main Campus">
             </div>
-            <div class="modal-body p-0">
-                <form #campusForm="ngForm">
-                    <div class="row gy-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-secondary-light">Campus Name</label>
-                            <input type="text" class="form-control radius-8" name="campusName"
-                                [(ngModel)]="selectedCampus.campusName" required placeholder="Main Campus">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-secondary-light">Campus Code</label>
-                            <input type="text" class="form-control radius-8" name="campusCode"
-                                [(ngModel)]="selectedCampus.campusCode" required placeholder="MC-01">
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-semibold text-secondary-light">Address</label>
-                            <textarea class="form-control radius-8" name="address" [(ngModel)]="selectedCampus.address"
-                                rows="3" placeholder="Full address..."></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-secondary-light">Contact Number</label>
-                            <input type="text" class="form-control radius-8" name="contactNumber"
-                                [(ngModel)]="selectedCampus.contactNumber" placeholder="+1234567890">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-secondary-light">Email Address</label>
-                            <input type="email" class="form-control radius-8" name="email"
-                                [(ngModel)]="selectedCampus.email" placeholder="campus@school.com">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="isActive"
-                                    [(ngModel)]="selectedCampus.isActive" id="isActive">
-                                <label class="form-check-label" for="isActive">Is Active</label>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary-light">Campus Code</label>
+              <input type="text" class="form-control radius-8" name="campusCode" [(ngModel)]="selectedCampus.campusCode" required placeholder="MC-01">
             </div>
-            <div class="modal-footer border-0 p-0 mt-24 d-flex align-items-center justify-content-end gap-2">
-                <button type="button" class="btn btn-secondary radius-8 px-20 py-11"
-                    (click)="closeModal()">Cancel</button>
-                <button type="submit" class="btn btn-primary-600 radius-8 px-20 py-11" (click)="saveCampus()">Save
-                    Changes</button>
+            <div class="col-12">
+              <label class="form-label fw-semibold text-secondary-light">Address</label>
+              <textarea class="form-control radius-8" name="address" [(ngModel)]="selectedCampus.address" rows="3" placeholder="Full address"></textarea>
             </div>
-        </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary-light">Contact Number</label>
+              <input type="text" class="form-control radius-8" name="contactNumber" [(ngModel)]="selectedCampus.contactNumber" placeholder="+923001234567">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary-light">Email Address</label>
+              <input type="email" class="form-control radius-8" name="email" [(ngModel)]="selectedCampus.email" placeholder="campus@school.com">
+            </div>
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="isActive" [(ngModel)]="selectedCampus.isActive" id="isActive">
+                <label class="form-check-label" for="isActive">Is Active</label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer border-0 p-0 mt-20 d-flex align-items-center justify-content-end gap-2">
+        <button type="button" class="btn btn-secondary radius-8 px-20 py-11" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary-600 radius-8 px-20 py-11" (click)="saveCampus()">Save Changes</button>
+      </div>
     </div>
+  </div>
 </div>
 <div class="modal-backdrop fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'"></div>

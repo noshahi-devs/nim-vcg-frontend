@@ -1,46 +1,42 @@
-<div class="dashboard-main-body">
-    <div class="silk-panel p-60">
-        <div class="d-flex justify-content-between align-items-end mb-50">
-            <div>
-                <span class="greeting text-warning">Curate Your Experience</span>
-                <h1 class="display-4 fw-black">Visual Identity</h1>
-            </div>
-            <div class="silk-badge px-20 py-10 rounded-pill bg-light fw-bold small text-uppercase letter-spacing-2">
-                System Preferences
-            </div>
-        </div>
+<div class="dashboard-main-body theme-page">
+  <app-breadcrumb [title]="title"></app-breadcrumb>
 
-        <form class="elegant-form">
-            <div class="row g-5">
-                <div class="col-lg-6">
-                    <div class="luxury-input-group">
-                        <label class="label-minimal">Primary Designation</label>
-                        <div class="silk-upload-box">
-                            <input type="file" id="logoUpload" class="d-none">
-                            <label for="logoUpload" class="upload-trigger">
-                                <iconify-icon icon="solar:upload-minimalistic-bold-duotone"></iconify-icon>
-                                <span>Upload Brand Assets</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="luxury-input-group">
-                        <label class="label-minimal">Color Signature</label>
-                        <div class="d-flex gap-3 mt-15">
-                            <div class="color-orb active" style="background: var(--accent-prime)"></div>
-                            <div class="color-orb" style="background: #ef4444"></div>
-                            <div class="color-orb" style="background: #3b82f6"></div>
-                            <div class="color-orb" style="background: #10b981"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-80 d-flex justify-content-end">
-                <button type="submit" class="btn-elegant">Apply Transformation</button>
-            </div>
-        </form>
+  <section class="theme-hero">
+    <div class="theme-hero-content">
+      <p class="theme-eyebrow">Brand Studio</p>
+      <h2>Theme & Visual Identity</h2>
+      <p>Control logo, color signature, and visual personality of your admin workspace.</p>
     </div>
+    <span class="theme-badge">System Preferences</span>
+  </section>
+
+  <section class="theme-panel">
+    <h5>Brand Configuration</h5>
+    <div class="theme-grid">
+      <div class="theme-card">
+        <label>Primary Designation</label>
+        <div class="theme-upload-box">
+          <input type="file" id="logoUpload" class="d-none">
+          <label for="logoUpload" class="theme-upload-trigger">
+            <iconify-icon icon="solar:upload-minimalistic-bold-duotone"></iconify-icon>
+            <span>Upload Brand Assets</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="theme-card">
+        <label>Color Signature</label>
+        <div class="theme-color-row">
+          <button type="button" class="color-orb active" style="background: #486cea;"></button>
+          <button type="button" class="color-orb" style="background: #ef4444;"></button>
+          <button type="button" class="color-orb" style="background: #10b981;"></button>
+          <button type="button" class="color-orb" style="background: #f59e0b;"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-actions">
+      <button type="button" class="theme-btn">Apply Transformation</button>
+    </div>
+  </section>
 </div>

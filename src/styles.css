@@ -696,9 +696,140 @@ body {
     animation: none !important;
   }
 
+  .login-welcome-card,
+  .login-petal,
+  .login-welcome-popup::after {
+    animation: none !important;
+  }
+
   .swal2-actions.nim-swal-actions .nim-swal-btn,
   .swal2-popup.nim-swal-toast {
     transition: none !important;
+  }
+}
+
+/* ===========================
+   Login Welcome Popup
+   =========================== */
+.swal2-popup.login-welcome-popup {
+  max-width: 36rem !important;
+  overflow: hidden !important;
+}
+
+.swal2-title.login-welcome-title {
+  margin-bottom: 0.55rem !important;
+}
+
+.swal2-html-container.login-welcome-html {
+  margin-top: 0 !important;
+}
+
+.login-welcome-card {
+  position: relative;
+  border: 1px solid rgba(72, 108, 234, 0.18);
+  background: linear-gradient(140deg, #f8fbff 0%, #ffffff 100%);
+  border-radius: 14px;
+  padding: 12px;
+  animation: loginCardFloat 3.2s ease-in-out infinite;
+}
+
+.login-welcome-message {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.login-welcome-meta {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.login-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  border-radius: 999px;
+  padding: 0 10px;
+  font-size: 0.76rem;
+  color: #1e293b;
+  font-weight: 600;
+  background: rgba(72, 108, 234, 0.1);
+  border: 1px solid rgba(72, 108, 234, 0.2);
+}
+
+.login-flower-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.login-petal {
+  position: absolute;
+  top: -20px;
+  left: var(--start-x, 50%);
+  border-radius: 70% 70% 70% 15%;
+  background: radial-gradient(circle at 30% 30%, #ffe7f2 0%, #f9b7d8 52%, #e87fb7 100%);
+  box-shadow: inset -1px -1px 2px rgba(255, 255, 255, 0.35);
+  opacity: 0;
+  transform: translateY(-12px) rotate(var(--petal-rotation, 0deg));
+  animation: loginPetalFall var(--petal-duration, 3s) linear var(--petal-delay, 0s) infinite;
+}
+
+.login-welcome-popup::after {
+  content: "";
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  right: -74px;
+  top: -86px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 214, 234, 0.44) 0%, rgba(255, 214, 234, 0) 72%);
+  pointer-events: none;
+  z-index: 1;
+  animation: loginBloomPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes loginPetalFall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -20px, 0) rotate(var(--petal-rotation, 0deg)) scale(0.85);
+  }
+
+  15% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--petal-drift, 0px), 330px, 0) rotate(calc(var(--petal-rotation, 0deg) + 260deg)) scale(1.06);
+  }
+}
+
+@keyframes loginBloomPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+
+  50% {
+    transform: scale(1.06);
+    opacity: 0.78;
+  }
+}
+
+@keyframes loginCardFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-2px);
   }
 }
 

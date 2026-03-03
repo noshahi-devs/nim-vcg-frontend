@@ -1,8 +1,8 @@
 /* Core Layout Variables */
 :host {
     display: block;
-    --primary-color: #6366f1;
-    --primary-hover: #4f46e5;
+    --primary-color: #486cea;
+    --primary-hover: #355bd4;
     --danger-color: #ef4444;
     --danger-hover: #dc2626;
     --bg-color: #f8fafc;
@@ -14,9 +14,9 @@
 }
 
 .page-container {
-    padding: 1.5rem;
+    padding: 0;
     background-color: transparent;
-    min-height: calc(100vh - 80px);
+    min-height: auto;
 }
 
 /* Glassmorphism Cards */
@@ -38,30 +38,33 @@
 
 /* Header */
 .page-header {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background: linear-gradient(130deg, #0f172a 0%, #1f3478 44%, #486cea 100%);
+    border: 0;
+    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.24);
 }
 
 .page-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-main);
+    font-size: clamp(1.24rem, 2.2vw, 1.58rem);
+    font-weight: 800;
+    color: #ffffff;
     margin: 0;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.01em;
 }
 
 .page-subtitle {
-    color: var(--text-muted);
-    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.9rem;
     margin: 0;
     margin-top: 0.25rem;
 }
 
 .section-title {
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--text-main);
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
@@ -192,7 +195,7 @@
 }
 
 .premium-table th {
-    background-color: #f8fafc;
+    background-color: #f8faff;
     color: var(--text-muted);
     font-weight: 600;
     font-size: 0.85rem;
