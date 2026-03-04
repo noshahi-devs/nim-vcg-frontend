@@ -82,6 +82,39 @@
     text-overflow: ellipsis;
 }
 
+:host ::ng-deep .sidebar-menu > li.dropdown > a[data-desc] {
+    position: relative;
+    overflow: visible;
+}
+
+:host ::ng-deep .sidebar-menu > li.dropdown > a[data-desc]::before {
+    content: attr(data-desc);
+    position: absolute;
+    inset-inline-start: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%) translateX(-6px);
+    background: rgba(15, 23, 42, 0.96);
+    color: #ffffff;
+    font-size: 0.71rem;
+    font-weight: 600;
+    line-height: 1;
+    padding: 7px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.26);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    z-index: 20;
+}
+
+:host ::ng-deep .sidebar-menu > li.dropdown > a[data-desc]:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+}
+
 :host ::ng-deep .sidebar-menu li a:hover {
     background: var(--sidebar-hover);
     color: #ffffff;
@@ -175,6 +208,10 @@
     margin-inline-end: 0.75rem;
 }
 
+:host ::ng-deep .sidebar.active .sidebar-menu > li.dropdown > a[data-desc]::before {
+    display: none;
+}
+
 :host ::ng-deep .sidebar-close-btn {
     top: 0.85rem;
     inset-inline-end: 0.85rem;
@@ -237,6 +274,12 @@
     }
 
     :host ::ng-deep .sidebar-mobile-toggle {
+        display: none;
+    }
+}
+
+@media (max-width: 1199px) {
+    :host ::ng-deep .sidebar-menu > li.dropdown > a[data-desc]::before {
         display: none;
     }
 }

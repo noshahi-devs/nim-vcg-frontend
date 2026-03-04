@@ -45,7 +45,6 @@
         </a>
       </li>
 
-      <li class="sidebar-menu-group-title">MENU</li>
 
 
 
@@ -61,9 +60,9 @@
 
       <!-- Section Management -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Section list and section setup" title="Section list and section setup">
           <iconify-icon icon="mdi:view-list" class="menu-icon"></iconify-icon>
-          <span>Sections</span>
+          <span>Manage Sections</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/section-list" routerLinkActive="active-page"><i
@@ -76,9 +75,9 @@
 
       <!-- Employee Records -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Staff records, profiles and login control" title="Staff records, profiles and login control">
           <iconify-icon icon="mdi:account-tie" class="menu-icon"></iconify-icon>
-          <span>Employees</span>
+          <span>Employees View</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/staff-list" routerLinkActive="active-page"><i
@@ -92,9 +91,9 @@
 
       <!-- Student Directory -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Student records, admissions and promotions" title="Student records, admissions and promotions">
           <iconify-icon icon="mdi:account-school" class="menu-icon"></iconify-icon>
-          <span>Students</span>
+          <span>Manage Students</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/student-list" routerLinkActive="active-page"><i
@@ -108,9 +107,9 @@
 
       <!-- Academic Classes -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Class setup and class management" title="Class setup and class management">
           <iconify-icon icon="mdi:google-classroom" class="menu-icon"></iconify-icon>
-          <span>Classes</span>
+          <span>Manage Classes</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/class-list" routerLinkActive="active-page"><i
@@ -124,9 +123,9 @@
 
       <!-- Subject Assignment -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Subjects creation and teacher assignment" title="Subjects creation and teacher assignment">
           <iconify-icon icon="mdi:book-open-variant" class="menu-icon"></iconify-icon>
-          <span>Subjects</span>
+          <span>Manage Subjects</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/subject-list" routerLinkActive="active-page"><i
@@ -140,9 +139,9 @@
 
       <!-- Financial Management -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Accountant'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Fees, invoices, payments and defaulters" title="Fees, invoices, payments and defaulters">
           <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
-          <span>Finance</span>
+          <span>Finance System</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/fee" routerLinkActive="active-page"><i
@@ -164,7 +163,7 @@
 
       <!-- Payroll System -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Accountant'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Salary processing and salary slips" title="Salary processing and salary slips">
           <iconify-icon icon="mdi:cash-multiple" class="menu-icon"></iconify-icon>
           <span>Payroll System</span>
         </a>
@@ -178,9 +177,9 @@
 
       <!-- Attendance Tracking -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Student and staff attendance with reports" title="Student and staff attendance with reports">
           <iconify-icon icon="mdi:calendar-check" class="menu-icon"></iconify-icon>
-          <span>Attendance</span>
+          <span>Attendance Track</span>
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/attendance"
@@ -206,9 +205,9 @@
 
       <!-- Leave Management -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Apply, review and manage leave requests" title="Apply, review and manage leave requests">
           <iconify-icon icon="mdi:calendar-outline" class="menu-icon"></iconify-icon>
-          <span>Leave</span>
+          <span>Manage Leave</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/leave" routerLinkActive="active-page"><i
@@ -228,9 +227,9 @@
 
       <!-- Examination Center -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Exams, schedules, marks and results" title="Exams, schedules, marks and results">
           <iconify-icon icon="mdi:school-outline" class="menu-icon"></iconify-icon>
-          <span>Exams</span>
+          <span>Manage Exams</span>
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam" routerLinkActive="active-page"><i
@@ -257,7 +256,7 @@
 
       <!-- Account Ledger -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin','Accountant'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Income, expenses, ledger and bank cash" title="Income, expenses, ledger and bank cash">
           <iconify-icon icon="mdi:finance" class="menu-icon"></iconify-icon>
           <span>Account Ledger</span>
         </a>
@@ -279,9 +278,9 @@
 
       <!-- Analytics & Reports -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Accountant'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Analytics insights and report center" title="Analytics insights and report center">
           <iconify-icon icon="mdi:file-chart" class="menu-icon"></iconify-icon>
-          <span>Reports</span>
+          <span>Reports System</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/report" routerLinkActive="active-page"><i
@@ -289,9 +288,25 @@
         </ul>
       </li>
 
+      <!-- Communications -->
+      <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
+        <a href="javascript:void(0)" routerLinkActive="active-page">
+          <iconify-icon icon="mdi:message-outline" class="menu-icon"></iconify-icon>
+          <span>Notifications</span>
+          <span *ngIf="unreadMessageCount > 0" class="badge bg-danger ms-auto">{{ unreadMessageCount }}</span>
+        </a>
+        <ul class="sidebar-submenu">
+          <li><a routerLink="/email" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Inbox</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/broadcast"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Broadcast</a>
+          </li>
+        </ul>
+      </li>
+
       <!-- System Admin -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin'])">
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-desc="Settings, campuses, roles and system controls" title="Settings, campuses, roles and system controls">
           <iconify-icon icon="mdi:cog" class="menu-icon"></iconify-icon>
           <span>System Admin</span>
         </a>
@@ -310,24 +325,6 @@
                 class="ri-circle-fill circle-icon text-info-main"></i> Language Settings</a></li>
         </ul>
       </li>
-
-
-      <!-- Communications -->
-      <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
-        <a href="javascript:void(0)" routerLinkActive="active-page">
-          <iconify-icon icon="mdi:message-outline" class="menu-icon"></iconify-icon>
-          <span>Communications</span>
-          <span *ngIf="unreadMessageCount > 0" class="badge bg-danger ms-auto">{{ unreadMessageCount }}</span>
-        </a>
-        <ul class="sidebar-submenu">
-          <li><a routerLink="/email" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-primary-600"></i> Inbox</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/broadcast"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Broadcast</a>
-          </li>
-        </ul>
-      </li>
-
     </ul>
   </div>
 
