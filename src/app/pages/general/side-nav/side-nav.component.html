@@ -63,7 +63,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:view-list" class="menu-icon"></iconify-icon>
-          <span>Section Management</span>
+          <span>Sections</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/section-list" routerLinkActive="active-page"><i
@@ -78,7 +78,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:account-tie" class="menu-icon"></iconify-icon>
-          <span>Employee Records</span>
+          <span>Employees</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/staff-list" routerLinkActive="active-page"><i
@@ -94,7 +94,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:account-school" class="menu-icon"></iconify-icon>
-          <span>Student Directory</span>
+          <span>Students</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/student-list" routerLinkActive="active-page"><i
@@ -110,7 +110,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:google-classroom" class="menu-icon"></iconify-icon>
-          <span>Academic Classes</span>
+          <span>Classes</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/class-list" routerLinkActive="active-page"><i
@@ -126,7 +126,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:book-open-variant" class="menu-icon"></iconify-icon>
-          <span>Subject Assignment</span>
+          <span>Subjects</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/subject-list" routerLinkActive="active-page"><i
@@ -142,7 +142,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
-          <span>Financial Management</span>
+          <span>Finance</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/fee" routerLinkActive="active-page"><i
@@ -180,7 +180,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:calendar-check" class="menu-icon"></iconify-icon>
-          <span>Attendance Tracking</span>
+          <span>Attendance</span>
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/attendance"
@@ -208,7 +208,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:calendar-outline" class="menu-icon"></iconify-icon>
-          <span>Leave Management</span>
+          <span>Leave</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/leave" routerLinkActive="active-page"><i
@@ -230,7 +230,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:school-outline" class="menu-icon"></iconify-icon>
-          <span>Examination Center</span>
+          <span>Exams</span>
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam" routerLinkActive="active-page"><i
@@ -281,7 +281,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Accountant'])">
         <a href="javascript:void(0)">
           <iconify-icon icon="mdi:file-chart" class="menu-icon"></iconify-icon>
-          <span>Analytics & Reports</span>
+          <span>Reports</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/report" routerLinkActive="active-page"><i

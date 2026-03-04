@@ -76,6 +76,12 @@
     transition: all 0.25s ease;
 }
 
+:host ::ng-deep .sidebar-menu > li > a > span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 :host ::ng-deep .sidebar-menu li a:hover {
     background: var(--sidebar-hover);
     color: #ffffff;
