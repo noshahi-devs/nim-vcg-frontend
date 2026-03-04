@@ -1,0 +1,33 @@
+<svg width="560" height="160" viewBox="0 0 560 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="nimLogoBg" x1="14" y1="20" x2="546" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0F172A"/>
+      <stop offset="0.55" stop-color="#2C4FBF"/>
+      <stop offset="1" stop-color="#486CEA"/>
+    </linearGradient>
+    <linearGradient id="nimPetal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#DCE8FF"/>
+      <stop offset="1" stop-color="#9DB9FF"/>
+    </linearGradient>
+    <filter id="nimShadow" x="0" y="0" width="560" height="160" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="8" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#nimShadow)">
+    <rect x="14" y="16" width="532" height="128" rx="28" fill="url(#nimLogoBg)"/>
+    <rect x="14.75" y="16.75" width="530.5" height="126.5" rx="27.25" stroke="rgba(255,255,255,0.24)" stroke-width="1.5"/>
+  </g>
+
+  <g transform="translate(52 80)">
+    <circle cx="0" cy="-14" r="11" fill="url(#nimPetal)"/>
+    <circle cx="14" cy="0" r="11" fill="url(#nimPetal)"/>
+    <circle cx="0" cy="14" r="11" fill="url(#nimPetal)"/>
+    <circle cx="-14" cy="0" r="11" fill="url(#nimPetal)"/>
+    <circle cx="0" cy="0" r="8" fill="#FFFFFF"/>
+    <circle cx="0" cy="0" r="3.5" fill="#486CEA"/>
+  </g>
+
+  <text x="100" y="86" fill="#FFFFFF" font-size="52" font-weight="800" font-family="Inter, Segoe UI, Arial, sans-serif" letter-spacing="1.5">NIM</text>
+  <text x="100" y="114" fill="rgba(255,255,255,0.92)" font-size="20" font-weight="600" font-family="Inter, Segoe UI, Arial, sans-serif" letter-spacing="0.4">Institute Manager</text>
+</svg>

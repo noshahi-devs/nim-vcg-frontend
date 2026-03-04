@@ -10,7 +10,7 @@ import { SettingsService, SystemSetting } from './settings.service';
 export class AppConfigService {
     private configSubject = new BehaviorSubject<any>({
         instituteName: 'Noshahi Institute',
-        instituteLogo: 'assets/images/logo.png',
+        instituteLogo: 'assets/images/logo-pro.svg',
         instituteAddress: '',
         institutePhone: '',
         instituteEmail: '',
@@ -48,3 +48,4 @@ export class AppConfigService {
         return this.configSubject.value;
     }
 }
+

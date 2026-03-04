@@ -5,9 +5,14 @@
     <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
   </button>
   <div class="sidebar-logo-container">
-    <a routerLink="/dashboard" class="sidebar-logo">
-      <img [src]="config?.instituteLogo || 'assets/images/logo.png'" alt="site logo" class="light-logo">
-      <img [src]="config?.instituteLogo || 'assets/images/logo.png'" alt="site logo" class="dark-logo">
+    <a routerLink="/dashboard" class="sidebar-logo sidebar-branding" aria-label="Go to dashboard">
+      <span class="sidebar-brand-icon" aria-hidden="true">
+        <iconify-icon icon="mdi:briefcase-account-outline"></iconify-icon>
+      </span>
+      <span class="sidebar-brand-text">
+        <span class="sidebar-brand-title">{{ config?.instituteName || 'Noshahi Institute' }}</span>
+        <span class="sidebar-brand-subtitle">Institute Manager</span>
+      </span>
     </a>
   </div>
   <div class="sidebar-menu-area">
@@ -660,3 +665,4 @@
     </div>
   </footer>
 </main>
+

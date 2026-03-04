@@ -16,7 +16,7 @@ describe('BrandingHomeComponent', () => {
           useValue: {
             config$: of({
               instituteName: 'NIM',
-              instituteLogo: 'assets/images/logo.png'
+              instituteLogo: 'assets/images/logo-pro.svg'
             })
           }
         }
@@ -32,3 +32,4 @@ describe('BrandingHomeComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

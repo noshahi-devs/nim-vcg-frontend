@@ -18,6 +18,10 @@
     border-inline-end: 1px solid var(--sidebar-border);
     box-shadow: 0 22px 44px rgba(79, 70, 229, 0.35);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    min-height: 100vh;
 }
 
 :host ::ng-deep html[data-theme="dark"] aside.sidebar {
@@ -30,27 +34,86 @@
 }
 
 :host ::ng-deep .sidebar-logo-container {
-    padding: 1rem 1rem 0.75rem;
+    position: relative;
+    padding: 0.9rem 1rem 0.75rem;
+    background: transparent !important;
+    border: 0 !important;
+}
+
+:host ::ng-deep .sidebar-logo-container::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0.9rem;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.1));
 }
 
 :host ::ng-deep .sidebar-logo {
-    border: 1px solid var(--sidebar-border);
-    background: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(6px);
-    border-radius: 0.9rem;
-    height: 4rem;
-    padding-inline: 0.9rem;
+    border: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border-radius: 0;
+    min-height: 44px;
+    height: auto;
+    padding: 0;
+    box-shadow: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
-:host ::ng-deep .sidebar-logo img {
-    max-height: 2.5rem;
-    width: auto;
+:host ::ng-deep .sidebar-branding {
+    gap: 0.58rem;
+}
+
+:host ::ng-deep .sidebar-brand-icon {
+    width: 1.95rem;
+    height: 1.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+:host ::ng-deep .sidebar-brand-icon iconify-icon {
+    font-size: 1.45rem;
+}
+
+:host ::ng-deep .sidebar-brand-text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.06;
+}
+
+:host ::ng-deep .sidebar-brand-title {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:host ::ng-deep .sidebar-brand-subtitle {
+    margin-top: 0.18rem;
+    font-size: 0.63rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(241, 245, 249, 0.84);
 }
 
 :host ::ng-deep .sidebar-menu-area {
-    height: calc(100vh - 4.75rem);
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
     border-inline-end: 0;
-    padding: 0.25rem 0.75rem 1.2rem;
+    padding: 0.55rem 0.75rem 1.2rem;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 :host ::ng-deep .sidebar-menu-area::-webkit-scrollbar {
@@ -189,9 +252,25 @@
     padding-inline: 0.55rem;
 }
 
+:host ::ng-deep .sidebar.active .sidebar-brand-text {
+    display: none;
+}
+
+:host ::ng-deep .sidebar.active .sidebar-logo {
+    justify-content: center;
+}
+
 :host ::ng-deep .sidebar.active .sidebar-menu li a i,
 :host ::ng-deep .sidebar.active .sidebar-menu li a iconify-icon {
     margin-inline-end: 0;
+}
+
+:host ::ng-deep .sidebar.active:hover .sidebar-brand-text {
+    display: flex;
+}
+
+:host ::ng-deep .sidebar.active:hover .sidebar-logo {
+    justify-content: flex-start;
 }
 
 :host ::ng-deep .sidebar.active:hover .sidebar-menu li a {
