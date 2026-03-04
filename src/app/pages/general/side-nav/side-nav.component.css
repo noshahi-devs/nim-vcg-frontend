@@ -1,6 +1,7 @@
 :host ::ng-deep {
     --auth-primary: #224abe;
     --auth-indigo-deep: #224abe;
+    --layout-collapse-motion: 340ms cubic-bezier(0.22, 1, 0.36, 1);
 
     --sidebar-border: rgba(255, 255, 255, 0.24);
     --sidebar-text: rgba(255, 255, 255, 0.95);
@@ -22,11 +23,18 @@
     flex-direction: column;
     height: 100vh;
     min-height: 100vh;
+    transition: width var(--layout-collapse-motion), inset-inline-start var(--layout-collapse-motion), box-shadow 240ms ease;
+    will-change: width, inset-inline-start;
 }
 
 :host ::ng-deep html[data-theme="dark"] aside.sidebar {
     background: var(--auth-primary);
     border-inline-end: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+:host ::ng-deep .dashboard-main {
+    transition: margin-inline-start var(--layout-collapse-motion);
+    will-change: margin-inline-start;
 }
 
 :host ::ng-deep aside.sidebar::before {
@@ -303,6 +311,29 @@
     background: var(--auth-primary) !important;
     border-bottom: 1px solid var(--sidebar-border) !important;
     box-shadow: 0 10px 24px rgba(79, 70, 229, 0.28);
+    transition: padding var(--layout-collapse-motion), box-shadow 240ms ease, border-color 240ms ease;
+}
+
+@media (min-width: 1200px) {
+    :host ::ng-deep .sidebar.active:hover {
+        width: 13.75rem;
+    }
+
+    :host ::ng-deep .dashboard-main.active .navbar-header {
+        padding-inline: 0.95rem 1.2rem;
+    }
+}
+
+@media (min-width: 1400px) {
+    :host ::ng-deep .sidebar.active:hover {
+        width: 17.1875rem;
+    }
+}
+
+@media (min-width: 1650px) {
+    :host ::ng-deep .sidebar.active:hover {
+        width: 19.5rem;
+    }
 }
 
 :host ::ng-deep .navbar-search input {
