@@ -9,6 +9,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from '../../../swal';
 
+export interface GroupedAssignment {
+  staffId: number;
+  staffName: string;
+  sectionId: number;
+  sectionName: string;
+  className: string;
+  assignments: { assignmentId: number; subjectId: number; subjectName: string }[];
+}
+
 @Component({
   selector: 'app-subject-assignment',
   standalone: true,
@@ -92,6 +101,32 @@ export class SubjectAssignmentComponent implements OnInit {
     );
   }
 
+  get groupedAssignments(): GroupedAssignment[] {
+    const filtered = this.filteredAssignments;
+    const map = new Map<string, GroupedAssignment>();
+
+    filtered.forEach(a => {
+      const key = `${a.staffId}-${a.sectionId}`;
+      if (!map.has(key)) {
+        map.set(key, {
+          staffId: a.staffId || 0,
+          staffName: a.staff?.staffName || 'Unknown Teacher',
+          sectionId: a.sectionId || 0,
+          sectionName: a.section?.sectionName || 'Unknown Section',
+          className: a.section?.standard?.standardName || '',
+          assignments: []
+        });
+      }
+      map.get(key)!.assignments.push({
+        assignmentId: a.subjectAssignmentId,
+        subjectId: a.subjectId || 0,
+        subjectName: a.subject?.subjectName || 'Unknown Subject'
+      });
+    });
+
+    return Array.from(map.values()).sort((a, b) => a.staffName.localeCompare(b.staffName));
+  }
+
   onClassChange(): void {
     this.sections = [];
     this.subjects = [];
@@ -123,6 +158,18 @@ export class SubjectAssignmentComponent implements OnInit {
     });
   }
 
+  get availableSubjects(): any[] {
+    if (!this.newAssignment.sectionId || this.subjects.length === 0) return this.subjects;
+
+    // Find all subject IDs already assigned to this specific section in the assignments list
+    const assignedSubjectIds = this.assignments
+      .filter(a => a.sectionId == this.newAssignment.sectionId)
+      .map(a => a.subjectId);
+
+    // Filter out these subjects from the available subjects list
+    return this.subjects.filter(s => !assignedSubjectIds.includes(s.subjectId));
+  }
+
   toggleSubjectSelection(subjectId: number) {
     const index = this.selectedSubjectIds.indexOf(subjectId);
     if (index > -1) {
@@ -138,7 +185,7 @@ export class SubjectAssignmentComponent implements OnInit {
 
   selectAllSubjects(event: any) {
     if (event.target.checked) {
-      this.selectedSubjectIds = this.subjects.map(s => s.subjectId);
+      this.selectedSubjectIds = this.availableSubjects.map(s => s.subjectId);
     } else {
       this.selectedSubjectIds = [];
     }

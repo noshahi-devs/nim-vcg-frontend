@@ -18,20 +18,20 @@ export const routes: Routes = [
 
       // Class Management
       { path: 'class-list', loadComponent: () => import('./pages/admin/class-list/class-list.component').then(m => m.ClassListComponent), data: { roles: ['Admin', 'Principal'] } },
-      { path: 'newclass', loadComponent: () => import('./pages/admin/newclass/newclass.component').then(m => m.NewClassComponent), data: { roles: ['Admin'] } },
-      { path: 'class-management', loadComponent: () => import('./pages/admin/class-management/class-management.component').then(m => m.ClassManagementComponent), data: { roles: ['Admin'] } },
+      { path: 'newclass', loadComponent: () => import('./pages/admin/newclass/newclass.component').then(m => m.NewClassComponent), data: { roles: ['Admin', 'Principal'] } },
+      { path: 'class-management', loadComponent: () => import('./pages/admin/class-management/class-management.component').then(m => m.ClassManagementComponent), data: { roles: ['Admin', 'Principal'] } },
 
       // Section Management
       { path: 'section-list', loadComponent: () => import('./pages/admin/section-list/section-list.component').then(m => m.SectionListComponent), data: { roles: ['Admin', 'Principal'] } },
-      { path: 'section-add', loadComponent: () => import('./pages/admin/section-add/section-add.component').then(m => m.SectionAddComponent), data: { roles: ['Admin'] } },
+      { path: 'section-add', loadComponent: () => import('./pages/admin/section-add/section-add.component').then(m => m.SectionAddComponent), data: { roles: ['Admin', 'Principal'] } },
 
       // Staff Management
       { path: 'staff-list', loadComponent: () => import('./pages/admin/staff-list/staff-list.component').then(m => m.StaffListComponent), data: { roles: ['Admin', 'Principal'] } },
-      { path: 'staff-add', loadComponent: () => import('./pages/admin/staff-add/staff-add.component').then(m => m.StaffAddComponent), data: { roles: ['Admin'] } },
+      { path: 'staff-add', loadComponent: () => import('./pages/admin/staff-add/staff-add.component').then(m => m.StaffAddComponent), data: { roles: ['Admin', 'Principal'] } },
       { path: 'staff-view-profile/:id', loadComponent: () => import('./pages/admin/staff-view-profile/staff-view-profile.component').then(m => m.StaffViewProfileComponent), data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
-      { path: 'staff-edit-profile/:id', loadComponent: () => import('./pages/admin/staff-edit-profile/staff-edit-profile.component').then(m => m.StaffEditProfileComponent), data: { roles: ['Admin'] } },
-      { path: 'staff-job-letter', loadComponent: () => import('./pages/admin/staff-job-letter/staff-job-letter.component').then(m => m.StaffJobLetterComponent), data: { roles: ['Admin'] } },
-      { path: 'staff-manage-login', loadComponent: () => import('./pages/admin/staff-manage-login/staff-manage-login.component').then(m => m.StaffManageLoginComponent), data: { roles: ['Admin'] } },
+      { path: 'staff-edit-profile/:id', loadComponent: () => import('./pages/admin/staff-edit-profile/staff-edit-profile.component').then(m => m.StaffEditProfileComponent), data: { roles: ['Admin', 'Principal'] } },
+      { path: 'staff-job-letter', loadComponent: () => import('./pages/admin/staff-job-letter/staff-job-letter.component').then(m => m.StaffJobLetterComponent), data: { roles: ['Admin', 'Principal'] } },
+      { path: 'staff-manage-login', loadComponent: () => import('./pages/admin/staff-manage-login/staff-manage-login.component').then(m => m.StaffManageLoginComponent), data: { roles: ['Admin', 'Principal'] } },
 
       // Attendance
       { path: 'attendance', loadComponent: () => import('./pages/admin/attendance/attendance.component').then(m => m.AttendanceComponent), data: { roles: ['Admin', 'Principal', 'Teacher'] } },
@@ -41,11 +41,11 @@ export const routes: Routes = [
       { path: 'my-attendance', loadComponent: () => import('./pages/teacher/my-attendance/my-attendance.component').then(m => m.MyAttendanceComponent), data: { roles: ['Teacher', 'Accountant'] } },
 
       // Student Management
-      { path: 'student-add', loadComponent: () => import('./pages/admin/student-add/student-add.component').then(m => m.StudentAddComponent), data: { roles: ['Admin'] } },
+      { path: 'student-add', loadComponent: () => import('./pages/admin/student-add/student-add.component').then(m => m.StudentAddComponent), data: { roles: ['Admin', 'Principal'] } },
       { path: 'student-list', loadComponent: () => import('./pages/admin/student-list/student-list.component').then(m => m.StudentListComponent), data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
       { path: 'student-view/:id', loadComponent: () => import('./pages/admin/student-view/student-view.component').then(m => m.StudentViewComponent), data: { roles: ['Admin', 'Principal', 'Teacher'] } },
-      { path: 'student-edit/:id', loadComponent: () => import('./pages/admin/student-edit/student-edit.component').then(m => m.StudentEditComponent), data: { roles: ['Admin'] } },
-      { path: 'student-promote', loadComponent: () => import('./pages/admin/student-promote/student-promote.component').then(m => m.StudentPromoteComponent), data: { roles: ['Admin'] } },
+      { path: 'student-edit/:id', loadComponent: () => import('./pages/admin/student-edit/student-edit.component').then(m => m.StudentEditComponent), data: { roles: ['Admin', 'Principal'] } },
+      { path: 'student-promote', loadComponent: () => import('./pages/admin/student-promote/student-promote.component').then(m => m.StudentPromoteComponent), data: { roles: ['Admin', 'Principal'] } },
       { path: 'student-profile', loadComponent: () => import('./pages/student/student-profile/student-profile.component').then(m => m.StudentProfileComponent), data: { roles: ['Student'] } },
       { path: 'student-attendance-view', loadComponent: () => import('./pages/student/student-attendance-view/student-attendance-view.component').then(m => m.StudentAttendanceViewComponent), data: { roles: ['Student'] } },
       { path: 'student-fee-view', loadComponent: () => import('./pages/student/student-fee-view/student-fee-view.component').then(m => m.StudentFeeViewComponent), data: { roles: ['Student'] } },
@@ -82,20 +82,20 @@ export const routes: Routes = [
       { path: 'exam-result', loadComponent: () => import('./pages/admin/exam-result/exam-result.component').then(m => m.ExamResultComponent), data: { roles: ['Admin', 'Principal', 'Teacher'] } },
       { path: 'exam-analytics', loadComponent: () => import('./pages/principal/exam-analytics/exam-analytics.component').then(m => m.ExamAnalyticsComponent), data: { roles: ['Admin', 'Principal'] } },
       { path: 'marks-entry', loadComponent: () => import('./pages/teacher/marks-entry/marks-entry.component').then(m => m.MarksEntryComponent), data: { roles: ['Teacher'] } },
-      { path: 'auto-grade-calculation', loadComponent: () => import('./pages/admin/auto-grade-calculation/auto-grade-calculation.component').then(m => m.AutoGradeCalculationComponent), data: { roles: ['Admin'] } },
+      { path: 'auto-grade-calculation', loadComponent: () => import('./pages/admin/auto-grade-calculation/auto-grade-calculation.component').then(m => m.AutoGradeCalculationComponent), data: { roles: ['Admin', 'Principal'] } },
 
       // Leave Management
       { path: 'leave', loadComponent: () => import('./pages/admin/leave/leave.component').then(m => m.LeaveComponent), data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
       { path: 'apply-leave', loadComponent: () => import('./pages/teacher/apply-leaves/apply-leaves.component').then(m => m.ApplyLeavesComponent), data: { roles: ['Teacher', 'Accountant'] } },
       { path: 'my-leaves', loadComponent: () => import('./pages/teacher/my-leaves/my-leaves.component').then(m => m.MyLeavesComponent), data: { roles: ['Teacher', 'Accountant'] } },
       { path: 'manage-leaves', loadComponent: () => import('./pages/admin/leave-manage/leave-manage.component').then(m => m.LeaveManageComponent), data: { roles: ['Admin', 'Principal'] } },
-      { path: 'leave-type', loadComponent: () => import('./pages/admin/leave-type/leave-type.component').then(m => m.LeaveTypeComponent), data: { roles: ['Admin'] } },
+      { path: 'leave-type', loadComponent: () => import('./pages/admin/leave-type/leave-type.component').then(m => m.LeaveTypeComponent), data: { roles: ['Admin', 'Principal'] } },
 
       // Subject Management
-      { path: 'subject', loadComponent: () => import('./pages/admin/subject/subject.component').then(m => m.SubjectComponent), data: { roles: ['Admin'] } },
-      { path: 'subject-add', loadComponent: () => import('./pages/admin/subject-add/subject-add.component').then(m => m.SubjectAddComponent), data: { roles: ['Admin'] } },
+      { path: 'subject', loadComponent: () => import('./pages/admin/subject/subject.component').then(m => m.SubjectComponent), data: { roles: ['Admin', 'Principal'] } },
+      { path: 'subject-add', loadComponent: () => import('./pages/admin/subject-add/subject-add.component').then(m => m.SubjectAddComponent), data: { roles: ['Admin', 'Principal'] } },
       { path: 'subject-list', loadComponent: () => import('./pages/admin/subject-list/subject-list.component').then(m => m.SubjectListComponent), data: { roles: ['Admin', 'Principal', 'Teacher'] } },
-      { path: 'subject-assignment', loadComponent: () => import('./pages/admin/subject-assignment/subject-assignment.component').then(m => m.SubjectAssignmentComponent), data: { roles: ['Admin'] } },
+      { path: 'subject-assignment', loadComponent: () => import('./pages/admin/subject-assignment/subject-assignment.component').then(m => m.SubjectAssignmentComponent), data: { roles: ['Admin', 'Principal'] } },
 
       // Reports
       { path: 'report', loadComponent: () => import('./pages/principal/report/report.component').then(m => m.ReportComponent), data: { roles: ['Admin', 'Principal', 'Accountant'] } },

@@ -1,10 +1,30 @@
 <div class="page-container">
     <!-- Header Section -->
-    <div class="page-header glass-card">
-        <div class="header-content">
-            <h2 class="page-title">Subject Assignment</h2>
-            <p class="page-subtitle">Map Teachers to specific Subjects and Sections</p>
-        </div>
+    <div class="page-header w-100">
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb" class="w-100">
+            <ol class="breadcrumb text-xs fw-medium">
+                <li class="breadcrumb-item">
+                    <a routerLink="/dashboard" class="text-muted text-decoration-none d-flex align-items-center gap-1">
+                        <i class="bi bi-house-door"></i> Dashboard
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="javascript:void(0)"
+                        class="text-muted text-decoration-none d-flex align-items-center gap-1">
+                        <i class="bi bi-journal-text"></i> Academics
+                    </a>
+                </li>
+                <li class="breadcrumb-item active fw-bold text-primary d-flex align-items-center gap-1"
+                    aria-current="page">
+                    Subject Assignment
+                </li>
+            </ol>
+        </nav>
+        <h4 class="page-title text-dark">
+            Subject Assignment
+        </h4>
+        <p class="page-subtitle text-muted">Map Teachers to specific Subjects and Sections</p>
     </div>
 
     <!-- Main Content Grid -->
@@ -12,7 +32,7 @@
 
         <!-- Left Column: Assignment Form -->
         <div class="form-section glass-card">
-            <h3 class="section-title">Assign New Subject</h3>
+            <h6 class="section-title">Assign New Subject</h6>
             <form (ngSubmit)="assignSubject()" #assignmentForm="ngForm" class="assignment-form">
 
                 <!-- Teacher Selection -->
@@ -81,19 +101,28 @@
                         </div>
                     </div>
 
-                    <div class="multi-select-container glass-card p-12" *ngIf="!missingSubjects">
+                    <div class="multi-select-container glass-card p-12"
+                        *ngIf="!missingSubjects && availableSubjects.length > 0">
                         <div class="d-flex align-items-center gap-10 mb-10 pb-8 border-bottom">
                             <input type="checkbox" (change)="selectAllSubjects($event)" id="selectAll"
                                 class="form-check-input">
-                            <label for="selectAll" class="text-sm fw-bold mb-0">Select All Subjects</label>
+                            <label for="selectAll" class="text-sm fw-bold mb-0">Select All Available Subjects</label>
                         </div>
                         <div class="subject-checkbox-list scroll-y" style="max-height: 200px; overflow-y: auto;">
-                            <div *ngFor="let sub of subjects" class="d-flex align-items-center gap-10 py-4">
+                            <div *ngFor="let sub of availableSubjects" class="d-flex align-items-center gap-10 py-4">
                                 <input type="checkbox" [id]="'sub-' + sub.subjectId"
                                     [checked]="isSubjectSelected(sub.subjectId)"
                                     (change)="toggleSubjectSelection(sub.subjectId)" class="form-check-input">
                                 <label [for]="'sub-' + sub.subjectId" class="text-sm mb-0">{{ sub.subjectName }}</label>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success py-8 px-12 d-flex align-items-center gap-10 radius-8 mb-12"
+                        *ngIf="!missingSubjects && availableSubjects.length === 0 && selectedClassId && newAssignment.sectionId">
+                        <iconify-icon icon="solar:check-circle-bold-duotone" class="text-xl"></iconify-icon>
+                        <div class="text-xs fw-bold">
+                            All subjects for this class are already successfully assigned in this section.
                         </div>
                     </div>
                 </div>
@@ -111,11 +140,11 @@
         <!-- Right Column: Assignments List -->
         <div class="list-section glass-card">
             <div class="list-header">
-                <h3 class="section-title">Current Assignments</h3>
+                <h6 class="section-title mb-0 border-0 pb-0">Current Assignments</h6>
                 <div class="search-box">
-                    <i class="bi bi-search"></i>
-                    <input type="text" class="form-control premium-input search-input" [(ngModel)]="searchTerm"
-                        placeholder="Search teacher, subject, or class..." />
+                    <iconify-icon icon="solar:magnifier-linear" class="search-icon"></iconify-icon>
+                    <input type="text" class="form-control premium-input search-input ps-5" [(ngModel)]="searchTerm"
+                        placeholder="Search... (Teacher, Class, Subject)" />
                 </div>
             </div>
 
@@ -125,8 +154,7 @@
                         <tr>
                             <th>Teacher</th>
                             <th>Class & Section</th>
-                            <th>Subject</th>
-                            <th>Actions</th>
+                            <th>Assigned Subjects</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -143,33 +171,37 @@
                                 <p class="mt-2 text-muted">No subject assignments found.</p>
                             </td>
                         </tr>
-                        <tr *ngFor="let assignment of filteredAssignments" class="table-row">
+                        <tr *ngFor="let group of groupedAssignments" class="table-row">
                             <td>
                                 <div class="user-info">
-                                    <div class="avatar-placeholder">
-                                        {{ assignment.staff?.staffName?.charAt(0) || 'T' }}
+                                    <div class="avatar-placeholder avatar-sm">
+                                        {{ group.staffName.charAt(0) }}
                                     </div>
-                                    <span class="fw-semibold">{{ assignment.staff?.staffName || 'Unknown Teacher'
-                                        }}</span>
+                                    <span class="fw-semibold">{{ group.staffName }}</span>
                                 </div>
                             </td>
                             <td>
-                                <span class="badge badge-soft-info">
-                                    {{ assignment.section?.sectionName || 'Section' }}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="subject-tag">
-                                    <i class="bi bi-book me-2"></i>
-                                    {{ assignment.subject?.subjectName || 'Unknown Subject' }}
+                                <div class="d-flex flex-column gap-1">
+                                    <span class="text-xs fw-bold text-muted">{{ group.className }}</span>
+                                    <span class="badge badge-soft-info badge-sm">
+                                        {{ group.sectionName }}
+                                    </span>
                                 </div>
                             </td>
                             <td>
-                                <button class="btn btn-icon btn-danger-soft"
-                                    (click)="removeAssignment(assignment.subjectAssignmentId)"
-                                    title="Remove Assignment">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div *ngFor="let sub of group.assignments" class="subject-chip">
+                                        <iconify-icon icon="solar:book-bookmark-minimalistic-bold"
+                                            class="text-primary me-1"></iconify-icon>
+                                        <span>{{ sub.subjectName }}</span>
+                                        <button class="chip-remove" (click)="removeAssignment(sub.assignmentId)"
+                                            title="Remove Subject">
+                                            <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+                                        </button>
+                                    </div>
+                                    <span *ngIf="group.assignments.length === 0" class="text-muted text-xs">No
+                                        subjects</span>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
