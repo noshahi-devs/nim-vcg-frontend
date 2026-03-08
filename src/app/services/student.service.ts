@@ -40,4 +40,9 @@ export class StudentService {
   public DeleteStudent(id: any): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`, this.getAuthHeaders());
   }
+
+  public CheckEmail(email: string): Observable<{ exists: boolean }> {
+    const checkEmailUrl = `${environment.apiBaseUrl}/api/users/check-email?email=${encodeURIComponent(email)}`;
+    return this.http.get<{ exists: boolean }>(checkEmailUrl);
+  }
 }

@@ -306,3 +306,104 @@
         font-size: 14px;
     }
 }
+
+/* ── Extreme Mobile Responsiveness (320px - 480px) ── */
+.teacher-stats-grid>* {
+    min-width: 0;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.dashboard-main-body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+    .dashboard-main-body {
+        padding: 12px 8px;
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+
+    .teacher-stats-grid {
+        gap: 12px;
+        width: 100%;
+    }
+
+    .t-stat-card {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .t-stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+
+    .t-stat-info {
+        min-width: 0;
+    }
+
+    .t-stat-label,
+    .t-stat-value {
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    .t-stat-value {
+        font-size: 18px;
+    }
+
+    .p-card {
+        padding: 12px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .calendar-grid {
+        gap: 4px;
+    }
+
+    .calendar-day {
+        font-size: 12px;
+        aspect-ratio: 1;
+    }
+
+    .month-label {
+        min-width: unset;
+        font-size: 13px;
+        padding: 0 4px;
+    }
+
+    .btn-icon {
+        padding: 2px;
+    }
+
+    .premium-table th,
+    .premium-table td {
+        padding: 8px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .table-responsive {
+        width: 100%;
+        max-width: 100vw;
+    }
+
+    .calendar-legend {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+}

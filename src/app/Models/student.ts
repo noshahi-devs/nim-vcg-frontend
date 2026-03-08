@@ -19,6 +19,9 @@ export class Student {
   studentContactNumber1?: string;
   studentContactNumber2?: string;
   studentEmail?: string;
+  studentPassword?: string;
+  parentEmail?: string;
+  parentPassword?: string;
   permanentAddress?: string | null;
   temporaryAddress?: string | null;
   fatherName?: string | null;

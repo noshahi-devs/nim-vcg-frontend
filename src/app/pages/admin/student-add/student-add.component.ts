@@ -13,10 +13,12 @@ import Swal from '../../../swal';
 
 declare var bootstrap: any;
 
+import { NgxMaskDirective } from 'ngx-mask';
+
 @Component({
   selector: 'app-student-add',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbComponent, NgxMaskDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './student-add.component.html',
   styleUrls: ['./student-add.component.css']
@@ -50,6 +52,9 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     studentContactNumber2: '',
 
     studentEmail: '',
+    studentPassword: '',
+    parentEmail: '',
+    parentPassword: '',
     permanentAddress: '',
     temporaryAddress: '',
 
@@ -135,6 +140,36 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
   }
 
   // -------------------------------------------------------
+  // EMAIL CHECKING LOGIC
+  // -------------------------------------------------------
+  onEmailBlur(email: string | undefined): void {
+    if (!email) return;
+
+    this.studentService.CheckEmail(email).subscribe({
+      next: (res) => {
+        if (res.exists) {
+          Swal.fire({
+            title: 'Email Already Exists!',
+            text: `The email address "${email}" is already registered. Please use a different one.`,
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            customClass: {
+              popup: 'nim-swal-popup',
+              title: 'nim-swal-title',
+              htmlContainer: 'nim-swal-text',
+              confirmButton: 'nim-swal-btn nim-swal-confirm'
+            }
+          });
+          // Optionally clear the field:
+          if (this.newStudent.studentEmail === email) this.newStudent.studentEmail = '';
+          if (this.newStudent.parentEmail === email) this.newStudent.parentEmail = '';
+        }
+      },
+      error: (err) => console.error('Error checking email', err)
+    });
+  }
+
+  // -------------------------------------------------------
   // SUBMIT FORM
   // -------------------------------------------------------
   onSubmit(form: NgForm): void {
@@ -162,6 +197,9 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
       studentContactNumber1: this.newStudent.studentContactNumber1 || null,
       studentContactNumber2: this.newStudent.studentContactNumber2 || null,
       studentEmail: this.newStudent.studentEmail || null,
+      studentPassword: this.newStudent.studentPassword || null,
+      parentEmail: this.newStudent.parentEmail || null,
+      parentPassword: this.newStudent.parentPassword || null,
       permanentAddress: this.newStudent.permanentAddress || null,
       temporaryAddress: this.newStudent.temporaryAddress || null,
       fatherName: this.newStudent.fatherName || null,
