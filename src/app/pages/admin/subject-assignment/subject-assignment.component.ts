@@ -7,7 +7,9 @@ import { SectionService } from '../../../services/section.service';
 import { SubjectService } from '../../../services/subject.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import Swal from '../../../swal';
+
 
 export interface GroupedAssignment {
   staffId: number;
@@ -31,30 +33,28 @@ export class SubjectAssignmentComponent implements OnInit {
   teachers: any[] = [];
   classes: any[] = [];
   sections: any[] = [];
-  subjects: any[] = [];
+  subjectList: any[] = []; // Full list of subjects for lookup
 
-  newAssignment: any = {
+  // Model for the new design
+  model: any = {
     staffId: null,
-    sectionId: null
+    standardId: null,
+    sectionId: null,
+    subjectRows: []
   };
 
-  selectedSubjectIds: number[] = [];
-  searchTerm: string = '';
-
-  selectedClassId: number | null = null;
   loading: boolean = false;
   isSubmitting: boolean = false;
-
-  // Missing data flags
-  missingSections: boolean = false;
-  missingSubjects: boolean = false;
+  errorMessage: string | null = null;
+  searchTerm: string = '';
 
   constructor(
     private assignmentService: SubjectAssignmentService,
     private staffService: StaffService,
     private standardService: StandardService,
     private sectionService: SectionService,
-    private subjectService: SubjectService
+    private subjectService: SubjectService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -63,6 +63,7 @@ export class SubjectAssignmentComponent implements OnInit {
 
   loadInitialData(): void {
     this.loading = true;
+    this.errorMessage = null;
 
     // Load existing assignments
     this.assignmentService.getAllAssignments().subscribe({
@@ -72,20 +73,26 @@ export class SubjectAssignmentComponent implements OnInit {
       },
       error: (err) => {
         console.error("Failed to load assignments", err);
+        this.errorMessage = "Failed to load existing assignments.";
         this.loading = false;
       }
     });
 
-    // Load Teachers (Academic Staff)
+    // Load Teachers
     this.staffService.getAllStaffs().subscribe({
       next: (res) => {
         this.teachers = (res || []).filter((s: any) => s.designation === 'Teacher');
       }
     });
 
-    // Load all classes (Standards)
+    // Load Classes
     this.standardService.getStandards().subscribe({
       next: (res) => this.classes = res
+    });
+
+    // Load All Subjects for the dynamic rows
+    this.subjectService.getSubjects().subscribe({
+      next: (res) => this.subjectList = res
     });
   }
 
@@ -129,101 +136,71 @@ export class SubjectAssignmentComponent implements OnInit {
 
   onClassChange(): void {
     this.sections = [];
-    this.subjects = [];
-    this.newAssignment.sectionId = null;
-    this.selectedSubjectIds = [];
-    this.missingSections = false;
-    this.missingSubjects = false;
+    this.model.sectionId = null;
+    this.model.subjectRows = [];
 
-    if (this.selectedClassId) {
-      const selectedClass = this.classes.find(c => c.standardId == this.selectedClassId);
+    if (this.model.standardId) {
+      const selectedClass = this.classes.find(c => c.standardId == this.model.standardId);
       if (selectedClass) {
-        this.loadSectionsDirect(selectedClass.standardName);
-        this.loadSubjectsDirect(this.selectedClassId);
+        this.sectionService.getSections().subscribe(res => {
+          this.sections = res.filter((x: any) => x.className === selectedClass.standardName);
+        });
+        // Clear and add one initial row
+        this.addSubjectRow();
       }
     }
   }
 
-  loadSectionsDirect(className: string) {
-    this.sectionService.getSections().subscribe(res => {
-      this.sections = res.filter((x: any) => x.className === className);
-      this.missingSections = this.sections.length === 0;
-    });
+  addSubjectRow(): void {
+    this.model.subjectRows.push({ subjectId: null });
   }
 
-  loadSubjectsDirect(classId: number) {
-    this.subjectService.getSubjects().subscribe(res => {
-      this.subjects = res.filter((x: any) => x.standardId == classId || x.standard?.standardId == classId);
-      this.missingSubjects = this.subjects.length === 0;
-    });
-  }
-
-  get availableSubjects(): any[] {
-    if (!this.newAssignment.sectionId || this.subjects.length === 0) return this.subjects;
-
-    // Find all subject IDs already assigned to this specific section in the assignments list
-    const assignedSubjectIds = this.assignments
-      .filter(a => a.sectionId == this.newAssignment.sectionId)
-      .map(a => a.subjectId);
-
-    // Filter out these subjects from the available subjects list
-    return this.subjects.filter(s => !assignedSubjectIds.includes(s.subjectId));
-  }
-
-  toggleSubjectSelection(subjectId: number) {
-    const index = this.selectedSubjectIds.indexOf(subjectId);
-    if (index > -1) {
-      this.selectedSubjectIds.splice(index, 1);
-    } else {
-      this.selectedSubjectIds.push(subjectId);
+  removeSubjectRow(index: number): void {
+    this.model.subjectRows.splice(index, 1);
+    if (this.model.subjectRows.length === 0) {
+      this.addSubjectRow();
     }
   }
 
-  isSubjectSelected(subjectId: number): boolean {
-    return this.selectedSubjectIds.includes(subjectId);
-  }
-
-  selectAllSubjects(event: any) {
-    if (event.target.checked) {
-      this.selectedSubjectIds = this.availableSubjects.map(s => s.subjectId);
-    } else {
-      this.selectedSubjectIds = [];
-    }
+  get filteredSubjects(): any[] {
+    if (!this.model.standardId) return [];
+    return this.subjectList.filter(s => s.standardId == this.model.standardId || s.standard?.standardId == this.model.standardId);
   }
 
   assignSubject(): void {
-    if (!this.newAssignment.staffId || !this.newAssignment.sectionId || this.selectedSubjectIds.length === 0) {
-      Swal.fire('Validation Error', 'Please select a Teacher, Section, and at least one Subject.', 'warning');
+    if (!this.model.staffId || !this.model.sectionId || this.model.subjectRows.length === 0) {
+      Swal.fire('Validation Error', 'Please select Teacher, Section, and at least one Subject.', 'warning');
+      return;
+    }
+
+    const validRows = this.model.subjectRows.filter((r: any) => r.subjectId !== null);
+    if (validRows.length === 0) {
+      Swal.fire('Validation Error', 'Please select at least one Subject.', 'warning');
       return;
     }
 
     this.isSubmitting = true;
-
-    // Create an array of requests for each selected subject
-    const requests = this.selectedSubjectIds.map(subId => {
+    const requests = validRows.map((row: any) => {
       return this.assignmentService.addAssignment({
-        staffId: this.newAssignment.staffId,
-        sectionId: this.newAssignment.sectionId,
-        subjectId: subId
+        staffId: this.model.staffId,
+        sectionId: this.model.sectionId,
+        subjectId: row.subjectId
       } as any);
     });
 
     forkJoin(requests).subscribe({
-      next: (res) => {
+      next: (res: any[]) => {
         this.isSubmitting = false;
         Swal.fire('Assigned!', `${res.length} subjects assigned successfully.`, 'success');
-        this.loadInitialData(); // Refresh list
 
-        // Reset form
-        this.selectedSubjectIds = [];
-        this.newAssignment.sectionId = null;
-        this.selectedClassId = null;
+        this.loadInitialData();
+        // Reset dynamic part
+        this.model.subjectRows = [];
+        this.addSubjectRow();
       },
       error: (err) => {
         this.isSubmitting = false;
-        let errMsg = 'Failed to assign subjects.';
-        if (err.error?.message) errMsg = err.error.message;
-        Swal.fire('Error', errMsg, 'error');
+        Swal.fire('Error', err.error?.message || 'Failed to assign subjects.', 'error');
       }
     });
   }
@@ -234,8 +211,6 @@ export class SubjectAssignmentComponent implements OnInit {
       text: "You won't be able to revert this!",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
       confirmButtonText: 'Yes, remove it!'
     }).then((result) => {
       if (result.isConfirmed) {
@@ -250,5 +225,3 @@ export class SubjectAssignmentComponent implements OnInit {
     });
   }
 }
-
-

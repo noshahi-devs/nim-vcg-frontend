@@ -442,18 +442,38 @@
 
 @media (max-width: 767px) {
   .es-topbar {
-    padding: 12px;
+    padding: 14px;
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .es-topbar-left,
-  .es-filter-group,
+  .es-topbar-left {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .es-filter-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
   .es-search-wrap,
   .es-search-input,
   .es-show-select {
     width: 100%;
   }
 
+  .es-add-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
   .es-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-row {
     grid-template-columns: 1fr;
   }
 }

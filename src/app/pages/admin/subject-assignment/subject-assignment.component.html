@@ -1,213 +1,219 @@
-<div class="page-container">
-    <!-- Header Section -->
-    <div class="page-header w-100">
-        <!-- Breadcrumbs -->
-        <nav aria-label="breadcrumb" class="w-100">
-            <ol class="breadcrumb text-xs fw-medium">
-                <li class="breadcrumb-item">
-                    <a routerLink="/dashboard" class="text-muted text-decoration-none d-flex align-items-center gap-1">
-                        <i class="bi bi-house-door"></i> Dashboard
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="javascript:void(0)"
-                        class="text-muted text-decoration-none d-flex align-items-center gap-1">
-                        <i class="bi bi-journal-text"></i> Academics
-                    </a>
-                </li>
-                <li class="breadcrumb-item active fw-bold text-primary d-flex align-items-center gap-1"
-                    aria-current="page">
-                    Subject Assignment
-                </li>
-            </ol>
-        </nav>
-        <h4 class="page-title text-dark">
-            Subject Assignment
-        </h4>
-        <p class="page-subtitle text-muted">Map Teachers to specific Subjects and Sections</p>
-    </div>
+<div class="dashboard-main-body">
+    <app-breadcrumb [title]="'Subject Assignment'"></app-breadcrumb>
 
-    <!-- Main Content Grid -->
-    <div class="content-grid">
-
-        <!-- Left Column: Assignment Form -->
-        <div class="form-section glass-card">
-            <h6 class="section-title">Assign New Subject</h6>
-            <form (ngSubmit)="assignSubject()" #assignmentForm="ngForm" class="assignment-form">
-
-                <!-- Teacher Selection -->
-                <div class="form-group">
-                    <label>Select Teacher</label>
-                    <div class="select-wrapper">
-                        <select class="form-control premium-input" [(ngModel)]="newAssignment.staffId" name="staffId"
-                            required>
-                            <option [ngValue]="null" disabled selected>-- Select Teacher --</option>
-                            <option *ngFor="let teacher of teachers" [value]="teacher.staffId">
-                                {{ teacher.staffName }}
-                            </option>
-                        </select>
-                        <i class="bi bi-person-badge select-icon"></i>
-                    </div>
+    <!-- ===================== MAIN FORM CARD ===================== -->
+    <div class="fee-card animate-fade-in" *ngIf="!loading">
+        <div class="fee-card-header">
+            <div class="header-left">
+                <div class="modal-icon-premium">
+                    <iconify-icon icon="solar:book-bookmark-bold"></iconify-icon>
                 </div>
-
-                <!-- Class Selection (Drives Section & Subject) -->
-                <div class="form-group">
-                    <label>Select Class (Standard)</label>
-                    <div class="select-wrapper">
-                        <select class="form-control premium-input" [(ngModel)]="selectedClassId" name="classId"
-                            (change)="onClassChange()" required>
-                            <option [ngValue]="null" disabled selected>-- Select Class --</option>
-                            <option *ngFor="let cls of classes" [value]="cls.standardId">
-                                {{ cls.standardName }}
-                            </option>
-                        </select>
-                        <i class="bi bi-building select-icon"></i>
-                    </div>
-                </div>
-
-                <!-- Section Selection -->
-                <div class="form-group" *ngIf="selectedClassId">
-                    <label>Select Section</label>
-                    <div class="alert alert-warning py-8 px-12 d-flex align-items-center gap-10 radius-8 mb-12"
-                        *ngIf="missingSections">
-                        <iconify-icon icon="solar:info-circle-bold-duotone" class="text-xl"></iconify-icon>
-                        <div class="text-xs">
-                            No sections found. <a routerLink="/section-add"
-                                class="fw-bold text-decoration-underline">Create Section</a> before assigning.
-                        </div>
-                    </div>
-                    <div class="select-wrapper" *ngIf="!missingSections">
-                        <select class="form-control premium-input" [(ngModel)]="newAssignment.sectionId"
-                            name="sectionId" required>
-                            <option [ngValue]="null" disabled selected>-- Select Section --</option>
-                            <option *ngFor="let sec of sections" [value]="sec.sectionId">
-                                {{ sec.sectionName }}
-                            </option>
-                        </select>
-                        <i class="bi bi-people select-icon"></i>
-                    </div>
-                </div>
-
-                <!-- Subject Selection (Multi-Select) -->
-                <div class="form-group" *ngIf="selectedClassId">
-                    <label>Select Subjects</label>
-
-                    <div class="alert alert-warning py-8 px-12 d-flex align-items-center gap-10 radius-8 mb-12"
-                        *ngIf="missingSubjects">
-                        <iconify-icon icon="solar:info-circle-bold-duotone" class="text-xl"></iconify-icon>
-                        <div class="text-xs">
-                            No subjects found. <a routerLink="/subject-add"
-                                class="fw-bold text-decoration-underline">Create Subject</a> before assigning.
-                        </div>
-                    </div>
-
-                    <div class="multi-select-container glass-card p-12"
-                        *ngIf="!missingSubjects && availableSubjects.length > 0">
-                        <div class="d-flex align-items-center gap-10 mb-10 pb-8 border-bottom">
-                            <input type="checkbox" (change)="selectAllSubjects($event)" id="selectAll"
-                                class="form-check-input">
-                            <label for="selectAll" class="text-sm fw-bold mb-0">Select All Available Subjects</label>
-                        </div>
-                        <div class="subject-checkbox-list scroll-y" style="max-height: 200px; overflow-y: auto;">
-                            <div *ngFor="let sub of availableSubjects" class="d-flex align-items-center gap-10 py-4">
-                                <input type="checkbox" [id]="'sub-' + sub.subjectId"
-                                    [checked]="isSubjectSelected(sub.subjectId)"
-                                    (change)="toggleSubjectSelection(sub.subjectId)" class="form-check-input">
-                                <label [for]="'sub-' + sub.subjectId" class="text-sm mb-0">{{ sub.subjectName }}</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="alert alert-success py-8 px-12 d-flex align-items-center gap-10 radius-8 mb-12"
-                        *ngIf="!missingSubjects && availableSubjects.length === 0 && selectedClassId && newAssignment.sectionId">
-                        <iconify-icon icon="solar:check-circle-bold-duotone" class="text-xl"></iconify-icon>
-                        <div class="text-xs fw-bold">
-                            All subjects for this class are already successfully assigned in this section.
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary premium-btn mt-4"
-                    [disabled]="!assignmentForm.valid || isSubmitting || selectedSubjectIds.length === 0">
-                    <span *ngIf="!isSubmitting">Assign Selected Subjects ({{ selectedSubjectIds.length }})</span>
-                    <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm" role="status"
-                        aria-hidden="true"></span>
-                </button>
-
-            </form>
-        </div>
-
-        <!-- Right Column: Assignments List -->
-        <div class="list-section glass-card">
-            <div class="list-header">
-                <h6 class="section-title mb-0 border-0 pb-0">Current Assignments</h6>
-                <div class="search-box">
-                    <iconify-icon icon="solar:magnifier-linear" class="search-icon"></iconify-icon>
-                    <input type="text" class="form-control premium-input search-input ps-5" [(ngModel)]="searchTerm"
-                        placeholder="Search... (Teacher, Class, Subject)" />
+                <div>
+                    <h4 class="card-title-premium">Subject Assignment Configuration</h4>
+                    <p class="card-subtitle-premium">Assign subjects to teachers for specific classes and sections</p>
                 </div>
             </div>
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn-ghost" (click)="searchTerm = ''" *ngIf="searchTerm">
+                    <iconify-icon icon="solar:refresh-linear" class="me-1"></iconify-icon>
+                    Clear Filter
+                </button>
+                <button class="btn-primary-gradient" (click)="assignSubject()" [disabled]="isSubmitting">
+                    <iconify-icon [icon]="isSubmitting ? 'solar:spinner-loop-bold' : 'solar:check-read-linear'"
+                        class="me-1"></iconify-icon>
+                    {{ isSubmitting ? 'Saving...' : 'Save Assignments' }}
+                </button>
+            </div>
+        </div>
 
-            <div class="table-responsive premium-table-wrapper">
-                <table class="table premium-table">
+        <div class="fee-card-body p-24">
+            <form #assignmentForm="ngForm">
+                <!-- Top Selection Region -->
+                <div class="form-row-3 mb-24">
+                    <!-- Teacher Selection -->
+                    <div class="form-card" style="margin-bottom: 0;">
+                        <div class="form-card-label">
+                            <span class="card-dot blue"></span>
+                            Teacher Association
+                        </div>
+                        <div class="form-group-premium">
+                            <label class="field-label">Select Teacher <span class="text-danger">*</span></label>
+                            <select class="field-input" [(ngModel)]="model.staffId" name="staffId" required>
+                                <option [ngValue]="null" disabled selected hidden>Select Teacher</option>
+                                <option *ngFor="let t of teachers" [ngValue]="t.staffId">
+                                    {{ t.staffName }} ({{ t.employeeId }})
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Class Selection -->
+                    <div class="form-card" style="margin-bottom: 0;">
+                        <div class="form-card-label">
+                            <span class="card-dot indigo"></span>
+                            Target Class
+                        </div>
+                        <div class="form-group-premium">
+                            <label class="field-label">Select Class <span class="text-danger">*</span></label>
+                            <select class="field-input" [(ngModel)]="model.standardId" name="standardId"
+                                (change)="onClassChange()" required>
+                                <option [ngValue]="null" disabled selected hidden>Select Class</option>
+                                <option *ngFor="let c of classes" [ngValue]="c.standardId">{{ c.standardName }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Section Selection -->
+                    <div class="form-card" style="margin-bottom: 0;">
+                        <div class="form-card-label">
+                            <span class="card-dot green"></span>
+                            Target Section
+                        </div>
+                        <div class="form-group-premium">
+                            <label class="field-label">Select Section <span class="text-danger">*</span></label>
+                            <select class="field-input" [(ngModel)]="model.sectionId" name="sectionId"
+                                [disabled]="!model.standardId" required>
+                                <option [ngValue]="null" disabled selected hidden>Select Section</option>
+                                <option *ngFor="let s of sections" [ngValue]="s.sectionId">{{ s.sectionName }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Subject Table -->
+                <div class="form-card animate-fade-in" *ngIf="model.sectionId">
+                    <div class="d-flex align-items-center justify-content-between mb-16">
+                        <div class="form-card-label" style="margin-bottom: 0;">
+                            <span class="card-dot orange"></span>
+                            Subject Selection
+                        </div>
+                        <button type="button" class="btn-add" (click)="addSubjectRow()">
+                            <iconify-icon icon="solar:add-circle-linear" class="me-1"></iconify-icon>
+                            Add Row
+                        </button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="fee-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">#</th>
+                                    <th style="width: 70%">Subject</th>
+                                    <th style="width: 20%" class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="table-row" *ngFor="let row of model.subjectRows; let i = index">
+                                    <td>
+                                        <div class="row-num">{{ i + 1 }}</div>
+                                    </td>
+                                    <td>
+                                        <select class="field-input" [(ngModel)]="row.subjectId" name="subject{{i}}"
+                                            required>
+                                            <option [ngValue]="null" disabled selected hidden>Choose Subject</option>
+                                            <option *ngFor="let sub of filteredSubjects" [ngValue]="sub.subjectId">
+                                                {{ sub.subjectName }} ({{ sub.subjectCode }})
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="icon-btn delete-btn" (click)="removeSubjectRow(i)"
+                                            title="Remove Row">
+                                            <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="model.subjectRows.length === 0">
+                                    <td colspan="3" class="empty-state text-center py-4">
+                                        <iconify-icon icon="solar:calendar-minimalistic-linear" class="mb-2 text-muted"
+                                            style="font-size: 32px;"></iconify-icon>
+                                        <p class="text-muted">No subjects added. Click "Add Row" to begin.</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="glass-card text-center p-5 animate-fade-in" *ngIf="loading">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <p class="text-muted">Loading configuration data...</p>
+    </div>
+
+    <!-- ===================== LIST SECTION (SHOWING ASSIGNMENTS) ===================== -->
+    <div class="fee-card mt-4 animate-fade-in" *ngIf="!loading && assignments.length > 0">
+        <div class="fee-card-header">
+            <div class="header-left">
+                <div>
+                    <h4 class="card-title-premium">Active Assignments</h4>
+                    <p class="card-subtitle-premium">Currently assigned subjects across the institution</p>
+                </div>
+            </div>
+            <div class="search-wrapper">
+                <iconify-icon icon="solar:magnifer-linear" class="search-icon"></iconify-icon>
+                <input type="text" class="search-input" placeholder="Search teacher or class..."
+                    [(ngModel)]="searchTerm">
+            </div>
+        </div>
+
+        <div class="fee-card-body">
+            <div class="table-wrapper">
+                <table class="fee-table">
                     <thead>
                         <tr>
                             <th>Teacher</th>
                             <th>Class & Section</th>
                             <th>Assigned Subjects</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngIf="loading">
-                            <td colspan="4" class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!loading && filteredAssignments.length === 0">
-                            <td colspan="4" class="text-center py-4 empty-state">
-                                <i class="bi bi-inbox fs-1 text-muted"></i>
-                                <p class="mt-2 text-muted">No subject assignments found.</p>
-                            </td>
-                        </tr>
-                        <tr *ngFor="let group of groupedAssignments" class="table-row">
+                        <tr class="table-row" *ngFor="let group of groupedAssignments">
                             <td>
                                 <div class="user-info">
                                     <div class="avatar-placeholder avatar-sm">
                                         {{ group.staffName.charAt(0) }}
                                     </div>
-                                    <span class="fw-semibold">{{ group.staffName }}</span>
+                                    <span class="student-name">{{ group.staffName }}</span>
                                 </div>
                             </td>
                             <td>
-                                <div class="d-flex flex-column gap-1">
-                                    <span class="text-xs fw-bold text-muted">{{ group.className }}</span>
-                                    <span class="badge badge-soft-info badge-sm">
-                                        {{ group.sectionName }}
-                                    </span>
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bold">{{ group.className }}</span>
+                                    <span class="text-muted text-xs">{{ group.sectionName }}</span>
                                 </div>
                             </td>
                             <td>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <div *ngFor="let sub of group.assignments" class="subject-chip">
-                                        <iconify-icon icon="solar:book-bookmark-minimalistic-bold"
-                                            class="text-primary me-1"></iconify-icon>
-                                        <span>{{ sub.subjectName }}</span>
-                                        <button class="chip-remove" (click)="removeAssignment(sub.assignmentId)"
-                                            title="Remove Subject">
-                                            <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+                                    <div class="subject-chip" *ngFor="let a of group.assignments">
+                                        <iconify-icon icon="solar:book-linear" class="text-primary"></iconify-icon>
+                                        {{ a.subjectName }}
+                                        <button class="chip-remove" (click)="removeAssignment(a.assignmentId)"
+                                            title="Unassign">
+                                            <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
                                         </button>
                                     </div>
-                                    <span *ngIf="group.assignments.length === 0" class="text-muted text-xs">No
-                                        subjects</span>
                                 </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="text-muted text-xs">Manage via chips</span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+    </div>
 
+    <!-- Empty State for List -->
+    <div class="glass-card text-center p-5 mt-4" *ngIf="!loading && assignments.length === 0">
+        <iconify-icon icon="solar:clipboard-list-broken" class="text-muted mb-3"
+            style="font-size: 48px;"></iconify-icon>
+        <h5>No Assignments Found</h5>
+        <p class="text-muted">Start by assigning subjects to teachers using the form above.</p>
     </div>
 </div>
