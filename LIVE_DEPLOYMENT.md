@@ -12,6 +12,29 @@ This is the current working deployment for `visioncollegegojra.com`.
 - Backend service: `nim-backend`
 - Backend URL behind nginx: `http://127.0.0.1:5000`
 
+## Easiest Option For A Junior Dev
+
+One-time install on the VPS:
+
+```bash
+cd /var/www/apps/nim-vcg-backend
+chmod +x scripts/install-deploy-command.sh scripts/deploy-live.sh
+sudo ./scripts/install-deploy-command.sh
+```
+
+Then deploy with one command:
+
+```bash
+nim-vcg-deploy all
+```
+
+Or only one side:
+
+```bash
+nim-vcg-deploy frontend
+nim-vcg-deploy backend
+```
+
 ## Frontend Deploy
 
 ```bash
@@ -59,6 +82,27 @@ Expected:
 - site returns `200`
 - empty login POST returns `415`
 - backend is `active (running)`
+
+## CI/CD
+
+Both repos already have GitHub Actions deploy workflows.
+
+Push to `main` and the workflow can deploy automatically if these secrets are set:
+
+- `VPS_HOST`
+- `VPS_PORT`
+- `VPS_USER`
+- `VPS_SSH_PRIVATE_KEY` or `VPS_PASSWORD`
+- `VPS_SUDO_PASSWORD` if the SSH user needs a sudo password
+- Frontend repo:
+  `FRONTEND_APP_PATH=/var/www/apps/nim-vcg-frontend`
+  `FRONTEND_WEB_ROOT=/var/www/visioncollegegojra/frontend`
+  `DEPLOY_BRANCH=main`
+- Backend repo:
+  `BACKEND_APP_PATH=/var/www/apps/nim-vcg-backend`
+  `BACKEND_PUBLISH_PATH=/var/www/visioncollegegojra/backend`
+  `BACKEND_SERVICE_NAME=nim-backend`
+  `DEPLOY_BRANCH=main`
 
 ## Important
 
