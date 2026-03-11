@@ -22,6 +22,7 @@ export class ReportComponent implements OnInit {
   purchaseSaleChart;
   incomeExpense;
   userOverviewDonutChart;
+  generatedAt = '';
 
   accountData: DashboardData | null = null;
 
@@ -35,6 +36,7 @@ export class ReportComponent implements OnInit {
   ngOnInit() {
     this.accountsService.getDashboardData().subscribe(data => {
       this.accountData = data;
+      this.generatedAt = new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
       this.updateHistoricalCharts(data.chartData);
       this.updateDonutChartFromAccount(data);
     });
@@ -66,14 +68,22 @@ export class ReportComponent implements OnInit {
   }
 
   updateHistoricalCharts(data: any) {
-    this.incomeExpense = this.createChartTwo('#487FFF', '#FF9F29', data.income, data.expense, data.labels);
+    const income = Array.isArray(data?.income) ? data.income.map((v: any) => Number(v) || 0) : [];
+    const expenses = Array.isArray(data?.expenses)
+      ? data.expenses.map((v: any) => Number(v) || 0)
+      : (Array.isArray(data?.expense) ? data.expense.map((v: any) => Number(v) || 0) : []);
+    const labels = Array.isArray(data?.months)
+      ? data.months
+      : (Array.isArray(data?.labels) ? data.labels : []);
+
+    this.incomeExpense = this.createChartTwo('#487FFF', '#FF9F29', income, expenses, labels);
     this.purchaseSaleChart = {
       ...this.purchaseSaleChart,
       series: [
-        { name: 'Income', data: data.income },
-        { name: 'Expense', data: data.expense }
+        { name: 'Income', data: income },
+        { name: 'Expense', data: expenses }
       ],
-      xaxis: { categories: data.labels }
+      xaxis: { categories: labels }
     };
   }
 
@@ -86,9 +96,11 @@ export class ReportComponent implements OnInit {
   }
 
   updateDonutChartFromAccount(data: any) {
+    const totalIncome = Number(data?.totalIncome) || 0;
+    const totalExpenses = Number(data?.totalExpenses) || 0;
     this.userOverviewDonutChart = {
       ...this.userOverviewDonutChart,
-      series: [data.totalIncome, data.totalExpenses],
+      series: [totalIncome, totalExpenses],
       labels: ['Income', 'Expenses'],
       colors: ['#487FFF', '#45B369']
     };
