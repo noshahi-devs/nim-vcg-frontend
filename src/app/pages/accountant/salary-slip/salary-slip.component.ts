@@ -87,6 +87,19 @@ export class SalarySlipComponent implements OnInit {
     this.loadSalaryRecords();
   }
 
+  /* ================= GETTERS FOR STATS ================= */
+  get totalDisbursement(): number {
+    return this.allSalaryData.reduce((acc, s) => acc + (s.netSalary || 0), 0);
+  }
+
+  get averageSlip(): number {
+    return this.allSalaryData.length > 0 ? this.totalDisbursement / this.allSalaryData.length : 0;
+  }
+
+  get totalPaidSlips(): number {
+    return this.allSalaryData.length;
+  }
+
   setCurrentMonth(): void {
     const today = new Date();
     this.selectedMonth = today.toISOString().substring(0, 7);
