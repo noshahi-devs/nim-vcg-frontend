@@ -6,7 +6,7 @@
         <div class="fee-card-header">
             <div class="header-left">
                 <div class="modal-icon-premium">
-                    <i class="ri-book-mark-fill"></i>
+                    <iconify-icon icon="solar:book-bookmark-bold-duotone"></iconify-icon>
                 </div>
                 <div>
                     <h4 class="card-title-premium">Subject Assignment Configuration</h4>
@@ -36,11 +36,14 @@
                             Teacher Association
                         </div>
                         <div class="form-group-premium">
-                            <label class="field-label">Select Teacher <span class="text-danger">*</span></label>
+                            <label class="field-label">
+                                <i class="ri-user-follow-line text-blue me-1"></i>
+                                Select Teacher <span class="text-danger">*</span>
+                            </label>
                             <select class="field-input" [(ngModel)]="model.staffId" name="staffId" required>
                                 <option [ngValue]="null" disabled selected hidden>Select Teacher</option>
                                 <option *ngFor="let t of teachers" [ngValue]="t.staffId">
-                                    {{ t.staffName }} ({{ t.employeeId }})
+                                    {{ t.staffName }} <span *ngIf="t.employeeId">({{ t.employeeId }})</span>
                                 </option>
                             </select>
                         </div>
@@ -53,7 +56,10 @@
                             Target Class
                         </div>
                         <div class="form-group-premium">
-                            <label class="field-label">Select Class <span class="text-danger">*</span></label>
+                            <label class="field-label">
+                                <i class="ri-government-line text-indigo me-1"></i>
+                                Select Class <span class="text-danger">*</span>
+                            </label>
                             <select class="field-input" [(ngModel)]="model.standardId" name="standardId"
                                 (change)="onClassChange()" required>
                                 <option [ngValue]="null" disabled selected hidden>Select Class</option>
@@ -69,7 +75,10 @@
                             Target Section
                         </div>
                         <div class="form-group-premium">
-                            <label class="field-label">Select Section <span class="text-danger">*</span></label>
+                            <label class="field-label">
+                                <i class="ri-layout-grid-line text-green me-1"></i>
+                                Select Section <span class="text-danger">*</span>
+                            </label>
                             <select class="field-input" [(ngModel)]="model.sectionId" name="sectionId"
                                 [disabled]="!model.standardId" (change)="onSectionChange()" required>
                                 <option [ngValue]="null" disabled selected hidden>Select Section</option>
@@ -79,57 +88,42 @@
                     </div>
                 </div>
 
-                <!-- Dynamic Subject Table -->
+                <!-- Checkbox Subject Selection -->
                 <div class="form-card animate-fade-in" *ngIf="model.sectionId">
                     <div class="d-flex align-items-center justify-content-between mb-16">
                         <div class="form-card-label" style="margin-bottom: 0;">
                             <span class="card-dot orange"></span>
                             Subject Selection
                         </div>
-                        <button type="button" class="btn-add" (click)="addSubjectRow()">
-                            <i class="ri-add-circle-line me-1"></i>
-                            Add Row
-                        </button>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="alert-premium py-1 px-3 d-flex align-items-center gap-2 animate-fade-in" *ngIf="allSubjectsAssigned">
+                                <i class="ri-information-line text-info"></i>
+                                <span class="text-xs fw-bold">All subjects assigned for this section</span>
+                            </div>
+                            <button type="button" class="btn-ghost btn-sm" (click)="selectAllSubjects()" *ngIf="filteredSubjects.length > 0">
+                                <i class="ri-checkbox-multiple-line me-1"></i>
+                                {{ model.selectedSubjectIds.length === filteredSubjects.length ? 'Deselect All' : 'Select All' }}
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="table-wrapper">
-                        <table class="fee-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 10%">#</th>
-                                    <th style="width: 70%">Subject</th>
-                                    <th style="width: 20%" class="text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="table-row" *ngFor="let row of model.subjectRows; let i = index">
-                                    <td>
-                                        <div class="row-num">{{ i + 1 }}</div>
-                                    </td>
-                                    <td>
-                                        <select class="field-input" [(ngModel)]="row.subjectId" name="subject{{i}}"
-                                            required>
-                                            <option [ngValue]="null" disabled selected hidden>Choose Subject</option>
-                                            <option *ngFor="let sub of filteredSubjects" [ngValue]="sub.subjectId">
-                                                {{ sub.subjectName }} ({{ sub.subjectCode }})
-                                            </option>
-                                        </select>
-                                    </td>
-                                    <td class="text-center">
-                                        <button type="button" class="icon-btn delete-btn" (click)="removeSubjectRow(i)"
-                                            title="Remove Row">
-                                            <i class="ri-delete-bin-7-line"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="model.subjectRows.length === 0">
-                                    <td colspan="3" class="empty-state text-center py-4">
-                                        <i class="ri-calendar-line text-muted mb-2" style="font-size: 32px; display:block;"></i>
-                                        <p class="text-muted">No subjects added. Click "Add Row" to begin.</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="subject-checkbox-grid" *ngIf="filteredSubjects.length > 0">
+                        <label class="subject-checkbox-card" *ngFor="let sub of filteredSubjects" [class.selected]="isSubjectSelected(sub.subjectId)">
+                            <input type="checkbox" [checked]="isSubjectSelected(sub.subjectId)" (change)="toggleSubject(sub.subjectId)" hidden>
+                            <div class="checkbox-indicator">
+                                <i class="ri-checkbox-circle-fill" *ngIf="isSubjectSelected(sub.subjectId)"></i>
+                                <i class="ri-checkbox-blank-circle-line" *ngIf="!isSubjectSelected(sub.subjectId)"></i>
+                            </div>
+                            <div class="subject-info">
+                                <span class="subject-name-text">{{ sub.subjectName }}</span>
+                                <span class="subject-code-text">{{ sub.subjectCode }}</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="empty-state text-center py-4" *ngIf="filteredSubjects.length === 0 && !allSubjectsAssigned">
+                        <i class="ri-book-2-line text-muted mb-2" style="font-size: 32px; display:block;"></i>
+                        <p class="text-muted">No subjects found for the selected class.</p>
                     </div>
                 </div>
             </form>

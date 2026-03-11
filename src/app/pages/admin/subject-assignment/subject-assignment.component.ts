@@ -40,7 +40,7 @@ export class SubjectAssignmentComponent implements OnInit {
     staffId: null,
     standardId: null,
     sectionId: null,
-    subjectRows: []
+    selectedSubjectIds: [] // Multiple selection via checkboxes
   };
 
   loading: boolean = false;
@@ -49,6 +49,7 @@ export class SubjectAssignmentComponent implements OnInit {
   searchTerm: string = '';
 
   constructor(
+  // ... existing constructor ...
     private assignmentService: SubjectAssignmentService,
     private staffService: StaffService,
     private standardService: StandardService,
@@ -165,21 +166,17 @@ export class SubjectAssignmentComponent implements OnInit {
   onClassChange(): void {
     this.sections = [];
     this.model.sectionId = null;
-    this.model.subjectRows = []; // Bug fix 3: Reset subjectRows to empty array
+    this.model.selectedSubjectIds = [];
 
     if (this.model.standardId) {
       const selectedClass = this.classes.find((c: any) => c.standardId == this.model.standardId);
       if (selectedClass) {
-        console.log("Selected Class:", selectedClass);
         this.sectionService.getSections().subscribe({
           next: (res) => {
-            console.log("All Sections:", res);
-            // Bug fix 2: Case-insensitive comparison for section filtering
             const name = (selectedClass.standardName || '').trim().toLowerCase();
             this.sections = (res || []).filter((x: any) =>
               (x.className || '').trim().toLowerCase() === name
             );
-            console.log("Filtered Sections for class:", this.sections);
           },
           error: (err) => {
             console.error("Failed to load sections", err);
@@ -191,45 +188,72 @@ export class SubjectAssignmentComponent implements OnInit {
   }
 
   onSectionChange(): void {
-    // Reset subject rows and add first row when a section is selected
-    this.model.subjectRows = [];
-    this.addSubjectRow();
+    this.model.selectedSubjectIds = [];
   }
 
-  addSubjectRow(): void {
-    this.model.subjectRows.push({ subjectId: null });
-  }
-
-  removeSubjectRow(index: number): void {
-    this.model.subjectRows.splice(index, 1);
-    if (this.model.subjectRows.length === 0) {
-      this.addSubjectRow();
+  toggleSubject(subjectId: number): void {
+    const index = this.model.selectedSubjectIds.indexOf(subjectId);
+    if (index > -1) {
+      this.model.selectedSubjectIds.splice(index, 1);
+    } else {
+      this.model.selectedSubjectIds.push(subjectId);
     }
+  }
+
+  isSubjectSelected(subjectId: number): boolean {
+    return this.model.selectedSubjectIds.includes(subjectId);
+  }
+
+  selectAllSubjects(): void {
+    const availableSubjects = this.filteredSubjects;
+    if (this.model.selectedSubjectIds.length === availableSubjects.length) {
+      this.model.selectedSubjectIds = [];
+    } else {
+      this.model.selectedSubjectIds = availableSubjects.map(s => s.subjectId);
+    }
+  }
+
+  get assignedSubjectIds(): number[] {
+    if (!this.model.sectionId) return [];
+    return this.assignments
+      .filter(a => a.sectionId == this.model.sectionId)
+      .map(a => a.subjectId as number);
   }
 
   get filteredSubjects(): any[] {
     if (!this.model.standardId) return [];
-    return this.subjectList.filter(s => s.standardId == this.model.standardId || s.standard?.standardId == this.model.standardId);
+    const subjectsForClass = this.subjectList.filter(s => 
+      s.standardId == this.model.standardId || 
+      s.standard?.standardId == this.model.standardId
+    );
+    
+    const assignedIds = this.assignedSubjectIds;
+    return subjectsForClass.filter(s => !assignedIds.includes(s.subjectId));
+  }
+
+  get allSubjectsAssigned(): boolean {
+    if (!this.model.sectionId || !this.model.standardId) return false;
+    const subjectsForClass = this.subjectList.filter(s => 
+      s.standardId == this.model.standardId || 
+      s.standard?.standardId == this.model.standardId
+    );
+    if (subjectsForClass.length === 0) return false;
+    
+    return this.filteredSubjects.length === 0;
   }
 
   assignSubject(): void {
-    if (!this.model.staffId || !this.model.sectionId || this.model.subjectRows.length === 0) {
+    if (!this.model.staffId || !this.model.sectionId || this.model.selectedSubjectIds.length === 0) {
       Swal.fire('Validation Error', 'Please select Teacher, Section, and at least one Subject.', 'warning');
       return;
     }
 
-    const validRows = this.model.subjectRows.filter((r: any) => r.subjectId !== null);
-    if (validRows.length === 0) {
-      Swal.fire('Validation Error', 'Please select at least one Subject.', 'warning');
-      return;
-    }
-
     this.isSubmitting = true;
-    const requests = validRows.map((row: any) => {
+    const requests = this.model.selectedSubjectIds.map((subjectId: number) => {
       return this.assignmentService.addAssignment({
         staffId: this.model.staffId,
         sectionId: this.model.sectionId,
-        subjectId: row.subjectId
+        subjectId: subjectId
       } as any);
     });
 
@@ -239,9 +263,7 @@ export class SubjectAssignmentComponent implements OnInit {
         Swal.fire('Assigned!', `${res.length} subjects assigned successfully.`, 'success');
 
         this.loadInitialData();
-        // Reset dynamic part
-        this.model.subjectRows = [];
-        this.addSubjectRow();
+        this.model.selectedSubjectIds = [];
       },
       error: (err) => {
         this.isSubmitting = false;

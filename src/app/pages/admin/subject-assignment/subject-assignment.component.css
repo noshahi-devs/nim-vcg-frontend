@@ -27,22 +27,23 @@
 }
 
 .modal-icon-premium {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, #6366f1, #4f46e5);
-    color: #fff !important;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
     flex-shrink: 0;
 }
 
-.modal-icon-premium i {
-    font-size: 22px;
+.modal-icon-premium i, .modal-icon-premium iconify-icon {
+    font-size: 26px;
     line-height: 1;
-    color: #fff !important;
+    color: #ffffff !important;
+    display: block;
 }
 
 @keyframes spin {
@@ -407,52 +408,89 @@ select.field-input {
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-/* ── Glass Utilities ── */
-.glass-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
+/* ── Subject Checkbox Grid ── */
+.subject-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
 }
 
-.animate-fade-in {
-    animation: fadeIn 0.4s ease-out;
+.subject-checkbox-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    user-select: none;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
+.subject-checkbox-card:hover {
+    border-color: #6366f1;
+    background: #f8faff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+}
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.subject-checkbox-card.selected {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.04);
+}
+
+.checkbox-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.checkbox-indicator i.ri-checkbox-circle-fill {
+    color: #6366f1;
+}
+
+.checkbox-indicator i.ri-checkbox-blank-circle-line {
+    color: #cbd5e1;
+}
+
+.subject-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.subject-name-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.subject-code-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+/* ── Premium Alert for Notifications ── */
+.alert-premium {
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 10px;
+    color: #3b82f6;
+}
+
+.alert-premium i {
+    font-size: 16px;
 }
 
 /* ── Utility ── */
-.p-24 {
-    padding: 24px;
-}
-
-.mb-16 {
-    margin-bottom: 16px;
-}
-
-.mb-24 {
-    margin-bottom: 24px;
-}
-
-.text-xs {
-    font-size: 0.75rem;
-}
-
-.mt-4 {
-    margin-top: 1.5rem;
-}
+.text-blue { color: #3b82f6 !important; }
+.text-indigo { color: #6366f1 !important; }
+.text-green { color: #10b981 !important; }
+.text-info { color: #3b82f6 !important; }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
