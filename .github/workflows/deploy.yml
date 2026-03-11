@@ -27,6 +27,7 @@ jobs:
             APP_PATH="${{ secrets.FRONTEND_APP_PATH }}"
             WEB_ROOT="${{ secrets.FRONTEND_WEB_ROOT }}"
             BRANCH="${{ secrets.DEPLOY_BRANCH }}"
+            SUDO_PASSWORD="${{ secrets.VPS_SUDO_PASSWORD }}"
 
             if [ -z "${BRANCH}" ]; then
               BRANCH="main"
@@ -35,14 +36,12 @@ jobs:
             cd "$APP_PATH"
             git fetch origin "$BRANCH"
             git checkout "$BRANCH"
-            git pull --ff-only origin "$BRANCH"
+            git reset --hard "origin/$BRANCH"
+            chmod +x scripts/deploy-live.sh
 
-            npm ci
-            npm run build
-
-            BUILD_DIR="dist/wowdash/browser"
-            if [ ! -d "$BUILD_DIR" ]; then
-              BUILD_DIR="dist/wowdash"
-            fi
-
-            rsync -a --delete "$BUILD_DIR"/ "$WEB_ROOT"/
+            FRONTEND_REPO="$APP_PATH" \
+            FRONTEND_LIVE="$WEB_ROOT" \
+            DEPLOY_BRANCH="$BRANCH" \
+            SKIP_SYNC=1 \
+            SUDO_PASSWORD="$SUDO_PASSWORD" \
+            bash scripts/deploy-live.sh

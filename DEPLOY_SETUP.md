@@ -24,7 +24,7 @@ git clone https://github.com/noshahi-devs/nim-vcg-frontend.git
 Web root example:
 
 ```bash
-sudo mkdir -p /var/www/visioncollegegojra
+sudo mkdir -p /var/www/visioncollegegojra/frontend
 sudo chown -R $USER:$USER /var/www/visioncollegegojra
 ```
 
@@ -39,12 +39,14 @@ Add:
 - `VPS_USER` = VPS SSH username (recommended: non-root deploy user)
 - `VPS_SSH_PRIVATE_KEY` = private key content of deploy user
 - `FRONTEND_APP_PATH` = VPS path where this repo is cloned (example `/var/www/apps/nim-vcg-frontend`)
-- `FRONTEND_WEB_ROOT` = live web path served by nginx (example `/var/www/visioncollegegojra`)
+- `FRONTEND_WEB_ROOT` = live web path served by nginx (example `/var/www/visioncollegegojra/frontend`)
 - `DEPLOY_BRANCH` = `main`
 
 ## 3) Nginx should serve the web root
 
 Nginx `root` should point to your `FRONTEND_WEB_ROOT`.
+
+The current production environment file targets `https://visioncollegegojra.com`, so nginx should also have TLS configured for that hostname before you use the production build.
 
 ## 4) Deploy flow
 
