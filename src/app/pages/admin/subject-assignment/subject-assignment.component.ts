@@ -65,34 +65,61 @@ export class SubjectAssignmentComponent implements OnInit {
     this.loading = true;
     this.errorMessage = null;
 
+    console.log("Loading Subject Assignment initial data...");
+
     // Load existing assignments
     this.assignmentService.getAllAssignments().subscribe({
       next: (res) => {
-        this.assignments = res;
+        console.log("Assignments loaded:", res);
+        this.assignments = res || [];
         this.loading = false;
       },
       error: (err) => {
         console.error("Failed to load assignments", err);
         this.errorMessage = "Failed to load existing assignments.";
         this.loading = false;
+        Swal.fire('Error', 'Failed to load existing assignments. Please check connectivity.', 'error');
       }
     });
 
     // Load Teachers
     this.staffService.getAllStaffs().subscribe({
       next: (res) => {
-        this.teachers = (res || []).filter((s: any) => s.designation === 'Teacher');
+        console.log("Staff loaded:", res);
+        this.teachers = (res || []).filter((s: any) => 
+          s.designation === 'Teacher' || 
+          (typeof s.designation === 'string' && s.designation.toLowerCase() === 'teacher')
+        );
+        console.log("Filtered Teachers:", this.teachers);
+      },
+      error: (err) => {
+        console.error("Failed to load teachers", err);
+        Swal.fire('Error', 'Failed to load teachers.', 'error');
       }
     });
 
     // Load Classes
     this.standardService.getStandards().subscribe({
-      next: (res) => this.classes = res
+      next: (res) => {
+        console.log("Classes loaded:", res);
+        this.classes = res || [];
+      },
+      error: (err) => {
+        console.error("Failed to load classes", err);
+        Swal.fire('Error', 'Failed to load classes.', 'error');
+      }
     });
 
     // Load All Subjects for the dynamic rows
     this.subjectService.getSubjects().subscribe({
-      next: (res) => this.subjectList = res
+      next: (res) => {
+        console.log("Subjects loaded:", res);
+        this.subjectList = res || [];
+      },
+      error: (err) => {
+        console.error("Failed to load subjects", err);
+        Swal.fire('Error', 'Failed to load subjects.', 'error');
+      }
     });
   }
 
@@ -103,7 +130,7 @@ export class SubjectAssignmentComponent implements OnInit {
     return this.assignments.filter(a =>
       a.staff?.staffName?.toLowerCase().includes(search) ||
       a.subject?.subjectName?.toLowerCase().includes(search) ||
-      a.section?.standard?.standardName?.toLowerCase().includes(search) ||
+      (a.section as any)?.className?.toLowerCase().includes(search) ||
       a.section?.sectionName?.toLowerCase().includes(search)
     );
   }
@@ -120,7 +147,8 @@ export class SubjectAssignmentComponent implements OnInit {
           staffName: a.staff?.staffName || 'Unknown Teacher',
           sectionId: a.sectionId || 0,
           sectionName: a.section?.sectionName || 'Unknown Section',
-          className: a.section?.standard?.standardName || '',
+          // Section has a 'className' string field, not a 'standard' navigation property
+          className: (a.section as any)?.className || '',
           assignments: []
         });
       }
@@ -137,18 +165,35 @@ export class SubjectAssignmentComponent implements OnInit {
   onClassChange(): void {
     this.sections = [];
     this.model.sectionId = null;
-    this.model.subjectRows = [];
+    this.model.subjectRows = []; // Bug fix 3: Reset subjectRows to empty array
 
     if (this.model.standardId) {
-      const selectedClass = this.classes.find(c => c.standardId == this.model.standardId);
+      const selectedClass = this.classes.find((c: any) => c.standardId == this.model.standardId);
       if (selectedClass) {
-        this.sectionService.getSections().subscribe(res => {
-          this.sections = res.filter((x: any) => x.className === selectedClass.standardName);
+        console.log("Selected Class:", selectedClass);
+        this.sectionService.getSections().subscribe({
+          next: (res) => {
+            console.log("All Sections:", res);
+            // Bug fix 2: Case-insensitive comparison for section filtering
+            const name = (selectedClass.standardName || '').trim().toLowerCase();
+            this.sections = (res || []).filter((x: any) =>
+              (x.className || '').trim().toLowerCase() === name
+            );
+            console.log("Filtered Sections for class:", this.sections);
+          },
+          error: (err) => {
+            console.error("Failed to load sections", err);
+            Swal.fire('Error', 'Failed to load sections.', 'error');
+          }
         });
-        // Clear and add one initial row
-        this.addSubjectRow();
       }
     }
+  }
+
+  onSectionChange(): void {
+    // Reset subject rows and add first row when a section is selected
+    this.model.subjectRows = [];
+    this.addSubjectRow();
   }
 
   addSubjectRow(): void {

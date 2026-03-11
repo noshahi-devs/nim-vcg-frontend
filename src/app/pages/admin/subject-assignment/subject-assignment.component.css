@@ -39,10 +39,20 @@
     flex-shrink: 0;
 }
 
-.modal-icon-premium iconify-icon {
-    font-size: 26px;
-    display: block;
+.modal-icon-premium i {
+    font-size: 22px;
+    line-height: 1;
     color: #fff !important;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.spin {
+    display: inline-block;
+    animation: spin 0.8s linear infinite;
 }
 
 
@@ -135,6 +145,19 @@
     transition: all 0.22s;
 }
 
+/* Dropdown arrow: remove browser default, add custom SVG chevron */
+select.field-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding-right: 38px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2364748b' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px 20px;
+    cursor: pointer;
+}
+
 .field-input:focus {
     border-color: #6366f1;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
@@ -144,7 +167,6 @@
     background-color: #ffffff;
     color: #1e293b;
 }
-
 
 .form-row-3 {
     display: grid;

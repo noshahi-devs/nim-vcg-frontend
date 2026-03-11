@@ -6,7 +6,7 @@
         <div class="fee-card-header">
             <div class="header-left">
                 <div class="modal-icon-premium">
-                    <iconify-icon icon="solar:book-bookmark-bold"></iconify-icon>
+                    <i class="ri-book-mark-fill"></i>
                 </div>
                 <div>
                     <h4 class="card-title-premium">Subject Assignment Configuration</h4>
@@ -15,12 +15,11 @@
             </div>
             <div class="d-flex align-items-center gap-3">
                 <button class="btn-ghost" (click)="searchTerm = ''" *ngIf="searchTerm">
-                    <iconify-icon icon="solar:refresh-linear" class="me-1"></iconify-icon>
+                    <i class="ri-refresh-line me-1"></i>
                     Clear Filter
                 </button>
                 <button class="btn-primary-gradient" (click)="assignSubject()" [disabled]="isSubmitting">
-                    <iconify-icon [icon]="isSubmitting ? 'solar:spinner-loop-bold' : 'solar:check-read-linear'"
-                        class="me-1"></iconify-icon>
+                    <i [class]="isSubmitting ? 'ri-loader-4-line spin me-1' : 'ri-check-double-line me-1'"></i>
                     {{ isSubmitting ? 'Saving...' : 'Save Assignments' }}
                 </button>
             </div>
@@ -72,7 +71,7 @@
                         <div class="form-group-premium">
                             <label class="field-label">Select Section <span class="text-danger">*</span></label>
                             <select class="field-input" [(ngModel)]="model.sectionId" name="sectionId"
-                                [disabled]="!model.standardId" required>
+                                [disabled]="!model.standardId" (change)="onSectionChange()" required>
                                 <option [ngValue]="null" disabled selected hidden>Select Section</option>
                                 <option *ngFor="let s of sections" [ngValue]="s.sectionId">{{ s.sectionName }}</option>
                             </select>
@@ -88,7 +87,7 @@
                             Subject Selection
                         </div>
                         <button type="button" class="btn-add" (click)="addSubjectRow()">
-                            <iconify-icon icon="solar:add-circle-linear" class="me-1"></iconify-icon>
+                            <i class="ri-add-circle-line me-1"></i>
                             Add Row
                         </button>
                     </div>
@@ -119,14 +118,13 @@
                                     <td class="text-center">
                                         <button type="button" class="icon-btn delete-btn" (click)="removeSubjectRow(i)"
                                             title="Remove Row">
-                                            <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
+                                            <i class="ri-delete-bin-7-line"></i>
                                         </button>
                                     </td>
                                 </tr>
                                 <tr *ngIf="model.subjectRows.length === 0">
                                     <td colspan="3" class="empty-state text-center py-4">
-                                        <iconify-icon icon="solar:calendar-minimalistic-linear" class="mb-2 text-muted"
-                                            style="font-size: 32px;"></iconify-icon>
+                                        <i class="ri-calendar-line text-muted mb-2" style="font-size: 32px; display:block;"></i>
                                         <p class="text-muted">No subjects added. Click "Add Row" to begin.</p>
                                     </td>
                                 </tr>
@@ -154,7 +152,7 @@
                 </div>
             </div>
             <div class="search-wrapper">
-                <iconify-icon icon="solar:magnifer-linear" class="search-icon"></iconify-icon>
+                <i class="ri-search-line search-icon"></i>
                 <input type="text" class="search-input" placeholder="Search teacher or class..."
                     [(ngModel)]="searchTerm">
             </div>
@@ -166,7 +164,7 @@
                     <thead>
                         <tr>
                             <th>Teacher</th>
-                            <th>Class & Section</th>
+                            <th>Class &amp; Section</th>
                             <th>Assigned Subjects</th>
                             <th class="text-center">Action</th>
                         </tr>
@@ -190,11 +188,11 @@
                             <td>
                                 <div class="d-flex flex-wrap gap-2">
                                     <div class="subject-chip" *ngFor="let a of group.assignments">
-                                        <iconify-icon icon="solar:book-linear" class="text-primary"></iconify-icon>
+                                        <i class="ri-book-2-line text-primary"></i>
                                         {{ a.subjectName }}
                                         <button class="chip-remove" (click)="removeAssignment(a.assignmentId)"
                                             title="Unassign">
-                                            <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+                                            <i class="ri-close-circle-fill"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -211,9 +209,9 @@
 
     <!-- Empty State for List -->
     <div class="glass-card text-center p-5 mt-4" *ngIf="!loading && assignments.length === 0">
-        <iconify-icon icon="solar:clipboard-list-broken" class="text-muted mb-3"
-            style="font-size: 48px;"></iconify-icon>
+        <i class="ri-clipboard-line text-muted mb-3" style="font-size: 48px; display:block;"></i>
         <h5>No Assignments Found</h5>
         <p class="text-muted">Start by assigning subjects to teachers using the form above.</p>
     </div>
+
 </div>
