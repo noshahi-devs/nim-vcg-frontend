@@ -1,25 +1,70 @@
 
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AttendanceService } from '../../../services/attendance.service';
+import { StudentService } from '../../../services/student.service';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { Student } from '../../../Models/student';
 
 @Component({
   selector: 'app-student-attendance-report',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BreadcrumbComponent],
   templateUrl: './student-attendance-report.component.html',
   styleUrls: ['./student-attendance-report.component.css']
 })
-export class StudentAttendanceReportComponent {
+export class StudentAttendanceReportComponent implements OnInit {
   studentId: number | null = null;
   startDate: string = '';
   endDate: string = '';
   report: any[] = [];
+  students: Student[] = [];
+  searchTerm: string = '';
+  showDropdown: boolean = false;
 
-  constructor(private attendanceService: AttendanceService) { }
+  constructor(
+    private attendanceService: AttendanceService,
+    private studentService: StudentService,
+    private eRef: ElementRef
+  ) { }
+
+  @HostListener('document:click', ['$event'])
+  clickout(event: any) {
+    if (!this.eRef.nativeElement.contains(event.target)) {
+      this.showDropdown = false;
+    }
+  }
+
+  ngOnInit(): void {
+    this.loadStudents();
+  }
+
+  get filteredStudents(): Student[] {
+    if (!this.searchTerm) return this.students;
+    return this.students.filter(s =>
+      s.studentName.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+
+  loadStudents(): void {
+    this.studentService.GetStudents().subscribe({
+      next: (res) => this.students = res,
+      error: (err) => console.error('Error loading students:', err)
+    });
+  }
+
+  selectStudent(s: Student): void {
+    this.studentId = s.studentId;
+    this.searchTerm = s.studentName;
+    this.showDropdown = false;
+  }
+
+  onSearchChange(): void {
+    this.showDropdown = true;
+    this.studentId = null; // Reset ID if user is typing manually
+  }
 
   getReport() {
     if (!this.studentId || !this.startDate || !this.endDate) return;

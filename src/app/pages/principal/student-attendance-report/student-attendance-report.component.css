@@ -85,6 +85,10 @@
   border: 1px solid #f1f5f9;
 }
 
+.overflow-visible {
+  overflow: visible !important;
+}
+
 .fee-card-header {
   display: flex;
   justify-content: space-between;
@@ -1251,3 +1255,83 @@
     padding: 6px 16px 14px;
   }
 }
+
+/* ========================
+   STUDENT AUTOCOMPLETE
+   ======================== */
+.autocomplete-container {
+  position: relative;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  max-height: 350px;
+  overflow-y: auto;
+  animation: autocompleteSlide 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes autocompleteSlide {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.autocomplete-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.autocomplete-item:hover {
+  background: rgba(72, 127, 255, 0.08);
+}
+
+.student-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.student-name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 14px;
+}
+
+.student-id-tag {
+  font-size: 11px;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.student-sub-info {
+  display: flex;
+  gap: 10px;
+}
+
+.info-tag {
+  font-size: 11px;
+}
+
+.info-tag.class { color: #487fff; font-weight: 600; }
+.info-tag.section { color: #64748b; }
+
+.no-results {
+  padding: 16px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+  font-style: italic;
+}

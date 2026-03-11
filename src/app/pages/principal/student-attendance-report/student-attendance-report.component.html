@@ -2,17 +2,35 @@
   <app-breadcrumb [title]="'Student Attendance Report'"></app-breadcrumb>
 
   <!-- Search Card -->
-  <div class="fee-card mb-24">
+  <div class="fee-card mb-24 overflow-visible">
     <div class="fee-card-header flex-wrap" style="border-bottom: none;">
       <div class="d-flex align-items-center flex-wrap gap-16 w-100">
 
-        <div class="search-wrapper" style="flex: 1; min-width: 200px;">
+        <div class="search-wrapper autocomplete-container" style="flex: 1; min-width: 350px;">
           <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <input type="number" class="search-input w-100" [(ngModel)]="studentId" placeholder="Student ID / Roll No"
-            style="padding-left: 36px;">
+          <input type="text" class="search-input w-100" [(ngModel)]="searchTerm" 
+                 (input)="onSearchChange()" (focus)="showDropdown = true"
+                 placeholder="Search student by name..." style="padding-left: 36px;">
+          
+          <!-- Custom Autocomplete Dropdown -->
+          <div class="autocomplete-dropdown glass-card" *ngIf="showDropdown && filteredStudents.length > 0">
+            <div class="autocomplete-item" *ngFor="let s of filteredStudents" (click)="selectStudent(s)">
+              <div class="student-main-info">
+                <span class="student-name">{{ s.studentName }}</span>
+                <span class="student-id-tag">#{{ s.studentId }}</span>
+              </div>
+              <div class="student-sub-info">
+                <span class="info-tag class">Class: {{ s.standard?.standardName || 'N/A' }}</span>
+                <span class="info-tag section">Section: {{ s.section || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="autocomplete-dropdown glass-card no-results" *ngIf="showDropdown && searchTerm && filteredStudents.length === 0">
+            No matching students found
+          </div>
         </div>
 
         <div class="search-wrapper">
