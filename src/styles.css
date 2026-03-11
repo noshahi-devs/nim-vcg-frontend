@@ -1002,18 +1002,13 @@ html body .modal-header-premium {
   position: relative;
   padding: 18px 20px !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
-  background: linear-gradient(
-    135deg,
-    var(--nim-popup-header-dark),
-    var(--nim-popup-primary-deep),
-    var(--nim-popup-primary)
-  ) !important;
+  background: var(--nim-popup-primary-deep) !important;
   color: #ffffff !important;
 }
 
 html body .modal-header-premium .header-gradient {
-  background: radial-gradient(circle at right, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0)) !important;
-  opacity: 1 !important;
+  background: none !important;
+  opacity: 0 !important;
 }
 
 html body .modal-title-premium,
@@ -1031,7 +1026,7 @@ html body .modal-subtitle-premium {
 }
 
 html body .modal-icon-premium {
-  background: linear-gradient(135deg, var(--nim-popup-primary), var(--nim-popup-primary-deep)) !important;
+  background: var(--nim-popup-primary-deep) !important;
   box-shadow: 0 8px 20px rgba(72, 108, 234, 0.3) !important;
   color: #ffffff !important;
 }
@@ -1101,7 +1096,7 @@ html body .select-icon {
 
 html body .btn-primary-gradient,
 html body .sml-btn-primary {
-  background: linear-gradient(135deg, var(--nim-popup-primary), var(--nim-popup-primary-deep)) !important;
+  background: var(--nim-popup-primary-deep) !important;
   border: 0 !important;
   color: #ffffff !important;
   box-shadow: 0 12px 24px rgba(72, 108, 234, 0.28) !important;
@@ -1137,12 +1132,7 @@ html body .modal .modal-content {
 }
 
 html body .modal .modal-header {
-  background: linear-gradient(
-    135deg,
-    var(--nim-popup-header-dark),
-    var(--nim-popup-primary-deep),
-    var(--nim-popup-primary)
-  ) !important;
+  background: var(--nim-popup-primary-deep) !important;
   color: #ffffff !important;
   border-bottom: 0 !important;
 }
@@ -1158,7 +1148,7 @@ html body .modal .modal-header .btn-close {
 }
 
 html body .modal .modal-body {
-  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%) !important;
+  background: #ffffff !important;
 }
 
 html body .modal .modal-footer {

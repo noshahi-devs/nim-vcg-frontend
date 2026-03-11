@@ -74,7 +74,7 @@
 
 /* ── Form Cards (Glass Sections) ── */
 .form-card {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: #f1f5f9;
     border: 1px solid #e8ecf2;
     border-radius: 16px;
     padding: 16px 18px 18px;

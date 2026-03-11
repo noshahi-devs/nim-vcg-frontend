@@ -103,7 +103,7 @@ export const routes: Routes = [
 
       // Communications & Messaging
       { path: 'email', loadComponent: () => import('./pages/ui-elements/email/email.component').then(m => m.EmailComponent), data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
-      { path: 'broadcast', loadComponent: () => import('./pages/general/broadcast/broadcast.component').then(m => m.BroadcastComponent), data: { roles: ['Admin', 'Principal', 'Teacher'] } },
+      { path: 'broadcast', loadComponent: () => import('./pages/general/broadcast/broadcast.component').then(m => m.BroadcastComponent), data: { roles: ['Admin', 'Principal'] } },
 
       // User Management
       { path: 'users-list', loadComponent: () => import('./pages/ui-elements/list/list.component').then(m => m.ListComponent), data: { roles: ['Admin'] } },

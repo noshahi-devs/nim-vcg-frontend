@@ -21,7 +21,7 @@
 }
 
 .premium-header {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+    background: #4f46e5;
     color: white;
     border-bottom: none;
 }
@@ -31,7 +31,7 @@
 }
 
 .form-card {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: #f1f5f9;
     border: 1px solid #e8ecf2;
     border-radius: 16px;
     padding: 16px 18px 18px;
@@ -159,7 +159,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    background: #4f46e5;
     color: #ffffff;
     border: none;
     border-radius: 12px;

@@ -16,9 +16,7 @@
   gap: 14px;
   flex-wrap: wrap;
   border-radius: 18px;
-  padding: 20px 22px;
-  background: linear-gradient(130deg, #0f172a 0%, #1e2f66 44%, #486cea 100%);
-  color: #ffffff;
+  background: #0f172a;
   box-shadow: 0 18px 38px rgba(15, 23, 42, 0.24);
 }
 
@@ -89,7 +87,7 @@
 .role-card-head {
   padding: 14px 16px;
   border-bottom: 1px solid #e6eeff;
-  background: linear-gradient(120deg, rgba(72, 108, 234, 0.1), rgba(72, 108, 234, 0.03));
+  background: #f1f5f9;
 }
 
 .role-card-head h6 {
@@ -133,7 +131,7 @@
   min-height: 42px;
   border: 0;
   border-radius: 11px;
-  background: linear-gradient(135deg, var(--ra-primary), var(--ra-primary-deep));
+  background: var(--ra-primary-deep);
   color: #ffffff;
   font-size: 0.86rem;
   font-weight: 700;
