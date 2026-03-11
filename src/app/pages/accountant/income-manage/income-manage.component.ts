@@ -365,13 +365,11 @@ export class IncomeManageComponent implements OnInit {
   currentIncome: Partial<Income> = {};
 
   filterSource = '';
-  filterCampus = '';
   filterDateFrom = '';
   filterDateTo = '';
 
   sources = ['Fee', 'Donation', 'Misc'];
   paymentMethods = ['Cash', 'Bank', 'Cheque', 'Online'];
-  campuses = ['Main Campus', 'Branch Campus'];
 
   constructor(
     private accountsService: AccountsService,
@@ -408,10 +406,9 @@ export class IncomeManageComponent implements OnInit {
   applyFilters(): void {
     this.filteredList = this.incomeList.filter(income => {
       const matchSource = !this.filterSource || income.source === this.filterSource;
-      const matchCampus = !this.filterCampus || income.campus === this.filterCampus;
       const matchDateFrom = !this.filterDateFrom || income.date >= this.filterDateFrom;
       const matchDateTo = !this.filterDateTo || income.date <= this.filterDateTo;
-      return matchSource && matchCampus && matchDateFrom && matchDateTo;
+      return matchSource && matchDateFrom && matchDateTo;
     });
     this.totalIncome = this.filteredList.reduce((sum, i) => sum + i.amount, 0);
   }
@@ -422,7 +419,6 @@ export class IncomeManageComponent implements OnInit {
       date: new Date().toISOString().split('T')[0],
       source: 'Fee',
       paymentMethod: 'Cash',
-      campus: 'Main Campus',
       receivedBy: 'Admin'
     };
     this.showModal = true;

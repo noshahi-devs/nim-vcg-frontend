@@ -25,13 +25,11 @@ export class ExpenseManageComponent implements OnInit {
   currentExpense: Partial<Expense> = {};
 
   filterType = '';
-  filterCampus = '';
   filterDateFrom = '';
   filterDateTo = '';
 
   expenseTypes = ['Salary', 'Bill', 'Purchase', 'Maintenance', 'Other'];
   paymentMethods = ['Cash', 'Bank', 'Cheque', 'Online'];
-  campuses = ['Main Campus', 'Branch Campus'];
 
   constructor(
     private accountsService: AccountsService,
@@ -62,10 +60,9 @@ export class ExpenseManageComponent implements OnInit {
   applyFilters(): void {
     this.filteredList = this.expenseList.filter(expense => {
       const matchType = !this.filterType || expense.expenseType === this.filterType;
-      const matchCampus = !this.filterCampus || expense.campus === this.filterCampus;
       const matchDateFrom = !this.filterDateFrom || expense.date >= this.filterDateFrom;
       const matchDateTo = !this.filterDateTo || expense.date <= this.filterDateTo;
-      return matchType && matchCampus && matchDateFrom && matchDateTo;
+      return matchType && matchDateFrom && matchDateTo;
     });
     this.totalExpenses = this.filteredList.reduce((sum, e) => sum + e.amount, 0);
   }
@@ -76,7 +73,6 @@ export class ExpenseManageComponent implements OnInit {
       date: new Date().toISOString().split('T')[0],
       expenseType: 'Other',
       paymentMethod: 'Cash',
-      campus: 'Main Campus',
       approvedBy: 'Admin'
     };
     this.showModal = true;
