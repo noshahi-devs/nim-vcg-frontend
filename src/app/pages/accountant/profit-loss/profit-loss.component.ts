@@ -21,8 +21,7 @@ export class ProfitLossComponent implements OnInit {
 
   startDate = '';
   endDate = '';
-  selectedCampus = '';
-  campuses = ['Main Campus', 'Branch Campus'];
+  generatedAt = '';
 
   chartOptions: any;
 
@@ -47,9 +46,10 @@ export class ProfitLossComponent implements OnInit {
       return;
     }
 
-    this.accountsService.getProfitLossReport(this.startDate, this.endDate, this.selectedCampus).subscribe({
+    this.accountsService.getProfitLossReport(this.startDate, this.endDate).subscribe({
       next: (data) => {
         this.report = data;
+        this.generatedAt = new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
         this.initializeChart();
       },
       error: (err) => {
@@ -61,6 +61,8 @@ export class ProfitLossComponent implements OnInit {
 
   initializeChart(): void {
     if (!this.report) return;
+    const primary = this.getThemeColor('--primary-color', '#28a745');
+    const secondary = this.getThemeColor('--secondary-color', '#dc3545');
 
     this.chartOptions = {
       series: [this.report.totalIncome, this.report.totalExpenses],
@@ -69,7 +71,7 @@ export class ProfitLossComponent implements OnInit {
         height: 350
       },
       labels: ['Income', 'Expenses'],
-      colors: ['#28a745', '#dc3545'],
+      colors: [primary, secondary],
       legend: {
         position: 'bottom'
       },
@@ -113,6 +115,21 @@ export class ProfitLossComponent implements OnInit {
   getProfitLossLabel(): string {
     if (!this.report) return '';
     return this.report.netProfit >= 0 ? 'Net Profit' : 'Net Loss';
+  }
+
+  getRangeDays(): number {
+    if (!this.startDate || !this.endDate) return 0;
+    const start = new Date(this.startDate);
+    const end = new Date(this.endDate);
+    const diff = end.getTime() - start.getTime();
+    if (diff < 0) return 0;
+    return Math.floor(diff / 86400000) + 1;
+  }
+
+  private getThemeColor(variable: string, fallback: string): string {
+    if (typeof window === 'undefined') return fallback;
+    const value = getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+    return value || fallback;
   }
 }
 
