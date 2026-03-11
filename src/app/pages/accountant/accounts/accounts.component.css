@@ -236,6 +236,102 @@
   margin-bottom: 28px;
 }
 
+.ledger-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.summary-card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.summary-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  background: var(--primary-soft);
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+.summary-card.debit .summary-icon {
+  color: var(--secondary);
+  background: var(--secondary-soft);
+  background: color-mix(in srgb, var(--secondary) 15%, transparent);
+}
+
+.summary-card.credit .summary-icon {
+  color: var(--primary);
+  background: var(--primary-soft);
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+.summary-card.balance .summary-icon {
+  color: var(--accent);
+  background: var(--accent-soft);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+.summary-card.balance.negative .summary-icon {
+  color: var(--secondary);
+  background: var(--secondary-soft);
+  background: color-mix(in srgb, var(--secondary) 15%, transparent);
+}
+
+.summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted-light);
+  font-weight: 700;
+}
+
+.summary-value {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--ink);
+}
+
+.summary-card.debit .summary-value {
+  color: var(--secondary);
+}
+
+.summary-card.credit .summary-value {
+  color: var(--primary);
+}
+
+.summary-card.balance .summary-value {
+  color: var(--accent);
+}
+
+.summary-card.balance.negative .summary-value {
+  color: var(--secondary);
+}
+
+.summary-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
 .stat-card {
   background: var(--surface);
   border-radius: 16px;

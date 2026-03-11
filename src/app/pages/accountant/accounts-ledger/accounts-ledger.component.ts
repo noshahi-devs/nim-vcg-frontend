@@ -22,6 +22,12 @@ export class AccountsLedgerComponent implements OnInit {
   filterType = '';
   filterDateFrom = '';
   filterDateTo = '';
+  searchTerm = '';
+
+  // Pagination
+  rowsPerPage = 10;
+  pageSizeOptions = [5, 10, 20, 50];
+  currentPage = 1;
 
   // Totals
   totalDebit = 0;
@@ -48,13 +54,21 @@ export class AccountsLedgerComponent implements OnInit {
   }
 
   applyFilters(): void {
+    const term = this.searchTerm.trim().toLowerCase();
     this.filteredTransactions = this.transactions.filter(t => {
       const matchType = !this.filterType || t.type === this.filterType;
       const matchDateFrom = !this.filterDateFrom || t.date >= this.filterDateFrom;
       const matchDateTo = !this.filterDateTo || t.date <= this.filterDateTo;
-      return matchType && matchDateFrom && matchDateTo;
+      const matchSearch = !term
+        || String(t.transactionId ?? '').toLowerCase().includes(term)
+        || String(t.category ?? '').toLowerCase().includes(term)
+        || String(t.description ?? '').toLowerCase().includes(term)
+        || String(t.type ?? '').toLowerCase().includes(term);
+      return matchType && matchDateFrom && matchDateTo && matchSearch;
     });
 
+    this.currentPage = 1;
+    this.ensureValidPage();
     this.calculateTotals();
   }
 
@@ -95,7 +109,54 @@ export class AccountsLedgerComponent implements OnInit {
     this.filterType = '';
     this.filterDateFrom = '';
     this.filterDateTo = '';
+    this.searchTerm = '';
+    this.currentPage = 1;
     this.applyFilters();
+  }
+
+  changePage(page: number): void {
+    if (page < 1 || page > this.totalPages) {
+      return;
+    }
+    this.currentPage = page;
+  }
+
+  onPageSizeChange(): void {
+    this.currentPage = 1;
+  }
+
+  get pagedTransactions(): Transaction[] {
+    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
+    return this.filteredTransactions.slice(startIndex, startIndex + this.rowsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredTransactions.length / this.rowsPerPage));
+  }
+
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  get paginationStart(): number {
+    if (!this.filteredTransactions.length) {
+      return 0;
+    }
+    return (this.currentPage - 1) * this.rowsPerPage + 1;
+  }
+
+  get paginationEnd(): number {
+    return Math.min(this.currentPage * this.rowsPerPage, this.filteredTransactions.length);
+  }
+
+  private ensureValidPage(): void {
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+    if (this.currentPage < 1) {
+      this.currentPage = 1;
+    }
   }
 
   formatCurrency(amount: number): string {

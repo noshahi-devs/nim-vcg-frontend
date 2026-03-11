@@ -51,6 +51,55 @@
       </div>
     </section>
 
+    <section class="ledger-summary" *ngIf="ledgerSummaryLoaded">
+      <div class="summary-card debit">
+        <div class="summary-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <polyline points="19 12 12 19 5 12" />
+          </svg>
+        </div>
+        <div class="summary-content">
+          <span class="summary-label">Total Debit</span>
+          <h4 class="summary-value">{{ formatCurrency(totalDebit) }}</h4>
+          <span class="summary-sub">From ledger</span>
+        </div>
+      </div>
+
+      <div class="summary-card credit">
+        <div class="summary-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="19" x2="12" y2="5" />
+            <polyline points="5 12 12 5 19 12" />
+          </svg>
+        </div>
+        <div class="summary-content">
+          <span class="summary-label">Total Credit</span>
+          <h4 class="summary-value">{{ formatCurrency(totalCredit) }}</h4>
+          <span class="summary-sub">From ledger</span>
+        </div>
+      </div>
+
+      <div class="summary-card balance" [class.negative]="currentBalance < 0">
+        <div class="summary-icon">
+          <svg *ngIf="currentBalance >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <svg *ngIf="currentBalance < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <div class="summary-content">
+          <span class="summary-label">Current Balance</span>
+          <h4 class="summary-value">{{ formatCurrency(currentBalance) }}</h4>
+          <span class="summary-sub">Latest balance</span>
+        </div>
+      </div>
+    </section>
+
     <section class="stats-grid" *ngIf="dashboardData">
       <div class="stat-card income">
         <div class="stat-icon">

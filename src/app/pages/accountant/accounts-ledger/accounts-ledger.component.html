@@ -1,6 +1,55 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
+  <!-- Summary Cards -->
+  <div class="stats-row mt-24" *ngIf="filteredTransactions.length > 0">
+    <div class="stat-card" style="padding: 16px;">
+      <div class="stat-icon-wrapper orange" style="width: 40px; height: 40px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <polyline points="19 12 12 19 5 12" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label" style="font-size: 13px;">Total Debit</span>
+        <h4 class="stat-value text-danger-main" style="font-size: 18px;">{{ formatCurrency(totalDebit) }}</h4>
+      </div>
+    </div>
+    <div class="stat-card" style="padding: 16px;">
+      <div class="stat-icon-wrapper green" style="width: 40px; height: 40px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
+          <line x1="12" y1="19" x2="12" y2="5" />
+          <polyline points="5 12 12 5 19 12" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label" style="font-size: 13px;">Total Credit</span>
+        <h4 class="stat-value text-success-main" style="font-size: 18px;">{{ formatCurrency(totalCredit) }}</h4>
+      </div>
+    </div>
+    <div class="stat-card" style="padding: 16px;">
+      <div class="stat-icon-wrapper" style="width: 40px; height: 40px;"
+        [ngClass]="finalBalance >= 0 ? 'green' : 'orange'">
+        <svg *ngIf="finalBalance >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          width="20" height="20">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+          <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+        <svg *ngIf="finalBalance < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          width="20" height="20">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label" style="font-size: 13px;">Current Balance</span>
+        <h4 class="stat-value" style="font-size: 18px;" [ngClass]="getBalanceClass(finalBalance)">{{
+          formatCurrency(finalBalance) }}</h4>
+      </div>
+    </div>
+  </div>
+
   <!-- Ledger Table Card -->
   <div class="fee-card">
     <div class="fee-card-header flex-wrap gap-16">
@@ -8,12 +57,28 @@
       <!-- Filters Group -->
       <div class="d-flex align-items-center flex-wrap gap-16 w-100">
         <div class="show-entries">
+          <span>Show</span>
+          <select class="entries-select" [(ngModel)]="rowsPerPage" (change)="onPageSizeChange()">
+            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">{{ size }}</option>
+          </select>
+        </div>
+
+        <div class="show-entries">
           <span>Type</span>
           <select class="entries-select" [(ngModel)]="filterType" (change)="applyFilters()">
             <option value="">All Types</option>
             <option value="Income">Income</option>
             <option value="Expense">Expense</option>
           </select>
+        </div>
+
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" class="search-input" [(ngModel)]="searchTerm" (input)="applyFilters()"
+            placeholder="Search by ID, category, description" style="width: 260px;">
         </div>
 
         <div class="search-wrapper">
@@ -103,7 +168,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="table-row" *ngFor="let transaction of filteredTransactions">
+            <tr class="table-row" *ngFor="let transaction of pagedTransactions">
               <td><span class="date-val">{{ transaction.date | date:'mediumDate' }}</span></td>
               <td><span class="enrollment-badge text-primary-main">{{ transaction.transactionId }}</span></td>
               <td>
@@ -148,53 +213,25 @@
         </table>
       </div>
 
-      <!-- Modern Summary Info Bottom Bar -->
-      <div class="stats-row mt-24 pt-24 border-top" *ngIf="filteredTransactions.length > 0"
-        style="border-color: #f1f5f9;">
-        <div class="stat-card" style="padding: 16px;">
-          <div class="stat-icon-wrapper orange" style="width: 40px; height: 40px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <polyline points="19 12 12 19 5 12" />
-            </svg>
-          </div>
-          <div class="stat-content">
-            <span class="stat-label" style="font-size: 13px;">Total Debit</span>
-            <h4 class="stat-value text-danger-main" style="font-size: 18px;">{{ formatCurrency(totalDebit) }}</h4>
-          </div>
+      <div class="pagination-bar" *ngIf="filteredTransactions.length > 0">
+        <div class="pagination-info">
+          Showing {{ paginationStart }} to {{ paginationEnd }} of {{ filteredTransactions.length }} entries
         </div>
-        <div class="stat-card" style="padding: 16px;">
-          <div class="stat-icon-wrapper green" style="width: 40px; height: 40px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
-              <line x1="12" y1="19" x2="12" y2="5" />
-              <polyline points="5 12 12 5 19 12" />
+        <div class="pagination-controls">
+          <button class="page-btn" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6" />
             </svg>
-          </div>
-          <div class="stat-content">
-            <span class="stat-label" style="font-size: 13px;">Total Credit</span>
-            <h4 class="stat-value text-success-main" style="font-size: 18px;">{{ formatCurrency(totalCredit) }}</h4>
-          </div>
-        </div>
-        <div class="stat-card" style="padding: 16px;">
-          <div class="stat-icon-wrapper" style="width: 40px; height: 40px;"
-            [ngClass]="finalBalance >= 0 ? 'green' : 'orange'">
-            <svg *ngIf="finalBalance >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-              width="20" height="20">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-              <polyline points="22 4 12 14.01 9 11.01" />
+          </button>
+          <button class="page-btn" *ngFor="let page of pageNumbers" [class.active]="page === currentPage"
+            (click)="changePage(page)">
+            {{ page }}
+          </button>
+          <button class="page-btn" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6" />
             </svg>
-            <svg *ngIf="finalBalance < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-              width="20" height="20">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-          </div>
-          <div class="stat-content">
-            <span class="stat-label" style="font-size: 13px;">Current Balance</span>
-            <h4 class="stat-value" style="font-size: 18px;" [ngClass]="getBalanceClass(finalBalance)">{{
-              formatCurrency(finalBalance) }}</h4>
-          </div>
+          </button>
         </div>
       </div>
 
