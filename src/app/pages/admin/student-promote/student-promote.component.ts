@@ -47,6 +47,8 @@ export class StudentPromoteComponent implements OnInit {
   nextSectionId: number = 0;
   nextAcademicYearId: number = 0;
 
+  selectedYearId: number | null = null;
+
   loading = false;
 
   constructor(
@@ -59,13 +61,14 @@ export class StudentPromoteComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.selectedYearId = this.sessionService.getCurrentYearId();
     this.loadInitialData();
   }
 
   loadInitialData(): void {
     this.loading = true;
     forkJoin({
-      students: this.studentService.GetStudents(this.sessionService.getCurrentYearId()),
+      students: this.studentService.GetStudents(this.selectedYearId),
       classes: this.standardService.getStandards(),
       sections: this.sectionService.getSections(),
       years: this.academicYearService.getAcademicYears()
@@ -79,9 +82,25 @@ export class StudentPromoteComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading data', err);
-        Swal.fire('Error', 'Failed to synchronize with registry.', 'error');
       }
     });
+  }
+
+  onYearChange(): void {
+    this.loading = true;
+    this.loadInitialData();
+  }
+
+  onSourceClassChange(): void {
+    this.selectedSectionId = 0; // Reset section when class changes
+    this.filterStudents();
+  }
+
+  get visibleSourceSections(): Section[] {
+    if (!this.selectedClassId) return this.sections;
+    const selectedClass = this.classes.find(c => c.standardId === Number(this.selectedClassId));
+    if (!selectedClass) return [];
+    return this.sections.filter(s => s.className === selectedClass.standardName);
   }
 
   filterStudents(): void {

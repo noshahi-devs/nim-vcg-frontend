@@ -8,7 +8,7 @@
           <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
         </div>
         <div class="stat-info">
-          <span class="stat-label">Total Students</span>
+          <span class="stat-label">Total {{ yearDisplayName }} Students</span>
           <span class="stat-value">{{ totalStudents }}</span>
         </div>
       </div>
@@ -45,18 +45,22 @@
           />
         </div>
         <div class="es-filter-group">
-          <select class="es-show-select" [(ngModel)]="filterClass" (ngModelChange)="applyFilters()">
+          <select class="es-show-select" [(ngModel)]="filterClass" (ngModelChange)="onClassChange()">
             <option value="">All Classes</option>
             <option *ngFor="let c of classList" [value]="c.standardId">{{ c.standardName }}</option>
           </select>
           <select class="es-show-select" [(ngModel)]="filterSection" (ngModelChange)="applyFilters()">
             <option value="">All Sections</option>
-            <option *ngFor="let s of sectionList" [value]="s.sectionName">{{ s.sectionName }}</option>
+            <option *ngFor="let s of visibleSections" [value]="s.sectionId">{{ s.sectionName }}</option>
           </select>
           <select class="es-show-select" [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
             <option value="">All Status</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
+          </select>
+          <select class="es-show-select academic-year-switcher" [(ngModel)]="selectedYearId" (ngModelChange)="onYearChange()">
+            <option [ngValue]="null">Search by Year</option>
+            <option *ngFor="let year of academicYears" [ngValue]="year.academicYearId">{{ year.name }}</option>
           </select>
         </div>
       </div>

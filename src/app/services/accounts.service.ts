@@ -114,6 +114,14 @@ export class AccountsService {
     return this.http.delete(`${this.apiUrl}/GeneralExpenses/${id}`, this.getAuthHeaders());
   }
 
+  getMonthlyPayments(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/MonthlyPayments`, this.getAuthHeaders());
+  }
+
+  getOthersPayments(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/OthersPayments`, this.getAuthHeaders());
+  }
+
   // Ledger: Now fetched from backend for accuracy
   getLedger(): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(`${this.apiUrl}/Accounts/ledger`, this.getAuthHeaders());

@@ -15,6 +15,7 @@ import { StaffService } from '../../../services/staff.service';
 import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
 import { finalize, forkJoin, Subscription } from 'rxjs';
 import { SessionService } from '../../../services/session.service';
+import { AcademicYear } from '../../../Models/academic-year';
 
 
 declare var bootstrap: any;
@@ -50,11 +51,29 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   assignedSections: Section[] = [];
   assignedClassNames: string[] = [];
   loading = false;
+  
+  academicYears: AcademicYear[] = [];
+  selectedYearId: number | null = null;
   private sessionSubscription?: Subscription;
+  private yearsSubscription?: Subscription;
 
   get totalStudents(): number { return this.studentList.length; }
   get activeStudents(): number { return this.studentList.filter(s => s.status?.toLowerCase() === 'active').length; }
   get inactiveStudents(): number { return this.studentList.filter(s => s.status?.toLowerCase() === 'inactive').length; }
+
+  get yearDisplayName(): string {
+    if (!this.selectedYearId) return 'Registry';
+    const year = this.academicYears.find(y => y.academicYearId === Number(this.selectedYearId));
+    return year ? year.name : 'Unknown Year';
+  }
+
+  get visibleSections(): Section[] {
+    if (!this.filterClass) return this.sectionList;
+    const selectedClass = this.classList.find(c => String(c.standardId) === this.filterClass);
+    if (!selectedClass) return this.sectionList;
+    // Filter by matching class name
+    return this.sectionList.filter(s => s.className === selectedClass.standardName);
+  }
 
 
   constructor(
@@ -69,10 +88,21 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit(): void {
+    // Initial sync with session
+    this.selectedYearId = this.sessionService.getCurrentYearId();
+
     this.sessionSubscription = this.sessionService.currentYear$.subscribe(year => {
       if (year) {
+        // Only update local selection if session year changes and we're following it
+        if (this.selectedYearId === null) {
+          this.selectedYearId = year.academicYearId;
+        }
         this.checkTeacherContext();
       }
+    });
+
+    this.yearsSubscription = this.sessionService.allYears$.subscribe(years => {
+      this.academicYears = years;
     });
   }
 
@@ -137,7 +167,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   }
 
   private loadAllData() {
-    const yearId = this.sessionService.getCurrentYearId();
+    const yearId = this.selectedYearId;
     forkJoin({
       students: this.studentService.GetStudents(yearId),
       classes: this.standardService.getStandards(),
@@ -215,6 +245,16 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     });
   }
 
+  onYearChange() {
+    this.loading = true;
+    this.loadAllData();
+  }
+
+  onClassChange() {
+    this.filterSection = ''; // Reset section when class changes
+    this.applyFilters();
+  }
+
   // -------------------------------------------------------
   // Centralized Filtering
   // -------------------------------------------------------
@@ -222,15 +262,16 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     let list = [...this.studentList];
 
     if (this.filterClass) {
-      list = list.filter(s => String(s.standardId) === this.filterClass);
+      const classId = Number(this.filterClass);
+      list = list.filter(s => Number(s.standardId) === classId);
     }
 
     if (this.filterSection) {
-      list = list.filter(s =>
-        s.section?.toLowerCase() === this.filterSection.toLowerCase() ||
-        s.section === this.filterSection ||
-        ((!s.section || s.section.trim() === '') && (this.filterSection === 'A' || this.filterSection.includes('Section A'))) ||
-        this.sectionList.find(sec => sec.sectionName === this.filterSection)?.sectionCode === s.section
+      const sectionId = Number(this.filterSection);
+      list = list.filter(s => 
+        Number(s.sectionId) === sectionId || 
+        // Fallback for legacy data using section name comparison
+        (this.sectionList.find(sec => sec.sectionId === sectionId)?.sectionName === s.section)
       );
     }
 
@@ -340,6 +381,9 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   ngOnDestroy(): void {
     if (this.sessionSubscription) {
       this.sessionSubscription.unsubscribe();
+    }
+    if (this.yearsSubscription) {
+      this.yearsSubscription.unsubscribe();
     }
   }
 }

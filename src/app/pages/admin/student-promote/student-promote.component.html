@@ -53,19 +53,23 @@
           <input type="text" class="premium-input" [(ngModel)]="searchTerm" (input)="filterStudents()" name="search"
             placeholder="Search students..." />
         </div>
+        <!-- Year Switcher -->
+        <select class="premium-select" [(ngModel)]="selectedYearId" (ngModelChange)="onYearChange()">
+          <option [ngValue]="null">Search by Year</option>
+          <option *ngFor="let y of academicYears" [ngValue]="y.academicYearId">{{ y.name }}</option>
+        </select>
 
         <!-- Class Filter -->
-        <select class="premium-select" [(ngModel)]="selectedClassId" (change)="filterStudents()">
-          <option [value]="0">All Classes</option>
-          <option *ngFor="let c of classes" [value]="c.standardId">{{ c.standardName }}</option>
+        <select class="premium-select" [(ngModel)]="selectedClassId" (change)="onSourceClassChange()">
+          <option [ngValue]="0">All Classes</option>
+          <option *ngFor="let c of classes" [ngValue]="c.standardId">{{ c.standardName }}</option>
         </select>
 
         <!-- Section Filter -->
         <select class="premium-select" [(ngModel)]="selectedSectionId" (change)="filterStudents()">
-          <option [value]="0">All Sections</option>
-          <option *ngFor="let s of sections" [value]="s.sectionId">{{ s.sectionName }}</option>
+          <option [ngValue]="0">All Sections</option>
+          <option *ngFor="let s of visibleSourceSections" [ngValue]="s.sectionId">{{ s.sectionName }}</option>
         </select>
-
         <!-- Rows select -->
         <select class="premium-select" [(ngModel)]="rowsPerPage" (change)="currentPage = 1">
           <option [value]="10">10 Rows</option>

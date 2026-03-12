@@ -287,24 +287,26 @@ export class AccountsComponent implements OnInit {
 
   private syncTotalsWithIncomeExpense(): void {
     forkJoin({
-      incomes: this.accountsService.getIncomeList().pipe(catchError(() => of([] as Income[]))),
+      generalIncomes: this.accountsService.getIncomeList().pipe(catchError(() => of([] as Income[]))),
+      feePayments: this.accountsService.getMonthlyPayments().pipe(catchError(() => of([]))),
+      otherPayments: this.accountsService.getOthersPayments().pipe(catchError(() => of([]))),
       expenses: this.accountsService.getExpenses().pipe(catchError(() => of([] as Expense[])))
-    }).subscribe(({ incomes, expenses }) => {
+    }).subscribe(({ generalIncomes, feePayments, otherPayments, expenses }) => {
       if (!this.dashboardData) return;
-      if (incomes.length === 0 && expenses.length === 0) return;
 
-      const totalIncome = incomes.length > 0
-        ? incomes.reduce((sum, item) => sum + this.parseAmount(item.amount), 0)
-        : this.dashboardData.totalIncome;
-      const totalExpenses = expenses.length > 0
-        ? expenses.reduce((sum, item) => sum + this.parseAmount(item.amount), 0)
-        : this.dashboardData.totalExpenses;
+      const totalGeneral = generalIncomes.reduce((sum, item) => sum + this.parseAmount(item.amount), 0);
+      const totalFees = feePayments.reduce((sum, item) => sum + this.parseAmount(item.amountPaid), 0);
+      const totalOthers = otherPayments.reduce((sum, item) => sum + this.parseAmount(item.amountPaid), 0);
+      
+      const totalIncome = totalGeneral + totalFees + totalOthers;
+      const totalExpenses = expenses.reduce((sum, item) => sum + this.parseAmount(item.amount), 0);
 
       this.dashboardData = {
         ...this.dashboardData,
         totalIncome,
         totalExpenses,
-        profitLoss: totalIncome - totalExpenses
+        profitLoss: totalIncome - totalExpenses,
+        cashBankBalance: totalIncome - totalExpenses
       };
       this.kpiSummary = this.buildKpiSummary(this.dashboardData);
     });
