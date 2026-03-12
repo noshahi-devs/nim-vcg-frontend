@@ -43,7 +43,7 @@ function getSelectedCampusId(): string | null {
 
 function rewriteApiUrl(req: Parameters<HttpInterceptorFn>[0]) {
   const localUrls = [
-    "http://localhost:5257", 
+    "https://localhost:7225", 
     "https://localhost:7225", 
     "http://127.0.0.1:5257",
     "https://127.0.0.1:7225"

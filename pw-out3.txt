@@ -1,24 +1,24 @@
 
 Running 4 tests using 2 workers
 
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
-Aborting unhandled API request: http://localhost:5257/api/Notifications/logs
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/stats
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/chart-data
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/student-distribution
+Aborting unhandled API request: https://localhost:7225/api/Notifications/logs
   ✓  1 [chromium] › e2e\integration-final.spec.ts:148:9 › Final Integration & Automation Tests › Admin Settings Persistence Workflow (11.7s)
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/stats
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/chart-data
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/student-distribution
   ✓  2 [chromium] › e2e\integration-final.spec.ts:175:9 › Final Integration & Automation Tests › Automated Grading Workflow Visibility (12.4s)
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/stats
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/chart-data
-Aborting unhandled API request: http://localhost:5257/api/Dashboard/student-distribution
-Aborting unhandled API request: http://localhost:5257/api/Notifications/logs
-Aborting unhandled API request: http://localhost:5257/api/Standards
-Aborting unhandled API request: http://localhost:5257/api/Sections
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/stats
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/chart-data
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/student-distribution
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/stats
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/chart-data
+Aborting unhandled API request: https://localhost:7225/api/Dashboard/student-distribution
+Aborting unhandled API request: https://localhost:7225/api/Notifications/logs
+Aborting unhandled API request: https://localhost:7225/api/Standards
+Aborting unhandled API request: https://localhost:7225/api/Sections
   ✘  4 [chromium] › e2e\integration-final.spec.ts:205:9 › Final Integration & Automation Tests › Notification Monitoring Verification (19.1s)
   ✘  3 [chromium] › e2e\integration-final.spec.ts:188:9 › Final Integration & Automation Tests › Analytics & Reports Integrity (26.0s)
 
