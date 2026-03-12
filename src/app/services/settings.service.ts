@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, ReplaySubject, tap, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface SystemSetting {
@@ -34,7 +34,23 @@ export interface PaymentGatewaySetting {
 export class SettingsService {
     private apiUrl = `${environment.apiBaseUrl}/api/Settings`;
 
-    constructor(private http: HttpClient) { }
+    private schoolInfo$ = new ReplaySubject<any>(1);
+
+    constructor(private http: HttpClient) { 
+        this.refreshSchoolInfo();
+    }
+
+    refreshSchoolInfo() {
+        this.getGeneralSettings().subscribe(settings => {
+            const info: any = {};
+            settings.forEach(s => info[s.settingKey] = s.settingValue);
+            this.schoolInfo$.next(info);
+        });
+    }
+
+    getSchoolInfo(): Observable<any> {
+        return this.schoolInfo$.asObservable();
+    }
 
     private getAuthHeaders() {
         const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');

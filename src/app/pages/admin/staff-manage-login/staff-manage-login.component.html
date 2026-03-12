@@ -67,7 +67,7 @@
         class="search-input"
         [(ngModel)]="searchTerm"
         (input)="searchLogins()"
-        placeholder="Search by name, email, role, campus"
+        placeholder="Search by name, email or role"
       />
     </div>
   </section>
@@ -86,7 +86,6 @@
             <th>Full Name</th>
             <th>Email</th>
             <th>Role</th>
-            <th>Campus</th>
             <th>Phone</th>
             <th class="text-center">Status</th>
             <th>Created On</th>
@@ -102,18 +101,30 @@
             <td>
               <span class="role-pill">{{ login.role }}</span>
             </td>
-            <td>{{ login.campus }}</td>
             <td>{{ login.phone }}</td>
             <td class="text-center">
               <span *ngIf="login.status?.toLowerCase() === 'active'" class="status-pill active">Active</span>
-              <span *ngIf="login.status?.toLowerCase() === 'inactive'" class="status-pill inactive">Inactive</span>
+              <span *ngIf="login.status?.toLowerCase() !== 'active'" class="status-pill inactive">Inactive</span>
             </td>
             <td>{{ login.createdOn }}</td>
             <td class="text-center">
               <div class="sml-actions">
-                <button type="button" (click)="openEditDialog(login)" class="icon-btn edit-btn" title="Edit">
-                  <iconify-icon icon="lucide:edit"></iconify-icon>
+                <!-- View Details -->
+                <button type="button" (click)="openViewDialog(login)" class="icon-btn view-btn" title="View Details">
+                  <iconify-icon icon="solar:eye-bold"></iconify-icon>
                 </button>
+                <!-- Activate / Deactivate Toggle (Admin Only) -->
+                <button
+                  type="button"
+                  (click)="toggleStatus(login)"
+                  class="icon-btn"
+                  [class.active-btn]="login.status?.toLowerCase() !== 'active'"
+                  [class.deactivate-btn]="login.status?.toLowerCase() === 'active'"
+                  [title]="login.status?.toLowerCase() === 'active' ? 'Deactivate' : 'Activate'"
+                >
+                  <iconify-icon [icon]="login.status?.toLowerCase() === 'active' ? 'solar:forbidden-circle-bold' : 'solar:shield-check-bold'"></iconify-icon>
+                </button>
+                <!-- Delete -->
                 <button type="button" (click)="confirmDelete(login)" class="icon-btn delete-btn" title="Delete">
                   <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
                 </button>
@@ -122,7 +133,7 @@
           </tr>
 
           <tr *ngIf="loading">
-            <td colspan="9" class="empty-state">
+            <td colspan="8" class="empty-state">
               <div class="empty-content">
                 <div class="spinner-border text-primary" role="status"></div>
                 <p>Loading logins...</p>
@@ -131,7 +142,7 @@
           </tr>
 
           <tr *ngIf="!loading && paginatedLogins.length === 0">
-            <td colspan="9" class="empty-state">
+            <td colspan="8" class="empty-state">
               <div class="empty-content">
                 <iconify-icon icon="mdi:account-off-outline" class="empty-icon"></iconify-icon>
                 <p>No logins found.</p>
@@ -192,7 +203,79 @@
   </section>
 </div>
 
-<!-- Add / Edit Modal -->
+<!-- =================== VIEW DETAILS MODAL =================== -->
+<div
+  class="modal fade sml-modal"
+  [class.show]="showViewDialog"
+  [style.display]="showViewDialog ? 'block' : 'none'"
+  tabindex="-1"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="modal-dialog modal-dialog-centered sml-modal-dialog">
+    <div class="modal-content sml-modal-card" *ngIf="viewLogin">
+      <div class="sml-modal-header">
+        <div class="sml-modal-title-wrap">
+          <span class="sml-modal-badge">Read Only</span>
+          <h1 class="sml-modal-title">Account Details</h1>
+          <p class="sml-modal-subtitle">Viewing login information for {{ viewLogin.name }}</p>
+        </div>
+        <button type="button" class="sml-close-btn" (click)="closeViewDialog()" aria-label="Close">
+          <iconify-icon icon="material-symbols:close-rounded"></iconify-icon>
+        </button>
+      </div>
+
+      <div class="sml-modal-body">
+        <div class="view-detail-grid">
+          <div class="view-detail-item">
+            <span class="view-detail-label">Full Name</span>
+            <span class="view-detail-value">{{ viewLogin.name }}</span>
+          </div>
+          <div class="view-detail-item">
+            <span class="view-detail-label">Email Address</span>
+            <span class="view-detail-value">{{ viewLogin.email }}</span>
+          </div>
+          <div class="view-detail-item">
+            <span class="view-detail-label">Role</span>
+            <span class="view-detail-value"><span class="role-pill">{{ viewLogin.role }}</span></span>
+          </div>
+          <div class="view-detail-item">
+            <span class="view-detail-label">Phone Number</span>
+            <span class="view-detail-value">{{ viewLogin.phone }}</span>
+          </div>
+          <div class="view-detail-item">
+            <span class="view-detail-label">Account Status</span>
+            <span class="view-detail-value">
+              <span class="status-pill" [class.active]="viewLogin.status?.toLowerCase() === 'active'" [class.inactive]="viewLogin.status?.toLowerCase() !== 'active'">
+                {{ viewLogin.status }}
+              </span>
+            </span>
+          </div>
+          <div class="view-detail-item">
+            <span class="view-detail-label">Created On</span>
+            <span class="view-detail-value">{{ viewLogin.createdOn }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sml-modal-footer">
+        <div class="sml-modal-actions">
+          <button type="button" (click)="toggleStatus(viewLogin); closeViewDialog()" class="sml-btn"
+            [style.background]="viewLogin.status?.toLowerCase() === 'active' ? '#ef4444' : '#10b981'"
+            style="color: white; border: none;">
+            <iconify-icon [icon]="viewLogin.status?.toLowerCase() === 'active' ? 'solar:forbidden-circle-bold' : 'solar:shield-check-bold'"></iconify-icon>
+            {{ viewLogin.status?.toLowerCase() === 'active' ? 'Deactivate Account' : 'Activate Account' }}
+          </button>
+          <button type="button" (click)="closeViewDialog()" class="sml-btn sml-btn-ghost">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade sml-modal-backdrop" [class.show]="showViewDialog" *ngIf="showViewDialog" (click)="closeViewDialog()"></div>
+
+<!-- =================== CREATE LOGIN MODAL (ADD ONLY) =================== -->
 <div
   class="modal fade sml-modal"
   [class.show]="showDialog"
@@ -205,11 +288,9 @@
     <div class="modal-content sml-modal-card">
       <div class="sml-modal-header">
         <div class="sml-modal-title-wrap">
-          <span class="sml-modal-badge">{{ isEditMode ? 'Edit Access' : 'New Access' }}</span>
-          <h1 class="sml-modal-title">{{ isEditMode ? 'Edit Login' : 'Create New Login' }}</h1>
-          <p class="sml-modal-subtitle">
-            {{ isEditMode ? 'Update account details, role and status for this staff member.' : 'Create a secure staff login account with role and campus access.' }}
-          </p>
+          <span class="sml-modal-badge">New Access</span>
+          <h1 class="sml-modal-title">Create New Login</h1>
+          <p class="sml-modal-subtitle">Create a secure staff login account with role access.</p>
         </div>
         <button type="button" class="sml-close-btn" (click)="closeDialog()" aria-label="Close">
           <iconify-icon icon="material-symbols:close-rounded"></iconify-icon>
@@ -229,12 +310,12 @@
               <input type="email" class="field-input" [(ngModel)]="loginForm.email" name="email" placeholder="Enter email address" required />
             </div>
 
-            <div class="sml-field" *ngIf="!isEditMode">
+            <div class="sml-field">
               <label class="field-label">Password <span class="text-danger-600">*</span></label>
               <input type="password" class="field-input" [(ngModel)]="loginForm.password" name="password" placeholder="Enter password" />
             </div>
 
-            <div class="sml-field" *ngIf="!isEditMode">
+            <div class="sml-field">
               <label class="field-label">Confirm Password <span class="text-danger-600">*</span></label>
               <input type="password" class="field-input" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm password" />
             </div>
@@ -251,35 +332,8 @@
             </div>
 
             <div class="sml-field">
-              <label class="field-label">Campus <span class="text-danger-600">*</span></label>
-              <div class="select-wrapper">
-                <select class="field-input" [(ngModel)]="loginForm.campus" name="campus" required>
-                  <option value="">Select campus</option>
-                  <option *ngFor="let campus of campuses" [value]="campus.value">{{ campus.label }}</option>
-                </select>
-                <iconify-icon icon="mdi:chevron-down" class="select-icon"></iconify-icon>
-              </div>
-            </div>
-
-            <div class="sml-field">
               <label class="field-label">Phone <span class="text-danger-600">*</span></label>
               <input type="text" class="field-input" [(ngModel)]="loginForm.phone" name="phone" placeholder="Enter phone number" required />
-            </div>
-
-            <div class="sml-field sml-status-field">
-              <label class="field-label">Status <span class="text-danger-600">*</span></label>
-              <div class="sml-status-group">
-                <label class="sml-status-option" [class.is-active]="loginForm.status === 'Active'" for="sml-status-active">
-                  <input class="sml-status-input" type="radio" [(ngModel)]="loginForm.status" name="status" id="sml-status-active" value="Active" />
-                  <span class="sml-status-dot"></span>
-                  <span>Active</span>
-                </label>
-                <label class="sml-status-option" [class.is-inactive]="loginForm.status === 'Inactive'" for="sml-status-inactive">
-                  <input class="sml-status-input" type="radio" [(ngModel)]="loginForm.status" name="status" id="sml-status-inactive" value="Inactive" />
-                  <span class="sml-status-dot"></span>
-                  <span>Inactive</span>
-                </label>
-              </div>
             </div>
           </div>
 
@@ -288,8 +342,8 @@
             <div class="sml-modal-actions">
               <button type="button" (click)="closeDialog()" class="sml-btn sml-btn-ghost">Cancel</button>
               <button type="submit" class="sml-btn sml-btn-primary">
-                <iconify-icon [icon]="isEditMode ? 'mdi:content-save-edit-outline' : 'mdi:content-save-outline'"></iconify-icon>
-                {{ isEditMode ? 'Update Login' : 'Save Login' }}
+                <iconify-icon icon="mdi:content-save-outline"></iconify-icon>
+                Save Login
               </button>
             </div>
           </div>

@@ -13,7 +13,6 @@ interface Login {
   email: string;
   password?: string;
   role: string;
-  campus: string;
   phone: string;
   status: string;
   createdOn: string;
@@ -56,11 +55,9 @@ export class StaffManageLoginComponent implements OnInit {
     { label: 'Accountant', value: 'Accountant' }
   ];
 
-  campuses = [
-    { label: 'Main Campus', value: 'Main Campus' },
-    { label: 'Girls Campus', value: 'Girls Campus' },
-    { label: 'Boys Campus', value: 'Boys Campus' }
-  ];
+  // View Dialog
+  showViewDialog = false;
+  viewLogin: Login | null = null;
 
   // Search & Pagination
   searchTerm: string = '';
@@ -116,7 +113,6 @@ export class StaffManageLoginComponent implements OnInit {
           name: u.userName,
           email: u.email,
           role: Array.isArray(u.role) ? u.role.join(', ') : (u.role || 'Teacher'),
-          campus: u.campus || 'Main Campus',
           phone: u.phoneNumber || 'N/A',
           status: u.status || 'Active',
           createdOn: u.createdOn || new Date().toISOString().split('T')[0]
@@ -142,7 +138,6 @@ export class StaffManageLoginComponent implements OnInit {
       email: '',
       password: '',
       role: '',
-      campus: '',
       phone: '',
       status: 'Active',
       createdOn: new Date().toISOString().split('T')[0]
@@ -152,6 +147,16 @@ export class StaffManageLoginComponent implements OnInit {
   // Dialog Methods
   openAddDialog(): void {
     this.router.navigate(['/staff-add']);
+  }
+
+  openViewDialog(login: Login): void {
+    this.viewLogin = { ...login };
+    this.showViewDialog = true;
+  }
+
+  closeViewDialog(): void {
+    this.showViewDialog = false;
+    this.viewLogin = null;
   }
 
   openEditDialog(login: Login): void {
@@ -167,10 +172,38 @@ export class StaffManageLoginComponent implements OnInit {
     this.confirmPassword = '';
   }
 
+  // Toggle Active/Inactive
+  toggleStatus(login: Login): void {
+    const newStatus = login.status?.toLowerCase() === 'active' ? 'Inactive' : 'Active';
+    const action = newStatus === 'Active' ? 'Activate' : 'Deactivate';
+    Swal.fire({
+      title: `${action} User?`,
+      text: `Are you sure you want to ${action.toLowerCase()} ${login.name}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: `Yes, ${action}`,
+      confirmButtonColor: newStatus === 'Active' ? '#10b981' : '#ef4444',
+      cancelButtonColor: '#6b7280'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.userService.toggleUserStatus(login.id, newStatus).subscribe({
+          next: () => {
+            login.status = newStatus;
+            Swal.fire({ icon: 'success', title: `${action}d!`, text: `${login.name} has been ${action.toLowerCase()}d.`, timer: 1500, showConfirmButton: false });
+          },
+          error: (err) => {
+            console.error('Error toggling status:', err);
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update user status.' });
+          }
+        });
+      }
+    });
+  }
+
   // CRUD Operations
   saveLogin(): void {
     // Validation
-    if (!this.loginForm.name || !this.loginForm.email || !this.loginForm.role || !this.loginForm.campus || !this.loginForm.phone) {
+    if (!this.loginForm.name || !this.loginForm.email || !this.loginForm.role || !this.loginForm.phone) {
       Swal.fire({ icon: 'warning', title: 'Incomplete', text: 'Please fill all required fields' });
       return;
     }
@@ -254,8 +287,7 @@ export class StaffManageLoginComponent implements OnInit {
     this.filteredLogins = this.logins.filter(login =>
       login.name.toLowerCase().includes(search) ||
       login.email.toLowerCase().includes(search) ||
-      login.role.toLowerCase().includes(search) ||
-      login.campus.toLowerCase().includes(search)
+      login.role.toLowerCase().includes(search)
     );
 
     this.currentPage = 1;

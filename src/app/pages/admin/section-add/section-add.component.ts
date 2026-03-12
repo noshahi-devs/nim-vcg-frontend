@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import Swal from '../../../swal';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
@@ -14,7 +14,7 @@ import { Section } from '../../../Models/section';
 @Component({
   selector: 'app-section-add',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbComponent],
+  imports: [CommonModule, ReactiveFormsModule, BreadcrumbComponent],
   templateUrl: './section-add.component.html',
   styleUrls: ['./section-add.component.css']
 })
@@ -23,30 +23,29 @@ export class SectionAddComponent implements OnInit {
   teachers: Staff[] = [];
   classes: Standard[] = [];
 
-  newSection: Section = {
-    sectionId: 0,
-    sectionName: '',
-    className: '',
-    sectionCode: '',
-    staffId: undefined,
-    roomNo: '',
-    capacity: 0
-  };
+  sectionForm!: FormGroup;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private sectionService: SectionService,
     private staffService: StaffService,
-    private standardService: StandardService
-  ) { }
-
+    private standardService: StandardService,
+    private fb: FormBuilder
+  ) {
+    this.sectionForm = this.fb.group({
+      className: ['', Validators.required],
+      sectionCode: ['', Validators.required],
+      staffId: [null, Validators.required],
+      roomNo: ['', Validators.required],
+      capacity: [null, [Validators.required, Validators.min(1)]]
+    });
+  }
 
   ngOnInit(): void {
     this.staffService.getAllStaffs().subscribe(data => {
       this.teachers = data || []; // Adjust filter as needed if you only want teachers
     });
-
 
     this.standardService.getStandards().subscribe(data => {
       this.classes = data;
@@ -54,15 +53,15 @@ export class SectionAddComponent implements OnInit {
       // Check for pre-filled class from query params
       this.route.queryParams.subscribe(params => {
         if (params['className']) {
-          this.newSection.className = params['className'];
+          this.sectionForm.patchValue({ className: params['className'] });
         }
       });
     });
   }
 
-
-  async onSubmit(form: any): Promise<void> {
-    if (form.invalid) {
+  async onSubmit(): Promise<void> {
+    if (this.sectionForm.invalid) {
+      this.sectionForm.markAllAsTouched();
       Swal.fire({
         icon: 'error',
         title: 'Form Incomplete',
@@ -84,10 +83,18 @@ export class SectionAddComponent implements OnInit {
     });
 
     if (confirmResult.isConfirmed) {
-      // Set section name
-      this.newSection.sectionName = `Section ${this.newSection.sectionCode} - ${this.newSection.className}`;
+      const formValue = this.sectionForm.value;
+      const newSection: Section = {
+        sectionId: 0,
+        sectionName: `Section ${formValue.sectionCode} - ${formValue.className}`,
+        className: formValue.className,
+        sectionCode: formValue.sectionCode,
+        staffId: formValue.staffId,
+        roomNo: formValue.roomNo,
+        capacity: formValue.capacity
+      };
 
-      this.sectionService.createSection(this.newSection).subscribe({
+      this.sectionService.createSection(newSection).subscribe({
         next: async () => {
           await Swal.fire({
             icon: 'success',
@@ -108,9 +115,7 @@ export class SectionAddComponent implements OnInit {
         }
       });
     }
-
   }
-
 }
 
 

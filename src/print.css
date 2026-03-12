@@ -1,0 +1,50 @@
+/* PRINT STYLES - NIM PRODUCTION */
+@media print {
+  /* HIDE UI ELEMENTS */
+  app-side-nav,
+  .dashboard-sidebar,
+  .navbar-header,
+  .breadcrumb-nav,
+  .action-buttons,
+  .stats-overview-row,
+  .premium-filter-section,
+  .premium-pagination-wrapper,
+  .modal-footer-premium,
+  .modal-close-premium,
+  button,
+  .icon-btn,
+  .no-print {
+    display: none !important;
+  }
+
+  /* SHOW ONLY CONTENT */
+  .dashboard-main-body {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+  }
+
+  body {
+    background: white !important;
+    font-size: 12pt;
+    color: black !important;
+  }
+
+  /* TARGETED TEMPLATES */
+  #detailed-receipt,
+  #thermal-receipt,
+  .printable-area {
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .glass-card, 
+  .premium-slip-card {
+    box-shadow: none !important;
+    border: 1px solid #eee !important;
+    break-inside: avoid;
+  }
+}

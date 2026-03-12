@@ -7,6 +7,7 @@ import { Fee } from '../../../Models/fee';
 import { AcademicMonth } from '../../../Models/academicmonth';
 import { CommonServices } from '../../../services/common.service';
 import { MonthlyPaymentService } from '../../../services/monthly-payment.service';
+import { SettingsService } from '../../../services/settings.service';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -47,6 +48,9 @@ export class MonthlyPaymentComponent implements OnInit {
 
   selectedPayment!: MonthlyPayment;
 
+  // School Info
+  schoolInfo: any = {};
+
   // Dropdown & Search state
   showFeesDropdown = false;
   showMonthsDropdown = false;
@@ -56,13 +60,21 @@ export class MonthlyPaymentComponent implements OnInit {
 
   constructor(
     private commonService: CommonServices,
-    private paymentService: MonthlyPaymentService
+    private paymentService: MonthlyPaymentService,
+    private settingsService: SettingsService
   ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.loadAll();
     this.loadPayments();
+    this.loadSchoolInfo();
+  }
+
+  loadSchoolInfo() {
+    this.settingsService.getSchoolInfo().subscribe(info => {
+      this.schoolInfo = info;
+    });
   }
 
   get todayDate(): string {
@@ -317,6 +329,13 @@ export class MonthlyPaymentComponent implements OnInit {
     this.feeSearchTerm = '';
     this.monthSearchTerm = '';
     this.form.reset();
+  }
+
+  printReceipt(payment: MonthlyPayment) {
+    this.selectedPayment = payment;
+    setTimeout(() => {
+      window.print();
+    }, 100);
   }
 
   // ----- Multi-select dropdown helpers -----

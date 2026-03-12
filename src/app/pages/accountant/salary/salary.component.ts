@@ -111,10 +111,17 @@ export class SalaryComponent implements OnInit {
     );
   }
 
+  onStaffSelect(): void {
+    const selectedStaff = this.staffList.find(s => s.staffId === Number(this.salary.staffId));
+    if (selectedStaff) {
+      this.salary.staffName = selectedStaff.staffName;
+    }
+  }
+
   /* ================= SAVE SALARY ================= */
   saveSalary(): void {
 
-    if (!this.salary.staffName || !this.salary.basicSalary) {
+    if (!this.salary.staffId || !this.salary.basicSalary) {
       Swal.fire('Validation Error', 'Staff & Basic Salary required', 'warning');
       return;
     }

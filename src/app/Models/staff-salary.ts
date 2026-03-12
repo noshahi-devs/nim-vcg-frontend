@@ -2,6 +2,7 @@ export class StaffSalary {
   // Per individual Staff's salary prototype
   staffSalaryId!: number;
   staffName?: string; // this proprty is for just Drop-down list; same as staffName of Staff class
+  staffId?: number | string; // UI property for proper dropdown validation
   basicSalary?: number;
   festivalBonus?: number;
   allowance?: number;

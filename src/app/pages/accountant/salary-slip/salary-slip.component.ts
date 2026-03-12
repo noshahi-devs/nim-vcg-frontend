@@ -5,6 +5,7 @@ import Swal from '../../../swal';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { StaffSalaryService } from '../../../services/staff-salary.service';
 import { StaffService } from '../../../services/staff.service';
+import { SettingsService } from '../../../services/settings.service';
 import { StaffSalary } from '../../../Models/staff-salary';
 import { Staff } from '../../../Models/staff';
 
@@ -73,18 +74,29 @@ export class SalarySlipComponent implements OnInit {
   // Selected slip for printing
   selectedSlip: SalaryRecord | null = null;
 
+  // School Info for reports
+  schoolInfo: any = {};
+
   // Loading state
   isLoading: boolean = false;
 
   constructor(
     private staffSalaryService: StaffSalaryService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private settingsService: SettingsService
   ) { }
 
   ngOnInit(): void {
     this.setCurrentMonth();
     this.loadStaffList();
     this.loadSalaryRecords();
+    this.loadSchoolInfo();
+  }
+
+  loadSchoolInfo(): void {
+    this.settingsService.getSchoolInfo().subscribe(info => {
+      this.schoolInfo = info;
+    });
   }
 
   /* ================= GETTERS FOR STATS ================= */
@@ -358,30 +370,14 @@ export class SalarySlipComponent implements OnInit {
   printDetailedReceipt(slip: SalaryRecord): void {
     this.selectedSlip = slip;
     setTimeout(() => {
-      const printContent = document.getElementById('detailed-receipt');
-      const originalContent = document.body.innerHTML;
-
-      if (printContent) {
-        document.body.innerHTML = printContent.innerHTML;
-        window.print();
-        document.body.innerHTML = originalContent;
-        window.location.reload();
-      }
+      window.print();
     }, 100);
   }
 
   printThermalReceipt(slip: SalaryRecord): void {
     this.selectedSlip = slip;
     setTimeout(() => {
-      const printContent = document.getElementById('thermal-receipt');
-      const originalContent = document.body.innerHTML;
-
-      if (printContent) {
-        document.body.innerHTML = printContent.innerHTML;
-        window.print();
-        document.body.innerHTML = originalContent;
-        window.location.reload();
-      }
+      window.print();
     }, 100);
   }
 

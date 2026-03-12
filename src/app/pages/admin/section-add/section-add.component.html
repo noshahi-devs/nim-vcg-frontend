@@ -14,7 +14,7 @@
         </div>
 
         <div class="card-body p-32">
-          <form #sectionForm="ngForm" (ngSubmit)="onSubmit(sectionForm)" novalidate class="premium-form">
+          <form [formGroup]="sectionForm" (ngSubmit)="onSubmit()" class="premium-form">
             <div class="row g-4">
               <!-- Select Class -->
               <div class="col-md-6">
@@ -23,13 +23,13 @@
                     <i class="ri-community-line me-2 text-primary-500"></i>Academic Class
                   </label>
                   <div class="input-wrapper-premium">
-                    <select class="form-select-premium" name="className" [(ngModel)]="newSection.className" required
-                      #classSelect="ngModel" [ngClass]="{ 'is-invalid': classSelect.invalid && classSelect.touched }">
+                    <select class="form-select-premium" formControlName="className"
+                      [ngClass]="{ 'is-invalid': sectionForm.get('className')?.invalid && sectionForm.get('className')?.touched }">
                       <option value="" disabled selected>Choose a Class</option>
                       <option *ngFor="let c of classes" [value]="c.standardName">{{ c.standardName }}</option>
                     </select>
                   </div>
-                  <div *ngIf="classSelect.invalid && classSelect.touched" class="error-feedback">
+                  <div *ngIf="sectionForm.get('className')?.invalid && sectionForm.get('className')?.touched" class="error-feedback">
                     Required: selection is missing
                   </div>
                 </div>
@@ -42,12 +42,11 @@
                     <i class="ri-hashtag me-2 text-primary-500"></i>Section Identifier
                   </label>
                   <div class="input-wrapper-premium">
-                    <input type="text" class="form-control-premium" name="sectionCode"
-                      [(ngModel)]="newSection.sectionCode" required #sectionCode="ngModel"
-                      [ngClass]="{ 'is-invalid': sectionCode.invalid && sectionCode.touched }"
+                    <input type="text" class="form-control-premium" formControlName="sectionCode"
+                      [ngClass]="{ 'is-invalid': sectionForm.get('sectionCode')?.invalid && sectionForm.get('sectionCode')?.touched }"
                       placeholder="e.g., A, B, C" />
                   </div>
-                  <div *ngIf="sectionCode.invalid && sectionCode.touched" class="error-feedback">
+                  <div *ngIf="sectionForm.get('sectionCode')?.invalid && sectionForm.get('sectionCode')?.touched" class="error-feedback">
                     Required: enter a code
                   </div>
                 </div>
@@ -60,13 +59,13 @@
                     <i class="ri-user-star-line me-2 text-primary-500"></i>Assigned Class Teacher
                   </label>
                   <div class="input-wrapper-premium">
-                    <select class="form-select-premium" name="staffId" [(ngModel)]="newSection.staffId" required
-                      #teacher="ngModel" [ngClass]="{ 'is-invalid': teacher.invalid && teacher.touched }">
-                      <option [value]="undefined" disabled selected>Assign a Staff Member</option>
+                    <select class="form-select-premium" formControlName="staffId"
+                      [ngClass]="{ 'is-invalid': sectionForm.get('staffId')?.invalid && sectionForm.get('staffId')?.touched }">
+                      <option [ngValue]="null" disabled selected>Assign a Staff Member</option>
                       <option *ngFor="let t of teachers" [value]="t.staffId">{{ t.staffName }}</option>
                     </select>
                   </div>
-                  <div *ngIf="teacher.invalid && teacher.touched" class="error-feedback">
+                  <div *ngIf="sectionForm.get('staffId')?.invalid && sectionForm.get('staffId')?.touched" class="error-feedback">
                     Required: assign a teacher
                   </div>
                 </div>
@@ -79,11 +78,11 @@
                     <i class="ri-door-open-line me-2 text-primary-500"></i>Room Allocation
                   </label>
                   <div class="input-wrapper-premium">
-                    <input type="text" class="form-control-premium" name="roomNo" [(ngModel)]="newSection.roomNo"
-                      required #roomNo="ngModel" [ngClass]="{ 'is-invalid': roomNo.invalid && roomNo.touched }"
+                    <input type="text" class="form-control-premium" formControlName="roomNo"
+                      [ngClass]="{ 'is-invalid': sectionForm.get('roomNo')?.invalid && sectionForm.get('roomNo')?.touched }"
                       placeholder="e.g., R-101" />
                   </div>
-                  <div *ngIf="roomNo.invalid && roomNo.touched" class="error-feedback">
+                  <div *ngIf="sectionForm.get('roomNo')?.invalid && sectionForm.get('roomNo')?.touched" class="error-feedback">
                     Required: specify room
                   </div>
                 </div>
@@ -96,12 +95,12 @@
                     <i class="ri-team-line me-2 text-primary-500"></i>Student Capacity
                   </label>
                   <div class="input-wrapper-premium">
-                    <input type="number" class="form-control-premium" name="capacity" [(ngModel)]="newSection.capacity"
-                      required #capacity="ngModel" [ngClass]="{ 'is-invalid': capacity.invalid && capacity.touched }"
+                    <input type="number" class="form-control-premium" formControlName="capacity"
+                      [ngClass]="{ 'is-invalid': sectionForm.get('capacity')?.invalid && sectionForm.get('capacity')?.touched }"
                       placeholder="Max enrollment" />
                   </div>
-                  <div *ngIf="capacity.invalid && capacity.touched" class="error-feedback">
-                    Required: enter capacity
+                  <div *ngIf="sectionForm.get('capacity')?.invalid && sectionForm.get('capacity')?.touched" class="error-feedback">
+                    Required: enter valid capacity
                   </div>
                 </div>
               </div>

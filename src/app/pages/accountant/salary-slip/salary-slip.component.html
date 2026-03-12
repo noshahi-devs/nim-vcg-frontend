@@ -162,8 +162,10 @@
 <div id="detailed-receipt" style="display: none;" *ngIf="selectedSlip">
   <div style="max-width: 800px; margin: 0 auto; padding: 40px; font-family: Arial, sans-serif;">
     <div style="text-align: center; border-bottom: 3px solid #800020; padding-bottom: 20px; margin-bottom: 30px;">
-      <h1 style="color: #800020; margin: 0 0 10px 0;">Noshahi Institute Manager</h1>
-      <p style="margin: 0; color: #666;">Salary Payment Receipt</p>
+      <h1 style="color: #800020; margin: 0 0 10px 0;">{{ schoolInfo.instituteName || 'Noshahi Institute Manager' }}</h1>
+      <p style="margin: 0; color: #666;">{{ schoolInfo.instituteAddress }}</p>
+      <p style="margin: 0; color: #666;">Contact: {{ schoolInfo.institutePhone }} | {{ schoolInfo.instituteEmail }}</p>
+      <p style="margin: 10px 0 0 0; font-weight: bold; color: #800020; text-transform: uppercase;">Salary Payment Receipt</p>
     </div>
     <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
       <h3 style="margin: 0 0 15px 0;">Staff: {{ selectedSlip.staffName }}</h3>
@@ -204,7 +206,7 @@
 <div id="thermal-receipt" style="display: none;" *ngIf="selectedSlip">
   <div style="width: 300px; margin: 0 auto; padding: 10px; font-family: 'Courier New', monospace; font-size: 12px;">
     <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 10px;">
-      <h2 style="margin: 0; font-size: 16px;">SCHOOL MANAGEMENT</h2>
+      <h2 style="margin: 0; font-size: 16px;">{{ (schoolInfo.instituteName || 'SCHOOL MANAGEMENT').toUpperCase() }}</h2>
       <p style="margin: 5px 0 0 0; font-size: 10px;">SALARY RECEIPT</p>
     </div>
     <p style="margin: 2px 0;">ID: {{ selectedSlip.staffId }}</p>

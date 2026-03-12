@@ -48,9 +48,9 @@
         <!-- STAFF DROPDOWN -->
         <div class="col-md-6">
           <label class="form-label-premium">Staff Name *</label>
-          <select class="form-select-premium" [(ngModel)]="salary.staffName">
-            <option value="" disabled selected>Select Staff</option>
-            <option *ngFor="let staff of staffList" [value]="staff.staffName">
+          <select class="form-select-premium" [(ngModel)]="$any(salary).staffId" (change)="onStaffSelect()">
+            <option [value]="undefined" disabled selected>Select Staff</option>
+            <option *ngFor="let staff of staffList" [value]="staff.staffId">
               {{ staff.staffName }}
             </option>
           </select>

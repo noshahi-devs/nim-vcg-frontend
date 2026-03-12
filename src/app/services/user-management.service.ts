@@ -9,7 +9,6 @@ export interface User {
     email: string;
     phoneNumber?: string;
     role?: string[];
-    campus?: string;
     status?: string;
     createdOn?: string;
 }
@@ -54,5 +53,9 @@ export class UserManagementService {
 
     getAllRoles(): Observable<any[]> {
         return this.http.get<any[]>(`${environment.apiBaseUrl}/GetRoles`, this.getAuthHeaders());
+    }
+
+    toggleUserStatus(userId: string, status: string): Observable<any> {
+        return this.http.put(`${this.apiUrl}/toggle-status/${userId}`, { status }, this.getAuthHeaders());
     }
 }
