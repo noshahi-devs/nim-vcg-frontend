@@ -6,6 +6,7 @@ import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { Designation } from '../../../Models/staff';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { AttendanceService } from '../../../services/attendance.service';
 
 declare var $: any;
 
@@ -31,188 +32,62 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
   staffData: any = null;
   loading: boolean = false;
   activeTab: 'overview' | 'attendance' | 'performance' = 'overview';
-  private readonly STORAGE_KEY = 'staffList';
+  defaultAvatar = 'assets/images/user-grid/user-grid-img2.png';
 
-  // Sample staff data - replace with actual service call
-  staffList = this.loadStaffFromStorage() || [
-    {
-      id: 1,
-      name: 'Ayesha Khan',
-      cnic: '35202-1234567-8',
-      gender: 'Female',
-      dob: '1995-08-15',
-      phone: '0312-1234567',
-      email: 'teacher@gmail.com',
-      qualification: 'MBA',
-      address: 'Lahore, Pakistan',
-      joiningDate: '2021-02-12',
-      profile: 'assets/images/user-grid/user-grid-img2.png',
-      status: 'Active',
-      bg: 'assets/images/user-grid/user-grid-bg2.png',
-      role: 'Teacher',
-      experience: '2 years',
-
-      attendance: {
-        percentage: 92,
-        presentDays: 21,
-        absentDays: 2,
-        lateDays: 1,
-        totalDays: 24,
-        history: [
-          { month: 'Jan', rate: 95 },
-          { month: 'Feb', rate: 92 }
-        ]
-      },
-      performance: {
-        rating: 4.8,
-        tasksCompleted: 45,
-        totalTasks: 50,
-        studentFeedback: 'Excellent teaching style and very punctual.',
-        skills: ['Curriculum Planning', 'Classroom Management', 'Student Counseling']
-      }
-    },
-    {
-      id: 2,
-      name: 'Bilal Ahmad',
-      cnic: '35201-7654321-9',
-      gender: 'Male',
-      dob: '1990-03-12',
-      phone: '0321-9876543',
-      email: 'bilal.ahmad@noshahi.edu.pk',
-      qualification: 'B.Com',
-      address: 'Faisalabad, Pakistan',
-      joiningDate: '2019-06-01',
-      profile: 'assets/images/user-grid/user-grid-img3.png',
-      status: 'Active',
-      bg: 'assets/images/user-grid/user-grid-bg3.png',
-      role: 'Principal',
-      experience: '2 years',
-      attendance: {
-        percentage: 98,
-        presentDays: 23,
-        absentDays: 1,
-        lateDays: 0,
-        totalDays: 24,
-        history: [
-          { month: 'Jan', rate: 97 },
-          { month: 'Feb', rate: 98 }
-        ]
-      },
-      performance: {
-        rating: 4.9,
-        tasksCompleted: 58,
-        totalTasks: 60,
-        studentFeedback: 'Great leadership and very supportive.',
-        skills: ['Leadership', 'Strategic Planning', 'Administration']
-      }
-    },
-    {
-      id: 3,
-      name: 'Hamza Tariq',
-      cnic: '35203-2222333-4',
-      gender: 'Male',
-      dob: '1997-01-10',
-      phone: '0301-2223344',
-      email: 'hamza.tariq@noshahi.edu.pk',
-      qualification: 'BS IT',
-      address: 'Multan, Pakistan',
-      joiningDate: '2020-09-10',
-      profile: 'assets/images/user-grid/user-grid-img4.png',
-      status: 'active',
-      bg: 'assets/images/user-grid/user-grid-bg4.png',
-      role: 'Accountant',
-      experience: '2 years',
-      attendance: {
-        percentage: 95,
-        presentDays: 22,
-        absentDays: 1,
-        lateDays: 1,
-        totalDays: 24,
-        history: [
-          { month: 'Jan', rate: 94 },
-          { month: 'Feb', rate: 95 }
-        ]
-      },
-      performance: {
-        rating: 4.7,
-        tasksCompleted: 82,
-        totalTasks: 85,
-        studentFeedback: 'Very meticulous with accounts and reports.',
-        skills: ['Financial Accounting', 'Auditing', 'Excel Expert']
-      }
-    }
-  ];
+  attendanceStats = {
+    percentage: 0,
+    presentDays: 0,
+    absentDays: 0,
+    lateDays: 0,
+    totalDays: 0,
+    history: [] as any[]
+  };
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     public authService: AuthService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private attendanceService: AttendanceService
   ) { }
 
   get currentUserEmail(): string {
     return this.authService.userValue?.email || 'N/A';
   }
 
-
   ngOnInit() {
-    // Get staff ID from route
     this.route.params.subscribe(params => {
       const idParam = params['id'];
       if (idParam) {
         this.staffId = +idParam;
         this.loadStaffData();
       } else {
-        // Handle "My Profile" case: no ID provided
-        this.loading = true;
-        const currentUser = this.authService.userValue;
-        if (currentUser && currentUser.email) {
-          // Fetch all staff to find the one matching the current user's email
-          this.staffService.getAllStaffs().subscribe({
-            next: (staffs) => {
-              console.log('Profile Lookup - Current User Email:', currentUser.email);
-              console.log('Profile Lookup - All Staff Emails:', staffs.map(s => s.email));
-
-              const currentStaff = staffs.find(s =>
-                s.email?.trim().toLowerCase() === currentUser.email?.trim().toLowerCase()
-              );
-
-              if (currentStaff) {
-                console.log('Profile Lookup - Found Staff ID:', currentStaff.staffId);
-                this.staffId = currentStaff.staffId;
-                this.loadStaffData();
-              } else {
-                console.warn('Profile Lookup - No staff record found for email:', currentUser.email);
-                this.loading = false;
-                this.loadStaffFromBackupByEmail(currentUser.email);
-              }
-            },
-
-            error: (err) => {
-              console.error('Error fetching staff list for profile lookup:', err);
-              this.loadStaffFromBackupByEmail(currentUser.email);
-              this.loading = false;
-            }
-          });
-        } else {
-          this.loading = false;
-        }
+        this.loadMyProfile();
       }
     });
   }
 
-  private loadStaffFromBackupByEmail(email: string) {
-    const currentStaff = this.staffList.find(s => s.email === email);
-    if (currentStaff) {
-      this.staffData = currentStaff;
+  loadMyProfile() {
+    this.loading = true;
+    const currentUser = this.authService.userValue;
+    if (currentUser?.email) {
+      this.staffService.getAllStaffs().subscribe({
+        next: (staffs) => {
+          const currentStaff = staffs.find(s =>
+            s.email?.trim().toLowerCase() === currentUser.email?.trim().toLowerCase()
+          );
+          if (currentStaff) {
+            this.staffId = currentStaff.staffId;
+            this.loadStaffData();
+          } else {
+            this.loading = false;
+          }
+        },
+        error: () => this.loading = false
+      });
+    } else {
+      this.loading = false;
     }
-  }
-
-
-  // Load staff data from localStorage
-  loadStaffFromStorage(): any[] | null {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : null;
   }
 
   loadStaffData() {
@@ -220,130 +95,127 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
     this.staffService.getStaffById(this.staffId).subscribe({
       next: (staff: any) => {
         this.staffData = this.mapStaffToUi(staff);
+        this.loadAttendanceData();
         this.loading = false;
         this.checkAuthorization();
       },
       error: (err) => {
-        console.error('Error loading staff from service:', err);
-        // Fallback to local storage or mock if service fails
-        this.loadStaffFromBackup();
+        console.error('Error loading staff:', err);
         this.loading = false;
       }
+    });
+  }
+
+  loadAttendanceData() {
+    const now = new Date();
+    const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const endDate = now.toISOString();
+
+    this.attendanceService.getStaffAttendanceReport(this.staffId, startDate, endDate).subscribe({
+      next: (report: any[]) => {
+        if (!report || report.length === 0) return;
+
+        const total = report.length;
+        const present = report.filter(r => r.isPresent || r.IsPresent).length;
+        const absent = report.filter(r => !(r.isPresent || r.IsPresent)).length;
+        
+        this.attendanceStats = {
+          totalDays: total,
+          presentDays: present,
+          absentDays: absent,
+          lateDays: 0, // Not explicitly tracked in simple boolean report
+          percentage: total > 0 ? Math.round((present / total) * 100) : 0,
+          history: [] // Could be populated if needed
+        };
+
+        if (this.staffData) {
+          this.staffData.attendance = this.attendanceStats;
+        }
+      },
+      error: (err) => console.error('Error loading attendance:', err)
     });
   }
 
   private mapStaffToUi(staff: any) {
     if (!staff) return null;
 
-    // Use default values for missing data to maintain UI quality
     return {
       id: staff.staffId,
-      name: staff.staffName,
-      cnic: staff.cnic || 'N/A', // Assuming CNIC might be missing in backend Staff model
+      name: staff.staffName || 'N/A',
+      cnic: staff.cnic || staff.CNIC || 'N/A',
       gender: this.getGenderName(staff.gender),
-      dob: staff.dob ? new Date(staff.dob).toLocaleDateString() : 'N/A',
+      dob: this.formatDate(staff.dob),
       phone: staff.contactNumber1 || 'N/A',
       email: staff.email || 'N/A',
       qualification: staff.qualifications || 'N/A',
       address: staff.permanentAddress || staff.temporaryAddress || 'N/A',
-      joiningDate: staff.joiningDate ? new Date(staff.joiningDate).toLocaleDateString() : 'N/A',
-      profile: staff.imagePath || 'assets/images/user-grid/user-grid-img2.png',
+      joiningDate: this.formatDate(staff.joiningDate),
+      profile: staff.imagePath || this.defaultAvatar,
       status: staff.status || 'Active',
       role: this.getDesignationName(staff.designation),
-      experience: staff.staffExperiences?.length > 0 ? `${staff.staffExperiences.length} entries` : 'No data',
-      // Keep enhanced mock data for attendance/performance as per user requirement
-      attendance: staff.attendance || {
-        percentage: 92,
-        presentDays: 21,
-        absentDays: 2,
-        lateDays: 1,
-        totalDays: 24,
-        history: [
-          { month: 'Jan', rate: 95 },
-          { month: 'Feb', rate: 92 }
-        ]
-      },
-      performance: staff.performance || {
-        rating: 4.8,
-        tasksCompleted: 45,
-        totalTasks: 50,
-        studentFeedback: 'Excellent teaching style and very punctual.',
-        skills: ['Curriculum Planning', 'Classroom Management', 'Student Counseling']
+      experience: staff.experience || staff.Experience || (staff.staffExperiences?.length ? `${staff.staffExperiences.length} History Entries` : 'N/A'),
+      attendance: this.attendanceStats,
+      performance: {
+        rating: null,
+        tasksCompleted: null,
+        totalTasks: null,
+        studentFeedback: null,
+        skills: []
       }
     };
   }
 
+  private formatDate(value: any): string | null {
+    if (!value) return null;
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? null : date.toLocaleDateString();
+  }
+
   private getGenderName(gender: any): string {
     if (gender === null || gender === undefined) return 'N/A';
-    const Genders = ['Male', 'Female', 'Other'];
-    return Genders[gender] || gender;
+    if (typeof gender === 'string') return gender;
+    const genders = ['Male', 'Female', 'Other'];
+    return genders[gender] || 'N/A';
   }
 
   private getDesignationName(designation: any): string {
-    if (designation === null || designation === undefined) return 'N/A';
     if (typeof designation === 'number') {
-      return Designation[designation] || 'N/A';
+      return Designation[designation] || 'Staff Member';
     }
-    return designation;
+    return designation || 'Staff Member';
+  }
+
+  getStatusClass(status: string): string {
+    const s = (status || '').toLowerCase();
+    if (s === 'active') return 'active';
+    if (s === 'inactive') return 'inactive';
+    return 'neutral';
   }
 
   private checkAuthorization() {
     const currentUser = this.authService.userValue;
     const isPrivileged = this.authService.hasAnyRole(['Admin', 'Principal']);
-
-    if (this.staffData && !isPrivileged) {
-      if (currentUser && this.staffData.email !== currentUser.email) {
-        console.warn('Unauthorized access attempt to staff profile:', this.staffId);
-        this.router.navigate(['/unauthorized']);
-      }
+    if (this.staffData && !isPrivileged && currentUser && this.staffData.email !== currentUser.email) {
+      this.router.navigate(['/unauthorized']);
     }
   }
-
-  private loadStaffFromBackup() {
-    let loadedList = this.loadStaffFromStorage();
-    if (loadedList) {
-      this.staffData = loadedList.find(staff => +staff.id === +this.staffId);
-    }
-  }
-
 
   goBack() {
-    // Navigate back to staff list
     this.router.navigate(['/staff-list']);
   }
 
   ngAfterViewInit() {
-
-    $("#imageUpload").change(function () {
-      this.readURL(this);
-    });
-
-    // ================== Password Show Hide Js Start ==========
-    // Call the function
     this.initializePasswordToggle('.toggle-password');
   }
-  initializePasswordToggle(toggleSelector) {
-    $(toggleSelector).on('click', function () {
+
+  initializePasswordToggle(toggleSelector: string) {
+    $(toggleSelector).on('click', function (this: any) {
       $(this).toggleClass("ri-eye-off-line");
-      var input = $($(this).attr("data-toggle"));
-      if (input.attr("type") === "password") {
-        input.attr("type", "text");
-      } else {
-        input.attr("type", "password");
-      }
+      const input = $($(this).attr("data-toggle"));
+      input.attr("type", input.attr("type") === "password" ? "text" : "password");
     });
   }
-  readURL(input) {
-    if (input.files && input.files[0]) {
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
-        $('#imagePreview').hide();
-        $('#imagePreview').fadeIn(650);
-      }
-      reader.readAsDataURL(input.files[0]);
-    }
-  }
+
   editStaff(id: number) {
     this.router.navigate(['/staff-edit-profile', id]);
   }

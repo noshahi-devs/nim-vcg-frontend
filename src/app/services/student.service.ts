@@ -21,8 +21,12 @@ export class StudentService {
     };
   }
 
-  public GetStudents(): Observable<Student[]> {
-    return this.http.get<Student[]>(this.apiUrl, this.getAuthHeaders());
+  public GetStudents(academicYearId?: number | null): Observable<Student[]> {
+    let url = this.apiUrl;
+    if (academicYearId) {
+      url += `?academicYearId=${academicYearId}`;
+    }
+    return this.http.get<Student[]>(url, this.getAuthHeaders());
   }
 
   public GetStudent(id: number): Observable<Student> {
@@ -39,6 +43,10 @@ export class StudentService {
 
   public DeleteStudent(id: any): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`, this.getAuthHeaders());
+  }
+
+  public bulkPromote(request: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/bulk-promote`, request, this.getAuthHeaders());
   }
 
   public CheckEmail(email: string): Observable<{ exists: boolean }> {

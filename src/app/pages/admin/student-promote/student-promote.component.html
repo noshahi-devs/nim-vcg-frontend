@@ -200,6 +200,14 @@
           </select>
         </div>
 
+        <div class="control-group">
+          <label>Target Academic Year</label>
+          <select class="action-select" [(ngModel)]="nextAcademicYearId">
+            <option [value]="0">Select Destination Year</option>
+            <option *ngFor="let y of academicYears" [value]="y.academicYearId">{{ y.name }}</option>
+          </select>
+        </div>
+
         <div class="control-group d-flex align-items-end">
           <button class="btn-promote" (click)="promoteSelected()"
             [disabled]="selectedStudents.length === 0 || loading || nextClassId === 0 || nextSectionId === 0">

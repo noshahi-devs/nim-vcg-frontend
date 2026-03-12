@@ -13,6 +13,7 @@ export class Staff {
   motherName?: string;
   temporaryAddress?: string;
   permanentAddress?: string;
+  cnic?: string;
   imagePath: string = '';
   imageUpload: ImageUpload = new ImageUpload();
   contactNumber1?: string;

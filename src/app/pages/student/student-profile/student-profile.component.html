@@ -1,208 +1,297 @@
 <div class="dashboard-main-body">
-    <app-breadcrumb [title]="'My Profile'" [main-title]="'Dashboard'"></app-breadcrumb>
+  <app-breadcrumb [title]="'My Profile'" [main-title]="'Dashboard'"></app-breadcrumb>
 
-    <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="height: 400px;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="alert alert-danger animate-fade-in" role="alert">
+    <iconify-icon icon="solar:danger-bold-duotone" class="me-2"></iconify-icon>
+    {{ error }}
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="!loading && !error && studentData" class="profile-layout animate-fade-in">
+    
+    <!-- Header Banner -->
+    <div class="profile-header-card shadow-sm">
+      <div class="header-banner"></div>
+      <div class="header-main-content">
+        <div class="avatar-container">
+          <img [src]="getStudentImage()" alt="Student" class="avatar-img shadow">
+          <div class="initials-placeholder" *ngIf="!studentData?.imageUpload?.imageData">
+            {{ getInitials(studentData?.studentName) }}
+          </div>
         </div>
+        
+        <div class="info-content">
+          <div class="name-row">
+            <h1 class="student-name">{{ studentData?.studentName }}</h1>
+            <span class="status-badge" [class.active]="studentData?.status === 'Active'">
+              {{ studentData?.status || 'Active' }}
+            </span>
+          </div>
+          
+          <div class="meta-row">
+            <div class="meta-item">
+              <iconify-icon icon="solar:userId-bold-duotone"></iconify-icon>
+              <span>ID: {{ studentData?.studentId }}</span>
+            </div>
+            <div class="meta-item">
+              <iconify-icon icon="solar:diploma-bold-duotone"></iconify-icon>
+              <span>{{ studentData?.standard?.standardName }} ({{ studentData?.section || 'N/A' }})</span>
+            </div>
+            <div class="meta-item" *ngIf="studentData?.admissionNo">
+              <iconify-icon icon="solar:ticket-bold-duotone"></iconify-icon>
+              <span>Adm: {{ studentData?.admissionNo }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-navigation">
+        <button class="nav-tab" [class.active]="activeTab === 'overview'" (click)="activeTab = 'overview'">
+          <iconify-icon icon="solar:user-circle-bold-duotone"></iconify-icon>
+          Overview
+        </button>
+        <button class="nav-tab" [class.active]="activeTab === 'academic'" (click)="activeTab = 'academic'">
+          <iconify-icon icon="solar:notebook-bold-duotone"></iconify-icon>
+          Academic Progress
+        </button>
+        <button class="nav-tab" [class.active]="activeTab === 'attendance'" (click)="activeTab = 'attendance'">
+          <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon>
+          Attendance
+        </button>
+        <button class="nav-tab" [class.active]="activeTab === 'finance'" (click)="activeTab = 'finance'">
+          <iconify-icon icon="solar:card-2-bold-duotone"></iconify-icon>
+          Finance
+        </button>
+      </div>
     </div>
 
-    <div *ngIf="error" class="alert alert-danger" role="alert">
-        {{ error }}
-    </div>
-
-    <div *ngIf="!loading && !error && studentData" class="profile-container animate-fade-in">
-        <!-- Premium Header Area -->
-        <div class="profile-header-banner">
-            <div class="banner-overlay"></div>
-            <div class="header-content p-4 d-flex align-items-end gap-4 flex-wrap">
-                <div class="profile-avatar-wrapper shadow-lg">
-                    <img [src]="getStudentImage()" alt="Student" class="profile-img">
-                    <div class="initials-fallback" *ngIf="!studentData?.imageUpload?.imageData">
-                        {{ getInitials(studentData?.studentName) }}
-                    </div>
+    <!-- Tab Contents -->
+    <div class="tab-content-area mt-4">
+      
+      <!-- Overview Tab -->
+      <div *ngIf="activeTab === 'overview'" class="tab-pane-animate">
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <div class="info-card">
+              <h5 class="card-title">Personal Details</h5>
+              <div class="detail-list">
+                <div class="detail-item">
+                  <span class="label">Gender</span>
+                  <span class="value">{{ studentData?.studentGender || 'N/A' }}</span>
                 </div>
-                <div class="profile-main-info flex-grow-1">
-                    <div class="d-flex align-items-center gap-3 mb-2">
-                        <h1 class="text-white mb-0 fw-bold">{{ studentData?.studentName }}</h1>
-                        <span class="badge status-pill active-status">Active Student</span>
-                    </div>
-                    <div class="meta-info d-flex gap-4 flex-wrap">
-                        <span class="meta-item">
-                            <iconify-icon icon="solar:diploma-bold-duotone"></iconify-icon>
-                            {{ studentData?.standard?.standardName || 'Class N/A' }} ({{ studentData?.section || 'Sec
-                            N/A' }})
-                        </span>
-                        <span class="meta-item">
-                            <iconify-icon icon="solar:ticket-bold-duotone"></iconify-icon>
-                            Adm No: {{ studentData?.admissionNo }}
-                        </span>
-                        <span class="meta-item">
-                            <iconify-icon icon="solar:user-id-bold-duotone"></iconify-icon>
-                            Roll No: {{ studentData?.studentId }}
-                        </span>
-                    </div>
+                <div class="detail-item">
+                  <span class="label">Date of Birth</span>
+                  <span class="value">{{ (studentData?.studentDOB | date:'mediumDate') || 'N/A' }}</span>
                 </div>
+                <div class="detail-item">
+                  <span class="label">Blood Group</span>
+                  <span class="value">{{ studentData?.studentBloodGroup || 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Religion</span>
+                  <span class="value">{{ studentData?.studentReligion || 'N/A' }}</span>
+                </div>
+              </div>
             </div>
+          </div>
+          
+          <div class="col-lg-4">
+            <div class="info-card">
+              <h5 class="card-title">Family Info</h5>
+              <div class="detail-list">
+                <div class="detail-item">
+                  <span class="label">Father's Name</span>
+                  <span class="value">{{ studentData?.fatherName || 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Mother's Name</span>
+                  <span class="value">{{ studentData?.motherName || 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Guardian</span>
+                  <span class="value">{{ studentData?.localGuardianName || 'N/A' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="info-card">
+              <h5 class="card-title">Contact & Addresses</h5>
+              <div class="contact-box">
+                <div class="c-item">
+                  <iconify-icon icon="solar:phone-bold" class="text-success"></iconify-icon>
+                  <span>{{ studentData?.studentContactNumber1 || 'N/A' }}</span>
+                </div>
+                <div class="c-item" *ngIf="studentData?.studentEmail">
+                  <iconify-icon icon="solar:letter-bold" class="text-primary"></iconify-icon>
+                  <span>{{ studentData?.studentEmail }}</span>
+                </div>
+              </div>
+              <hr>
+              <div class="address-item mb-2">
+                <span class="addr-label">Current Address</span>
+                <p class="addr-val">{{ studentData?.temporaryAddress || 'N/A' }}</p>
+              </div>
+              <div class="address-item">
+                <span class="addr-label">Permanent Address</span>
+                <p class="addr-val">{{ studentData?.permanentAddress || 'N/A' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Academic Progress Tab -->
+      <div *ngIf="activeTab === 'academic'" class="tab-pane-animate">
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="info-card">
+              <h5 class="card-title d-flex justify-content-between">
+                <span>Recent Performance</span>
+                <span class="badge bg-primary-subtle text-primary">Last 5 Exams</span>
+              </h5>
+              <div class="table-responsive mt-3" *ngIf="stats?.recentMarks?.length; else noMarks">
+                <table class="table custom-table">
+                  <thead>
+                    <tr>
+                      <th>Subject</th>
+                      <th>Score</th>
+                      <th>Grade</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let mark of stats?.recentMarks">
+                      <td class="fw-medium">{{ mark.subject }}</td>
+                      <td>{{ mark.score }} / {{ mark.total }}</td>
+                      <td><span class="grade-badge">{{ mark.grade }}</span></td>
+                      <td>
+                        <span class="status-p" [class.pass]="mark.status === 'Pass'" [class.fail]="mark.status === 'Fail'">
+                          {{ mark.status }}
+                        </span>
+                      </td>
+                      <td class="text-muted small">{{ mark.date | date:'shortDate' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <ng-template #noMarks>
+                <div class="empty-state">
+                  <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
+                  <p>No recent exam results found.</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="info-card highlight-card shadow-sm">
+              <h5 class="card-title">Next Scheduled Exam</h5>
+              <div *ngIf="stats?.nextExam; else noExam" class="next-exam-box">
+                <h4 class="subject-name text-primary">{{ stats?.nextExam?.subject }}</h4>
+                <div class="exam-meta">
+                  <div class="meta">
+                    <iconify-icon icon="solar:calendar-bold"></iconify-icon>
+                    {{ stats?.nextExam?.date | date:'mediumDate' }}
+                  </div>
+                  <div class="meta">
+                    <iconify-icon icon="solar:clock-circle-bold"></iconify-icon>
+                    {{ stats?.nextExam?.startTime }} - {{ stats?.nextExam?.endTime }}
+                  </div>
+                </div>
+              </div>
+              <ng-template #noExam>
+                <div class="empty-state compact">
+                  <iconify-icon icon="solar:calendar-add-bold-duotone"></iconify-icon>
+                  <p>No upcoming exams scheduled.</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendance Tab -->
+      <div *ngIf="activeTab === 'attendance'" class="tab-pane-animate">
+        <div class="row g-4 mb-4">
+          <div class="col-md-4">
+            <div class="stat-card rate-card">
+              <div class="stat-icon"><iconify-icon icon="solar:chart-2-bold-duotone"></iconify-icon></div>
+              <div class="stat-content">
+                <span class="stat-label">Presence Rate</span>
+                <h2 class="stat-value">{{ stats?.attendancePercentage || 0 }}%</h2>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="row g-4 mt-1">
-            <!-- Left Column: Personal Highlights -->
-            <div class="col-lg-4">
-                <div class="p-card sticky-sidebar">
-                    <div class="card-section">
-                        <h5 class="section-title">
-                            <iconify-icon icon="solar:user-circle-bold-duotone" class="text-primary"></iconify-icon>
-                            Quick Overview
-                        </h5>
-                        <div class="overview-list">
-                            <div class="overview-item">
-                                <span class="label">Gender</span>
-                                <span class="value">{{ studentData?.studentGender || 'N/A' }}</span>
-                            </div>
-                            <div class="overview-item">
-                                <span class="label">Blood Group</span>
-                                <span class="value">{{ studentData?.studentBloodGroup || 'N/A' }}</span>
-                            </div>
-                            <div class="overview-item">
-                                <span class="label">Date of Birth</span>
-                                <span class="value">{{ studentData?.studentDOB | date:'mediumDate' }}</span>
-                            </div>
-                            <div class="overview-item">
-                                <span class="label">Religion</span>
-                                <span class="value">{{ studentData?.studentReligion || 'N/A' }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card-section mt-4">
-                        <h5 class="section-title">
-                            <iconify-icon icon="solar:phone-bold-duotone" class="text-success"></iconify-icon>
-                            Contact Info
-                        </h5>
-                        <div class="contact-links">
-                            <a [href]="'tel:' + studentData?.studentContactNumber1" class="contact-link">
-                                <div class="link-icon bg-success-subtle text-success">
-                                    <iconify-icon icon="solar:phone-calling-bold"></iconify-icon>
-                                </div>
-                                <div class="link-text">
-                                    <span class="caption">Primary Phone</span>
-                                    <span class="text">{{ studentData?.studentContactNumber1 || 'N/A' }}</span>
-                                </div>
-                            </a>
-                            <a [href]="'mailto:' + studentData?.studentEmail" class="contact-link mt-3">
-                                <div class="link-icon bg-info-subtle text-info">
-                                    <iconify-icon icon="solar:letter-bold"></iconify-icon>
-                                </div>
-                                <div class="link-text">
-                                    <span class="caption">Email Address</span>
-                                    <span class="text">{{ studentData?.studentEmail || 'N/A' }}</span>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+        <div class="info-card">
+          <h5 class="card-title">Attendance History (Last 30 Days)</h5>
+          <div class="attendance-grid mt-3" *ngIf="attendanceHistory.length; else noAttendance">
+            <div class="att-day" *ngFor="let day of attendanceHistory" 
+                 [class.present]="day.isPresent" 
+                 [title]="(day.date | date:'mediumDate') + ': ' + (day.isPresent ? 'Present' : 'Absent')">
+              <span class="day-num">{{ day.date | date:'d' }}</span>
+              <span class="status-dot"></span>
             </div>
-
-            <!-- Right Column: Detailed Sections -->
-            <div class="col-lg-8">
-                <!-- Academic Details -->
-                <div class="p-card mb-4 highlight-card-blue">
-                    <h5 class="section-title mb-4 border-0">
-                        <iconify-icon icon="solar:notebook-bold-duotone"></iconify-icon>
-                        Academic Status
-                    </h5>
-                    <div class="row row-cols-1 row-cols-md-2 g-4">
-                        <div class="col">
-                            <div class="p-info-tile">
-                                <span class="t-label">Current Standard</span>
-                                <span class="t-value">{{ studentData?.standard?.standardName || 'N/A' }}</span>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="p-info-tile">
-                                <span class="t-label">Section</span>
-                                <span class="t-value">{{ studentData?.section || 'Not Assigned' }}</span>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="p-info-tile">
-                                <span class="t-label">Admission Number</span>
-                                <span class="t-value">#{{ studentData?.admissionNo }}</span>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="p-info-tile">
-                                <span class="t-label">Enrollment Number</span>
-                                <span class="t-value">{{ studentData?.enrollmentNo || 'N/A' }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Guardian Details -->
-                <div class="p-card mb-4">
-                    <h5 class="section-title mb-4">
-                        <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"
-                            class="text-purple"></iconify-icon>
-                        Guardian & Family
-                    </h5>
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="guardian-item">
-                                <iconify-icon icon="solar:user-bold" class="item-icon"></iconify-icon>
-                                <div class="item-content">
-                                    <span class="item-label">Father's Name</span>
-                                    <span class="item-value">{{ studentData?.fatherName || 'N/A' }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="guardian-item">
-                                <iconify-icon icon="solar:card-id-bold" class="item-icon"></iconify-icon>
-                                <div class="item-content">
-                                    <span class="item-label">Father's NID</span>
-                                    <span class="item-value">{{ studentData?.fatherNID || 'N/A' }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="guardian-item">
-                                <iconify-icon icon="solar:user-speak-bold" class="item-icon"></iconify-icon>
-                                <div class="item-content">
-                                    <span class="item-label">Mother's Name</span>
-                                    <span class="item-value">{{ studentData?.motherName || 'N/A' }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="guardian-item">
-                                <iconify-icon icon="solar:shield-user-bold" class="item-icon"></iconify-icon>
-                                <div class="item-content">
-                                    <span class="item-label">Local Guardian</span>
-                                    <span class="item-value">{{ studentData?.localGuardianName || 'N/A' }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Address Section -->
-                <div class="p-card">
-                    <h5 class="section-title mb-4">
-                        <iconify-icon icon="solar:map-point-bold-duotone" class="text-danger"></iconify-icon>
-                        Address Details
-                    </h5>
-                    <div class="address-box mb-4">
-                        <h6 class="address-type text-success">Current Address</h6>
-                        <p class="mb-0 text-neutral-600">{{ studentData?.temporaryAddress || 'N/A' }}</p>
-                    </div>
-                    <div class="address-box">
-                        <h6 class="address-type text-primary">Permanent Address</h6>
-                        <p class="mb-0 text-neutral-600">{{ studentData?.permanentAddress || 'N/A' }}</p>
-                    </div>
-                </div>
+          </div>
+          <ng-template #noAttendance>
+            <div class="empty-state">
+              <iconify-icon icon="solar:calendar-search-bold-duotone"></iconify-icon>
+              <p>No attendance records found for this period.</p>
             </div>
+          </ng-template>
+          
+          <div class="attendance-legend mt-4">
+            <span class="legend-item"><span class="dot present"></span> Present</span>
+            <span class="legend-item"><span class="dot absent"></span> Absent</span>
+          </div>
         </div>
+      </div>
+
+      <!-- Finance Tab -->
+      <div *ngIf="activeTab === 'finance'" class="tab-pane-animate">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="stat-card finance-paid">
+              <div class="stat-icon"><iconify-icon icon="solar:wallet-check-bold-duotone"></iconify-icon></div>
+              <div class="stat-content">
+                <span class="stat-label">Total Paid Fees</span>
+                <h2 class="stat-value">Rs. {{ stats?.totalPaid?.toLocaleString() || 0 }}</h2>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="stat-card finance-due">
+              <div class="stat-icon"><iconify-icon icon="solar:wallet-minus-bold-duotone"></iconify-icon></div>
+              <div class="stat-content">
+                <span class="stat-label">Total Pending Dues</span>
+                <h2 class="stat-value">Rs. {{ stats?.totalDue?.toLocaleString() || 0 }}</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card mt-4">
+          <h5 class="card-title">Recent Transactions</h5>
+          <div class="empty-state">
+            <iconify-icon icon="solar:bill-list-bold-duotone"></iconify-icon>
+            <p>Detailed transaction history is coming soon.</p>
+          </div>
+        </div>
+      </div>
+
     </div>
-</div>
+  </div>
+</div>

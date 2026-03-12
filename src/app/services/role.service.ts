@@ -25,9 +25,14 @@ export class RoleService {
     }
 
     // Assign role to user
-    assignRole(userId: string, roles: string[]): Observable<any> {
-        return this.http.post(`${this.apiUrl}/api/Users/AssignRole`, { id: userId, role: roles });
-    }
+    assignRole(id: string, roles: string[], userName: string = ''): Observable<any> {
+    const payload = {
+      Id: id,
+      Role: roles,
+      UserName: userName
+    };
+    return this.http.post(`${this.apiUrl}/AssignRole`, payload);
+  }
 
     // Remove role is handled by AssignRole by passing updated list in this API
     // but if you want to keep the signature:

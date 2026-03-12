@@ -5,38 +5,56 @@
     <div class="theme-hero-content">
       <p class="theme-eyebrow">Brand Studio</p>
       <h2>Theme & Visual Identity</h2>
-      <p>Control logo, color signature, and visual personality of your admin workspace.</p>
+      <p>Control the visual personality of your admin workspace with premium presets and custom colors.</p>
     </div>
-    <span class="theme-badge">System Preferences</span>
+    <span class="theme-badge">{{ currentTheme | titlecase }} Mode Active</span>
   </section>
 
   <section class="theme-panel">
-    <h5>Brand Configuration</h5>
+    <h5>Visual Presets</h5>
+    <div class="theme-grid">
+      <div *ngFor="let t of themes" 
+           class="theme-card preset-card" 
+           [class.active]="currentTheme === t.id"
+           (click)="selectTheme(t.id)">
+        <div class="preset-preview" [style.background-color]="t.bg">
+            <div class="preset-accent" [style.background-color]="t.primary"></div>
+        </div>
+        <div class="preset-info">
+            <label>{{ t.name }}</label>
+            <div class="preset-status">
+                <iconify-icon *ngIf="currentTheme === t.id" icon="solar:check-circle-bold-duotone"></iconify-icon>
+                <span>{{ currentTheme === t.id ? 'Selected' : 'Click to Apply' }}</span>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <h5 class="mt-4">Custom Color Signature</h5>
     <div class="theme-grid">
       <div class="theme-card">
-        <label>Primary Designation</label>
-        <div class="theme-upload-box">
-          <input type="file" id="logoUpload" class="d-none">
-          <label for="logoUpload" class="theme-upload-trigger">
-            <iconify-icon icon="solar:upload-minimalistic-bold-duotone"></iconify-icon>
-            <span>Upload Brand Assets</span>
-          </label>
+        <label>Primary Brand Color</label>
+        <div class="custom-color-picker-row">
+            <input type="color" [(ngModel)]="customColor" (change)="applyCustomColor()" class="color-input-field">
+            <div class="color-text-info">
+                <span class="color-hex">{{ customColor }}</span>
+                <p>Affects buttons, headers, and primary accents.</p>
+            </div>
         </div>
       </div>
 
       <div class="theme-card">
-        <label>Color Signature</label>
-        <div class="theme-color-row">
-          <button type="button" class="color-orb active" style="background: #486cea;"></button>
-          <button type="button" class="color-orb" style="background: #ef4444;"></button>
-          <button type="button" class="color-orb" style="background: #10b981;"></button>
-          <button type="button" class="color-orb" style="background: #f59e0b;"></button>
-        </div>
+        <label>Reset Settings</label>
+        <p class="text-sm text-muted">Restore default system theme and brand colors.</p>
+        <button (click)="resetTheme()" class="btn btn-outline-danger btn-sm mt-2">
+            <iconify-icon icon="solar:restart-bold-duotone" class="me-1"></iconify-icon>
+            Reset to Default
+        </button>
       </div>
     </div>
 
     <div class="theme-actions">
-      <button type="button" class="theme-btn">Apply Transformation</button>
+      <button type="button" class="theme-btn" (click)="applyCustomColor()">Save & Apply Signature</button>
     </div>
   </section>
 </div>

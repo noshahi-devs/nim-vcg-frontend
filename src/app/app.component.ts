@@ -24,9 +24,7 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const localStorageTheme = localStorage.getItem('theme');
-    this.currentThemeSetting = this.themeService.calculateSettingAsThemeString(localStorageTheme);
-    this.themeService.updateThemeOnHtmlEl(this.currentThemeSetting);
+    this.themeService.applySavedTheme();
 
     // Load dynamic config
     this.appConfig.loadConfig().subscribe();

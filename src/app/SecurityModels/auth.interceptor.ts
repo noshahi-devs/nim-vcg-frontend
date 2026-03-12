@@ -25,7 +25,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 };
 
 function getJwtToken(): string | null {
-  return localStorage.getItem('JWT_TOKEN');
+  return localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
 }
 
 function getSelectedCampusId(): string | null {
@@ -42,11 +42,18 @@ function getSelectedCampusId(): string | null {
 }
 
 function rewriteApiUrl(req: Parameters<HttpInterceptorFn>[0]) {
-  const localApiBase = "http://localhost:5257";
-  if (!req.url.startsWith(localApiBase)) {
+  const localUrls = [
+    "http://localhost:5257", 
+    "https://localhost:7225", 
+    "http://127.0.0.1:5257",
+    "https://127.0.0.1:7225"
+  ];
+  const matchedBase = localUrls.find(url => req.url.startsWith(url));
+  
+  if (!matchedBase) {
     return req;
   }
 
-  const rewrittenUrl = `${environment.apiBaseUrl}${req.url.substring(localApiBase.length)}`;
+  const rewrittenUrl = `${environment.apiBaseUrl}${req.url.substring(matchedBase.length)}`;
   return req.clone({ url: rewrittenUrl });
 }

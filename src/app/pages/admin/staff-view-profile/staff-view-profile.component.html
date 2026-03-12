@@ -1,5 +1,5 @@
 <div class="dashboard-main-body">
-  <app-breadcrumb [title]="title"></app-breadcrumb>
+  <app-breadcrumb [title]="title" [main-title]="'Management'"></app-breadcrumb>
 
   <!-- Loading State -->
   <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
@@ -8,275 +8,300 @@
     </div>
   </div>
 
-  <div class="profile-container" *ngIf="!loading && staffData; else noProfile">
-
-    <!-- Premium Header Area -->
-    <div class="profile-header-card">
-      <div class="profile-header-top">
-        <div class="profile-avatar-wrapper">
-          <img [src]="staffData.profile" [alt]="staffData.name" class="profile-avatar">
+  <div class="card h-100 p-0 radius-12 overflow-hidden border-0 shadow-sm" *ngIf="!loading && staffData; else noProfile">
+    <!-- PREMIUM HEADER -->
+    <div class="profile-header-premium position-relative">
+      <div class="profile-cover-bg"></div>
+      <div class="profile-header-content p-24 d-flex align-items-end gap-24">
+        <div class="profile-image-container">
+          <img [src]="staffData.profile || defaultAvatar" class="staff-profile-img shadow-lg" [alt]="staffData.name"
+            (error)="staffData.profile = defaultAvatar">
+          <span class="status-indicator" [ngClass]="getStatusClass(staffData.status) === 'active' ? 'bg-success' : 'bg-danger'"></span>
         </div>
-
-        <div class="profile-main-meta">
-          <div class="d-flex align-items-center gap-3 mb-2">
-            <span class="status-badge active" *ngIf="staffData.status === 'Active'">
-              <iconify-icon icon="solar:check-circle-bold"></iconify-icon>
-              {{ staffData.status }}
+        <div class="profile-basic-info flex-grow-1">
+          <div class="d-flex align-items-center gap-12 mb-4">
+            <h2 class="text-white mb-0 fw-bold">{{ staffData.name }}</h2>
+            <span class="badge bg-white text-primary border-0 py-6 px-12 radius-pill text-xs shadow-sm">
+              ID: {{ staffData.id }}
             </span>
           </div>
-          <h2>{{ staffData.name }}</h2>
-          <div class="d-flex align-items-center gap-4 text-slate-500 fw-medium">
-            <span class="d-flex align-items-center gap-2">
-              <iconify-icon icon="solar:user-rounded-bold-duotone" class="text-indigo-500"></iconify-icon>
-              {{ staffData.role }}
+          <p class="text-white text-opacity-80 mb-8 d-flex align-items-center gap-8">
+            <iconify-icon icon="solar:user-rounded-bold-duotone" class="text-lg"></iconify-icon>
+            {{ staffData.role || 'Staff Member' }}
+          </p>
+          <div class="d-flex align-items-center gap-24">
+            <span class="text-white text-opacity-70 text-xs d-flex align-items-center gap-4">
+              <iconify-icon icon="solar:calendar-bold"></iconify-icon>
+              Joined: {{ staffData.joiningDate || 'N/A' }}
             </span>
-            <span class="d-flex align-items-center gap-2">
-              <iconify-icon icon="solar:calendar-bold-duotone" class="text-indigo-500"></iconify-icon>
-              Joined {{ staffData.joiningDate }}
+            <span class="text-white text-opacity-70 text-xs d-flex align-items-center gap-4" *ngIf="staffData.experience">
+              <iconify-icon icon="solar:medal-ribbons-bold-duotone"></iconify-icon>
+              Exp: {{ staffData.experience }}
             </span>
           </div>
         </div>
-
-        <div class="header-actions">
-          <button (click)="editStaff(staffData.id)" class="btn btn-primary d-flex align-items-center gap-2 px-4 fw-bold"
-            style="border-radius: 10px; background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);">
-            <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
-            Edit Profile
+        <div class="profile-actions d-flex gap-8 mb-8">
+          <button (click)="editStaff(staffData.id)" class="btn btn-white btn-sm px-16 radius-8 d-flex align-items-center gap-8">
+            <iconify-icon icon="solar:pen-bold"></iconify-icon> Edit Profile
+          </button>
+          <button (click)="goBack()" class="btn btn-outline-white btn-sm px-16 radius-8">
+            Back to List
           </button>
         </div>
       </div>
-
-      <!-- Clean Tab Navigation -->
-      <nav class="profile-tabs-nav">
-        <div class="nav-tab-item" [class.active]="activeTab === 'overview'" (click)="activeTab = 'overview'">
-          <iconify-icon icon="solar:info-circle-bold-duotone" class="fs-5"></iconify-icon>
-          Overview
-        </div>
-        <div class="nav-tab-item" [class.active]="activeTab === 'attendance'" (click)="activeTab = 'attendance'">
-          <iconify-icon icon="solar:calendar-mark-bold-duotone" class="fs-5"></iconify-icon>
-          Attendance Report
-        </div>
-        <div class="nav-tab-item" [class.active]="activeTab === 'performance'" (click)="activeTab = 'performance'">
-          <iconify-icon icon="solar:chart-square-bold-duotone" class="fs-5"></iconify-icon>
-          Performance & Progress
-        </div>
-      </nav>
     </div>
 
-    <!-- Tab Content: Overview -->
-    <div [@fadeAnimation] *ngIf="activeTab === 'overview'" class="tab-content-area">
-      <div class="row gy-4">
-        <div class="col-lg-8">
-          <div class="card-premium">
-            <div class="section-head">
-              <span class="card-dot indigo"></span>
-              Personal Information
-            </div>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <div class="info-item-box">
-                  <div class="info-item-label">Full Name</div>
-                  <div class="info-item-value">{{ staffData.name }}</div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-item-box">
-                  <div class="info-item-label">CNIC / Identity</div>
-                  <div class="info-item-value">{{ staffData.cnic }}</div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-item-box">
-                  <div class="info-item-label">Email Address</div>
-                  <div class="info-item-value text-indigo-600">{{ staffData.email }}</div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-item-box">
-                  <div class="info-item-label">Phone Number</div>
-                  <div class="info-item-value">{{ staffData.phone }}</div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-item-box">
-                  <div class="info-item-label">Date of Birth</div>
-                  <div class="info-item-value">{{ staffData.dob }}</div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="info-item-box">
-                  <div class="info-item-label">Gender</div>
-                  <div class="info-item-value">{{ staffData.gender }}</div>
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="info-item-box mb-0">
-                  <div class="info-item-label">Residential Address</div>
-                  <div class="info-item-value">{{ staffData.address }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4">
-          <div class="card-premium">
-            <div class="section-head">
-              <span class="card-dot blue"></span>
-              Professional Career
-            </div>
-            <div class="info-item-box">
-              <div class="info-item-label">Qualification</div>
-              <div class="info-item-value text-indigo-600 fs-5">{{ staffData.qualification }}</div>
-            </div>
-            <div class="info-item-box">
-              <div class="info-item-label">Work Experience</div>
-              <div class="info-item-value">{{ staffData.experience }}</div>
-            </div>
-            <div class="info-item-box mb-0">
-              <div class="info-item-label">Current Role</div>
-              <div class="info-item-value">{{ staffData.role }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- TAB NAVIGATION -->
+    <div class="profile-tabs-nav border-bottom px-24 d-flex gap-32">
+      <button class="tab-item" [class.active]="activeTab === 'overview'" (click)="activeTab = 'overview'">
+        <iconify-icon icon="solar:info-circle-bold-duotone"></iconify-icon> Overview
+      </button>
+      <button class="tab-item" [class.active]="activeTab === 'attendance'" (click)="activeTab = 'attendance'">
+        <iconify-icon icon="solar:calendar-mark-bold-duotone"></iconify-icon> Attendance
+      </button>
+      <button class="tab-item" [class.active]="activeTab === 'performance'" (click)="activeTab = 'performance'">
+        <iconify-icon icon="solar:chart-square-bold-duotone"></iconify-icon> Performance
+      </button>
     </div>
 
-    <!-- Tab Content: Attendance -->
-    <div [@fadeAnimation] *ngIf="activeTab === 'attendance'" class="tab-content-area">
-      <div class="row g-4 mb-4">
-        <div class="col-md-4">
-          <div class="stat-card-premium">
-            <div class="stat-icon-wrap indigo">
-              <iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>
-            </div>
-            <div class="stat-info">
-              <div class="label">Presence Rate</div>
-              <div class="value">{{ staffData.attendance?.percentage }}%</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card-premium">
-            <div class="stat-icon-wrap green">
-              <iconify-icon icon="solar:check-read-bold-duotone"></iconify-icon>
-            </div>
-            <div class="stat-info">
-              <div class="label">Present Days</div>
-              <div class="value">{{ staffData.attendance?.presentDays }}</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card-premium">
-            <div class="stat-icon-wrap orange">
-              <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
-            </div>
-            <div class="stat-info">
-              <div class="label">Absent Days</div>
-              <div class="value">{{ staffData.attendance?.absentDays }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card-premium">
-        <div class="section-head mb-4">
-          <span class="card-dot indigo"></span>
-          Attendance History
-        </div>
-        <div class="table-responsive">
-          <table class="table align-middle">
-            <thead class="bg-light">
-              <tr class="text-slate-400 small fw-bold text-uppercase">
-                <th class="ps-3 py-3">Month</th>
-                <th class="py-3">Attendance Rate</th>
-                <th class="py-3 text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of staffData.attendance?.history" class="border-bottom">
-                <td class="ps-3 py-3 fw-bold">{{ item.month }}</td>
-                <td class="py-3" style="width: 50%;">
-                  <div class="d-flex align-items-center gap-3">
-                    <div class="flex-grow-1"
-                      style="height: 10px; background: #f1f5f9; border-radius: 20px; overflow: hidden;">
-                      <div [style.width.%]="item.rate" style="height: 100%; background: #6366f1; border-radius: 20px;">
-                      </div>
-                    </div>
-                    <span class="fw-bold">{{ item.rate }}%</span>
+    <div class="card-body p-24">
+      <!-- OVERVIEW TAB -->
+      <div *ngIf="activeTab === 'overview'" class="animate-fade-in">
+        <div class="row gy-4">
+          <div class="col-lg-6">
+            <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8">
+              <iconify-icon icon="solar:phone-calling-bold-duotone" class="text-primary"></iconify-icon>
+              Contact Details
+            </h6>
+            <div class="info-list-premium">
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-primary-focus">
+                    <iconify-icon icon="solar:phone-bold" class="text-primary"></iconify-icon>
                   </div>
-                </td>
-                <td class="py-3 text-center">
-                  <span class="badge"
-                    [ngClass]="item.rate > 90 ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'"
-                    style="padding: 6px 14px; border-radius: 12px; font-weight: 700;">
-                    {{ item.rate > 90 ? 'Excellent' : 'Good' }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+                  <span class="text-secondary-light fw-medium">Phone Number</span>
+                </div>
+                <span class="fw-bold text-neutral-800">{{ staffData.phone }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-warning-focus">
+                    <iconify-icon icon="solar:letter-bold" class="text-warning"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Email Address</span>
+                </div>
+                <span class="fw-bold text-neutral-800 text-indigo-600">{{ staffData.email }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-start py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-success-focus">
+                    <iconify-icon icon="solar:map-point-bold" class="text-success"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Address</span>
+                </div>
+                <span class="fw-bold text-neutral-800 text-end ps-24 max-w-250">{{ staffData.address }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-danger-focus">
+                    <iconify-icon icon="solar:id-card-bold" class="text-danger"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">CNIC / ID</span>
+                </div>
+                <span class="fw-bold text-neutral-800">{{ staffData.cnic }}</span>
+              </div>
+            </div>
+          </div>
 
-    <!-- Tab Content: Performance -->
-    <div [@fadeAnimation] *ngIf="activeTab === 'performance'" class="tab-content-area">
-      <div class="row gy-4">
-        <div class="col-lg-6">
-          <div class="card-premium">
-            <div class="section-head mb-4">
-              <span class="card-dot indigo"></span>
-              Rating & Productivity
+          <div class="col-lg-6">
+            <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8">
+              <iconify-icon icon="solar:medal-ribbons-bold-duotone" class="text-primary"></iconify-icon>
+              Professional Background
+            </h6>
+            <div class="info-list-premium">
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-indigo-focus">
+                    <iconify-icon icon="solar:diploma-bold" class="text-indigo"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Qualification</span>
+                </div>
+                <span class="fw-bold text-neutral-800">{{ staffData.qualification }}</span>
+              </div>
+              <div class="info-item-row-new d-flex justify-content-between align-items-start py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-purple-focus">
+                    <iconify-icon icon="solar:case-minimalistic-bold" class="text-purple"></iconify-icon>
+                  </div>
+                  <span class="text-secondary-light fw-medium">Experience</span>
+                </div>
+                <span class="fw-bold text-neutral-800 text-end ps-24 max-w-250">{{ staffData.experience }}</span>
+              </div>
             </div>
 
-            <div class="d-flex align-items-center gap-4 mb-4 pb-4 border-bottom">
-              <div class="stat-icon-wrap orange" style="width: 70px; height: 70px; font-size: 2rem;">
-                <iconify-icon icon="solar:star-bold-duotone"></iconify-icon>
+            <div class="row row-cols-1 row-cols-sm-2 gy-4 mt-16">
+              <div class="col">
+                <div class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
+                  <div class="tile-icon bg-cyan-focus radius-12 p-12">
+                    <iconify-icon icon="solar:users-group-rounded-bold" class="text-2xl text-cyan"></iconify-icon>
+                  </div>
+                  <div class="tile-content">
+                    <span class="text-xs text-secondary-light fw-bold uppercase ls-1">Gender</span>
+                    <h5 class="mb-0 text-lg fw-bold text-neutral-800 mt-4">{{ staffData.gender }}</h5>
+                  </div>
+                </div>
               </div>
-              <div>
-                <div class="label text-slate-400 small fw-bold text-uppercase mb-1">Teacher Rating</div>
-                <div class="value fs-2 fw-bold">{{ staffData.performance?.rating }} / 5.0</div>
-                <div class="text-orange-400 mt-1">
-                  <iconify-icon icon="solar:star-bold" *ngFor="let i of [1,2,3,4,5]"
-                    [class.text-slate-200]="i > staffData.performance?.rating"></iconify-icon>
+              <div class="col">
+                <div class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
+                  <div class="tile-icon bg-teal-focus radius-12 p-12">
+                    <iconify-icon icon="solar:calendar-bold" class="text-2xl text-teal"></iconify-icon>
+                  </div>
+                  <div class="tile-content">
+                    <span class="text-xs text-secondary-light fw-bold uppercase ls-1">Birthday</span>
+                    <h5 class="mb-0 text-lg fw-bold text-neutral-800 mt-4">{{ staffData.dob || 'N/A' }}</h5>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div class="d-flex align-items-center gap-4">
-              <div class="stat-icon-wrap indigo" style="width: 70px; height: 70px; font-size: 2rem;">
-                <iconify-icon icon="solar:checklist-bold-duotone"></iconify-icon>
+      <!-- ATTENDANCE TAB -->
+      <div *ngIf="activeTab === 'attendance'" class="animate-fade-in">
+        <div class="row g-4 mb-32">
+          <div class="col-md-4">
+            <div class="stat-card-premium">
+              <div class="stat-icon-wrap indigo">
+                <iconify-icon icon="solar:chart-2-bold-duotone"></iconify-icon>
               </div>
-              <div>
-                <div class="label text-slate-400 small fw-bold text-uppercase mb-1">Task Completion</div>
-                <div class="value fs-2 fw-bold">{{ staffData.performance?.tasksCompleted }} / {{
-                  staffData.performance?.totalTasks }}</div>
-                <span class="text-slate-400 small">Tasks completed this semester</span>
+              <div class="stat-info">
+                <div class="label">Presence Rate</div>
+                <div class="value">{{ staffData.attendance?.percentage }}%</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card-premium">
+              <div class="stat-icon-wrap green">
+                <iconify-icon icon="solar:check-read-bold-duotone"></iconify-icon>
+              </div>
+              <div class="stat-info">
+                <div class="label">Present Days</div>
+                <div class="value">{{ staffData.attendance?.presentDays }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card-premium">
+              <div class="stat-icon-wrap orange">
+                <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
+              </div>
+              <div class="stat-info">
+                <div class="label">Absent Days</div>
+                <div class="value">{{ staffData.attendance?.absentDays }}</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="col-lg-6">
-          <div class="card-premium">
-            <div class="section-head mb-4">
-              <span class="card-dot green"></span>
-              Skills & Peer Reviews
-            </div>
+        <div class="card-premium" *ngIf="staffData.attendance?.history?.length > 0">
+          <h6 class="mb-24 text-neutral-800 fw-bold">Attendance History</h6>
+          <div class="table-responsive">
+            <table class="table basic-table mb-0">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Attendance Rate</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of staffData.attendance?.history">
+                  <td class="fw-bold">{{ item.month }}</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-12">
+                      <div class="flex-grow-1 progress h-8-px radius-pill bg-neutral-100">
+                        <div class="progress-bar radius-pill bg-primary" [style.width.%]="item.rate"></div>
+                      </div>
+                      <span class="fw-bold text-xs">{{ item.rate }}%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge px-12 py-4 radius-pill" [ngClass]="item.rate > 90 ? 'bg-success-focus text-success' : 'bg-warning-focus text-warning'">
+                      {{ item.rate > 90 ? 'Excellent' : 'Good' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
-            <div class="mb-4">
-              <div class="label text-slate-400 small fw-bold text-uppercase mb-3">Professional Skills</div>
-              <div class="d-flex flex-wrap gap-2">
-                <span class="skill-tag" *ngFor="let skill of staffData.performance?.skills">{{ skill }}</span>
+      <!-- PERFORMANCE TAB -->
+      <div *ngIf="activeTab === 'performance'" class="animate-fade-in">
+        <div class="row gy-4">
+          <div class="col-lg-6">
+            <div class="card-premium">
+              <h6 class="mb-24 text-neutral-800 fw-bold">Rating & Productivity</h6>
+              <div class="d-flex align-items-center gap-24 mb-32 pb-24 border-bottom" *ngIf="staffData.performance?.rating; else noRating">
+                <div class="stat-icon-wrap orange" style="width: 70px; height: 70px; font-size: 2rem;">
+                  <iconify-icon icon="solar:star-bold-duotone"></iconify-icon>
+                </div>
+                <div>
+                  <span class="text-xs text-secondary-light fw-bold uppercase">Staff Rating</span>
+                  <div class="value fs-2 fw-bold mt-4">{{ staffData.performance?.rating }} / 5.0</div>
+                </div>
               </div>
-            </div>
+              <ng-template #noRating>
+                <div class="text-center py-32 bg-neutral-50 radius-12 mb-24">
+                  <iconify-icon icon="solar:star-line-duotone" class="text-4xl text-neutral-200 mb-8"></iconify-icon>
+                  <p class="text-secondary-light small mb-0">No rating data available yet.</p>
+                </div>
+              </ng-template>
 
-            <div class="mt-4">
-              <div class="label text-slate-400 small fw-bold text-uppercase mb-3">Management Feedback</div>
-              <div class="feedback-quote">
-                "{{ staffData.performance?.studentFeedback }}"
+              <div class="d-flex align-items-center gap-24" *ngIf="staffData.performance?.totalTasks; else noTasks">
+                <div class="stat-icon-wrap indigo" style="width: 70px; height: 70px; font-size: 2rem;">
+                  <iconify-icon icon="solar:checklist-bold-duotone"></iconify-icon>
+                </div>
+                <div>
+                  <span class="text-xs text-secondary-light fw-bold uppercase">Task Completion</span>
+                  <div class="value fs-2 fw-bold mt-4">{{ staffData.performance?.tasksCompleted }} / {{ staffData.performance?.totalTasks }}</div>
+                </div>
+              </div>
+              <ng-template #noTasks>
+                <div class="text-center py-32 bg-neutral-50 radius-12">
+                  <iconify-icon icon="solar:checklist-minimalistic-line-duotone" class="text-4xl text-neutral-200 mb-8"></iconify-icon>
+                  <p class="text-secondary-light small mb-0">No tasks assigned yet.</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="card-premium">
+              <h6 class="mb-24 text-neutral-800 fw-bold">Skills & Feedback</h6>
+              <div class="mb-32">
+                <span class="text-xs text-secondary-light fw-bold uppercase mb-16 d-block">Professional Skills</span>
+                <div class="d-flex flex-wrap gap-8" *ngIf="staffData.performance?.skills?.length > 0; else noSkills">
+                  <span class="skill-tag" *ngFor="let skill of staffData.performance?.skills">{{ skill }}</span>
+                </div>
+                <ng-template #noSkills>
+                  <p class="text-secondary-light small italic">Skills profile not yet updated.</p>
+                </ng-template>
+              </div>
+
+              <div class="mt-24">
+                <span class="text-xs text-secondary-light fw-bold uppercase mb-16 d-block">Management Feedback</span>
+                <div class="feedback-quote" *ngIf="staffData.performance?.studentFeedback; else noFeedback">
+                  "{{ staffData.performance?.studentFeedback }}"
+                </div>
+                <ng-template #noFeedback>
+                  <div class="p-16 bg-neutral-50 radius-12 border-start border-4 border-primary">
+                    <p class="text-secondary-light small mb-0">No recent feedback entries found.</p>
+                  </div>
+                </ng-template>
               </div>
             </div>
           </div>
@@ -286,16 +311,13 @@
   </div>
 
   <ng-template #noProfile>
-    <div *ngIf="!loading"
-      class="d-flex flex-column align-items-center justify-content-center mt-5 card-premium p-5 text-center">
-      <iconify-icon icon="solar:user-block-bold-duotone" class="text-danger-500 mb-3"
-        style="font-size: 80px;"></iconify-icon>
-      <h3 class="mb-2">Staff Profile Not Found</h3>
-      <p class="text-slate-500 mb-4 max-w-400-px mx-auto">
+    <div *ngIf="!loading" class="d-flex flex-column align-items-center justify-content-center mt-40 card-premium p-40 text-center shadow-sm">
+      <iconify-icon icon="solar:user-block-bold-duotone" class="text-danger mb-16" style="font-size: 80px;"></iconify-icon>
+      <h3 class="mb-8">Staff Profile Not Found</h3>
+      <p class="text-secondary-light mb-24 max-w-400-px mx-auto">
         We could not find a linked staff record for your account (<strong>{{ currentUserEmail }}</strong>).
-        You may need to be registered as a staff member in the system.
       </p>
-      <button class="btn btn-primary-600 px-4 py-2 radius-8" (click)="goBack()">
+      <button class="btn btn-primary px-24 py-12 radius-8 shadow-sm" (click)="goBack()">
         Back to Dashboard
       </button>
     </div>

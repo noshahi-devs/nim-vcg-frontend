@@ -10,6 +10,7 @@ import { StandardService } from '../../../services/standard.service';
 import { Standard } from '../../../Models/standard';
 import { OnInit } from '@angular/core';
 import Swal from '../../../swal';
+import { SessionService } from '../../../services/session.service';
 
 declare var bootstrap: any;
 
@@ -91,7 +92,8 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private studentService: StudentService,
-    private standardService: StandardService
+    private standardService: StandardService,
+    private sessionService: SessionService
   ) { }
 
   ngOnInit(): void {
@@ -216,6 +218,7 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
       status: this.newStudent.status || null,
       section: this.newStudent.section || null,
       standardId: this.newStudent.standardId || null,
+      academicYearId: this.sessionService.getCurrentYearId(),
       imagePath: this.newStudent.imageUpload.getBase64 || null
     };
 

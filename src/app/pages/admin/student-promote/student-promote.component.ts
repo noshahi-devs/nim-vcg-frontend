@@ -6,11 +6,14 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { StudentService } from '../../../services/student.service';
 import { StandardService } from '../../../services/standard.service';
 import { SectionService } from '../../../services/section.service';
+import { AcademicYearService } from '../../../services/academic-year.service';
+import { SessionService } from '../../../services/session.service';
 import { Student } from '../../../Models/student';
 import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
+import { AcademicYear } from '../../../Models/academic-year';
 import Swal from '../../../swal';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-student-promote',
@@ -24,12 +27,13 @@ export class StudentPromoteComponent implements OnInit {
   title = 'Student Promotion';
   Math = Math;
 
-  students: Student[] = [];
+  students: Student[] = []; // Renamed from allStudents to students for consistency with filterStudents
   filteredStudents: Student[] = [];
   selectedStudents: number[] = [];
 
   classes: Standard[] = [];
   sections: Section[] = [];
+  academicYears: AcademicYear[] = [];
   filteredNextSections: Section[] = [];
 
   searchTerm: string = '';
@@ -41,6 +45,7 @@ export class StudentPromoteComponent implements OnInit {
 
   nextClassId: number = 0;
   nextSectionId: number = 0;
+  nextAcademicYearId: number = 0;
 
   loading = false;
 
@@ -48,7 +53,9 @@ export class StudentPromoteComponent implements OnInit {
     private router: Router,
     private studentService: StudentService,
     private standardService: StandardService,
-    private sectionService: SectionService
+    private sectionService: SectionService,
+    private academicYearService: AcademicYearService,
+    private sessionService: SessionService
   ) { }
 
   ngOnInit(): void {
@@ -56,25 +63,25 @@ export class StudentPromoteComponent implements OnInit {
   }
 
   loadInitialData(): void {
-    this.standardService.getStandards().subscribe(data => this.classes = data || []);
-    this.sectionService.getSections().subscribe(data => this.sections = data || []);
-    this.loadStudents();
-  }
-
-  loadStudents(): void {
     this.loading = true;
-    this.studentService.GetStudents()
-      .pipe(finalize(() => this.loading = false))
-      .subscribe({
-        next: (data) => {
-          this.students = data || [];
-          this.filterStudents();
-        },
-        error: (err) => {
-          console.error(err);
-          Swal.fire('Error', 'Unable to load student data.', 'error');
-        }
-      });
+    forkJoin({
+      students: this.studentService.GetStudents(this.sessionService.getCurrentYearId()),
+      classes: this.standardService.getStandards(),
+      sections: this.sectionService.getSections(),
+      years: this.academicYearService.getAcademicYears()
+    }).pipe(finalize(() => this.loading = false)).subscribe({
+      next: (res) => {
+        this.students = res.students || [];
+        this.classes = res.classes || [];
+        this.sections = res.sections || [];
+        this.academicYears = res.years || [];
+        this.filterStudents();
+      },
+      error: (err) => {
+        console.error('Error loading data', err);
+        Swal.fire('Error', 'Failed to synchronize with registry.', 'error');
+      }
+    });
   }
 
   filterStudents(): void {
@@ -162,46 +169,47 @@ export class StudentPromoteComponent implements OnInit {
   }
 
   promoteSelected(): void {
-    if (!this.nextClassId || !this.nextSectionId) {
-      Swal.fire('Warning', 'Please select destination class and section before promoting.', 'warning');
-      return;
-    }
     if (this.selectedStudents.length === 0) {
-      Swal.fire('Warning', 'Please select at least one student to promote.', 'warning');
+      Swal.fire('Warning', 'Please select at least one student.', 'warning');
       return;
     }
 
-    const nextClass = this.classes.find(c => c.standardId === Number(this.nextClassId))?.standardName;
-    const nextSection = this.sections.find(s => s.sectionId === Number(this.nextSectionId))?.sectionName;
+    if (!this.nextClassId || !this.nextSectionId || !this.nextAcademicYearId) {
+      Swal.fire('Warning', 'Please select destination Class, Section, and Academic Year.', 'warning');
+      return;
+    }
 
     Swal.fire({
       title: 'Confirm Promotion',
-      text: `Are you sure you want to promote ${this.selectedStudents.length} students to ${nextClass} - ${nextSection}?`,
+      text: `Are you sure you want to promote ${this.selectedStudents.length} students to the selected destination?`,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Promote Now!',
+      confirmButtonText: 'Yes, Promote',
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.processPromotion();
+        this.loading = true;
+        const request = {
+          studentIds: this.selectedStudents,
+          nextClassId: Number(this.nextClassId),
+          nextSectionId: Number(this.nextSectionId),
+          nextAcademicYearId: Number(this.nextAcademicYearId)
+        };
+
+        this.studentService.bulkPromote(request).subscribe({
+          next: (res) => {
+            Swal.fire('Success', res.message || 'Students promoted successfully.', 'success');
+            this.selectedStudents = [];
+            this.loadInitialData(); 
+          },
+          error: (err) => {
+            console.error('Promotion error', err);
+            Swal.fire('Error', err.error?.message || 'Failed to promote students.', 'error');
+            this.loading = false;
+          }
+        });
       }
     });
-  }
-
-  processPromotion(): void {
-    Swal.fire({
-      title: 'Promoting Students...',
-      didOpen: () => Swal.showLoading(),
-      allowOutsideClick: false
-    });
-
-    // In a real app, this would be a bulk API call.
-    // For now, we simulate success and update the local list.
-    setTimeout(() => {
-      Swal.fire('Success!', `${this.selectedStudents.length} students have been promoted.`, 'success');
-      this.loadStudents(); // Reload to reflect changes
-      this.selectedStudents = [];
-    }, 1500);
   }
 
   getSelectedClassName(): string {

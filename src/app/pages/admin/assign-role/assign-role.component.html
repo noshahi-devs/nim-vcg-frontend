@@ -20,7 +20,7 @@
                         <div class="select-wrapper-premium">
                             <select class="field-select" [(ngModel)]="selectedStaffId">
                                 <option value="" disabled selected>Select Staff</option>
-                                <option *ngFor="let staff of staffList" [value]="staff.staffId">
+                                <option *ngFor="let staff of staffList" [value]="staff.userId">
                                     {{ staff.staffName }} ({{ Designation[staff.designation!] }})
                                 </option>
                             </select>

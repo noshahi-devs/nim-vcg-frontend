@@ -312,6 +312,9 @@
     border-bottom: 1px solid var(--sidebar-border) !important;
     box-shadow: 0 10px 24px rgba(79, 70, 229, 0.28);
     transition: padding var(--layout-collapse-motion), box-shadow 240ms ease, border-color 240ms ease;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
 }
 
 @media (min-width: 1200px) {

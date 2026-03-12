@@ -13,7 +13,8 @@ import { Section } from '../../../Models/section';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
-import { finalize, forkJoin } from 'rxjs';
+import { finalize, forkJoin, Subscription } from 'rxjs';
+import { SessionService } from '../../../services/session.service';
 
 
 declare var bootstrap: any;
@@ -49,6 +50,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   assignedSections: Section[] = [];
   assignedClassNames: string[] = [];
   loading = false;
+  private sessionSubscription?: Subscription;
 
   get totalStudents(): number { return this.studentList.length; }
   get activeStudents(): number { return this.studentList.filter(s => s.status?.toLowerCase() === 'active').length; }
@@ -61,12 +63,17 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     private sectionService: SectionService,
     public authService: AuthService,
     private staffService: StaffService,
-    private assignmentService: SubjectAssignmentService
+    private assignmentService: SubjectAssignmentService,
+    private sessionService: SessionService
   ) { }
 
 
   ngOnInit(): void {
-    this.checkTeacherContext();
+    this.sessionSubscription = this.sessionService.currentYear$.subscribe(year => {
+      if (year) {
+        this.checkTeacherContext();
+      }
+    });
   }
 
   private checkTeacherContext() {
@@ -130,8 +137,9 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   }
 
   private loadAllData() {
+    const yearId = this.sessionService.getCurrentYearId();
     forkJoin({
-      students: this.studentService.GetStudents(),
+      students: this.studentService.GetStudents(yearId),
       classes: this.standardService.getStandards(),
       sections: this.sectionService.getSections()
     }).pipe(finalize(() => this.loading = false)).subscribe({
@@ -173,7 +181,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   // Fetch Students From API
   // -------------------------------------------------------
   loadStudents() {
-    this.studentService.GetStudents().subscribe({
+    const yearId = this.sessionService.getCurrentYearId();
+    this.studentService.GetStudents(yearId).subscribe({
       next: (res) => {
         this.studentList = res;
         this.applyFilters();
@@ -327,4 +336,10 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit(): void { }
+
+  ngOnDestroy(): void {
+    if (this.sessionSubscription) {
+      this.sessionSubscription.unsubscribe();
+    }
+  }
 }

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { SettingsService, SystemSetting, NotificationSetting, PaymentGatewaySetting } from '../../../services/settings.service';
 import { NotificationService, NotificationLog } from '../../../services/notification.service';
 import { AcademicYearService } from '../../../services/academic-year.service';
+import { SessionService } from '../../../services/session.service';
 import { AcademicYear } from '../../../Models/academic-year';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import Swal from '../../../swal';
@@ -42,7 +43,8 @@ export class GeneralSettingsComponent implements OnInit {
     constructor(
         private settingsService: SettingsService,
         private notificationService: NotificationService,
-        private academicYearService: AcademicYearService
+        private academicYearService: AcademicYearService,
+        private sessionService: SessionService
     ) { }
 
     ngOnInit(): void {
@@ -130,7 +132,10 @@ export class GeneralSettingsComponent implements OnInit {
         }));
 
         this.settingsService.updateGeneralSettings(settingsToSend).subscribe({
-            next: () => Swal.fire('Success', 'General settings saved', 'success'),
+            next: () => {
+                Swal.fire('Success', 'General settings saved', 'success');
+                this.sessionService.refreshSession(true);
+            },
             error: () => Swal.fire('Error', 'Failed to save settings', 'error')
         });
     }

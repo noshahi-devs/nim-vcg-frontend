@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,7 +19,7 @@ declare var bootstrap: any;
   templateUrl: './staff-add.component.html',
   styleUrl: './staff-add.component.css'
 })
-export class StaffAddComponent implements AfterViewInit {
+export class StaffAddComponent implements OnInit, AfterViewInit {
   formatPhone(event: any) {
     let val = event.target.value.replace(/\D/g, '');
     if (val.length > 11) val = val.substring(0, 11);
@@ -166,21 +166,23 @@ export class StaffAddComponent implements AfterViewInit {
           'Other': Gender.Other
         };
 
-        const staffData: Staff = {
+        const staffData: any = {
           staffId: 0,
           staffName: this.newStaff.staffName,
           uniqueStaffAttendanceNumber: this.newStaff.uniqueStaffAttendanceNumber,
           gender: genderMap[this.newStaff.gender] ?? Gender.Male,
           dob: this.dobStr,
+          cnic: this.newStaff.cnic || null,
+          experience: this.newStaff.experience || null,
           contactNumber1: this.newStaff.contactNumber1,
           email: this.newStaff.email || null,
           qualifications: this.newStaff.qualifications || null,
-          joiningDate: this.joiningDateStr ? new Date(this.joiningDateStr) : undefined,
+          joiningDate: this.joiningDateStr ? new Date(this.joiningDateStr) : typeof this.joiningDateStr,
           designation: designationMap[this.newStaff.designation] ?? Designation.Teacher,
           permanentAddress: this.newStaff.permanentAddress || null,
           status: this.newStaff.status || null,
           imagePath: this.newStaff.profile,
-          imageUpload: this.newStaff.imageUpload, // Correct type
+          imageUpload: this.newStaff.imageUpload,
           staffExperiences: []
         };
 
@@ -195,7 +197,6 @@ export class StaffAddComponent implements AfterViewInit {
 
         this.authService.register(loginPayload).subscribe({
           next: (authRes) => {
-            console.log('Login credentials created successfully', authRes);
             this.staffService.addStaff(staffData).subscribe({
               next: () => {
                 Swal.fire({
@@ -208,49 +209,20 @@ export class StaffAddComponent implements AfterViewInit {
               },
               error: (err) => {
                 console.error('❌ Full error:', err);
-                let errorMessage = 'Something went wrong while creating staff profile!';
-                if (err.error) {
-                  if (typeof err.error === 'string') errorMessage = err.error;
-                  else if (err.error.message) errorMessage = err.error.message;
-                  else if (err.error.errors) {
-                    const errors = Object.values(err.error.errors).flat();
-                    errorMessage = errors.join(', ');
-                  } else errorMessage = JSON.stringify(err.error);
-                }
-
                 Swal.fire({
                   icon: 'error',
                   title: 'Failed to Add Staff Profile',
-                  text: errorMessage,
-                  footer: `Status: ${err.status}`
+                  text: 'Error in creating staff profile.'
                 });
               }
             });
           },
           error: (authErr) => {
             console.error('Auth Registration error:', authErr);
-            let errMsg = 'Failed to create login credentials.';
-            if (authErr.status === 400) {
-              const backendErrors = authErr.error?.errors || authErr.error?.message;
-              if (typeof backendErrors === 'object') {
-                errMsg = Object.values(backendErrors).flat().join(', ');
-              } else {
-                errMsg = backendErrors || 'Invalid login details provided.';
-              }
-            } else if (authErr.status === 409) {
-              errMsg = 'An account with this email/username already exists.';
-            } else if (authErr.status === 500) {
-              errMsg = 'Internal server error while creating login.';
-            } else if (authErr.status === 0) {
-              errMsg = 'Unable to connect to the authentication server.';
-            } else {
-              errMsg = authErr.error?.message || 'Something went wrong with authentication.';
-            }
-
             Swal.fire({
               icon: 'error',
               title: 'Login Creation Failed',
-              text: errMsg
+              text: 'Could not create account.'
             });
           }
         });
@@ -264,5 +236,3 @@ export class StaffAddComponent implements AfterViewInit {
 
   ngAfterViewInit(): void { }
 }
-
-
