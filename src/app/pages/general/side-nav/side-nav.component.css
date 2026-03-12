@@ -17,7 +17,7 @@
 :host ::ng-deep aside.sidebar {
     background: var(--auth-primary);
     border-inline-end: 1px solid var(--sidebar-border);
-    box-shadow: 0 22px 44px rgba(79, 70, 229, 0.35);
+    box-shadow: 0 22px 44px rgba(34, 74, 186, 0.25);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -209,7 +209,7 @@
 :host ::ng-deep .sidebar-menu li.dropdown.open>a {
     background: var(--sidebar-active-bg);
     color: var(--sidebar-active-text);
-    box-shadow: 0 10px 20px rgba(49, 46, 129, 0.2);
+    box-shadow: 0 10px 20px rgba(34, 74, 186, 0.15);
 }
 
 :host ::ng-deep .sidebar-menu li>a.active-page:hover,
@@ -310,7 +310,7 @@
 :host ::ng-deep .navbar-header {
     background: var(--auth-primary) !important;
     border-bottom: 1px solid var(--sidebar-border) !important;
-    box-shadow: 0 10px 24px rgba(79, 70, 229, 0.28);
+    box-shadow: 0 10px 24px rgba(34, 74, 186, 0.2);
     transition: padding var(--layout-collapse-motion), box-shadow 240ms ease, border-color 240ms ease;
     position: sticky !important;
     top: 0 !important;
@@ -336,6 +336,28 @@
 @media (min-width: 1650px) {
     :host ::ng-deep .sidebar.active:hover {
         width: 19.5rem;
+    }
+}
+
+/* Sync dashboard margin when sidebar is expanded on hover in collapsed state */
+@media (min-width: 1200px) {
+    :host ::ng-deep .sidebar.active:hover + .dashboard-main.active,
+    :host ::ng-deep .sidebar.active.sidebar-hover-expand + .dashboard-main.active {
+        margin-inline-start: 13.75rem;
+    }
+}
+
+@media (min-width: 1400px) {
+    :host ::ng-deep .sidebar.active:hover + .dashboard-main.active,
+    :host ::ng-deep .sidebar.active.sidebar-hover-expand + .dashboard-main.active {
+        margin-inline-start: 17.1875rem;
+    }
+}
+
+@media (min-width: 1650px) {
+    :host ::ng-deep .sidebar.active:hover + .dashboard-main.active,
+    :host ::ng-deep .sidebar.active.sidebar-hover-expand + .dashboard-main.active {
+        margin-inline-start: 19.5rem;
     }
 }
 
@@ -407,7 +429,7 @@
 :host ::ng-deep .sidebar-toggle.active {
     background: #ffffff;
     color: var(--auth-indigo-deep);
-    box-shadow: 0 8px 18px rgba(49, 46, 129, 0.24);
+    box-shadow: 0 8px 18px rgba(34, 74, 186, 0.2);
 }
 
 :host ::ng-deep .navbar-header [data-theme-toggle] {

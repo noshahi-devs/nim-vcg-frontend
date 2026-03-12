@@ -27,7 +27,7 @@
               }
             ],
             "styles": [
-              "src/styles.css",
+              "./src/styles.css",
               "public/assets/css/remixicon.css",
               "public/assets/css/lib/bootstrap.min.css",
               "public/assets/css/lib/apexcharts.css",
@@ -46,7 +46,7 @@
               "public/assets/css/style.css"
             ],
             "scripts": [
-              "/node_modules/jquery/dist/jquery.min.js",
+              "node_modules/jquery/dist/jquery.min.js",
               "public/assets/js/lib/bootstrap.bundle.min.js",
               "public/assets/js/lib/dataTables.min.js",
               "public/assets/js/lib/iconify-icon.min.js",

@@ -1,15 +1,15 @@
 @import url('./print.css');
 
 :root {
-  --primary-color: #487fff;
+  --primary-color: #224abe;
   --primary-light: #486cea;
-  --primary-deep: #355bd4;
+  --primary-deep: #1a3a96;
   --secondary-color: #ff9f29;
   --accent-color: #00b8f2;
   --bg-color: #f8fbff;
   --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
   --card-bg: rgba(255, 255, 255, 0.82);
-  --card-border: rgba(255, 255, 255, 0.3);
+  --card-border: #cbd5e1;
   --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   --text-main: #1e293b;
   --text-muted: #64748b;

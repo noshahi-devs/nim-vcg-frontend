@@ -220,6 +220,14 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
         target.toggleClass("active");
         $(".sidebar").toggleClass("active");
         $(".dashboard-main").toggleClass("active");
+      })
+      .on(`mouseenter${ns}`, () => {
+        if ($(".sidebar").hasClass("active")) {
+          $(".sidebar").addClass("sidebar-hover-expand");
+        }
+      })
+      .on(`mouseleave${ns}`, () => {
+        $(".sidebar").removeClass("sidebar-hover-expand");
       });
 
     $(".sidebar-mobile-toggle")
