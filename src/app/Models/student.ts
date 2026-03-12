@@ -39,6 +39,8 @@ export class Student {
   previousSchool: string = '';
   status: string = '';
   section: string = '';
+  sectionId?: number | null;
+  academicYearId?: number | null;
   // totalFee: number;
 }
 

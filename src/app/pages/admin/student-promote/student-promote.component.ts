@@ -86,13 +86,22 @@ export class StudentPromoteComponent implements OnInit {
 
   filterStudents(): void {
     const search = this.searchTerm.toLowerCase().trim();
+    
+    // Convert to number for strict comparison
+    const selClassId = this.selectedClassId ? Number(this.selectedClassId) : 0;
+    const selSectionId = this.selectedSectionId ? Number(this.selectedSectionId) : 0;
+
     this.filteredStudents = this.students.filter(s => {
       const matchSearch = !search ||
         s.studentName?.toLowerCase().includes(search) ||
         s.admissionNo?.toString().includes(search);
 
-      const matchClass = !this.selectedClassId || s.standardId === this.selectedClassId;
-      const matchSection = !this.selectedSectionId || s.section === this.sections.find(sec => sec.sectionId === this.selectedSectionId)?.sectionName;
+      const matchClass = !selClassId || Number(s.standardId) === selClassId;
+      
+      // Filter by sectionId if available, fallback to section name if sectionId is missing
+      const matchSection = !selSectionId || 
+        (s.sectionId ? Number(s.sectionId) === selSectionId : 
+         s.section === this.sections.find(sec => sec.sectionId === selSectionId)?.sectionName);
 
       return matchSearch && matchClass && matchSection;
     });
