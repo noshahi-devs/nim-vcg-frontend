@@ -25,6 +25,13 @@
     min-height: 100vh;
     transition: width var(--layout-collapse-motion), inset-inline-start var(--layout-collapse-motion), box-shadow 240ms ease;
     will-change: width, inset-inline-start;
+    z-index: 1001 !important;
+}
+
+@media (max-width: 1199px) {
+    :host ::ng-deep aside.sidebar {
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.25);
+    }
 }
 
 :host ::ng-deep html[data-theme="dark"] aside.sidebar {
@@ -46,6 +53,10 @@
     padding: 0.9rem 1rem 0.75rem;
     background: transparent !important;
     border: 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 70px;
 }
 
 :host ::ng-deep .sidebar-logo-container::after {
@@ -300,11 +311,44 @@
 }
 
 :host ::ng-deep .sidebar-close-btn {
-    top: 0.85rem;
-    inset-inline-end: 0.85rem;
-    border: 1px solid var(--sidebar-border);
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
+    position: absolute !important;
+    top: 0.85rem !important;
+    inset-inline-end: 0.85rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+    backdrop-filter: blur(8px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 1000 !important;
+    cursor: pointer !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+@media (min-width: 1200px) {
+    :host ::ng-deep .sidebar-close-btn {
+        display: none !important;
+    }
+}
+
+:host ::ng-deep .sidebar-close-btn iconify-icon {
+    font-size: 20px;
+}
+
+:host ::ng-deep .sidebar-close-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+    border-color: #ffffff;
+    transform: scale(1.05);
+}
+
+:host ::ng-deep .sidebar-close-btn:active {
+    transform: scale(0.95);
 }
 
 :host ::ng-deep .navbar-header {
@@ -315,6 +359,13 @@
     position: sticky !important;
     top: 0 !important;
     z-index: 1000 !important;
+    padding: 0.75rem 1rem !important; /* Mobile padding */
+}
+
+@media (min-width: 1200px) {
+    :host ::ng-deep .navbar-header {
+        padding: 1rem 1.5rem !important;
+    }
 }
 
 @media (min-width: 1200px) {
@@ -381,6 +432,27 @@
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
 }
 
+/* Fix mobile crowding */
+@media (max-width: 480px) {
+    :host ::ng-deep .navbar-header .col-auto:first-child .d-flex {
+        gap: 0.5rem !important;
+    }
+    :host ::ng-deep .navbar-header .col-auto:last-child .d-flex {
+        gap: 0.5rem !important;
+    }
+    :host ::ng-deep .sidebar-toggle, 
+    :host ::ng-deep .sidebar-mobile-toggle {
+        width: 36px;
+        height: 36px;
+    }
+    :host ::ng-deep .navbar-header [data-theme-toggle],
+    :host ::ng-deep .navbar-header .has-indicator,
+    :host ::ng-deep .navbar-header .dropdown button img {
+        width: 36px !important;
+        height: 36px !important;
+    }
+}
+
 :host ::ng-deep .sidebar-toggle,
 :host ::ng-deep .sidebar-mobile-toggle {
     width: 40px;
@@ -422,6 +494,18 @@
 :host ::ng-deep .sidebar-toggle .icon,
 :host ::ng-deep .sidebar-mobile-toggle .icon {
     color: inherit;
+}
+
+:host ::ng-deep .sidebar-toggle .icon.active {
+    display: none;
+}
+
+:host ::ng-deep .sidebar-toggle.active .icon.non-active {
+    display: none;
+}
+
+:host ::ng-deep .sidebar-toggle.active .icon.active {
+    display: inline-block;
 }
 
 :host ::ng-deep .sidebar-toggle:hover,

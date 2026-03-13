@@ -314,6 +314,7 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Smooth scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.closeMobileSidebar();
   }
 
   toggleTheme(): void {
