@@ -1,4 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Vision College</title>
+  <link rel="shortcut icon" href="img/vision_logo.png" type="image/x-icon">
 
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
     /* ===== General Reset ===== */
     * {
       margin: 0;
@@ -11,7 +22,6 @@
       background-color: #fff;
       color: #333;
       line-height: 1.7;
-      height: 100vh;
     }
 /* ===== Topbar ===== */
 .topbar {
@@ -481,298 +491,112 @@
   font-weight: 600;      /* bold text */
 }
 
-
-/* ===== HERO SLIDER ===== */
-.hero-slider {
-  position: relative;
-  width: 100%;
-  height: 84vh; /* Full screen height */
-  overflow: hidden;
-  font-family: "Poppins", sans-serif;
-  background-color: #800000;
-  
+:root {
+  --maroon: #7a0f0f;
+  --orange: #ff7a00;
+  --light: #f9f5f5;
 }
 
-/* Each slide */
-.hero-slider .slide {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
-}
-
-.hero-slider .slide.active {
-  opacity: 1;
-  z-index: 2;
-}
-
-/* Overlay for dark effect */
-.hero-slider .overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 50, 0.55); /* blue transparent overlay */
-  z-index: 1;
-}
-
-/* Text content */
-.hero-slider .content {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  color: #fff;
+/* HERO */
+.hero {
+  height: 40vh;
+  background: linear-gradient(rgba(122,15,15,0.85), rgba(255,122,0,0.7)),
+  url("https://i.ibb.co/6J3g9mw/college-building.jpg") center/cover;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  padding: 0 20px;
+}
+
+.hero h1 {
+  font-size: 42px;
+  font-weight: 700;
+}
+
+/* DIRECTOR SECTION */
+.director-section {
+  display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  padding: 0 20px;
-  animation: fadeInUp 1.5s ease forwards;
-}
-
-/* Heading styles */
-.hero-slider h1 {
-  font-size: 60px;
-  font-weight: 700;
-  margin: 10px 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #ffa500; /* orange heading */}
-
-.hero-slider h2 {
-  font-size: 26px;
-  font-weight: 400;
-  margin-bottom: 15px;
-  color: #d9e8ff;
-}
-
-/* Simple text entrance animation */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive styles */
-@media (max-width: 991px) {
-  .hero-slider h1 {
-    font-size: 40px;
-  }
-  .hero-slider h2 {
-    font-size: 20px;
-  }
-}
-
-@media (max-width: 600px) {
-  .hero-slider h1 {
-    font-size: 30px;
-  }
-  .hero-slider h2 {
-    font-size: 18px;
-  }
-}
-
-
-/* --- About Section Styling --- */
-.about-section {
-  position: relative;
-  background: url("../../../../../public/assets/img/unversalimg2.jpg") center center/cover no-repeat; /* background image */
-  color: #fff;
-  padding: 100px 0;
-  overflow: hidden;
-}
-
-/* Overlay gradient */
-.about-section .overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to right, rgba(5, 5, 5, 0.8), rgba(32, 31, 32, 0.8));
-  z-index: 1;
-}
-
-.about-container {
-  position: relative;
-  z-index: 2;
-  width: 85%;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
   gap: 40px;
+  padding: 60px 10%;
+  background: var(--light);
 }
 
-/* Left side */
-.about-left {
-  flex: 1;
-  min-width: 280px;
+.director-img-box img {
+  width: 300px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 15px;
+  border: 5px solid var(--orange);
 }
 
-.about-logo {
-  width: 220px;
-  margin-bottom: 20px;
+.director-content {
+  max-width: 600px;
 }
 
-.about-title {
-  font-size: 38px;
-  font-weight: 600;
-  color:orange;
-  margin-top: 10px;
-}
-
-/* Right side */
-.about-right {
-  flex: 1.5;
-  min-width: 320px;
-}
-
-.about-right p {
-  font-size: 19px;
-  line-height: 1.8;
+.director-content h2 {
+  color: var(--maroon);
+  font-size: 32px;
   margin-bottom: 15px;
-  color: #d8d2fd;
+  font-weight: 700;
 }
 
-/* Button */
-.about-btn {
-  display: inline-block;
-  text-decoration: none;
-  color: #fff;
-  border: 2px solid #fff;
-  padding: 10px 25px;
-  border-radius: 30px;
-  font-weight: 500;
-  transition: all 0.3s ease;
+.director-content p {
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 15px;
+  color: #333;
 }
 
-.about-btn i {
-  margin-left: 8px;
-  transition: margin-left 0.3s ease;
+.signature {
+  margin-top: 20px;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--orange);
 }
 
-.about-btn:hover {
-  background: #fff;
-  color: maroon;
-}
+/* ===========================
+       MOBILE RESPONSIVE
+   =========================== */
 
-.about-btn:hover i {
-  margin-left: 12px;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-  .about-container {
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .director-section {
     flex-direction: column;
     text-align: center;
+    padding: 40px 20px;
   }
 
-  .about-logo {
-    margin: 0 auto 20px;
+  .director-img-box img {
+    width: 250px;
+    height: 300px;
   }
 
-  .about-btn {
-    margin-top: 15px;
-  }
-}
-
-
-
-/* === Services Section === */
-.services-section {
-  padding: 100px 0;
-  position: relative;
-  background-color:#800000;
-}
-
-/* Optional gradient overlay */
-.services-section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-
-/* Container */
-.services-container {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  width: 85%;
-  margin: auto;
-}
-
-/* Service Box */
-.service-box {
-  border-radius: 15px;
-  text-align: center;
-  padding: 40px 25px;
-  color: #fff;
-  transition: all 0.3s ease;
-}
-
-.service-box:hover {
-  transform: translateY(-10px);
-}
-
-/* Icon */
-.service-icon {
-  width: 60px;
-  margin-bottom: 20px;
-  color: #c04000;
-}
-
-/* Title */
-.service-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  color: #fff;
-}
-
-/* Text */
-.service-text {
-  font-size: 15px;
-  line-height: 1.7;
-  color: #e0e0e0;
-}
-
-/* Responsive Design */
-@media (max-width: 992px) {
-  .services-container {
-    grid-template-columns: repeat(2, 1fr);
+  .director-content h2 {
+    font-size: 26px;
   }
 }
 
-@media (max-width: 576px) {
-  .services-container {
-    grid-template-columns: 1fr;
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 26px;
   }
 
-  .service-box {
-    padding: 30px 20px;
+  .director-img-box img {
+    width: 200px;
+    height: 260px;
+  }
+
+  .director-content p {
+    font-size: 14px;
   }
 }
-
-
-
-
 footer {
       background-color: #111;
       color: #eee;
@@ -872,6 +696,22 @@ footer {
   transform: scale(1.2);
 }
 
+/* ===== TABLET RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .footer-container {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 60px 40px 40px;
+  }
+
+  .footer-column h3::after {
+    width: 60px;
+  }
+
+  .social-icons a {
+    margin-left: 15px;
+    font-size: 17px;
+  }
+}
 
 /* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 600px) {
@@ -900,6 +740,7 @@ footer {
     margin: 0 12px;
   }
 }
+
 /* Back to Top Button */
 .back-to-top {
   position: fixed;
@@ -924,4 +765,286 @@ footer {
 .back-to-top:hover {
   background-color: #c04000; /* orange accent */
 }
+</style>
+</head>
+<body>
+ <!-- TOP BAR -->
+<section class="topbar">
+  <div class="container">
+    <div class="topbar-content">
+
+      <!-- LEFT SIDE -->
+      <div class="topbar-left">
+        <a href="mailto:visioncollegegojra@gmail.com">
+          <i class="fas fa-envelope"></i> visioncollegegojra@gmail.com
+        </a>
+        <a href="tel:03074800049">
+          <i class="fas fa-phone-alt"></i> 0307 4800049
+        </a>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="topbar-right">
+       <!-- RIGHT SIDE -->
+      <div class="topbar-right">
+        <div class="social-icons">
+          <a href="https://www.facebook.com/UCLLahore/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.linkedin.com/company/university-college-lahore/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://www.instagram.com/ucl_universalcollegelahore" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        </div>      </div>
+
+    </div>
+  </div>
+</section>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-container">
+
+      <!-- LOGO -->
+      <div class="navbar-logo">
+        <img src="img/vision_logo.png" alt="Logo">
+        <div>
+          <span class="college-name">Vision College</span>
+          <span class="college-tagline">Inspiring Minds, Building Futures</span>
+        </div>
+      </div>
+      <!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="close-btn" onclick="closeMenu()">
+    <i class="fas fa-times"></i>
+  </div>
+
+  <ul>
+    <li><a href="index.html">Home</a></li>
+
+    <li>
+      <button class="dropdown-btn">Academics ▼</button>
+      <ul class="dropdown-content">
+        <li><a href="metric.html">Matric</a></li>
+        <li><a href="intermediate.html">Intermediate</a></li>
+        <li><a href="undergraduate.html">Undergraduate</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <button class="dropdown-btn">Admissions ▼</button>
+      <ul class="dropdown-content">
+        <li><a href="Entrance-Requirements.html">Entrance Requirements</a></li>
+        <li><a href="fee-structure.html">Fee Structures</a></li>
+      </ul>
+    </li>
+
+        <li><a href="faculty.html">Faculty</a></li>
+      
+
+    <li><a href="life-at-VC.html">Life at VC</a></li>
+    <li>
+      <button class="dropdown-btn active">About Us ▼</button>
+      <ul class="dropdown-content">
+        <li><a href="our-history.html">Our History</a></li>
+        <li><a href="massege-director.html" class="active"> Massegege from the Director</a></li>
+      </ul>
+    </li>    <li><a href="contact.html">Contact Us</a></li>
+  </ul>
+</div>
+
+<!-- HAMBURGER BUTTON (MOBILE) -->
+<div class="hamburger" onclick="openMenu()">
+  <i class="fas fa-bars"></i>
+</div>
+<script>
+  function openMenu() {
+    document.getElementById("mobileMenu").style.right = "0";
+  }
+
+  function closeMenu() {
+    document.getElementById("mobileMenu").style.right = "-280px";
+  }
+
+  // Dropdown Toggle (Mobile)
+  const dropdownButtons = document.querySelectorAll(".dropdown-btn");
+  dropdownButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const dropdown = btn.nextElementSibling;
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+  });
+</script>
+ <!-- MENU -->
+ <ul class="navbar-menu">
+  <li><a href="index.html">Home</a></li>
+  <li class="academics">
+  <a href="#">Academics</a>
+  <div class="mega-dropdown">
+    
+ 
+
+
+   
+    <div class="mega-section">
+      <a href="metric.html">Matric</a>
+      <a href="intermediate.html">Intermediate</a>
+      <a href="undergraduate.html">undergraduate</a>
+
+    </div>
+
+    
+
+  </div>
+</li>
+
+     <!-- Admissions Dropdown -->
+     <li>
+      <a href="#">Admissions</a>
+      <ul class="dropdown">
+        <li><a href="Entrance-Requirements.html">Entrance Requirements</a></li>
+        <li><a href="fee-structure.html">Fee Structures</a></li>
+      </ul>
+    </li>
+
+    <!-- Faculty Dropdown -->
   
+        <li><a href="faculty.html">Faculty</a></li>
+     
+    <li><a href="life-at-VC.html">Life at VC</a></li>
+
+    <!-- About Us Dropdown -->
+    <li>
+      <a href="#" class="active">About Us</a>
+      <ul class="dropdown">
+        <li><a href="our-history.html">Our History</a></li>
+        <li><a href="massege-director.html">Message from the Director</a></li>
+      </ul>
+    </li>
+
+    <li><a href="contact.html">Contact Us</a></li>
+  </ul>
+  </div>
+</nav>
+<script>
+  const currentLocation = window.location.href;
+  const menuItems = document.querySelectorAll('.navbar-menu a');
+
+  menuItems.forEach(link => {
+    if (link.href === currentLocation) {
+      link.classList.add('active');
+    }
+  });
+</script>
+<!-- HERO -->
+<section class="hero">
+  <h1>Message From The Director</h1>
+</section>
+
+<!-- MAIN CONTENT -->
+<section class="director-section">
+  
+  <div class="director-img-box">
+    <img src="https://i.ibb.co/zmYr6pJ/director.png" alt="Director Image">
+  </div>
+
+  <div class="director-content">
+    <h2>Welcome to Vision College</h2>
+    <p>
+      At Vision College, our mission is to create an environment where students can grow, 
+      learn, and excel in both academic and personal development. We believe that education 
+      is a powerful tool that shapes the future, and it is our responsibility to provide the 
+      best learning experience to every student.
+    </p>
+
+    <p>
+      Our college is committed to offering quality education, modern facilities, highly 
+      experienced faculty members, and a supportive learning environment. With dedication, 
+      discipline, and hard work, every student can achieve success.
+    </p>
+
+    <p class="signature">Mirza Luqman— Director, Vision College</p>
+  </div>
+</section>
+
+ <!-- Footer Start -->
+ <footer class="footer">
+  <div class="footer-container">
+
+    <!-- Column 1: Contact Info -->
+    <div class="footer-column">
+      <img src="img/vision_logo.png" alt="NGC Logo" class="footer-logo">
+      <p>
+     
+        Imamia Colony Near Islamia Ground Gojra
+      </p>
+      <p>
+        +92 3074800049<br>
+        <a href="mailto:info@ucl.edu.pk">info@ngc.edu.pk</a><br>
+        <a href="mailto:admissions@ucl.edu.pk">admissions@ngc.edu.pk</a>
+      </p>
+    </div>
+
+    <!-- Column 2: Our Campus -->
+    <div class="footer-column">
+      <h3>Our Campus</h3>
+      <ul>
+        <li><a href="massege-director.html">Director's Message</a></li>
+      
+        <li><a href="Entrance-Requirements.html">Entrance-Requirements</a></li>
+        <li><a href="fee-structure.html">Fee-structure</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 3: Life at UCL -->
+    <div class="footer-column">
+      <h3>Life at VC</h3>
+      <ul>
+        <li><a href="life-at-VC.html">VC Welfare Society</a></li>
+        <li><a href="life-at-VC.html">VC Sports Society</a></li>
+        <li><a>VC Adventure Society</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 4: Academics -->
+    <div class="footer-column">
+      <h3>Academics</h3>
+      <ul>
+        <li><a href="timetable.html">Timetables</a></li>
+        <li><a href="calendar.html">Calendar</a></li>
+      </ul>
+    </div>
+
+  </div>
+<!-- Back to Top Button -->
+<button id="backToTop" class="back-to-top">
+  ↑
+</button>
+<script>
+  const backToTopBtn = document.getElementById("backToTop");
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.style.display = "flex";
+    } else {
+      backToTopBtn.style.display = "none";
+    }
+  });
+
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+</script>
+  <!-- Copyright Area -->
+  <div class="footer-bottom">
+    <p>© 2024 Vision College</p>
+
+    <div class="social-icons">
+      <a href="https://www.facebook.com/UCLLahore/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://www.linkedin.com/company/university-college-lahore/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="https://www.instagram.com/ucl_universalcollegelahore" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+    </div>
+  </div>
+</footer>
+<!-- Footer End -->
+</body>
+</html>

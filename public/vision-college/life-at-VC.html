@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Vision College</title>
+  <link rel="shortcut icon" href="img/vision_logo.png" type="image/x-icon">
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    /* ===== General Reset ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background-color: #fff;
+      color: #333;
+      line-height: 1.7;
+    }
+/* ===== Topbar ===== */
+.topbar {
+  background: linear-gradient(90deg, #800000, #c04000); /* Maroon to Orange gradient */
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 0;
+}
+
+.topbar .container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.topbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.topbar-left a,
+.topbar-right a {
+  color: #fff;
+  margin-right: 15px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.topbar-left a i {
+  margin-right: 6px;
+  font-size: 15px;
+  color: #ffa500; /* orange icons */
+}
+
+.topbar-left a:hover,
+.topbar-right a:hover {
+  color: #ffa500; /* orange hover */
+}
+
+/* Right section links */
+.topbar-right a {
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+/* 🔹 Responsive Design */
+@media (max-width: 992px) {
+  .topbar-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+  }
+  .topbar-left,
+  .topbar-right {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    font-size: 13px;
+    padding: 5px 0;
+  }
+
+  .topbar-right {
+  display: flex;              /* 👈 items ek line mein aajayenge */
+  justify-content: center;    /* 👈 center align horizontally */
+  align-items: center;        /* 👈 vertically center */
+  gap: 15px;                  /* 👈 dono links ke beech space */
+  flex-wrap: nowrap;          /* 👈 line break hone se rokta hai */
+}
+
+  .topbar-left a i {
+    font-size: 14px;
+  }
+}
+   /* ===== Navbar ===== */
+.navbar {
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  width: 100%;
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 20px;
+}
+
+/* Logo + text */
+.navbar-logo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.navbar-logo img {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+}
+
+.college-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #800000; /* maroon */
+  line-height: 1.1;
+}
+
+.college-tagline {
+  display: block;
+  font-size: 12px;
+  color: #c04000; /* orange tagline */
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* Navbar menu */
+.navbar-menu {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-menu > li {
+  margin-left: 30px;
+  position: relative;
+}
+
+.navbar-menu a {
+  text-decoration: none;
+  color: #800000; /* maroon */
+  font-size: 17px;
+  font-weight: 550;
+  padding: 18px 0;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.navbar-menu a.active {
+  color: #fff;
+  background: linear-gradient(90deg, #800000, #c04000); /* maroon-orange active */
+  border-radius: 5px;
+  padding: 8px 15px;
+}
+
+.navbar-menu a:hover {
+  background: rgba(255, 165, 0, 0.2); /* soft orange hover */
+  border-radius: 5px;
+}
+
+/* Hover effect underline */
+.navbar-menu > li > a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 4px;
+  bottom: 10px;
+  left: 0;
+  background-color: #c04000; /* orange underline */
+  transition: width 0.3s;
+}
+
+.navbar-menu > li > a:hover::after {
+  width: 100%;
+}
+
+/* Dropdown */
+.dropdown a:hover {
+  color: #c04000;
+}
+.navbar-menu a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+    /* HOVER EFFECT - MAIN MENU */
+    .navbar-menu > li > a {
+      position: relative;
+    }
+
+    .navbar-menu > li > a::after {
+      content: "";
+      position: absolute;
+      width: 0%;
+      height: 5px; 
+      bottom: 10px;
+      left: 0;
+      background-color:rgb(163, 40, 40);
+      transition: width 0.3s;
+    }
+
+    .navbar-menu > li > a:hover {
+      color: rgb(163, 40, 40);
+    }
+
+    .navbar-menu > li > a:hover::after {
+      width: 100%;
+    }
+
+    /* DROPDOWN */
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+     background: #f5f5f5;
+      min-width: 250px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      display: none;
+     
+    }
+     /* Dropdown list style remove */
+   .dropdown {
+     list-style: none;
+     margin: 0;
+     padding: 0;
+    }
+  .dropdown li {
+  list-style: none;
+}
+
+    .dropdown li {
+      margin: 0;
+    }
+
+    .dropdown a {
+      padding: 12px 20px;
+      color: #333;
+      font-size: 15px;
+    }
+
+    .dropdown a:hover {
+      background: #f5f5f5;
+      color: rgb(163, 40, 40); /* केवल color change होगा, line नहीं आएगी */
+    }
+
+    .navbar-menu li:hover .dropdown {
+      display: block;
+    }
+
+
+
+
+    .navbar-menu a.active {
+  color: #fff;
+  background:#800000;; /* blue-purple gradient */
+  border-radius: 5px;
+  padding: 8px 15px;
+  transition: 0.3s ease;
+}
+
+.navbar-menu a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
+
+    /* Responsive (basic) */
+    @media (max-width: 992px) {
+      .navbar-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .navbar-menu {
+        flex-direction: column;
+        width: 100%;
+      }
+      .navbar-menu > li {
+        margin-left: 0;
+        width: 100%;
+      }
+      .navbar-menu a {
+        padding: 12px 0;
+        width: 100%;
+      }
+      .dropdown {
+        position: static;
+        box-shadow: none;
+        width: 100%;
+      }
+      .dropdown a {
+        padding-left: 30px;
+      }
+    }
+    /* Academics mega dropdown */
+.navbar-menu li.academics .mega-dropdown {
+  display: none;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
+  gap: 20px;
+  padding: 20px 30px;
+   min-width: 600px; /* large width for mega menu */
+   
+   
+}
+
+.navbar-menu li.academics:hover .mega-dropdown {
+  display: grid;
+}
+
+.mega-dropdown li {
+  list-style: none;
+}
+
+.mega-dropdown h4 {
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 10px;
+  color: #800000;; /* dark blue heading */
+}
+
+.mega-dropdown a {
+  display: block;
+  padding: 6px 0;
+  font-size: 15px;
+  color: #333;
+  text-decoration: none;
+  transition: color 0.3s ease, background 0.3s ease;
+}
+
+.mega-dropdown a:hover {
+ 
+  color: #800000;; /* hover पर सिर्फ़ text color बदलेगा */
+}
+
+
+
+
+/* Mega Dropdown Container */
+.navbar-menu li.academics .mega-dropdown {
+  display: none;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
+  gap: 20px;
+  padding: 15px 25px;
+  min-width: 100px;
+  background: #f5f5f5;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 999;
+}
+
+.navbar-menu li.academics:hover .mega-dropdown {
+  display: grid;
+}
+
+/* Each Column Section */
+.mega-section {
+  padding: 0 15px;
+  border-right: 1px solid #e0e0e0; /* Divider line */
+}
+
+.mega-section:last-child {
+  border-right: none; /* آخری والے پر لائن نہ ہو */
+}
+
+/* HAMBURGER BUTTON */
+.hamburger {
+  position: absolute;   /* free positioning inside navbar */
+  top: 18px;            /* 👈 upar se thoda space */
+  right: 20px;          /* 👈 right se gap */
+  display: none;
+  font-size: 28px;
+  color: #800000;
+  cursor: pointer;
+  z-index: 999;         /* ensure visible over other elements */
+  margin-left: 0;       /* remove auto margin */
+}
+
+/* SHOW HAMBURGER ON MOBILE */
+@media (max-width: 992px) {
+  .hamburger {
+    display: block;
+  }
+  .navbar-menu {
+    display: none;
+  }
+}
+
+/* MOBILE SLIDE MENU */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100%;
+  background: #ffffff;
+  box-shadow: -3px 0 10px rgba(0,0,0,0.3);
+  padding: 30px 20px;
+  transition: right 0.4s ease;
+  z-index: 2000;
+}
+
+.mobile-menu ul {
+  list-style: none;
+}
+
+.mobile-menu a {
+  display: block;
+  padding: 12px 0;
+  color: #800000;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid #e3e3e3;
+}
+
+.close-btn {
+  font-size: 25px;
+  text-align: right;
+  cursor: pointer;
+  margin-bottom: 20px;
+  color: #800000;
+}
+
+/* MOBILE NAVBAR LOGO SPACING */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 10px;
+}
+
+@media (max-width: 992px) {
+  .navbar-container {
+    position: relative; /* important for absolute hamburger */
+    padding: 10px 0;
+  }
+
+  .navbar-logo {
+    margin-top: 5px; /* ensures space from top */
+  }
+}
+
+/* DROPDOWN (MOBILE) */
+.dropdown-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+  color:#800000;
+  border-bottom: 1px solid #e3e3e3;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  padding-left: 15px;
+}
+
+.mobile-menu a.active,
+.mobile-menu .dropdown-btn.active {
+  color: #d22b2b;        /* highlight color */
+  font-weight: 600;      /* bold text */
+}
+
+/* Life at VC — Fully Responsive Styles (Maroon + Orange Theme) */
+
+* { box-sizing: border-box; margin:0; padding:0; font-family: "Poppins", sans-serif; }
+:root {
+  --maroon: #7a0f0f;
+  --orange: #ff7a00;
+  --bg: #fbf8f7;
+  --muted: #666;
+  --container: 1100px;
+}
+
+/* container */
+.container { width: calc(100% - 40px); max-width: var(--container); margin: 0 auto; }
+
+/* HEADER */
+.site-header { background: white; border-bottom: 1px solid #eee; position: sticky; top:0; z-index: 50; }
+.header-inner { display:flex; align-items:center; justify-content:space-between; padding:12px 0; flex-wrap:wrap; }
+.logo { font-weight:700; color:var(--maroon); font-size:20px; }
+.nav { display:flex; flex-wrap:wrap; gap:10px; }
+.nav a { color:#333; text-decoration:none; padding:8px 10px; border-radius:8px; font-weight:500; }
+.nav a.active, .nav a:hover { background:var(--maroon); color:white; }
+
+/* HERO */
+.hero {
+  background: linear-gradient(180deg, rgba(122,15,15,0.88), rgba(255,122,0,0.6)),
+  url('img/college-building.jpg') center/cover;
+  color:white;
+  padding:70px 0;
+}
+.hero-inner {
+  display:flex;
+  gap:30px;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
+.hero-text { max-width:560px; }
+.hero-text h1 { font-size:38px; margin-bottom:10px; }
+.hero-text p { color:#f3eaea; margin-bottom:18px; line-height:1.6; }
+.hero-image img {
+  width:420px;
+  max-width:100%;
+  border-radius:12px;
+  border:5px solid rgba(255,255,255,0.12);
+}
+
+/* BUTTONS */
+.btn { display:inline-block; text-decoration:none; padding:10px 18px; border-radius:8px; font-weight:600; }
+.btn-primary { background:var(--orange); color:white; border: 2px solid var(--orange); }
+.btn-outline { background:transparent; color:var(--maroon); border: 2px solid var(--maroon); }
+
+/* HIGHLIGHTS */
+.highlights { padding:30px 0; }
+.grid-4 { display:grid; grid-template-columns: repeat(4,1fr); gap:16px; }
+.card.small {
+  background:white; padding:18px; border-radius:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.04); text-align:center;
+}
+.card.small h3 { color:var(--maroon); margin-bottom:6px; }
+
+/* GALLERY */
+.gallery { padding:30px 0; }
+.gallery h2 { color:var(--maroon); margin-bottom:6px; }
+.gallery .muted { color:var(--muted); margin-bottom:14px; }
+.gallery-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; }
+.gallery-grid img {
+  width:95%; height:240px; object-fit:cover; border-radius:8px;
+  cursor:pointer; transition: transform .25s ease;
+}
+.gallery-grid img:hover { transform: translateY(-6px); }
+
+/* MODAL */
+.modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8);
+  align-items:center; justify-content:center; padding:20px; z-index:200;
+}
+.modal-img { max-width:40px; max-height:40vh; border-radius:8px; }
+.modal-close { position:absolute; top:10px; right:24px; font-size:32px; color:white; cursor:pointer; }
+.modal-caption { color:#fff; margin-top:10px; text-align:center; }
+
+/* TESTIMONIALS */
+.testimonials { padding:36px 0; }
+.test-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; }
+.test-card {
+  background:white; padding:18px; border-radius:10px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.04);
+}
+.test-card .quote { font-style:italic; color:#333; margin-bottom:14px; }
+.test-card .meta { display:flex; gap:12px; align-items:center; }
+.test-card .meta img {
+  width:48px; height:48px; border-radius:50%; object-fit:cover;
+  border:2px solid var(--orange);
+}
+.test-card .meta strong { display:block; color:var(--maroon); }
+.test-card .meta span { display:block; color:var(--muted); font-size:13px; }
+
+/* FACILITIES */
+.facilities { padding:24px 0; }
+.grid-3 { display:grid; grid-template-columns: repeat(3,1fr); gap:16px; }
+.card { background:white; padding:20px; border-radius:10px; box-shadow:0 8px 18px rgba(0,0,0,0.04); }
+.card h3 { color:var(--maroon); margin-bottom:8px; }
+
+/* EVENTS STRIP */
+.events { padding:28px 0; }
+.events-strip {
+  display:flex; gap:12px; overflow-x:auto; padding-bottom:6px;
+  scroll-behavior: smooth;
+}
+.events-strip::-webkit-scrollbar { height:6px; }
+.events-strip::-webkit-scrollbar-thumb { background:var(--orange); border-radius:10px; }
+.event {
+  min-width:220px; background:white; padding:16px; border-radius:10px;
+  box-shadow:0 6px 16px rgba(0,0,0,0.04);
+}
+.event h4 { color:var(--maroon); margin-bottom:6px; }
+
+/* CTA */
+.cta {
+  background: linear-gradient(90deg, rgba(122,15,15,0.95), rgba(255,122,0,0.95));
+  color:white;
+  padding:34px 0;
+  margin-top:20px;
+}
+.cta-inner {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; flex-wrap:wrap;
+}
+.cta-inner h2 { font-size:24px; margin-bottom:6px; }
+
+
+
+/* ================================
+   FULL RESPONSIVENESS
+================================ */
+
+/* Tablets + Small Laptops */
+@media (max-width: 1100px) {
+  .grid-4 { grid-template-columns: repeat(2,1fr); }
+  .test-grid { grid-template-columns: repeat(2,1fr); }
+  .grid-3 { grid-template-columns: repeat(2,1fr); }
+
+  .hero-inner { flex-direction:column-reverse; text-align:center; gap:18px; }
+  .hero-image img { max-width:80%; margin:0 auto; }
+
+  .cta-inner { flex-direction:column; text-align:center; }
+}
+
+/* Mobile (680px) */
+@media (max-width: 680px) {
+  .grid-4, .grid-3, .test-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2,1fr); }
+  .hero { padding:40px 0; }
+  .hero-text h1 { font-size:26px; }
+  .hero-text p { font-size:14px; }
+  .gallery-grid img { height:150px; }
+
+  .events-strip .event { min-width:180px; }
+}
+
+/* Extra Small Screens (420px) */
+@media (max-width: 420px) {
+  .gallery-grid { grid-template-columns: 1fr; }
+  .hero-text h1 { font-size:22px; }
+  .hero-image img { width:100%; }
+  .modal-img { max-height:60vh; }
+  .events-strip .event { min-width:160px; padding:14px; }
+}
+
+
+footer {
+      background-color: #111;
+      color: #eee;
+  font-family: "Poppins", sans-serif;
+  line-height: 1.7;
+  width: 100%;
+}
+
+/* ===== FOOTER CONTAINER ===== */
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 40px;
+  padding: 80px 60px 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ===== COLUMN TITLES ===== */
+.footer-column h3 {
+  font-size: 18px;
+  color: #fff;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.footer-column h3::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: #c04000; /* orange line */
+  margin-top: 8px;
+}
+
+/* ===== TEXT & LINKS ===== */
+.footer-column p {
+  color: #ccc;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.footer-column a {
+  color: #ccc;
+  text-decoration: none;
+  transition: 0.3s;
+  display: inline-block;
+}
+
+.footer-column a:hover {
+  color: white;
+  transform: translateX(3px);
+}
+
+/* ===== LOGO ===== */
+.footer-logo {
+  width: 50px;
+  margin-bottom: 20px;
+}
+
+/* ===== LISTS ===== */
+.footer-column ul {
+  list-style: none;
+}
+
+.footer-column ul li {
+  margin-bottom: 8px;
+}
+
+/* ===== BOTTOM BAR ===== */
+.footer-bottom {
+  background: #0a0a0a;
+  border-top: 1px solid #222;
+  padding: 20px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.footer-bottom p {
+  font-size: 14px;
+  color: #ccc;
+}
+
+/* ===== SOCIAL ICONS ===== */
+.social-icons a {
+  color: #ffa500;
+  font-size: 18px;
+  margin-left: 20px;
+  transition: 0.3s;
+}
+
+.social-icons a:hover {
+  color: white;
+  transform: scale(1.2);
+}
+
+/* ===== TABLET RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .footer-container {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 60px 40px 40px;
+  }
+
+  .footer-column h3::after {
+    width: 60px;
+  }
+
+  .social-icons a {
+    margin-left: 15px;
+    font-size: 17px;
+  }
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 30px;
+    padding: 50px 25px 30px;
+  }
+
+  .footer-column h3::after {
+    margin: 8px auto 0;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 30px;
+  }
+
+  .social-icons {
+    margin-top: 10px;
+  }
+
+  .social-icons a {
+    margin: 0 12px;
+  }
+}
+
+/* Back to Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: 100px; /* aur upar */
+  right: 25px;
+  width: 45px;
+  height: 45px;
+  background-color: #800000; /* maroon */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+  transition: 0.3s;
+  z-index: 999;
+}
+
+.back-to-top:hover {
+  background-color: #c04000; /* orange accent */
+}
+</style>
+</head>
+<body>
+<!-- TOP BAR -->
+<section class="topbar">
+  <div class="container">
+    <div class="topbar-content">
+
+      <!-- LEFT SIDE -->
+      <div class="topbar-left">
+        <a href="mailto:visioncollegegojra@gmail.com">
+          <i class="fas fa-envelope"></i> visioncollegegojra@gmail.com
+        </a>
+        <a href="tel:03074800049">
+          <i class="fas fa-phone-alt"></i> 0307 4800049
+        </a>
+      </div>
+<!-- RIGHT SIDE -->
+<div class="topbar-right">
+  <div class="social-icons">
+    <a href="https://www.facebook.com/UCLLahore/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+    <a href="https://www.linkedin.com/company/university-college-lahore/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+    <a href="https://www.instagram.com/ucl_universalcollegelahore" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+  </div>      </div>
+
+    </div>
+  </div>
+</section>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-container">
+
+      <!-- LOGO -->
+      <div class="navbar-logo">
+        <img src="img/vision_logo.png" alt="Logo">
+        <div>
+          <span class="college-name">Vision College</span>
+          <span class="college-tagline">Inspiring Minds, Building Futures</span>
+        </div>
+      </div>
+      <!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="close-btn" onclick="closeMenu()">
+    <i class="fas fa-times"></i>
+  </div>
+
+  <ul>
+    <li><a href="index.html">Home</a></li>
+
+    <li>
+      <button class="dropdown-btn ">Academics ▼</button>
+      <ul class="dropdown-content">
+        <li><a href="metric.html">Matric</a></li>
+        <li><a href="intermediate.html">Intermediate</a></li>
+        <li><a href="undergraduate.html">Undergraduate</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <button class="dropdown-btn">Admissions ▼</button>
+      <ul class="dropdown-content">
+        <li><a href="Entrance-Requirements.html">Entrance Requirements</a></li>
+        <li><a href="fee-structure.html">Fee Structures</a></li>
+      </ul>
+    </li>
+
+   
+        <li><a href="faculty.html">Faculty</a></li>
+      
+
+    <li><a href="life-at-VC.html" class="active">Life at VC</a></li>
+    <li>
+      <button class="dropdown-btn">About Us ▼</button>
+      <ul class="dropdown-content">
+        <li><a href="our-history.html">Our History</a></li>
+        <li><a href="massege-director.html"> Massegege from the Director</a></li>
+      </ul>
+    </li>    <li><a href="contact.html">Contact Us</a></li>
+  </ul>
+</div>
+
+
+<!-- HAMBURGER BUTTON (MOBILE) -->
+<div class="hamburger" onclick="openMenu()">
+  <i class="fas fa-bars"></i>
+</div>
+<script>
+  function openMenu() {
+    document.getElementById("mobileMenu").style.right = "0";
+  }
+
+  function closeMenu() {
+    document.getElementById("mobileMenu").style.right = "-280px";
+  }
+
+  // Dropdown Toggle (Mobile)
+  const dropdownButtons = document.querySelectorAll(".dropdown-btn");
+  dropdownButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const dropdown = btn.nextElementSibling;
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+  });
+</script>
+ <!-- MENU -->
+ <ul class="navbar-menu">
+  <li><a href="index.html">Home</a></li>
+  <li class="academics">
+  <a href="#">Academics</a>
+  <div class="mega-dropdown">
+    
+ 
+
+
+   
+    <div class="mega-section">
+      <a href="metric.html">Matric</a>
+      <a href="intermediate.html">Intermediate</a>
+      <a href="undergraduate.html">undergraduate</a>
+
+    </div>
+
+    
+
+  </div>
+</li>
+
+     <!-- Admissions Dropdown -->
+     <li>
+      <a href="#">Admissions</a>
+      <ul class="dropdown">
+        <li><a href="Entrance-Requirements.html">Entrance Requirements</a></li>
+        <li><a href="fee-structure.html">Fee Structures</a></li>
+      </ul>
+    </li>
+
+    <!-- Faculty Dropdown -->
+
+        <li><a href="faculty.html">Faculty</a></li>
+    
+    <li><a href="life-at-VC.html">Life at VC</a></li>
+
+    <!-- About Us Dropdown -->
+    <li>
+      <a href="#">About Us</a>
+      <ul class="dropdown">
+        <li><a href="our-history.html">Our History</a></li>
+        <li><a href="massege-director.html">Message from the Director</a></li>
+      </ul>
+    </li>
+
+    <li><a href="contact.html">Contact Us</a></li>
+  </ul>
+  </div>
+</nav>
+<script>
+  const currentLocation = window.location.href;
+  const menuItems = document.querySelectorAll('.navbar-menu a');
+
+  menuItems.forEach(link => {
+    if (link.href === currentLocation) {
+      link.classList.add('active');
+    }
+  });
+</script>
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <h1>Life at Vision College</h1>
+      <p>Discover a vibrant academic environment where discipline meets creativity, skills meet opportunities and students grow to their full potential.</p>
+    </div>
+    <div class="hero-image">
+      <img src="img/metric1.jpg" alt="Campus Students">
+    </div>
+  </div>
+</section>
+
+<!-- HIGHLIGHT STATS -->
+<section class="highlights">
+  <div class="container grid-4">
+    <div class="card small">
+      <h3>25+</h3>
+      <p>Active Societies</p>
+    </div>
+    <div class="card small">
+      <h3>50+</h3>
+      <p>Workshops / Year</p>
+    </div>
+    <div class="card small">
+      <h3>98%</h3>
+      <p>Student Satisfaction</p>
+    </div>
+    <div class="card small">
+      <h3>15+</h3>
+      <p>Sports Programs</p>
+    </div>
+  </div>
+</section>
+
+<!-- CAMPUS GALLERY -->
+<section id="gallery" class="gallery">
+  <div class="container">
+    <h2>Campus Gallery</h2>
+    <p class="muted">A glimpse of everyday life at VC</p>
+
+    <div class="gallery-grid">
+      <img src="img/Campus.jpeg" alt="">
+      <img src="img/Campus1.jpeg" alt="">
+      <img src="img/Campus2.jpeg" alt="">
+      <img src="img/Campus3.jpeg" alt="">
+      <img src="img/Campus4.jpeg" alt="">
+      <img src="img/Campus5.jpeg" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY MODAL -->
+<div class="modal" id="modal">
+  <span class="modal-close" onclick="closeModal()">&times;</span>
+  <img id="modalImg" class="modal-img">
+</div>
+
+<!-- FACILITIES -->
+<section class="facilities">
+  <div class="container">
+    <h2 style="color:var(--maroon); margin-bottom:15px;">Facilities We Offer</h2>
+
+    <div class="grid-3">
+      <div class="card">
+        <h3>Modern Classrooms</h3>
+        <p>Fully equipped learning spaces with digital support & comfortable seating.</p>
+      </div>
+
+      <div class="card">
+        <h3>Library & Study Zones</h3>
+        <p>A peaceful, resource-rich environment to help students focus & grow.</p>
+      </div>
+
+      <div class="card">
+        <h3>Sports & Fitness</h3>
+        <p>Cricket, football, badminton, athletics and indoor games.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STUDENT LIFE -->
+<section class="student-life">
+  <div class="container">
+    <h2 style="color:var(--maroon); margin-bottom:12px;">Student Life at VC</h2>
+    <p class="muted">Where learning meets creativity, friendships & unforgettable experiences.</p>
+
+    <div class="grid-3">
+      <div class="life-box">
+        <h3>Competitions & Events</h3>
+        <p>Debates, Naat/Qiraat, Science exhibitions, IT competitions.</p>
+      </div>
+
+      <div class="life-box">
+        <h3>Study Tours</h3>
+        <p>Educational trips to historical, scientific & industrial locations.</p>
+      </div>
+
+      <div class="life-box">
+        <h3>Professional Grooming</h3>
+        <p>Career counseling, skill-building workshops and personality development.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section class="events">
+  <div class="container">
+    <h2 style="color:var(--maroon);">Events & Activities</h2>
+
+    <div class="events-strip">
+      <div class="event">
+        <h4>Sports Week</h4>
+        <p>Full week of sports championships & competitions.</p>
+      </div>
+      <div class="event">
+        <h4>Annual Function</h4>
+        <p>A celebration of achievements, talents and awards.</p>
+      </div>
+      <div class="event">
+        <h4>Welcome Party</h4>
+        <p>New students are warmly welcomed to VC family.</p>
+      </div>
+      <div class="event">
+        <h4>Qiraat / Naat Competitions</h4>
+        <p>Showcasing religious talent and spiritual recitations.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="container">
+    <h2 style="color:var(--maroon);">What Students Say</h2>
+
+    <div class="test-grid">
+      <div class="test-card">
+        <p class="quote">“VC is a place that truly helps you grow academically and personally.”</p>
+        <div class="meta">
+          <img src="img/student1.jpg">
+          <div>
+            <strong>Ahmed Khan</strong>
+            <span>Pre-Engineering</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="test-card">
+        <p class="quote">“Teachers are very kind and supportive. I love the environment.”</p>
+        <div class="meta">
+          <img src="img/student2.jpg">
+          <div>
+            <strong>Sana Fatima</strong>
+            <span>ICS Student</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="test-card">
+        <p class="quote">“Events, tours and activities make the college life amazing!”</p>
+        <div class="meta">
+          <img src="img/student1.jpg">
+          <div>
+            <strong>Areeb Malik</strong>
+            <span>FSC Student</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="container cta-inner">
+    <h2>Join Vision College — Where Your Future Begins</h2>
+    <a href="contact.html" class="btn btn-outline">Apply Now</a>
+  </div>
+</section>
+ <!-- SMALL JS FOR GALLERY MODAL -->
+ <script>
+  function openModal(src, alt) {
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modal-img');
+    const caption = document.getElementById('modal-caption');
+    modal.style.display = 'flex';
+    modalImg.src = src;
+    modalImg.alt = alt;
+    caption.textContent = alt || '';
+  }
+
+  function closeModal(e) {
+    // close only when background or close icon clicked
+    if (e && e.target && (e.target.id === 'modal' || e.target.classList.contains('modal-close'))) {
+      document.getElementById('modal').style.display = 'none';
+    } else if (!e) {
+      document.getElementById('modal').style.display = 'none';
+    }
+  }
+
+  // close by ESC key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+ 
+  
+
+<!-- ===== FOOTER START ===== -->
+<footer class="footer">
+  <div class="footer-container">
+
+    <!-- Column 1 -->
+    <div class="footer-column">
+      <img src="img/vision_logo.png" alt="NGC Logo" class="footer-logo">
+      <p>
+        Imamia Colony Near Islamia Ground Gojra</p>
+      <p>
+        +92 3074800049<br>
+        <a href="mailto:info@visioncollegegojra.com">info@visioncollegegojra.com</a><br>
+        <a href="mailto:admissions@visioncollegegojra.com">admissions@visioncollegegojra.com</a>
+      </p>
+    </div>
+
+    <!-- Column 2 -->
+    <div class="footer-column">
+      <h3>Our Campus</h3>
+      <ul>
+        <li><a href="massege-director.html">Director's Message</a></li>
+    
+        <li><a href="Entrance-Requirements.html">Entrance-Requirements</a></li>
+        <li><a href="fee-structure.html">Fee-structure</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 3 -->
+    <div class="footer-column">
+      <h3>Life at VC</h3>
+      <ul>
+        <li><a href="life-at-VC.html">VC Welfare Society</a></li>
+        <li><a href="life-at-VC.html">VC Sports Society</a></li>
+        <li><a>VC Adventure Society</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 4 -->
+    <div class="footer-column">
+      <h3>Academics</h3>
+      <ul>
+        <li><a href="timetable.html">Timetables</a></li>
+        <li><a href="calendar.html">Calendar</a></li>
+      </ul>
+    </div>
+
+  </div>
+<!-- Back to Top Button -->
+<button id="backToTop" class="back-to-top">
+  ↑
+</button>
+<script>
+  const backToTopBtn = document.getElementById("backToTop");
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.style.display = "flex";
+    } else {
+      backToTopBtn.style.display = "none";
+    }
+  });
+
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+</script>
+  <!-- Bottom Bar -->
+  <div class="footer-bottom">
+    <p>© 2024 Vision College</p>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/UCLLahore/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://www.linkedin.com/company/university-college-lahore/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="https://www.instagram.com/ucl_universalcollegelahore" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+    </div>
+  </div>
+</footer>
+<!-- ===== FOOTER END ===== -->
+
+</body>
+</html>

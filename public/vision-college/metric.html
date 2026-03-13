@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Vision College</title>
+  <link rel="shortcut icon" href="img/vision_logo.png" type="image/x-icon">
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    /* ===== General Reset ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background-color: #fff;
+      color: #333;
+      line-height: 1.7;
+    }
+/* ===== Topbar ===== */
+.topbar {
+  background: linear-gradient(90deg, #800000, #c04000); /* Maroon to Orange gradient */
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 0;
+}
+
+.topbar .container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.topbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.topbar-left a,
+.topbar-right a {
+  color: #fff;
+  margin-right: 15px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.topbar-left a i {
+  margin-right: 6px;
+  font-size: 15px;
+  color: #ffa500; /* orange icons */
+}
+
+.topbar-left a:hover,
+.topbar-right a:hover {
+  color: #ffa500; /* orange hover */
+}
+
+/* Right section links */
+.topbar-right a {
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+/* 🔹 Responsive Design */
+@media (max-width: 992px) {
+  .topbar-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+  }
+  .topbar-left,
+  .topbar-right {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    font-size: 13px;
+    padding: 5px 0;
+  }
+
+  .topbar-right {
+  display: flex;              /* 👈 items ek line mein aajayenge */
+  justify-content: center;    /* 👈 center align horizontally */
+  align-items: center;        /* 👈 vertically center */
+  gap: 15px;                  /* 👈 dono links ke beech space */
+  flex-wrap: nowrap;          /* 👈 line break hone se rokta hai */
+}
+
+  .topbar-left a i {
+    font-size: 14px;
+  }
+}
+   /* ===== Navbar ===== */
+.navbar {
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  width: 100%;
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 20px;
+}
+
+/* Logo + text */
+.navbar-logo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.navbar-logo img {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+}
+
+.college-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #800000; /* maroon */
+  line-height: 1.1;
+}
+
+.college-tagline {
+  display: block;
+  font-size: 12px;
+  color: #c04000; /* orange tagline */
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* Navbar menu */
+.navbar-menu {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-menu > li {
+  margin-left: 30px;
+  position: relative;
+}
+
+.navbar-menu a {
+  text-decoration: none;
+  color: #800000; /* maroon */
+  font-size: 17px;
+  font-weight: 550;
+  padding: 18px 0;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.navbar-menu a.active {
+  color: #fff;
+  background: linear-gradient(90deg, #800000, #c04000); /* maroon-orange active */
+  border-radius: 5px;
+  padding: 8px 15px;
+}
+
+.navbar-menu a:hover {
+  background: rgba(255, 165, 0, 0.2); /* soft orange hover */
+  border-radius: 5px;
+}
+
+/* Hover effect underline */
+.navbar-menu > li > a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 4px;
+  bottom: 10px;
+  left: 0;
+  background-color: #c04000; /* orange underline */
+  transition: width 0.3s;
+}
+
+.navbar-menu > li > a:hover::after {
+  width: 100%;
+}
+
+/* Dropdown */
+.dropdown a:hover {
+  color: #c04000;
+}
+.navbar-menu a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+    /* HOVER EFFECT - MAIN MENU */
+    .navbar-menu > li > a {
+      position: relative;
+    }
+
+    .navbar-menu > li > a::after {
+      content: "";
+      position: absolute;
+      width: 0%;
+      height: 5px; 
+      bottom: 10px;
+      left: 0;
+      background-color:rgb(163, 40, 40);
+      transition: width 0.3s;
+    }
+
+    .navbar-menu > li > a:hover {
+      color: rgb(163, 40, 40);
+    }
+
+    .navbar-menu > li > a:hover::after {
+      width: 100%;
+    }
+
+    /* DROPDOWN */
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+     background: #f5f5f5;
+      min-width: 250px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      display: none;
+     
+    }
+     /* Dropdown list style remove */
+   .dropdown {
+     list-style: none;
+     margin: 0;
+     padding: 0;
+    }
+  .dropdown li {
+  list-style: none;
+}
+
+    .dropdown li {
+      margin: 0;
+    }
+
+    .dropdown a {
+      padding: 12px 20px;
+      color: #333;
+      font-size: 15px;
+    }
+
+    .dropdown a:hover {
+      background: #f5f5f5;
+      color: rgb(163, 40, 40); /* केवल color change होगा, line नहीं आएगी */
+    }
+
+    .navbar-menu li:hover .dropdown {
+      display: block;
+    }
+
+
+
+
+    .navbar-menu a.active {
+  color: #fff;
+  background:#800000;; /* blue-purple gradient */
+  border-radius: 5px;
+  padding: 8px 15px;
+  transition: 0.3s ease;
+}
+
+.navbar-menu a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
+
+    /* Responsive (basic) */
+    @media (max-width: 992px) {
+      .navbar-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .navbar-menu {
+        flex-direction: column;
+        width: 100%;
+      }
+      .navbar-menu > li {
+        margin-left: 0;
+        width: 100%;
+      }
+      .navbar-menu a {
+        padding: 12px 0;
+        width: 100%;
+      }
+      .dropdown {
+        position: static;
+        box-shadow: none;
+        width: 100%;
+      }
+      .dropdown a {
+        padding-left: 30px;
+      }
+    }
+    /* Academics mega dropdown */
+.navbar-menu li.academics .mega-dropdown {
+  display: none;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
+  gap: 20px;
+  padding: 20px 30px;
+   min-width: 600px; /* large width for mega menu */
+   
+   
+}
+
+.navbar-menu li.academics:hover .mega-dropdown {
+  display: grid;
+}
+
+.mega-dropdown li {
+  list-style: none;
+}
+
+.mega-dropdown h4 {
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 10px;
+  color: #800000;; /* dark blue heading */
+}
+
+.mega-dropdown a {
+  display: block;
+  padding: 6px 0;
+  font-size: 15px;
+  color: #333;
+  text-decoration: none;
+  transition: color 0.3s ease, background 0.3s ease;
+}
+
+.mega-dropdown a:hover {
+ 
+  color: #800000;; /* hover पर सिर्फ़ text color बदलेगा */
+}
+
+
+
+
+/* Mega Dropdown Container */
+.navbar-menu li.academics .mega-dropdown {
+  display: none;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
+  gap: 20px;
+  padding: 15px 25px;
+  min-width: 100px;
+  background: #f5f5f5;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 999;
+}
+
+.navbar-menu li.academics:hover .mega-dropdown {
+  display: grid;
+}
+
+/* Each Column Section */
+.mega-section {
+  padding: 0 15px;
+  border-right: 1px solid #e0e0e0; /* Divider line */
+}
+
+.mega-section:last-child {
+  border-right: none; /* آخری والے پر لائن نہ ہو */
+}
+
+/* HAMBURGER BUTTON */
+.hamburger {
+  position: absolute;   /* free positioning inside navbar */
+  top: 18px;            /* 👈 upar se thoda space */
+  right: 20px;          /* 👈 right se gap */
+  display: none;
+  font-size: 28px;
+  color: #800000;
+  cursor: pointer;
+  z-index: 999;         /* ensure visible over other elements */
+  margin-left: 0;       /* remove auto margin */
+}
+
+/* SHOW HAMBURGER ON MOBILE */
+@media (max-width: 992px) {
+  .hamburger {
+    display: block;
+  }
+  .navbar-menu {
+    display: none;
+  }
+}
+
+/* MOBILE SLIDE MENU */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100%;
+  background: #ffffff;
+  box-shadow: -3px 0 10px rgba(0,0,0,0.3);
+  padding: 30px 20px;
+  transition: right 0.4s ease;
+  z-index: 2000;
+}
+
+.mobile-menu ul {
+  list-style: none;
+}
+
+.mobile-menu a {
+  display: block;
+  padding: 12px 0;
+  color: #800000;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid #e3e3e3;
+}
+
+.close-btn {
+  font-size: 25px;
+  text-align: right;
+  cursor: pointer;
+  margin-bottom: 20px;
+  color: #800000;
+}
+
+/* MOBILE NAVBAR LOGO SPACING */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 10px;
+}
+
+@media (max-width: 992px) {
+  .navbar-container {
+    position: relative; /* important for absolute hamburger */
+    padding: 10px 0;
+  }
+
+  .navbar-logo {
+    margin-top: 5px; /* ensures space from top */
+  }
+}
+
+/* DROPDOWN (MOBILE) */
+.dropdown-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+  color:#800000;
+  border-bottom: 1px solid #e3e3e3;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  padding-left: 15px;
+}
+
+.mobile-menu a.active,
+.mobile-menu .dropdown-btn.active {
+  color: #d22b2b;        /* highlight color */
+  font-weight: 600;      /* bold text */
+}
+    /* ===== Hero Section ===== */
+    .hero-section {
+      position: relative;
+      background: url('img/metric1.jpg') center/cover no-repeat;
+      height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      text-align: center;
+    }
+
+    .hero-section .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-content {
+      position: relative;
+      color: #fff;
+      z-index: 2;
+    }
+
+    .hero-content h1 {
+      font-size: 48px;
+      text-transform: uppercase;
+      margin-bottom: 10px; 
+       color: #ffa500; /* orange heading */
+
+
+    }
+
+    .hero-content p {
+      font-size: 18px;
+        color: #fff;
+
+    }
+
+    /* ===== Container & Row ===== */
+    .container {
+      width: 85%;
+      margin: 0 auto;
+      padding: 60px 0;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .col {
+      flex: 1;
+      padding: 20px;
+    }
+
+    .col.left img {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    /* ===== Overview Section ===== */
+.overview-section {
+  padding: 60px 20px;
+  background-color: #f9f9f9;
+}
+
+.overview-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.overview-section .row {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap; /* responsive for mobile */
+}
+
+.overview-section .col {
+  flex: 1; /* equal width on large screens */
+  min-width: 300px; /* ensures column doesn't shrink too much */
+}
+
+.overview-section .col.left img {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
+
+.overview-section .col.right h2 {
+  font-size: 28px;
+  color:  #6b0b0b;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.overview-section .col.right p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Responsive (Mobile) */
+@media (max-width: 768px) {
+  .overview-section .row {
+    flex-direction: column; /* stack image above text */
+    gap: 20px;
+  }
+  .overview-section .col.right h2 {
+    font-size: 24px;
+  }
+  .overview-section .col.right p {
+    font-size: 15px;
+  }
+  .overview-section {
+    padding: 40px 15px;
+  }
+}
+
+    /* ===== Section Titles ===== */
+    h2 {
+      font-size: 30px;
+      margin-bottom: 25px;
+      text-align: center;
+      color: #800000; /* maroon headings */
+
+    }
+    .subjects-section {
+  padding: 60px 0;
+  text-align: center;
+  background-color: #f9f9f9; /* optional background */
+}
+
+.subjects-section .container {
+  max-width: 1200px; /* limit width for center alignment */
+  margin: 0 auto; /* centers the container horizontally */
+  padding: 0 20px; /* small left-right padding for spacing */
+}
+
+.subjects-section h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color:  #6b0b0b;
+}
+
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.subject-card {
+  background: #6b0b0b;
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-align: center;
+  width: 100%;
+  max-width: 220px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.subject-card:hover {
+
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(128,0,0,0.3);
+}
+
+
+    /* ===== Why Choose Us Section ===== */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+    }
+
+    .why-card {
+      background: #f5f8ff;
+      
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .why-card:hover {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .why-card i {
+      font-size: 35px;
+      color: #800000;
+      margin-bottom: 15px;
+    }
+
+    /* ===== Admission Section ===== */
+    .admission-section {
+      background: #f5f8ff;
+      text-align: center;
+    }
+
+    .apply-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 30px;
+      background: #800000; /* maroon hover */
+
+      color: #fff;
+      border-radius: 30px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .apply-btn:hover {
+      opacity: 0.9;
+      background: #ac3c05; /* orange */
+
+    }
+
+    footer {
+      background-color: #111;
+      color: #eee;
+  font-family: "Poppins", sans-serif;
+  line-height: 1.7;
+  width: 100%;
+}
+
+/* ===== FOOTER CONTAINER ===== */
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 40px;
+  padding: 80px 60px 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ===== COLUMN TITLES ===== */
+.footer-column h3 {
+  font-size: 18px;
+  color: #fff;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.footer-column h3::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: #c04000; /* orange line */
+  margin-top: 8px;
+}
+
+/* ===== TEXT & LINKS ===== */
+.footer-column p {
+  color: #ccc;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.footer-column a {
+  color: #ccc;
+  text-decoration: none;
+  transition: 0.3s;
+  display: inline-block;
+}
+
+.footer-column a:hover {
+  color: white;
+  transform: translateX(3px);
+}
+
+/* ===== LOGO ===== */
+.footer-logo {
+  width: 50px;
+  margin-bottom: 20px;
+}
+
+/* ===== LISTS ===== */
+.footer-column ul {
+  list-style: none;
+}
+
+.footer-column ul li {
+  margin-bottom: 8px;
+}
+
+/* ===== BOTTOM BAR ===== */
+.footer-bottom {
+  background: #0a0a0a;
+  border-top: 1px solid #222;
+  padding: 20px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.footer-bottom p {
+  font-size: 14px;
+  color: #ccc;
+}
+
+/* ===== SOCIAL ICONS ===== */
+.social-icons a {
+  color: #ffa500;
+  font-size: 18px;
+  margin-left: 20px;
+  transition: 0.3s;
+}
+
+.social-icons a:hover {
+  color: white;
+  transform: scale(1.2);
+}
+
+/* ===== TABLET RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .footer-container {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 60px 40px 40px;
+  }
+
+  .footer-column h3::after {
+    width: 60px;
+  }
+
+  .social-icons a {
+    margin-left: 15px;
+    font-size: 17px;
+  }
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 30px;
+    padding: 50px 25px 30px;
+  }
+
+  .footer-column h3::after {
+    margin: 8px auto 0;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 30px;
+  }
+
+  .social-icons {
+    margin-top: 10px;
+  }
+
+  .social-icons a {
+    margin: 0 12px;
+  }
+}
+
+/* Back to Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: 100px; /* aur upar */
+  right: 25px;
+  width: 45px;
+  height: 45px;
+  background-color: #800000; /* maroon */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+  transition: 0.3s;
+  z-index: 999;
+}
+
+.back-to-top:hover {
+  background-color: #c04000; /* orange accent */
+}
+
+
+
+
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP BAR -->
+  <section class="topbar">
+    <div class="container">
+      <div class="topbar-content">
+  
+        <!-- LEFT SIDE -->
+        <div class="topbar-left">
+          <a href="mailto:visioncollegegojra@gmail.com">
+            <i class="fas fa-envelope"></i> visioncollegegojra@gmail.com
+          </a>
+          <a href="tel:03074800049">
+            <i class="fas fa-phone-alt"></i> 0307 4800049
+          </a>
+        </div>
+  
+        <!-- RIGHT SIDE -->
+        <div class="topbar-right">
+          <div class="social-icons">
+            <a href="https://www.facebook.com/UCLLahore/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.linkedin.com/company/university-college-lahore/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://www.instagram.com/ucl_universalcollegelahore" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+          </div>        </div>
+  
+      </div>
+    </div>
+  </section>
+  
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-container">
+  
+      <!-- LOGO -->
+      <div class="navbar-logo">
+        <img src="img/vision_logo.png" alt="Vision College Logo">
+        <div>
+          <span class="college-name">Vision College</span>
+          <span class="college-tagline">Inspiring Minds, Building Futures</span>
+        </div>
+      </div>
+  
+      <!-- MOBILE MENU -->
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="close-btn" onclick="closeMenu()">
+          <i class="fas fa-times"></i>
+        </div>
+  
+        <ul>
+          <li><a href="index.html">Home</a></li>
+  
+          <li>
+            <button class="dropdown-btn active">Academics ▼</button>
+            <ul class="dropdown-content">
+              <li><a href="metric.html" class="active">Matric</a></li>
+              <li><a href="intermediate.html">Intermediate</a></li>
+              <li><a href="undergraduate.html">Undergraduate</a></li>
+            </ul>
+          </li>
+  
+          <li>
+            <button class="dropdown-btn">Admissions ▼</button>
+            <ul class="dropdown-content">
+              <li><a href="Entrance-Requirements.html">Entrance Requirements</a></li>
+              <li><a href="fee-structure.html">Fee Structure</a></li>
+            </ul>
+          </li>
+  
+   
+              <li><a href="faculty.html">Faculty</a></li>
+           
+  
+          <li><a href="life-at-VC.html">Life at VC</a></li>
+  
+          <li>
+            <button class="dropdown-btn">About Us ▼</button>
+            <ul class="dropdown-content">
+              <li><a href="our-history.html">Our History</a></li>
+              <li><a href="massege-director.html">Message from the Director</a></li>
+            </ul>
+          </li>
+  
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+  
+      <!-- HAMBURGER BUTTON -->
+      <div class="hamburger" onclick="openMenu()">
+        <i class="fas fa-bars"></i>
+      </div>
+  
+      <script>
+        function openMenu() {
+          document.getElementById("mobileMenu").style.right = "0";
+        }
+        function closeMenu() {
+          document.getElementById("mobileMenu").style.right = "-280px";
+        }
+  
+        // Dropdown Toggle for Mobile
+        const dropdownButtons = document.querySelectorAll(".dropdown-btn");
+        dropdownButtons.forEach(btn => {
+          btn.addEventListener("click", () => {
+            const dropdown = btn.nextElementSibling;
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+          });
+        });
+      </script>
+  
+      <!-- DESKTOP MENU -->
+      <ul class="navbar-menu">
+        <li><a href="index.html">Home</a></li>
+  
+        <li class="academics">
+          <a href="#" class="active">Academics</a>
+          <div class="mega-dropdown">
+            <div class="mega-section">
+              <a href="metric.html">Matric</a>
+              <a href="intermediate.html">Intermediate</a>
+              <a href="undergraduate.html">Undergraduate</a>
+            </div>
+          </div>
+        </li>
+  
+        <li>
+          <a href="#">Admissions</a>
+          <ul class="dropdown">
+            <li><a href="Entrance-Requirements.html">Entrance Requirements</a></li>
+            <li><a href="fee-structure.html">Fee Structure</a></li>
+          </ul>
+        </li>
+  
+      
+            <li><a href="faculty.html">Faculty</a></li>
+         
+  
+        <li><a href="life-at-VC.html">Life at VC</a></li>
+  
+        <li>
+          <a href="#">About Us</a>
+          <ul class="dropdown">
+            <li><a href="our-history.html">Our History</a></li>
+            <li><a href="massege-director.html">Message from the Director</a></li>
+          </ul>
+        </li>
+  
+        <li><a href="contact.html">Contact Us</a></li>
+      </ul>
+  
+    </div>
+  </nav>
+  
+  <script>
+    const currentLocation = window.location.href;
+    const menuItems = document.querySelectorAll('.navbar-menu a');
+  
+    menuItems.forEach(link => {
+      if (link.href === currentLocation) {
+        link.classList.add('active');
+      }
+    });
+  </script>
+  
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero-section">
+    <div class="overlay"></div>
+    <div class="hero-content">
+      <h1>Matric Program</h1>
+      <p>Building a Strong Foundation for Academic Excellence</p>
+    </div>
+  </section>
+  
+  <!-- ===== OVERVIEW SECTION ===== -->
+  <section class="overview-section">
+    <div class="container">
+      <div class="row">
+        <div class="col left">
+          <img src="img/metric.jpg" alt="Matric Overview">
+        </div>
+  
+        <div class="col right">
+          <h2>About Matric Program</h2>
+          <p>
+            At <strong>Vision College</strong>, our Matric Program focuses on strong conceptual learning in both Science and Arts groups. 
+            Our aim is to prepare students for higher education with confidence, discipline, and academic excellence.
+          </p>
+  
+          <p>
+            The program is affiliated with the Board of Intermediate and Secondary Education, Faisalabad. 
+            Students benefit from experienced faculty, modern labs, and a supportive learning environment.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- ===== SUBJECTS SECTION ===== -->
+  <section class="subjects-section">
+    <div class="container">
+      <h2>Subjects Offered</h2>
+  
+      <div class="subjects-grid">
+        <div class="subject-card">Physics</div>
+        <div class="subject-card">Chemistry</div>
+        <div class="subject-card">Biology</div>
+        <div class="subject-card">Mathematics</div>
+        <div class="subject-card">Computer Science</div>
+  
+        <div class="subject-card">English</div>
+        <div class="subject-card">Urdu</div>
+        <div class="subject-card">Islamiyat</div>
+        <div class="subject-card">Pak Study</div>
+        <div class="subject-card">Holy Quran</div>
+      </div>
+  
+    </div>
+  </section>
+  
+  <!-- ===== WHY CHOOSE US ===== -->
+  <section class="why-section">
+    <div class="container">
+      <h2>Why Choose Vision College</h2>
+  
+      <div class="why-grid">
+        <div class="why-card">
+          <i class="fa fa-user-tie"></i>
+          <h4>Qualified Faculty</h4>
+          <p>Highly experienced and dedicated teachers committed to academic excellence.</p>
+        </div>
+  
+        <div class="why-card">
+          <i class="fa fa-flask"></i>
+          <h4>Modern Science Labs</h4>
+          <p>Fully equipped Physics, Chemistry, and Computer labs for practical learning.</p>
+        </div>
+  
+        <div class="why-card">
+          <i class="fa fa-graduation-cap"></i>
+          <h4>Board Affiliated</h4>
+          <p>Curriculum strictly follows the Board of Intermediate and Secondary Education standards.</p>
+        </div>
+  
+        <div class="why-card">
+          <i class="fa fa-hand-holding-heart"></i>
+          <h4>Scholarships</h4>
+          <p>Merit-based and need-based scholarships available for deserving students.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- ===== ADMISSION SECTION ===== -->
+  <section class="admission-section">
+    <div class="container">
+      <h2>Admission Details</h2>
+      <p>Admissions for Matric (Session 2025) are now open. Students can apply online or visit our campus.</p>
+  
+      <p><strong>Required Documents:</strong> B-Form, Recent Photographs, Previous School Leaving Certificate.</p>
+  
+      <a href="contact.html" class="apply-btn">Apply Now</a>
+    </div>
+  </section>
+  
+ <!-- ===== FOOTER START ===== -->
+ <footer class="footer">
+  <div class="footer-container">
+
+    <!-- Column 1 -->
+    <div class="footer-column">
+      <img src="img/vision_logo.png" alt="Vision College Logo" class="footer-logo">
+      <p>Imamia Colony, Near Islamia Ground, Gojra</p>
+      <p>
+        +92 3074800049<br>
+        <a href="mailto:info@visioncollegegojra.com">info@visioncollegegojra.com</a><br>
+        <a href="mailto:admissions@visioncollegegojra.com">admissions@visioncollegegojra.com</a>
+      </p>
+    </div>
+
+    <!-- Column 2 -->
+    <div class="footer-column">
+      <h3>Our Campus</h3>
+      <ul>
+        <li><a href="massege-director.html">Director's Message</a></li>
+      
+    
+        <li><a href="Entrance-Requirements.html">Entrance-Requirements</a></li>
+        <li><a href="fee-structure.html">Fee-structure</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 3 -->
+    <div class="footer-column">
+      <h3>Life at VC</h3>
+      <ul>
+        <li><a href="life-at-VC.html">VC Welfare Society</a></li>
+        <li><a href="life-at-VC.html">VC Sports Society</a></li>
+        <li><a>VC Adventure Society</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 4 -->
+    <div class="footer-column">
+      <h3>Academics</h3>
+      <ul>
+        <li><a href="timetable.html">Timetables</a></li>
+        <li><a href="calendar.html">Calendar</a></li>
+      </ul>
+    </div>
+
+  </div>
+<!-- Back to Top Button -->
+<button id="backToTop" class="back-to-top">
+  ↑
+</button>
+<script>
+  const backToTopBtn = document.getElementById("backToTop");
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.style.display = "flex";
+    } else {
+      backToTopBtn.style.display = "none";
+    }
+  });
+
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+</script>
+
+  <!-- Bottom Bar -->
+  <div class="footer-bottom">
+    <p>© 2024 Vision College</p>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/visioncollegegojra" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://www.linkedin.com/in/visioncollegegojra" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="https://www.instagram.com/visioncollegegojra" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+    </div>
+    
+  </div>
+</footer>
+<!-- ===== FOOTER END ===== -->
+  
+  </body>
+  
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vision College</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: "Roboto", sans-serif;
+      overflow: hidden; /* ✅ No Scroll */
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background-color: white;
+      color: white;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 10;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-left img {
+      width: 50px;
+      height: auto;
+    }
+
+    .college-name {
+      margin-left: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      color: rgb(124, 122, 122);
+    }
+
+    .header-right a {
+      text-decoration: none;
+      background-color: white;
+      color: #303f9f;
+      padding: 6px 14px;
+      border-radius: 4px;
+      border: 1px solid #303f9f;
+      font-size: 14px;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .header-right a:hover {
+      background-color: #303f9f;
+      color: white;
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    main {
+      display: flex;
+      height: 100vh;
+      padding-top: 60px; /* space for fixed header */
+    }
+
+    /* LEFT SIDE - IMAGE */
+    .image-section {
+      flex: 1;
+      background-image: url('img/unversalimg2.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      
+    }
+
+
+
+/* Right Side Form */
+.login-form-container {
+  flex: 1;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 450px; /* Best width */
+}
+
+
+.login-box h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2a2a72;
+}
+
+
+
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+}
+
+label span {
+  color: red;
+}
+
+input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: #4b6cb7;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: linear-gradient(135deg, #4b6cb7, #182848);
+  color: white;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.form-links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.form-links a {
+  color: #4b6cb7;
+  font-size: 14px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.form-links a:hover {
+  text-decoration: underline;
+}
+
+.footer-text {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 13px;
+  color: #666;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-section {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .login-image {
+    height: 300px;
+  }
+
+  .login-form-container {
+    padding: 20px;
+  }
+}
+
+/* ===== RESPONSIVE FIX ===== */
+
+@media (max-width: 992px) {
+  main {
+    flex-direction: column;
+    height: auto;
+  }
+
+  /* Image Section on Mobile */
+  .image-section {
+    height: 220px;
+    flex: unset;
+    width: 100%;
+  }
+
+  /* Form Section Full Width */
+  .login-form-container {
+    flex: unset;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .login-box {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+  }
+}
+
+/* Extra Small Devices */
+@media (max-width: 480px) {
+  .college-name {
+    font-size: 14px;
+  }
+
+  header {
+    height: 50px;
+    padding: 0 12px;
+  }
+
+  .header-left img {
+    width: 38px;
+  }
+
+  .header-right a {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+
+  .login-box h1 {
+    font-size: 22px;
+  }
+
+  input, button {
+    font-size: 14px;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="header-left">
+      <span class="college-name">Vision College</span>
+    </div>
+    <div class="header-right">
+      <a href="index.html">College Home</a>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main>
+    <!-- LEFT IMAGE -->
+    <section class="image-section"></section>
+
+   
+  <section class="login-section">
+    <!-- Left Side Image -->
+  
+
+    <!-- Right Side Form -->
+    <div class="login-form-container">
+      <div class="login-box">
+        <h1>Applicant Login</h1>
+        <form>
+          <label for="email">Email Address <span>*</span></label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+          <label for="password">Password <span>*</span></label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+          <button type="submit">Login</button>
+
+          <div class="form-links">
+            <a href="#">Forgot Password?</a>
+            <a href="#">Create Account</a>
+          </div>
+        </form>
+
+       
+      </div>
+    </div>
+  </section>
+  </main>
+
+</body>
+</html>

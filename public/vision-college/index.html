@@ -1,4 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Vision College</title>
+  <link rel="shortcut icon" href="img/vision_logo.png" type="image/x-icon">
 
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
     /* ===== General Reset ===== */
     * {
       margin: 0;
@@ -589,7 +600,7 @@
 /* --- About Section Styling --- */
 .about-section {
   position: relative;
-  background: url("../../../../../public/assets/img/unversalimg2.jpg") center center/cover no-repeat; /* background image */
+  background: url("img/unversalimg2.jpg") center center/cover no-repeat; /* background image */
   color: #fff;
   padding: 100px 0;
   overflow: hidden;
@@ -924,4 +935,403 @@ footer {
 .back-to-top:hover {
   background-color: #c04000; /* orange accent */
 }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<section class="topbar">
+  <div class="container">
+    <div class="topbar-content">
+
+      <!-- LEFT SIDE -->
+      <div class="topbar-left">
+        <a href="mailto:visioncollegegojra@gmail.com">
+          <i class="fas fa-envelope"></i> visioncollegegojra@gmail.com
+        </a>
+        <a href="tel:03074800049">
+          <i class="fas fa-phone-alt"></i> 0307-4800049
+        </a>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="topbar-right">
+        <div class="social-icons">
+          <a href="https://www.facebook.com/UCLLahore/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.linkedin.com/company/university-college-lahore/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://www.instagram.com/ucl_universalcollegelahore" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        </div>      </div>
+
+    </div>
+  </div>
+</section>
+
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-container">
+
+      <!-- LOGO -->
+      <div class="navbar-logo">
+        <img src="img/vision_logo.png" alt="Logo">
+        <div>
+          <span class="college-name">Vision College </span>
+          <span class="college-tagline">Inspiring Minds, Building Futures</span>
+        </div>
+      </div>
+      <!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="close-btn" onclick="closeMenu()">
+    <i class="fas fa-times"></i>
+  </div>
+
+  <ul>
+    <li><a href="index.html">Home</a></li>
+
+    <li>
+      <button class="dropdown-btn">Academics ▼</button>
+      <ul class="dropdown-content">
+        <li><a href="metric.html">Matric</a></li>
+        <li><a href="intermediate.html">Intermediate</a></li>
+        <li><a href="undergraduate.html">Undergraduate</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <button class="dropdown-btn">Admissions ▼</button>
+      <ul class="dropdown-content">
+        <li><a href="Entrance-Requirements.html">Entrance Requirements</a></li>
+        <li><a href="fee-structure.html">Fee Structures</a></li>
+      </ul>
+    </li>
+
   
+        <li><a href="faculty.html">Faculty</a></li>
+     
+      
+    <li><a href="life-at-VC.html">Life at VC</a></li>
+    <li>
+      <button class="dropdown-btn">About Us ▼</button>
+      <ul class="dropdown-content">
+        <li><a href="our-history.html">Our History</a></li>
+        <li><a href="massege-director.html"> Massegege from the Director</a></li>
+      </ul>
+    </li>    <li><a href="contact.html">Contact Us</a></li>
+  </ul>
+</div>
+
+<!-- HAMBURGER BUTTON (MOBILE) -->
+<div class="hamburger" onclick="openMenu()">
+  <i class="fas fa-bars"></i>
+</div>
+<script>
+  function openMenu() {
+    document.getElementById("mobileMenu").style.right = "0";
+  }
+
+  function closeMenu() {
+    document.getElementById("mobileMenu").style.right = "-280px";
+  }
+
+  // Dropdown Toggle (Mobile)
+  const dropdownButtons = document.querySelectorAll(".dropdown-btn");
+  dropdownButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const dropdown = btn.nextElementSibling;
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+  });
+  
+</script>
+ <!-- MENU -->
+ <ul class="navbar-menu">
+  <li><a href="index.html">Home</a></li>
+  <li class="academics">
+  <a href="#">Academics</a>
+  <div class="mega-dropdown">
+    
+ 
+
+
+   
+    <div class="mega-section">
+      <a href="metric.html">Matric</a>
+      <a href="intermediate.html">Intermediate</a>
+      <a href="undergraduate.html">undergraduate</a>
+
+    </div>
+
+    
+
+  </div>
+</li>
+
+     <!-- Admissions Dropdown -->
+     <li>
+      <a href="#">Admissions</a>
+      <ul class="dropdown">
+        <li><a href="Entrance-Requirements.html">Entrance Requirements</a></li>
+        <li><a href="fee-structure.html">Fee Structures</a></li>
+      </ul>
+    </li>
+
+    <!-- Faculty Dropdown -->
+   
+        <li><a href="faculty.html">Faculty</a></li>
+     
+
+    <li><a href="life-at-VC.html">Life at VC</a></li>
+
+    <!-- About Us Dropdown -->
+    <li>
+      <a href="#">About Us</a>
+      <ul class="dropdown">
+        <li><a href="our-history.html">Our History</a></li>
+        <li><a href="massege-director.html">Message from the Director</a></li>
+      </ul>
+    </li>
+
+    <li><a href="contact.html">Contact Us</a></li>
+  </ul>
+  </div>
+</nav>
+
+<script>
+
+
+// Mobile menu active link
+const mobileLinks = document.querySelectorAll('.mobile-menu a');
+const mobileDropdowns = document.querySelectorAll('.mobile-menu .dropdown-btn');
+const currentPage = window.location.pathname.split("/").pop(); // current file name
+
+// Links
+mobileLinks.forEach(link => {
+  if(link.getAttribute('href') === currentPage) {
+    link.classList.add('active');
+  }
+});
+
+// Dropdown buttons: highlight if any of its child links is active
+mobileDropdowns.forEach(btn => {
+  const dropdown = btn.nextElementSibling;
+  if(dropdown) {
+    const activeChild = dropdown.querySelector('a.active');
+    if(activeChild) {
+      btn.classList.add('active');
+    }
+  }
+});
+
+  const currentLocation = window.location.href;
+  const menuItems = document.querySelectorAll('.navbar-menu a');
+
+  menuItems.forEach(link => {
+    if (link.href === currentLocation) {
+      link.classList.add('active');
+    }
+  });
+</script>
+
+
+
+<!-- HERO SLIDER -->
+<header class="hero-slider">
+  <div class="slide active" style="background-image: url('img/vision\ building.jpeg');">
+    <div class="overlay"></div>
+    <div class="content">
+      <h2>Stay Local Study Global</h2>
+      <h1>Vision College Gojra</h1>
+      
+    </div>
+  </div>
+
+  <div class="slide" style="background-image: url('img/unversalimg2.jpg');">
+    <div class="overlay"></div>
+    <div class="content">
+      <h2>Quality Education in Gojra</h2>
+      <h1>Building Leaders for Tomorrow</h1>
+    
+    </div>
+  </div>
+</header>
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.hero-slider .slide');
+
+  function showNextSlide() {
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.add('active');
+  }
+
+  setInterval(showNextSlide, 5000); // change every 5 seconds
+</script>
+
+
+<section class="about-section">
+  <div class="overlay"></div>
+  <div class="about-container">
+
+    <!-- Left Column -->
+    <div class="about-left">
+      <h3 class="about-title">Committed to Academic Excellence</h3>
+    </div>
+
+    <!-- Right Column -->
+    <div class="about-right">
+      <p>
+        Vision College Gojra is dedicated to providing quality education with modern teaching
+        methods, well-equipped labs, and a highly qualified faculty.  
+        Our mission is to empower students with knowledge, skills, and confidence to excel in their academic
+        and professional lives.
+      </p>
+
+      <p>
+        Since its establishment, Vision College has been focused on shaping the future of students
+        through discipline, character-building, and academic excellence.
+      </p>
+
+      <a href="our-history.html" class="about-btn">Read More <i class="fa fa-long-arrow-right"></i></a>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="services-section">
+  <div class="services-container">
+
+    <!-- Box 1 -->
+    <div class="service-box">
+      <img src="img/educational icon.jpg" alt="Educational Facilities Icon" class="service-icon">
+      <h3 class="service-title">Modern Educational Facilities</h3>
+      <p class="service-text">
+        A fully equipped library, science labs, and advanced IT labs to support students’
+        learning and research.
+      </p>
+    </div>
+
+    <!-- Box 2 -->
+    <div class="service-box">
+      <img src="img/globaly icon.jpg" alt="Globally Recognised Icon" class="service-icon">
+      <h3 class="service-title">Quality & Excellence</h3>
+      <p class="service-text">
+        Vision College maintains high academic standards and follows a curriculum designed to
+        prepare students for global competitiveness.
+      </p>
+    </div>
+
+    <!-- Box 3 -->
+    <div class="service-box">
+      <img src="img/HEC icon.jpg" alt="HEC Icon" class="service-icon">
+      <h3 class="service-title">Recognised Institution</h3>
+      <p class="service-text">
+        Vision College is recognised for its commitment to providing quality education and
+        maintaining academic discipline.
+      </p>
+    </div>
+
+    <!-- Box 4 -->
+    <div class="service-box">
+      <img src="img/Art icon.jpg" alt="Campus Icon" class="service-icon">
+      <h3 class="service-title">State-of-the-Art Campus</h3>
+      <p class="service-text">
+        A vibrant environment with spacious classrooms, cafeteria, sports facilities, and
+        co-curricular activities.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+    <!-- ===== FOOTER START ===== -->
+<footer class="footer">
+  <div class="footer-container">
+
+    <!-- Column 1 -->
+    <div class="footer-column">
+      <img src="img/vision_logo.png" alt="Vision College Logo" class="footer-logo">
+      <p>Imamia Colony, Near Islamia Ground, Gojra</p>
+      <p>
+        +92 3074800049<br>
+        <a href="mailto:info@visioncollegegojra.com">info@visioncollegegojra.com</a><br>
+        <a href="mailto:admissions@visioncollegegojra.com">admissions@visioncollegegojra.com</a>
+      </p>
+    </div>
+
+    <!-- Column 2 -->
+    <div class="footer-column">
+      <h3>Our Campus</h3>
+      <ul>
+        <li><a href="massege-director.html">Director's Message</a></li>
+       
+       
+        <li><a href="Entrance-Requirements.html">Entrance-Requirements</a></li>
+        <li><a href="fee-structure.html">Fee-structure</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 3 -->
+    <div class="footer-column">
+      <h3>Life at VC</h3>
+      <ul>
+        <li><a href="life-at-VC.html">VC Welfare Society</a></li>
+        <li><a href="life-at-VC.html">VC Sports Society</a></li>
+        <li><a>VC Adventure Society</a></li>
+      </ul>
+    </div>
+
+    <!-- Column 4 -->
+    <div class="footer-column">
+      <h3>Academics</h3>
+      <ul>
+        <li><a href="timetable.html">Timetables</a></li>
+        <li><a href="calendar.html">Calendar</a></li>
+      </ul>
+    </div>
+
+  </div>
+<!-- Back to Top Button -->
+<button id="backToTop" class="back-to-top">
+  ↑
+</button>
+<script>
+  const backToTopBtn = document.getElementById("backToTop");
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.style.display = "flex";
+    } else {
+      backToTopBtn.style.display = "none";
+    }
+  });
+
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+</script>
+  <!-- Bottom Bar -->
+  <div class="footer-bottom">
+    <p>© 2024 Vision College</p>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/visioncollegegojra" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://www.linkedin.com/in/visioncollegegojra" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="https://www.instagram.com/visioncollegegojra" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+    </div>
+    
+  </div>
+</footer>
+<!-- ===== FOOTER END ===== -->
+
+
+
+</body>
+</html>
+
+
