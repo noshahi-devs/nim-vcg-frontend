@@ -2,8 +2,9 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './SecurityModels/auth.guard';
 
 export const routes: Routes = [
-  { path: '', loadComponent: () => import('./pages/general/branding-home/branding-home.component').then(m => m.BrandingHomeComponent), pathMatch: 'full' },
-  { path: 'home', loadComponent: () => import('./pages/general/branding-home/branding-home.component').then(m => m.BrandingHomeComponent) },
+  { path: 'vision-college', loadComponent: () => import('./pages/general/branding-home/branding-home.component').then(m => m.BrandingHomeComponent) },
+  { path: '', redirectTo: 'vision-college', pathMatch: 'full' },
+  { path: 'home', redirectTo: 'vision-college', pathMatch: 'full' },
   { path: 'sign-in', loadComponent: () => import('./pages/auth/sign-in/sign-in.component').then(m => m.SignInComponent) },
   { path: 'sign-up', loadComponent: () => import('./pages/auth/sign-up/sign-up.component').then(m => m.SignUpComponent) },
   { path: 'forgot-password', loadComponent: () => import('./pages/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent) },
