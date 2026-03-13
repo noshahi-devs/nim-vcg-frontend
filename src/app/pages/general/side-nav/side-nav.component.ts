@@ -227,11 +227,11 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     const onSidebarHoverOut = () => {
-      // Grace period: 220ms to cross the gap between toggle button and sidebar body
+      // Longer grace period (350ms) to cross the gap between toggle button and sidebar body
       sidebarHoverTimer = setTimeout(() => {
         $(".sidebar").removeClass("sidebar-hover-expand");
         sidebarHoverTimer = null;
-      }, 220);
+      }, 350);
     };
 
     // Attach to both the sidebar body and the toggle button so hovering either keeps it expanded
@@ -243,16 +243,30 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     $(".sidebar-toggle")
       .off(`click${ns} mouseenter${ns} mouseleave${ns}`)
       .on(`click${ns}`, (event) => {
-        const target = $(event.currentTarget);
-        target.toggleClass("active");
-        $(".sidebar").toggleClass("active");
-        $(".dashboard-main").toggleClass("active");
-        // Clear any pending collapse when explicitly toggling
+        const btn = $(event.currentTarget);
+        const sidebar = $(".sidebar");
+        const dashMain = $(".dashboard-main");
+
+        // Clear any pending hover-collapse timer
         if (sidebarHoverTimer) {
           clearTimeout(sidebarHoverTimer);
           sidebarHoverTimer = null;
         }
-        $(".sidebar").removeClass("sidebar-hover-expand");
+        sidebar.removeClass("sidebar-hover-expand");
+
+        const isCollapsed = sidebar.hasClass("active"); // active = collapsed (icon-only)
+
+        if (isCollapsed) {
+          // Arrow was visible — user clicked to EXPAND
+          sidebar.removeClass("active");
+          dashMain.removeClass("active");
+          btn.removeClass("active");
+        } else {
+          // Hamburger was visible — user clicked to COLLAPSE
+          sidebar.addClass("active");
+          dashMain.addClass("active");
+          btn.addClass("active");
+        }
       })
       .on(`mouseenter${ns}`, onSidebarHoverIn)
       .on(`mouseleave${ns}`, onSidebarHoverOut);

@@ -368,27 +368,65 @@
     }
 }
 
+/* === sidebar-hover-expand: width expansion (mirrors .sidebar.active:hover) === */
+/* Triggered when hovering the toggle button (JS adds the class) */
 @media (min-width: 1200px) {
-    :host ::ng-deep .sidebar.active:hover {
+    :host ::ng-deep .sidebar.active:hover,
+    :host ::ng-deep .sidebar.active.sidebar-hover-expand {
         width: 13.75rem;
     }
 
+    /* Remove left padding so toggle btn is right at the sidebar edge — eliminates gap */
     :host ::ng-deep .dashboard-main.active .navbar-header {
-        padding-inline: 0.95rem 1.2rem;
+        padding-inline-start: 0.3rem !important;
     }
 }
 
 @media (min-width: 1400px) {
-    :host ::ng-deep .sidebar.active:hover {
+    :host ::ng-deep .sidebar.active:hover,
+    :host ::ng-deep .sidebar.active.sidebar-hover-expand {
         width: 17.1875rem;
     }
 }
 
 @media (min-width: 1650px) {
-    :host ::ng-deep .sidebar.active:hover {
+    :host ::ng-deep .sidebar.active:hover,
+    :host ::ng-deep .sidebar.active.sidebar-hover-expand {
         width: 19.5rem;
     }
 }
+
+/* Reveal sidebar text/labels when hover-expanded */
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .sidebar-brand-text {
+    display: flex;
+}
+
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .sidebar-logo {
+    justify-content: flex-start;
+}
+
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .sidebar-menu li a span {
+    display: inline-block;
+}
+
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .sidebar-menu li a {
+    justify-content: flex-start;
+    padding-inline: 0.78rem;
+}
+
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .sidebar-menu li a .menu-icon,
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .sidebar-menu li a iconify-icon {
+    margin-inline-end: 0.5rem;
+}
+
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .sidebar-menu li.sidebar-menu-group-title {
+    display: inline-block;
+}
+
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .sidebar-menu li.dropdown a::after {
+    display: inline-block;
+}
+
 
 /* Sync dashboard margin when sidebar is expanded on hover in collapsed state */
 @media (min-width: 1200px) {
