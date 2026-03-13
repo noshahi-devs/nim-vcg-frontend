@@ -1,11 +1,16 @@
 @import url('./print.css');
 
 :root {
-  --primary-color: #800000;       /* Maroon */
-  --primary-light: #a52a2a;       /* Brown-ish Maroon */
-  --primary-deep: #5a0000;        /* Deep Maroon */
-  --secondary-color: #F4C430;     /* Golden Yellow */
-  --accent-color: #F4C430;        /* Same as secondary for consistency */
+  --primary-color: #800000;
+  /* Maroon */
+  --primary-light: #a52a2a;
+  /* Brown-ish Maroon */
+  --primary-deep: #5a0000;
+  /* Deep Maroon */
+  --secondary-color: #F4C430;
+  /* Golden Yellow */
+  --accent-color: #F4C430;
+  /* Same as secondary for consistency */
   --bg-color: #F9FAFB;
   --bg-gradient: linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%);
   --card-bg: rgba(255, 255, 255, 0.95);
@@ -230,6 +235,7 @@ body {
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0);
@@ -291,7 +297,7 @@ body {
 
 .receipt-body {
   padding: 24px;
-  background: rgba(0,0,0,0.02);
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .receipt-id-row {
@@ -380,7 +386,7 @@ body {
 }
 
 .receipt-total-box {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   padding: 16px;
   margin-top: 24px;
@@ -409,7 +415,7 @@ body {
 
 .receipt-footer {
   padding: 20px 24px;
-  background: rgba(0,0,0,0.03);
+  background: rgba(0, 0, 0, 0.03);
   display: flex;
   gap: 12px;
   justify-content: center;
@@ -434,7 +440,7 @@ body {
 }
 
 .receipt-btn.btn-secondary:hover {
-  background: rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.1);
   color: var(--text-main);
 }
 
@@ -480,19 +486,17 @@ body {
   width: 70%;
   height: 300%;
   pointer-events: none;
-  background: linear-gradient(
-    110deg,
-    transparent 20%,
-    rgba(255, 255, 255, 0.1) 38%,
-    rgba(255, 255, 255, 0.05) 54%,
-    transparent 68%
-  );
+  background: linear-gradient(110deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.1) 38%,
+      rgba(255, 255, 255, 0.05) 54%,
+      transparent 68%);
   transform: rotate(12deg);
   animation: nimPopupShine 5.8s linear infinite;
   z-index: 0;
 }
 
-.swal2-popup.nim-swal-popup > * {
+.swal2-popup.nim-swal-popup>* {
   position: relative;
   z-index: 1;
 }
@@ -663,6 +667,7 @@ body {
 }
 
 @keyframes nimIconPulse {
+
   0%,
   100% {
     transform: translateY(0) scale(1);
@@ -674,6 +679,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .nim-swal-show,
   .nim-swal-hide,
   .swal2-popup.nim-swal-popup .swal2-icon,
@@ -755,9 +761,19 @@ body {
 }
 
 @keyframes loginPetalFall {
-  0% { opacity: 0; transform: translateY(-20px) rotate(0deg); }
-  15% { opacity: 0.8; }
-  100% { opacity: 0; transform: translateY(400px) rotate(360deg); }
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) rotate(0deg);
+  }
+
+  15% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(400px) rotate(360deg);
+  }
 }
 
 /* ===========================
@@ -799,4 +815,331 @@ html body .modal-box select {
   background: var(--card-bg) !important;
   color: var(--text-main) !important;
   border: 1.5px solid var(--card-border) !important;
+}
+
+/* ===========================
+   Wavy Alert Design
+   =========================== */
+.swal2-popup.nim-swal-wavy {
+  padding: 0 !important;
+  border-radius: 28px !important;
+  overflow: hidden !important;
+  border: none !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.nim-wavy-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nim-wavy-header {
+  width: 100%;
+  height: 120px;
+  background: #ef4444;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.nim-wavy-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #ffffff;
+  /* Complex wave shape using clip-path */
+  clip-path: polygon(100% 100%, 0% 100%, 0% 30%, 15% 45%, 30% 25%, 50% 10%, 70% 25%, 85% 45%, 100% 30%);
+}
+
+/* Better wave using SVG data URI for accuracy */
+.nim-wavy-header {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M0,224L60,202.7C120,181,240,139,360,138.7C480,139,600,181,720,170.7C840,160,960,96,1080,80C1200,64,1320,96,1380,112L1440,128L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: #ef4444;
+  /* Main red */
+}
+
+.nim-wavy-icon-circle {
+  width: 80px;
+  height: 80px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 60px;
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.2);
+  z-index: 10;
+  animation: nimWavyIconBounce 1s ease-out;
+}
+
+.nim-wavy-icon-circle iconify-icon {
+  font-size: 48px;
+  color: #ef4444;
+}
+
+.nim-wavy-content {
+  padding: 24px 32px 32px;
+  text-align: center;
+}
+
+.nim-wavy-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.nim-wavy-message {
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.nim-wavy-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.nim-wavy-btn {
+  padding: 12px 32px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+}
+
+.nim-wavy-btn-primary {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+}
+
+.nim-wavy-btn-secondary {
+  background: white;
+  color: #ef4444;
+  border: 1.5px solid #ef4444;
+}
+
+.nim-wavy-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+@keyframes nimWavyIconBounce {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ===========================
+   Backdrop Blur (all popups)
+   =========================== */
+.swal2-backdrop-show {
+  backdrop-filter: blur(10px) saturate(1.5) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(1.5) !important;
+  background-color: rgba(50, 0, 0, 0.15) !important;
+}
+
+/* ===========================
+   Premium Welcome Popup V3
+   =========================== */
+.swal2-popup.nim-welcome-premium {
+  padding: 0 !important;
+  border-radius: 24px !important;
+  background: #ffffff !important;
+  border: none !important;
+  width: 440px !important;
+  max-width: 90vw !important;
+  overflow: hidden !important;
+  box-shadow: 0 30px 60px rgba(128, 0, 0, 0.2), 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Make close (X) button visible on the maroon header */
+.swal2-popup.nim-welcome-premium .swal2-close {
+  position: absolute !important;
+  top: 10px !important;
+  right: 14px !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 22px !important;
+  z-index: 10 !important;
+  background: transparent !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background 0.2s !important;
+}
+
+.swal2-popup.nim-welcome-premium .swal2-close:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+/* Header banner */
+.nim-welcome-header {
+  height: 110px;
+  background: linear-gradient(135deg, #800000 0%, #4a0000 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Animated dots pattern */
+.nim-welcome-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(244, 196, 48, 0.2) 1px, transparent 1px);
+  background-size: 16px 16px;
+  animation: nimWelcomeBgScroll 25s linear infinite;
+}
+
+/* Bottom wave divider */
+.nim-welcome-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 28px;
+  background: #ffffff;
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+/* Logo — transparent, no white bg */
+.nim-welcome-logo {
+  width: 64px;
+  height: 64px;
+  z-index: 2;
+  animation: nimLogoFloat 5s ease-in-out infinite;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
+}
+
+.nim-welcome-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Body */
+.nim-welcome-body {
+  padding: 16px 24px 22px;
+  text-align: center;
+}
+
+/* Role badge */
+.nim-welcome-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  background: linear-gradient(90deg, #fff8e0, #fffbec);
+  color: #9a7a1e;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 11.5px;
+  border: 1px solid #f4d86480;
+  margin-bottom: 8px;
+}
+
+/* Title */
+.nim-welcome-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #800000;
+  margin: 0 0 3px;
+  line-height: 1.2;
+  letter-spacing: -0.2px;
+}
+
+/* Username */
+.nim-welcome-subtitle {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #F4C430;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 14px;
+}
+
+/* Info card */
+.nim-welcome-card {
+  background: #fafafa;
+  border-radius: 14px;
+  padding: 11px 14px;
+  border: 1px solid #f0f0f0;
+  margin-bottom: 14px;
+}
+
+/* Launch button */
+.nim-welcome-btn {
+  width: 100%;
+  background: linear-gradient(90deg, #800000 0%, #a30000 100%);
+  color: white;
+  border: none;
+  padding: 13px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 6px 18px rgba(128, 0, 0, 0.25);
+  letter-spacing: 0.3px;
+}
+
+.nim-welcome-btn:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 12px 28px rgba(128, 0, 0, 0.3);
+}
+
+.nim-welcome-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* Animations */
+@keyframes nimWelcomeBgScroll {
+  from { background-position: 0 0; }
+  to { background-position: 100px 100px; }
+}
+
+@keyframes nimLogoFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes nimParticles {
+  from { background-position: 0 0; }
+  to { background-position: -100px -100px; }
+}
+
+@keyframes nimWavyIconBounce {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
 }
