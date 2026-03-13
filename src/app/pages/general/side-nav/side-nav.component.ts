@@ -213,22 +213,49 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
         item.toggleClass("dropdown-open");
       });
 
+    // Shared hover timer prevents flicker when toggle button moves during expansion
+    let sidebarHoverTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const onSidebarHoverIn = () => {
+      if (sidebarHoverTimer) {
+        clearTimeout(sidebarHoverTimer);
+        sidebarHoverTimer = null;
+      }
+      if ($(".sidebar").hasClass("active")) {
+        $(".sidebar").addClass("sidebar-hover-expand");
+      }
+    };
+
+    const onSidebarHoverOut = () => {
+      // Grace period: 220ms to cross the gap between toggle button and sidebar body
+      sidebarHoverTimer = setTimeout(() => {
+        $(".sidebar").removeClass("sidebar-hover-expand");
+        sidebarHoverTimer = null;
+      }, 220);
+    };
+
+    // Attach to both the sidebar body and the toggle button so hovering either keeps it expanded
+    $(".sidebar")
+      .off(`mouseenter${ns} mouseleave${ns}`)
+      .on(`mouseenter${ns}`, onSidebarHoverIn)
+      .on(`mouseleave${ns}`, onSidebarHoverOut);
+
     $(".sidebar-toggle")
-      .off(`click${ns}`)
+      .off(`click${ns} mouseenter${ns} mouseleave${ns}`)
       .on(`click${ns}`, (event) => {
         const target = $(event.currentTarget);
         target.toggleClass("active");
         $(".sidebar").toggleClass("active");
         $(".dashboard-main").toggleClass("active");
-      })
-      .on(`mouseenter${ns}`, () => {
-        if ($(".sidebar").hasClass("active")) {
-          $(".sidebar").addClass("sidebar-hover-expand");
+        // Clear any pending collapse when explicitly toggling
+        if (sidebarHoverTimer) {
+          clearTimeout(sidebarHoverTimer);
+          sidebarHoverTimer = null;
         }
-      })
-      .on(`mouseleave${ns}`, () => {
         $(".sidebar").removeClass("sidebar-hover-expand");
-      });
+      })
+      .on(`mouseenter${ns}`, onSidebarHoverIn)
+      .on(`mouseleave${ns}`, onSidebarHoverOut);
 
     $(".sidebar-mobile-toggle")
       .off(`click${ns}`)
