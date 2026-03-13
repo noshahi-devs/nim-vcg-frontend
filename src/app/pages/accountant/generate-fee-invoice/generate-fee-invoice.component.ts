@@ -80,7 +80,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   loadFees() {
     this.feeService.getAllFees().subscribe({
       next: res => { this.fees = res; this.applyFilters(); },
-      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load fee records.', confirmButtonColor: '#6366f1' })
+      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load fee records.', confirmButtonColor: '#800000' })
     });
   }
 
@@ -163,7 +163,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
           this.loadFees();
           Swal.fire({ icon: 'success', title: 'Updated!', text: 'Fee updated successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee.', confirmButtonColor: '#6366f1' })
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee.', confirmButtonColor: '#800000' })
       });
     } else {
       this.feeService.createFee(feeData).subscribe({
@@ -172,7 +172,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
           this.loadFees();
           Swal.fire({ icon: 'success', title: 'Created!', text: 'Fee created successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create fee.', confirmButtonColor: '#6366f1' })
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create fee.', confirmButtonColor: '#800000' })
       });
     }
   }
@@ -196,7 +196,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
           this.loadFees();
           Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Fee record has been deleted.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee.', confirmButtonColor: '#6366f1' })
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee.', confirmButtonColor: '#800000' })
       });
     }
   }

@@ -4,7 +4,7 @@
 }
 
 .bg-gradient-primary {
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
 }
 
 .check-success-icon {
@@ -21,7 +21,7 @@
 }
 
 .btn-checkin {
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
     color: white;
     border: none;
     padding: 18px 40px;
@@ -33,14 +33,14 @@
     justify-content: center;
     gap: 12px;
     margin: 0 auto;
-    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 15px 30px rgba(128, 0, 0, 0.4);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
 }
 
 .btn-checkin:hover {
     transform: scale(1.05) translateY(-2px);
-    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 20px 40px rgba(128, 0, 0, 0.5);
 }
 
 .btn-checkin:active {

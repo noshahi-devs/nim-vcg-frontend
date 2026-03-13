@@ -5,12 +5,12 @@
 /* ── Hero Banner ── */
 .teacher-hero-banner {
     position: relative;
-    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #1e40af 100%);
+    background: linear-gradient(135deg, #5a0000 0%, #800000 40%, #6d0000 100%);
     border-radius: 24px;
     padding: 32px 36px;
     margin-bottom: 28px;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(99, 102, 241, 0.35);
+    box-shadow: 0 20px 60px rgba(128, 0, 0, 0.35);
     animation: heroSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -36,7 +36,7 @@
 .orb-1 {
     width: 280px;
     height: 280px;
-    background: rgba(139, 92, 246, 0.4);
+    background: rgba(244, 196, 48, 0.4);
     top: -80px;
     right: 80px;
     animation: orbFloat 8s ease-in-out infinite alternate;
@@ -45,7 +45,7 @@
 .orb-2 {
     width: 180px;
     height: 180px;
-    background: rgba(6, 182, 212, 0.3);
+    background: rgba(128, 0, 0, 0.3);
     bottom: -60px;
     right: 300px;
     animation: orbFloat 10s ease-in-out infinite alternate-reverse;
@@ -96,7 +96,7 @@
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    background: linear-gradient(135deg, #800000, #F4C430);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -104,7 +104,7 @@
     font-weight: 800;
     color: #fff;
     border: 4px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 8px 24px rgba(128, 0, 0, 0.5);
     animation: avatarPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
 }
 
@@ -501,7 +501,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    background: linear-gradient(135deg, #800000, #5a0000);
     color: #fff;
     padding: 8px 14px;
     border-radius: 10px;
@@ -517,9 +517,9 @@
 }
 
 .section-tag {
-    background: #e0f2fe;
-    color: #0284c7;
-    border: 1px solid #bae6fd;
+    background: #f8e6e6;
+    color: #800000;
+    border: 1px solid #eecaca;
     border-radius: 8px;
     padding: 4px 12px;
     font-size: 12px;
@@ -684,7 +684,7 @@
 
 .quick-action-tile:hover .qa-arrow {
     transform: translateX(4px);
-    color: #6366f1;
+    color: #800000;
 }
 
 /* ── Teacher Profile Strip ── */
@@ -770,8 +770,8 @@
 
 /* ── Management Hero ── */
 .management-hero {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #334155 100%);
-    box-shadow: 0 20px 60px rgba(30, 41, 59, 0.35);
+    background: linear-gradient(135deg, #460000 0%, #5a0000 40%, #6d0000 100%);
+    box-shadow: 0 20px 60px rgba(128, 0, 0, 0.35);
 }
 
 /* ── Utilities ── */

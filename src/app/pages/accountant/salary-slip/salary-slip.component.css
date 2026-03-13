@@ -4,7 +4,7 @@
 
 :host {
   --primary-deep: #487fff;
-  --secondary-deep: #486cea;
+  --secondary-deep: #800000;
   --accent-emerald: #2ecc71;
   --accent-rose: #e74c3c;
   --slate-50: #f8fafc;
@@ -345,7 +345,7 @@ iconify-icon {
   justify-content: space-between;
   align-items: center;
   color: white;
-  box-shadow: 0 10px 20px -5px rgba(72, 127, 255, 0.4);
+  box-shadow: 0 10px 20px -5px rgba(128, 0, 0, 0.4);
 }
 
 .net-labels {

@@ -1,6 +1,6 @@
 :host {
-  --ra-primary: #486cea;
-  --ra-primary-deep: #355bd4;
+  --ra-primary: #800000;
+  --ra-primary-deep: #5a0000;
 }
 
 .role-page {
@@ -123,8 +123,8 @@
 }
 
 .field-input:focus {
-  border-color: var(--ra-primary);
-  box-shadow: 0 0 0 4px rgba(72, 108, 234, 0.12);
+  border-color: #800000;
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.12);
 }
 
 .btn-primary-gradient {
@@ -135,7 +135,7 @@
   color: #ffffff;
   font-size: 0.86rem;
   font-weight: 700;
-  box-shadow: 0 10px 20px rgba(72, 108, 234, 0.28);
+  box-shadow: 0 10px 20px rgba(128, 0, 0, 0.28);
 }
 
 .btn-primary-gradient:hover {
@@ -193,7 +193,7 @@
   min-height: 24px;
   border-radius: 999px;
   padding: 0 10px;
-  background: rgba(72, 108, 234, 0.12);
+  background: rgba(128, 0, 0, 0.1);
   color: var(--ra-primary);
   font-size: 0.74rem;
   font-weight: 700;

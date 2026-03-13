@@ -1,28 +1,28 @@
 @import url('./print.css');
 
 :root {
-  --primary-color: #224abe;
-  --primary-light: #486cea;
-  --primary-deep: #1a3a96;
-  --secondary-color: #ff9f29;
-  --accent-color: #00b8f2;
-  --bg-color: #f8fbff;
-  --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-  --card-bg: rgba(255, 255, 255, 0.82);
-  --card-border: #cbd5e1;
-  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  --text-main: #1e293b;
-  --text-muted: #64748b;
-  --glass-bg: rgba(255, 255, 255, 0.82);
-  --glass-border: rgba(255, 255, 255, 0.3);
+  --primary-color: #800000;       /* Maroon */
+  --primary-light: #a52a2a;       /* Brown-ish Maroon */
+  --primary-deep: #5a0000;        /* Deep Maroon */
+  --secondary-color: #F4C430;     /* Golden Yellow */
+  --accent-color: #F4C430;        /* Same as secondary for consistency */
+  --bg-color: #F9FAFB;
+  --bg-gradient: linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-border: #E5E7EB;
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  --text-main: #374151;
+  --text-muted: #6B7280;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(229, 231, 235, 0.5);
 }
 
 [data-theme="dark"] {
-  --primary-color: #6366f1;
-  --primary-light: #818cf8;
-  --primary-deep: #4f46e5;
-  --secondary-color: #fbbf24;
-  --accent-color: #22d3ee;
+  --primary-color: #a10000;
+  --primary-light: #bf2b2b;
+  --primary-deep: #800000;
+  --secondary-color: #F4C430;
+  --accent-color: #F4C430;
   --bg-color: #0f172a;
   --bg-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   --card-bg: rgba(30, 41, 59, 0.8);
@@ -35,11 +35,11 @@
 }
 
 [data-theme="midnight"] {
-  --primary-color: #a855f7;
-  --primary-light: #c084fc;
-  --primary-deep: #9333ea;
-  --secondary-color: #f472b6;
-  --accent-color: #2dd4bf;
+  --primary-color: #5a0000;
+  --primary-light: #800000;
+  --primary-deep: #460000;
+  --secondary-color: #F4C430;
+  --accent-color: #F4C430;
   --bg-color: #020617;
   --bg-gradient: linear-gradient(135deg, #0f172a 0%, #020617 100%);
   --card-bg: rgba(15, 23, 42, 0.9);
@@ -52,11 +52,11 @@
 }
 
 [data-theme="sunset"] {
-  --primary-color: #f97316;
-  --primary-light: #fb923c;
-  --primary-deep: #ea580c;
-  --secondary-color: #4f46e5;
-  --accent-color: #fb7185;
+  --primary-color: #800000;
+  --primary-light: #a52a2a;
+  --primary-deep: #5a0000;
+  --secondary-color: #F4C430;
+  --accent-color: #f97316;
   --bg-color: #fff7ed;
   --bg-gradient: linear-gradient(135deg, #ffedd5 0%, #fff7ed 100%);
   --card-bg: rgba(255, 255, 255, 0.9);
@@ -69,11 +69,11 @@
 }
 
 [data-theme="nature"] {
-  --primary-color: #10b981;
-  --primary-light: #34d399;
-  --primary-deep: #059669;
-  --secondary-color: #8b5cf6;
-  --accent-color: #fbbf24;
+  --primary-color: #800000;
+  --primary-light: #10b981;
+  --primary-deep: #5a0000;
+  --secondary-color: #F4C430;
+  --accent-color: #F4C430;
   --bg-color: #f0fdf4;
   --bg-gradient: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
   --card-bg: rgba(255, 255, 255, 0.9);
@@ -146,7 +146,7 @@ body {
 .form-floating-custom .form-select:focus {
   background: white;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(72, 108, 234, 0.1);
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
 }
 
 .form-floating-custom i,
@@ -199,7 +199,7 @@ body {
 }
 
 .glass-table thead th {
-  background: rgba(78, 84, 200, 0.05);
+  background: rgba(128, 0, 0, 0.05);
   color: var(--text-main) !important;
   font-weight: 700;
   text-transform: uppercase;
@@ -536,7 +536,7 @@ body {
 }
 
 .swal2-actions.nim-swal-actions .nim-swal-btn:focus-visible {
-  outline: 2px solid var(--primary-light);
+  outline: 2px solid var(--secondary-color);
   outline-offset: 1px;
 }
 
@@ -720,7 +720,7 @@ body {
   justify-content: center;
   color: #ffffff;
   background: var(--primary-color);
-  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 18px rgba(128, 0, 0, 0.2);
   animation: loginEmblemGlow 2.5s ease-in-out infinite;
 }
 
@@ -734,8 +734,8 @@ body {
 
 .login-chip {
   color: var(--text-main);
-  background: var(--primary-light);
-  opacity: 0.8;
+  background: var(--bg-color);
+  opacity: 0.9;
   border: 1px solid var(--card-border);
 }
 

@@ -1,10 +1,11 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-breadcrumb',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './breadcrumb.component.html',
   styleUrl: './breadcrumb.component.css',
@@ -12,4 +13,5 @@ import { RouterLink } from '@angular/router';
 export class BreadcrumbComponent {
   @Input('title') title: string = '';
   @Input('main-title') mainTitle: string = '';
+  @Input('icon') icon: string = '';
 }

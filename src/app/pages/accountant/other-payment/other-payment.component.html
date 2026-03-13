@@ -4,7 +4,7 @@
   <!-- ===================== STATS CARDS ===================== -->
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-icon-wrapper blue">
+      <div class="stat-icon-wrapper maroon" style="background: rgba(128, 0, 0, 0.1); color: #800000;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="2" y="3" width="20" height="14" rx="2" />
           <path d="M8 21h8M12 17v4" />
@@ -205,7 +205,7 @@
         <!-- Section: Student -->
         <div class="form-card">
           <div class="form-card-label">
-            <span class="card-dot blue"></span>
+            <span class="card-dot maroon" style="background: #800000;"></span>
             Student Selection
           </div>
           <div class="form-group-premium">
@@ -349,7 +349,8 @@
     <!-- Footer -->
     <div class="modal-footer-premium">
       <button class="btn-ghost" (click)="closeDialog()">Cancel</button>
-      <button class="btn-primary-gradient" (click)="savePayment()" [disabled]="form.invalid">
+      <button class="btn-primary-gradient" (click)="savePayment()" [disabled]="form.invalid"
+        style="background: linear-gradient(135deg, #800000, #5a0000); box-shadow: 0 4px 14px rgba(128, 0, 0, 0.4);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="20 6 9 17 4 12" />
         </svg>
@@ -364,10 +365,10 @@
 <div *ngIf="showViewDialog" class="modal-overlay" (click)="closeDialog()">
   <div class="modal-box" (click)="$event.stopPropagation()">
     <div class="modal-header-premium">
-      <div class="header-gradient" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);"></div>
+      <div class="header-gradient" style="background: linear-gradient(135deg, #800000 0%, #5a0000 100%);"></div>
       <div class="header-content">
         <div class="modal-icon-premium"
-          style="background: linear-gradient(135deg, #0ea5e9, #0284c7); box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4);">
+          style="background: linear-gradient(135deg, #800000, #5a0000); box-shadow: 0 4px 14px rgba(128, 0, 0, 0.4);">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             <circle cx="12" cy="12" r="3" />
@@ -420,7 +421,7 @@
       </div>
     </div>
     <div class="modal-footer-premium">
-      <button class="btn-primary-gradient" style="background: linear-gradient(135deg,#0ea5e9,#0284c7)"
+      <button class="btn-primary-gradient" style="background: linear-gradient(135deg,#800000,#5a0000); box-shadow: 0 4px 12px rgba(128, 0, 0, 0.25);"
         (click)="closeDialog()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M18 6 6 18M6 6l12 12" />

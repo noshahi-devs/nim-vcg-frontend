@@ -72,7 +72,7 @@ export class FeeDefaultersComponent implements OnInit {
           icon: 'error',
           title: 'Error',
           text: 'Failed to load fee defaulters. Please try again.',
-          confirmButtonColor: '#6366f1'
+          confirmButtonColor: '#800000'
         });
         this.isLoading = false;
       }
@@ -155,7 +155,7 @@ export class FeeDefaultersComponent implements OnInit {
       html: `Send payment reminder to <strong>${defaulter.studentName}</strong>?`,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#6366f1',
+      confirmButtonColor: '#800000',
       cancelButtonColor: '#6c757d',
       confirmButtonText: 'Yes, send it!'
     }).then((result) => {
@@ -178,7 +178,7 @@ export class FeeDefaultersComponent implements OnInit {
       text: `Send reminders to all ${this.filteredDefaulters.length} filtered defaulters?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#6366f1',
+      confirmButtonColor: '#800000',
       cancelButtonColor: '#6c757d',
       confirmButtonText: 'Yes, send all!'
     }).then((result) => {
@@ -225,7 +225,7 @@ export class FeeDefaultersComponent implements OnInit {
       icon: 'info',
       title: 'PDF Export',
       text: 'PDF export functionality is being processed.',
-      confirmButtonColor: '#6366f1'
+      confirmButtonColor: '#800000'
     });
   }
 

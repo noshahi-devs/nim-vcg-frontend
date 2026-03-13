@@ -26,7 +26,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
     color: #fff;
     border: none;
     border-radius: 12px;
@@ -37,12 +37,12 @@
     width: 100%;
     margin-bottom: 28px;
     transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 4px 16px rgba(128, 0, 0, 0.4);
 }
 
 .msg-sidebar .compose-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 8px 24px rgba(128, 0, 0, 0.5);
 }
 
 .msg-sidebar .folder-label {
@@ -76,7 +76,7 @@
 }
 
 .folder-nav .folder-item.active {
-    background: rgba(99, 102, 241, 0.25);
+    background: rgba(128, 0, 0, 0.25);
     color: #fff;
     font-weight: 600;
 }
@@ -87,7 +87,7 @@
 }
 
 .folder-nav .folder-item .badge-count {
-    background: #6366f1;
+    background: #800000;
     color: #fff;
     font-size: 10px;
     font-weight: 700;
@@ -187,7 +187,7 @@
 
 .msg-item.active {
     background: #ede9fe;
-    border-left: 3px solid #6366f1;
+    border-left: 3px solid #800000;
 }
 
 .msg-item.unread .msg-item-name {
@@ -204,7 +204,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    background: linear-gradient(135deg, #800000, #5a0000);
     color: #fff;
     display: flex;
     align-items: center;
@@ -264,7 +264,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #6366f1;
+    background: #800000;
     position: absolute;
     right: 14px;
     top: 50%;
@@ -353,7 +353,7 @@
 
 .detail-action-btn:hover {
     background: #ede9fe;
-    color: #6366f1;
+    color: #800000;
 }
 
 .detail-action-btn.danger:hover {
@@ -378,7 +378,7 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    background: linear-gradient(135deg, #800000, #5a0000);
     color: #fff;
     display: flex;
     align-items: center;
@@ -485,7 +485,7 @@
 }
 
 .compose-modal .modal-header {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
     color: #fff;
     border: none;
     padding: 20px 24px;
@@ -524,8 +524,8 @@
 
 .compose-modal .form-control:focus,
 .compose-modal .form-select:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    border-color: #800000;
+    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
     outline: none;
 }
 

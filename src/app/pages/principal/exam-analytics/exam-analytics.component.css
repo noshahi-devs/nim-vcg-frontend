@@ -1,6 +1,6 @@
 :host {
-  --ea-primary: #486cea;
-  --ea-primary-deep: #355bd4;
+  --ea-primary: #800000;
+  --ea-primary-deep: #5a0000;
   --ea-ink: #0f172a;
   --ea-muted: #64748b;
   --ea-border: #dbe5ff;
@@ -13,7 +13,7 @@
 }
 
 .ea-hero {
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 52%, #486cea 100%);
+  background: linear-gradient(135deg, #460000 0%, #5a0000 52%, #800000 100%);
   border-radius: 18px;
   padding: 20px 22px;
   color: #ffffff;
@@ -108,7 +108,7 @@
 
 .ea-select:focus {
   border-color: var(--ea-primary);
-  box-shadow: 0 0 0 4px rgba(72, 108, 234, 0.13);
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.13);
   background: #ffffff;
 }
 
@@ -165,7 +165,7 @@
 }
 
 .ea-stat-icon.primary {
-  background: rgba(72, 108, 234, 0.14);
+  background: rgba(128, 0, 0, 0.14);
   color: var(--ea-primary);
 }
 
@@ -222,7 +222,7 @@
   gap: 10px;
   padding: 14px 16px;
   border-bottom: 1px solid #e6eeff;
-  background: linear-gradient(120deg, rgba(72, 108, 234, 0.1), rgba(72, 108, 234, 0.03));
+  background: linear-gradient(120deg, rgba(128, 0, 0, 0.1), rgba(128, 0, 0, 0.03));
 }
 
 .ea-table-head h5 {
@@ -292,7 +292,7 @@
 }
 
 .ea-pill.primary {
-  background: rgba(72, 108, 234, 0.14);
+  background: rgba(128, 0, 0, 0.14);
   color: var(--ea-primary);
 }
 

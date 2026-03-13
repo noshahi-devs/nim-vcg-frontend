@@ -1,10 +1,10 @@
 <div class="dashboard-main-body">
-  <app-breadcrumb [title]="'Student List'" [main-title]="'Management'"></app-breadcrumb>
+  <app-breadcrumb [title]="'Student List'" [main-title]="'Management'" [icon]="'solar:users-group-rounded-bold-duotone'"></app-breadcrumb>
 
   <div class="es-page">
     <div class="stats-row" *ngIf="!isTeacher">
       <div class="stat-card">
-        <div class="stat-icon blue">
+        <div class="stat-icon maroon" style="background: rgba(128, 0, 0, 0.1); color: #800000;">
           <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
         </div>
         <div class="stat-info">

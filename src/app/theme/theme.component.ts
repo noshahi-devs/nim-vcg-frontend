@@ -15,10 +15,10 @@ import { FormsModule } from '@angular/forms';
 export class ThemeComponent implements OnInit {
   title = 'Theme';
   currentTheme = 'light';
-  customColor = '#486cea';
+  customColor = '#800000';
 
   themes = [
-    { id: 'light', name: 'Alabaster Light', primary: '#487fff', bg: '#f8fbff' },
+    { id: 'light', name: 'Alabaster Light', primary: '#800000', bg: '#fffafb' },
     { id: 'dark', name: 'Obsidian Dark', primary: '#6366f1', bg: '#0f172a' },
     { id: 'midnight', name: 'Midnight Neon', primary: '#a855f7', bg: '#020617' },
     { id: 'sunset', name: 'Crimson Sunset', primary: '#f97316', bg: '#fff7ed' },
@@ -29,7 +29,7 @@ export class ThemeComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentTheme = this.themeService.getSavedTheme();
-    this.customColor = this.themeService.getSavedCustomColor() || '#486cea';
+    this.customColor = this.themeService.getSavedCustomColor() || '#800000';
   }
 
   selectTheme(themeId: string): void {
@@ -43,7 +43,7 @@ export class ThemeComponent implements OnInit {
 
   resetTheme(): void {
     this.selectTheme('light');
-    this.customColor = '#486cea';
+    this.customColor = '#800000';
     this.themeService.setCustomColor(this.customColor);
   }
 }

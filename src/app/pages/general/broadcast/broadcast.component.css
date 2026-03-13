@@ -4,10 +4,32 @@
 .broadcast-compose-card {
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    border: 1px solid #800000;
+}
+
+.broadcast-sidebar {
+    background: linear-gradient(180deg, #800000 0%, #800000 100%) !important;
+    padding: 24px;
+    border-radius: 16px;
+    color: #fff;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.broadcast-sidebar::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
 }
 
 .broadcast-card-header {
-    background: linear-gradient(135deg, #224abe 0%, #1a3a96 60%, #1e3a8a 100%);
+    background: linear-gradient(135deg, #800000 0%, #5a0000 60%, #460000 100%) !important;
     padding: 28px 24px;
     position: relative;
     overflow: hidden;
@@ -68,13 +90,13 @@
 }
 
 .role-pill:hover {
-    border-color: #224abe;
-    color: #224abe;
+    border-color: #800000;
+    color: #800000;
 }
 
 .role-pill.active {
-    background: #224abe;
-    border-color: #224abe;
+    background: #800000;
+    border-color: #800000;
     color: #fff;
 }
 
@@ -94,8 +116,8 @@
 }
 
 .broadcast-input:focus {
-    border-color: #224abe;
-    box-shadow: 0 0 0 3px rgba(34, 74, 186, 0.12);
+    border-color: #800000;
+    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
     background: #fff;
 }
 
@@ -121,14 +143,14 @@
 }
 
 .priority-btn:hover {
-    border-color: #224abe;
-    color: #224abe;
+    border-color: #800000;
+    color: #800000;
 }
 
 .priority-btn.active {
-    background: #eef2ff;
-    border-color: #224abe;
-    color: #224abe;
+    background: #fff1f2;
+    border-color: #800000;
+    color: #800000;
     font-weight: 600;
 }
 
@@ -156,18 +178,18 @@
     padding: 13px 20px;
     border-radius: 12px;
     border: none;
-    background: linear-gradient(135deg, #224abe 0%, #1a3a96 100%);
+    background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
     color: #fff;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 16px rgba(34, 74, 186, 0.35);
+    box-shadow: 0 4px 16px rgba(128, 0, 0, 0.35);
 }
 
 .broadcast-submit-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(34, 74, 186, 0.5);
+    box-shadow: 0 8px 24px rgba(128, 0, 0, 0.5);
 }
 
 .broadcast-submit-btn:disabled {
@@ -220,29 +242,26 @@
     font-size: 14px;
 }
 
-.broadcast-log-item {
-    display: flex;
-    gap: 14px;
-    padding: 16px 20px;
-    border-bottom: 1px solid #f5f5f5;
-    transition: background 0.15s;
+.broadcast-compose-card .card-body {
+    background: #fff;
+    color: #444;
 }
 
 .broadcast-log-item:hover {
-    background: #f9f9ff;
+    background: #fffafa;
 }
 
 .log-type-badge {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    background: #fff1f2 !important;
+    color: #800000 !important;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 20px;
     flex-shrink: 0;
-    background: linear-gradient(135deg, #224abe, #1a3a96);
-    color: #fff;
 }
 
 .log-body {
@@ -290,8 +309,17 @@
     border-radius: 20px;
     font-size: 11px;
     font-weight: 600;
-    background: #eef2ff;
-    color: #224abe;
+    background: #fff1f2;
+    color: #800000;
+}
+
+.log-broadcast-badge {
+    background: #fff1f2 !important;
+    color: #800000 !important;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
 }
 
 .log-read-tag {

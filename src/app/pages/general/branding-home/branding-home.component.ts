@@ -136,7 +136,7 @@ export class BrandingHomeComponent implements OnInit, OnDestroy {
   }
 
   formatInstituteName(name?: string | null): string {
-    const fallbackName = 'Noshahi Institute';
+    const fallbackName = 'Vision College';
     const instituteName = (name || fallbackName).trim();
 
     // Remove trailing "Manager" for cleaner branding in logo areas.

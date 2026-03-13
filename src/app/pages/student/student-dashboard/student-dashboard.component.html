@@ -51,14 +51,14 @@
         <!-- Stat Cards Grid -->
         <div class="teacher-stats-grid">
             <div class="t-stat-card">
-                <div class="t-stat-icon" style="background: rgba(99, 102, 241, 0.12); color: #6366f1;">
+                <div class="t-stat-icon" style="background: rgba(128, 0, 0, 0.12); color: #800000;">
                     <iconify-icon icon="solar:user-check-bold-duotone"></iconify-icon>
                 </div>
                 <div class="t-stat-info">
                     <span class="t-stat-label">Attendance</span>
-                    <span class="t-stat-value" style="color: #6366f1;">{{ stats.attendancePercentage }}%</span>
+                    <span class="t-stat-value" style="color: #800000;">{{ stats.attendancePercentage }}%</span>
                 </div>
-                <div class="t-stat-bar" style="background: #6366f1; width: 100%;"></div>
+                <div class="t-stat-bar" style="background: #800000; width: 100%;"></div>
             </div>
 
             <div class="t-stat-card">
@@ -91,7 +91,7 @@
                 <div class="t-card-header">
                     <div class="t-card-title">
                         <iconify-icon icon="solar:chart-bold-duotone" class="title-icon"
-                            style="color:#6366f1;"></iconify-icon>
+                            style="color:#F4C430;"></iconify-icon>
                         Recent Exam Performance
                     </div>
                 </div>
@@ -131,14 +131,14 @@
                 <div class="t-card-header">
                     <div class="t-card-title">
                         <iconify-icon icon="solar:star-bold-duotone" class="title-icon"
-                            style="color:#f59e0b;"></iconify-icon>
+                            style="color:#F4C430;"></iconify-icon>
                         Next Milestone
                     </div>
                 </div>
                 <div *ngIf="stats.nextExam; else noExam" class="next-milestone-content">
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <div class="milestone-icon"
-                            style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; padding: 12px; border-radius: 12px;">
+                            style="background: rgba(244, 196, 48, 0.1); color: #F4C430; padding: 12px; border-radius: 12px;">
                             <iconify-icon icon="solar:calendar-mark-bold-duotone"
                                 style="font-size: 24px;"></iconify-icon>
                         </div>
@@ -179,15 +179,15 @@
         <div class="quick-actions-section">
             <div class="section-header">
                 <h5 class="section-title">
-                    <iconify-icon icon="solar:magic-stick-3-bold-duotone" style="color:#f59e0b;"></iconify-icon>
+                    <iconify-icon icon="solar:magic-stick-3-bold-duotone" style="color:#F4C430;"></iconify-icon>
                     Student Life
                 </h5>
                 <p class="section-subtitle">Access your portal features instantly</p>
             </div>
             <div class="quick-actions-grid">
                 <a class="quick-action-tile" href="javascript:void(0)">
-                    <div class="qa-glow" style="background: rgba(99, 102, 241, 0.2);"></div>
-                    <div class="qa-icon" style="background: rgba(99, 102, 241, 0.12); color: #6366f1;">
+                    <div class="qa-glow" style="background: rgba(128, 0, 0, 0.2);"></div>
+                    <div class="qa-icon" style="background: rgba(128, 0, 0, 0.12); color: #800000;">
                         <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
                     </div>
                     <div class="qa-text">
@@ -198,8 +198,8 @@
                 </a>
 
                 <a class="quick-action-tile" href="javascript:void(0)">
-                    <div class="qa-glow" style="background: rgba(14, 165, 233, 0.2);"></div>
-                    <div class="qa-icon" style="background: rgba(14, 165, 233, 0.12); color: #0ea5e9;">
+                    <div class="qa-glow" style="background: rgba(244, 196, 48, 0.2);"></div>
+                    <div class="qa-icon" style="background: rgba(244, 196, 48, 0.12); color: #F4C430;">
                         <iconify-icon icon="solar:user-check-bold-duotone"></iconify-icon>
                     </div>
                     <div class="qa-text">
@@ -210,8 +210,8 @@
                 </a>
 
                 <a class="quick-action-tile" href="javascript:void(0)">
-                    <div class="qa-glow" style="background: rgba(16, 185, 129, 0.2);"></div>
-                    <div class="qa-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
+                    <div class="qa-glow" style="background: rgba(128, 0, 0, 0.2);"></div>
+                    <div class="qa-icon" style="background: rgba(128, 0, 0, 0.12); color: #800000;">
                         <iconify-icon icon="solar:chart-bold-duotone"></iconify-icon>
                     </div>
                     <div class="qa-text">

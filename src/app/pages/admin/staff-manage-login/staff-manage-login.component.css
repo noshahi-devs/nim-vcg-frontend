@@ -1,6 +1,6 @@
 :host {
-  --sml-primary: var(--primary-color, #486cea);
-  --sml-primary-deep: var(--primary-deep, #355bd4);
+  --sml-primary: #800000;
+  --sml-primary-deep: #5a0000;
   --sml-ink: var(--text-main, #0f172a);
   --sml-muted: var(--text-muted, #64748b);
   --sml-border: var(--card-border, #dbe5ff);
@@ -75,7 +75,7 @@
   border-radius: 11px;
   padding: 0 16px;
   background: #ffffff;
-  color: #1e3a8a;
+  color: #800000;
   font-size: 0.88rem;
   font-weight: 700;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -115,7 +115,7 @@
 }
 
 .sml-stat-icon.total {
-  background: rgba(72, 108, 234, 0.12);
+  background: rgba(128, 0, 0, 0.1);
   color: var(--sml-primary);
 }
 
@@ -191,7 +191,7 @@
 
 .entries-select:focus {
   border-color: var(--sml-primary);
-  box-shadow: 0 0 0 3px rgba(72, 108, 234, 0.15);
+  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
 }
 
 .search-wrapper {
@@ -223,7 +223,7 @@
 
 .search-input:focus {
   border-color: var(--sml-primary);
-  box-shadow: 0 0 0 3px rgba(72, 108, 234, 0.15);
+  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
   background: #ffffff;
 }
 
@@ -295,7 +295,7 @@
   height: 24px;
   border-radius: 999px;
   padding: 0 10px;
-  background: rgba(72, 108, 234, 0.12);
+  background: rgba(128, 0, 0, 0.12);
   color: var(--sml-primary);
   font-size: 0.74rem;
   font-weight: 700;
@@ -345,7 +345,7 @@
 }
 
 .edit-btn {
-  background: rgba(72, 108, 234, 0.14);
+  background: rgba(128, 0, 0, 0.1);
   color: var(--sml-primary);
 }
 
@@ -531,7 +531,7 @@
 
 .field-input:focus {
   border-color: var(--sml-primary);
-  box-shadow: 0 0 0 4px rgba(72, 108, 234, 0.14);
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
   transform: translateY(-1px);
 }
 
@@ -681,12 +681,12 @@
 .sml-btn-primary {
   color: #ffffff;
   background: linear-gradient(135deg, var(--sml-primary), var(--sml-primary-deep));
-  box-shadow: 0 12px 24px rgba(72, 108, 234, 0.28);
+  box-shadow: 0 12px 24px rgba(128, 0, 0, 0.28);
 }
 
 .sml-btn-primary:hover {
   color: #ffffff;
-  box-shadow: 0 16px 28px rgba(72, 108, 234, 0.34);
+  box-shadow: 0 16px 28px rgba(128, 0, 0, 0.34);
 }
 
 .sml-modal-backdrop {
@@ -823,7 +823,7 @@
 
 /* ========== ADDITIONAL ACTION BUTTON STYLES ========== */
 .view-btn {
-  background: rgba(72, 108, 234, 0.14);
+  background: rgba(128, 0, 0, 0.14);
   color: var(--sml-primary);
 }
 

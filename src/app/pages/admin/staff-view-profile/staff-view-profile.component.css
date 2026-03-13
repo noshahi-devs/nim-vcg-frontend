@@ -5,7 +5,7 @@
 
 .profile-header-premium {
   min-height: 280px;
-  background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+  background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
   position: relative;
   overflow: hidden;
   border-radius: 12px 12px 0 0;
@@ -78,11 +78,11 @@
 }
 
 .tab-item:hover {
-  color: #4e54c8;
+  color: #800000;
 }
 
 .tab-item.active {
-  color: #4e54c8;
+  color: #800000;
 }
 
 .tab-item.active::after {
@@ -92,7 +92,7 @@
   left: 0;
   width: 100%;
   height: 3px;
-  background: #4e54c8;
+  background: #800000;
   border-radius: 3px 3px 0 0;
 }
 
@@ -149,7 +149,7 @@
 
 .btn-white {
   background: #fff;
-  color: #4e54c8;
+  color: #800000;
   border: none;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -189,8 +189,8 @@
 
 .personal-tile:hover {
   transform: translateY(-5px);
-  border-color: #4e54c8 !important;
-  box-shadow: 0 10px 20px rgba(78, 84, 200, 0.1) !important;
+  border-color: #800000 !important;
+  box-shadow: 0 10px 20px rgba(128, 0, 0, 0.1) !important;
 }
 
 .tile-icon {
@@ -224,7 +224,7 @@
   font-size: 1.5rem;
 }
 
-.stat-icon-wrap.indigo { background: rgba(78, 84, 200, 0.1); color: #4e54c8; }
+.stat-icon-wrap.indigo { background: rgba(128, 0, 0, 0.1); color: #800000; }
 .stat-icon-wrap.green { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
 .stat-icon-wrap.orange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
 
@@ -243,18 +243,18 @@
 }
 
 /* FOCUS COLORS for icons */
-.bg-primary-focus { background-color: rgba(78, 84, 200, 0.1); }
+.bg-primary-focus { background-color: rgba(128, 0, 0, 0.1); }
 .bg-info-focus { background-color: rgba(14, 165, 233, 0.1); }
 .bg-warning-focus { background-color: rgba(245, 158, 11, 0.1); }
 .bg-success-focus { background-color: rgba(34, 197, 94, 0.1); }
 .bg-danger-focus { background-color: rgba(239, 68, 68, 0.1); }
-.bg-indigo-focus { background-color: rgba(99, 102, 241, 0.1); }
+.bg-indigo-focus { background-color: rgba(128, 0, 0, 0.1); }
 .bg-purple-focus { background-color: rgba(168, 85, 247, 0.1); }
 .bg-pink-focus { background-color: rgba(236, 72, 153, 0.1); }
 .bg-cyan-focus { background-color: rgba(6, 182, 212, 0.1); }
 .bg-teal-focus { background-color: rgba(20, 184, 166, 0.1); }
 
-.text-indigo { color: #6362f1; }
+.text-indigo { color: #800000; }
 .text-purple { color: #a855f7; }
 .text-pink { color: #ec4899; }
 .text-cyan { color: #06b6d4; }
@@ -263,7 +263,7 @@
 /* FEEDBACK STYLE */
 .feedback-quote {
   background: #f8fafc;
-  border-left: 4px solid #4e54c8;
+  border-left: 4px solid #800000;
   padding: 16px;
   border-radius: 0 12px 12px 0;
   font-style: italic;

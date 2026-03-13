@@ -1,5 +1,5 @@
 <div class="dashboard-main-body">
-  <app-breadcrumb [title]="title"></app-breadcrumb>
+  <app-breadcrumb [title]="title" [icon]="'solar:chart-2-bold-duotone'"></app-breadcrumb>
 
   <!-- ===================== TOP FILTER BAR ===================== -->
   <div class="fee-card mb-24">
@@ -46,7 +46,7 @@
     <!-- ===================== STATS CARDS ===================== -->
     <div class="stats-row mb-24">
       <div class="stat-card">
-        <div class="stat-icon-wrapper green">
+        <div class="stat-icon-wrapper primary">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="8" x2="12" y2="16" />
@@ -260,7 +260,7 @@
   <div *ngIf="!report" class="fee-card p-0">
     <div class="fee-card-body py-48 d-flex flex-column align-items-center justify-content-center text-center">
       <div class="mb-16 rounded-circle d-flex align-items-center justify-content-center"
-        style="width: 80px; height: 80px; background: #eff6ff; color: #3b82f6;">
+        style="width: 80px; height: 80px; background: rgba(128, 0, 0, 0.1); color: #800000;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
           <line x1="16" y1="2" x2="16" y2="6" />

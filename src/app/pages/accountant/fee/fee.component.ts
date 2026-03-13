@@ -62,7 +62,7 @@ export class FeeComponent implements OnInit {
         this.feeTypes = [];
         this.filteredFeeTypes = [];
         this.paginatedFeeTypes = [];
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load fee types.', confirmButtonColor: '#6366f1' });
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load fee types.', confirmButtonColor: '#800000' });
       }
     });
   }
@@ -121,7 +121,7 @@ export class FeeComponent implements OnInit {
           this.loadFeeTypes();
           Swal.fire({ icon: 'success', title: 'Updated!', text: 'Fee type updated successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee type.', confirmButtonColor: '#6366f1' })
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee type.', confirmButtonColor: '#800000' })
       });
     } else {
       this.feeTypeService.createFeeType(payload).subscribe({
@@ -130,7 +130,7 @@ export class FeeComponent implements OnInit {
           this.loadFeeTypes();
           Swal.fire({ icon: 'success', title: 'Added!', text: 'Fee type added successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to add fee type.', confirmButtonColor: '#6366f1' })
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to add fee type.', confirmButtonColor: '#800000' })
       });
     }
   }
@@ -153,7 +153,7 @@ export class FeeComponent implements OnInit {
           this.loadFeeTypes();
           Swal.fire({ icon: 'success', title: 'Deleted!', text: `"${ft.typeName}" has been deleted.`, showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee type.', confirmButtonColor: '#6366f1' })
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee type.', confirmButtonColor: '#800000' })
       });
     }
   }

@@ -2,12 +2,12 @@
    GLOBAL PREMIUM THEME
 ======================== */
 :host {
-  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  --primary-gradient: linear-gradient(135deg, #800000 0%, #5a0000 100%);
   --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  --blue-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --blue-gradient: linear-gradient(135deg, #800000 0%, #5a0000 100%);
   --orange-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(99, 102, 241, 0.1);
+  --glass-border: rgba(128, 0, 0, 0.1);
   --shadow-premium: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 15px -5px rgba(0, 0, 0, 0.03);
 }
 
@@ -53,9 +53,9 @@
   height: 26px;
 }
 
-.stat-icon-wrapper.blue {
-  background: #eff6ff;
-  color: #3b82f6;
+.stat-icon-wrapper.primary {
+  background: rgba(128, 0, 0, 0.1);
+  color: #800000;
 }
 
 .stat-icon-wrapper.green {
@@ -63,9 +63,9 @@
   color: #10b981;
 }
 
-.stat-icon-wrapper.indigo {
-  background: #eef2ff;
-  color: #6366f1;
+.stat-icon-wrapper.deep {
+  background: rgba(128, 0, 0, 0.1);
+  color: #800000;
 }
 
 .stat-icon-wrapper.orange {
@@ -156,8 +156,8 @@
 }
 
 .search-input-premium:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  border-color: #800000;
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
 }
 
 .filter-group {
@@ -193,7 +193,7 @@
 }
 
 .field-select-premium:focus {
-  border-color: #6366f1;
+  border-color: #800000;
 }
 
 .field-chevron {
@@ -266,7 +266,7 @@
 }
 
 .tab-btn.active {
-  color: #6366f1;
+  color: #800000;
 }
 
 .tab-btn svg {
@@ -281,7 +281,7 @@
   height: 3px;
   background: var(--primary-gradient);
   transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 10px rgba(128, 0, 0, 0.4);
 }
 
 /* ========================
@@ -486,7 +486,7 @@
   background: var(--primary-gradient);
   border-color: transparent;
   color: white;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 12px rgba(128, 0, 0, 0.3);
 }
 
 .page-btn-premium:hover:not(.active):not(:disabled) {

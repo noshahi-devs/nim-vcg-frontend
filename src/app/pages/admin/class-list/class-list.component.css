@@ -59,8 +59,8 @@
 }
 
 .es-search-input:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    border-color: #800000;
+    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
     width: 300px;
     background: #fff;
 }
@@ -79,7 +79,7 @@
 }
 
 .es-show-select:focus {
-    border-color: #6366f1;
+    border-color: #800000;
 }
 
 /* Add Button */
@@ -87,7 +87,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    background: linear-gradient(135deg, #800000, #5a0000);
     color: #fff;
     border: none;
     border-radius: 12px;
@@ -98,13 +98,13 @@
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     white-space: nowrap;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+    box-shadow: 0 4px 14px rgba(128, 0, 0, 0.35);
     text-decoration: none;
 }
 
 .es-add-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45);
+    box-shadow: 0 8px 24px rgba(128, 0, 0, 0.45);
     color: #fff;
 }
 
@@ -155,7 +155,7 @@
 }
 
 .accent-0 {
-    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    background: linear-gradient(90deg, #800000, #5a0000);
 }
 
 .accent-1 {
@@ -197,8 +197,8 @@
 }
 
 .icon-0 {
-    background: rgba(99, 102, 241, 0.1);
-    color: #6366f1;
+    background: rgba(128, 0, 0, 0.1);
+    color: #800000;
 }
 
 .icon-1 {
@@ -264,7 +264,7 @@
 
 .es-meta-pill iconify-icon {
     font-size: 20px;
-    color: #6366f1;
+    color: #800000;
 }
 
 .es-meta-label {
@@ -304,12 +304,12 @@
 }
 
 .es-action-btn.view {
-    background: rgba(99, 102, 241, 0.1);
-    color: #6366f1;
+    background: rgba(128, 0, 0, 0.1);
+    color: #800000;
 }
 
 .es-action-btn.view:hover {
-    background: #6366f1;
+    background: #800000;
     color: #fff;
 }
 
@@ -420,8 +420,8 @@
     width: 80px;
     height: 80px;
     border-radius: 24px;
-    background: rgba(99, 102, 241, 0.1);
-    color: #6366f1;
+    background: rgba(128, 0, 0, 0.1);
+    color: #800000;
     display: flex;
     align-items: center;
     justify-content: center;

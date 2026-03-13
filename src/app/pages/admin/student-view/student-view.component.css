@@ -5,7 +5,7 @@
 
 .profile-header-premium {
   min-height: 280px;
-  background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+  background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
   position: relative;
   overflow: hidden;
   border-radius: 12px 12px 0 0;
@@ -76,11 +76,11 @@
 }
 
 .tab-item:hover {
-  color: #4e54c8;
+  color: #800000;
 }
 
 .tab-item.active {
-  color: #4e54c8;
+  color: #800000;
 }
 
 .tab-item.active::after {
@@ -90,7 +90,7 @@
   left: 0;
   width: 100%;
   height: 3px;
-  background: #4e54c8;
+  background: #800000;
   border-radius: 3px 3px 0 0;
 }
 
@@ -128,7 +128,7 @@
 
 .btn-white {
   background: #fff;
-  color: #4e54c8;
+  color: #800000;
   border: none;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -210,8 +210,8 @@
 
 .personal-tile:hover {
   transform: translateY(-5px);
-  border-color: #4e54c8 !important;
-  box-shadow: 0 10px 20px rgba(78, 84, 200, 0.1) !important;
+  border-color: #800000 !important;
+  box-shadow: 0 10px 20px rgba(128, 0, 0, 0.1) !important;
 }
 
 .tile-icon {
@@ -228,7 +228,7 @@
 
 /* FOCUS COLORS */
 .bg-primary-focus {
-  background-color: rgba(78, 84, 200, 0.1);
+  background-color: rgba(128, 0, 0, 0.1);
 }
 
 .bg-info-focus {
@@ -248,7 +248,7 @@
 }
 
 .bg-indigo-focus {
-  background-color: rgba(99, 102, 241, 0.1);
+  background-color: rgba(128, 0, 0, 0.1);
 }
 
 .bg-purple-focus {
@@ -269,7 +269,7 @@
 
 /* TEXT COLORS FOR ICONS */
 .text-indigo {
-  color: #6362f1;
+  color: #800000;
 }
 
 .text-purple {

@@ -151,7 +151,7 @@ export class SignUpComponent {
           text: errMsg,
           icon: 'error',
           confirmButtonText: 'Try Again',
-          confirmButtonColor: '#6366f1',
+          confirmButtonColor: '#800000',
           customClass: {
             popup: 'premium-swal-popup',
             title: 'premium-swal-title',

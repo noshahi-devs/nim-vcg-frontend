@@ -2,17 +2,17 @@
    DESIGN TOKENS & ANIMATIONS
    ======================== */
 :host {
-    --brand-primary: #6366f1;
-    --brand-primary-deep: #4f46e5;
-    --brand-secondary: #8b5cf6;
+    --brand-primary: #800000;
+    --brand-primary-deep: #5a0000;
+    --brand-secondary: #f4c430;
     --brand-success: #10b981;
     --brand-danger: #ef4444;
     --brand-warning: #f59e0b;
     --glass-bg: rgba(255, 255, 255, 0.7);
     --glass-border: rgba(255, 255, 255, 0.8);
     --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-    --premium-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    --deep-brand-gradient: linear-gradient(150deg, #0f2364 0%, #17388e 64%, #224abe 100%);
+    --premium-gradient: linear-gradient(135deg, #800000 0%, #5a0000 100%);
+    --deep-brand-gradient: linear-gradient(150deg, #3a0000 0%, #5a0000 64%, #800000 100%);
 }
 
 .animate-fade-up {
@@ -77,8 +77,8 @@
 }
 
 .stat-icon-wrapper.indigo {
-    background: #eef2ff;
-    color: #6366f1;
+    background: rgba(128, 0, 0, 0.1);
+    color: #800000;
 }
 
 .stat-icon-wrapper.violet {
@@ -139,7 +139,7 @@
 }
 
 .header-title-premium iconify-icon {
-    color: #6366f1;
+    color: #800000;
     font-size: 24px;
 }
 
@@ -184,8 +184,8 @@
 
 .premium-input:focus,
 .premium-select:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    border-color: #800000;
+    box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
     background: #fff;
 }
 
@@ -245,8 +245,8 @@
 }
 
 .custom-checkbox:checked {
-    background: #6366f1;
-    border-color: #6366f1;
+    background: #800000;
+    border-color: #800000;
 }
 
 .custom-checkbox:checked::after {
@@ -269,14 +269,14 @@
     width: 36px;
     height: 36px;
     border-radius: 12px;
-    background: #eef2ff;
-    color: #6366f1;
+    background: rgba(128, 0, 0, 0.1);
+    color: #800000;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
     font-size: 14px;
-    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.1);
+    box-shadow: 0 4px 10px rgba(128, 0, 0, 0.1);
 }
 
 .admission-badge {
@@ -420,7 +420,7 @@
     min-height: 48px;
     height: auto;
     background: #ffffff;
-    color: #224abe;
+    color: #800000;
     border: none;
     border-radius: 14px;
     padding: 12px 24px;
@@ -433,7 +433,7 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 20px rgba(128, 0, 0, 0.15);
 }
 
 .btn-promote:hover:not(:disabled) {
@@ -489,9 +489,9 @@
 }
 
 .page-link-premium.active {
-    background: #6366f1;
+    background: #800000;
     color: #fff;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 12px rgba(128, 0, 0, 0.3);
 }
 
 .page-link-premium:hover:not(.active):not(.disabled) {

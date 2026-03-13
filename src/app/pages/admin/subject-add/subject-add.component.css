@@ -21,7 +21,7 @@
 }
 
 .premium-header {
-    background: #4f46e5;
+    background: #800000;
     color: white;
     border-bottom: none;
 }
@@ -40,8 +40,8 @@
 }
 
 .form-card:hover {
-    border-color: #c7d2fe;
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.06);
+    border-color: rgba(128, 0, 0, 0.3);
+    box-shadow: 0 4px 16px rgba(128, 0, 0, 0.06);
 }
 
 .form-card-label {
@@ -64,13 +64,13 @@
 }
 
 .card-dot.blue {
-    background: #3b82f6;
-    box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
+    background: #800000;
+    box-shadow: 0 0 6px rgba(128, 0, 0, 0.5);
 }
 
 .card-dot.indigo {
-    background: #6366f1;
-    box-shadow: 0 0 6px rgba(99, 102, 241, 0.5);
+    background: #5a0000;
+    box-shadow: 0 0 6px rgba(90, 0, 0, 0.5);
 }
 
 .card-dot.green {
@@ -107,8 +107,8 @@
 
 .field-input:focus,
 .field-select:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    border-color: #800000;
+    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
 }
 
 .select-wrapper-premium {
@@ -159,7 +159,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: #4f46e5;
+    background: #800000;
     color: #ffffff;
     border: none;
     border-radius: 12px;
@@ -168,12 +168,12 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 14px rgba(128, 0, 0, 0.3);
 }
 
 .btn-primary-gradient:hover:not([disabled]) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 6px 20px rgba(128, 0, 0, 0.4);
 }
 
 .btn-primary-gradient[disabled] {

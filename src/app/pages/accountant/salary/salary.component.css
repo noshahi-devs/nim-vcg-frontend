@@ -35,9 +35,9 @@
     font-size: 24px;
 }
 
-.stat-icon-wrapper.blue {
-    background: #eff6ff;
-    color: #6366f1;
+.stat-icon-wrapper.primary {
+    background: rgba(128, 0, 0, 0.1);
+    color: #800000;
 }
 
 .stat-icon-wrapper.green {
@@ -95,7 +95,7 @@
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    background: linear-gradient(135deg, #800000, #5a0000);
     color: white;
     display: flex;
     align-items: center;
@@ -135,14 +135,14 @@
 
 .form-control-premium:focus,
 .form-select-premium:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    border-color: #800000;
+    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
     outline: none;
 }
 
 .net-salary-group {
     background: #f5f3ff;
-    border: 1.5px dashed #6366f1;
+    border: 1.5px dashed #800000;
     border-radius: 10px;
     padding: 12px;
 }
@@ -150,7 +150,7 @@
 .net-salary-group span {
     font-size: 11px;
     font-weight: 700;
-    color: #6366f1;
+    color: #800000;
     text-transform: uppercase;
     display: block;
     margin-bottom: 4px;
@@ -159,7 +159,7 @@
 .net-val {
     font-size: 20px;
     font-weight: 800;
-    color: #6366f1;
+    color: #800000;
 }
 
 /* ========================
@@ -217,7 +217,7 @@
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    color: #6366f1;
+    color: #800000;
     font-size: 12px;
 }
 
@@ -234,15 +234,15 @@
 }
 
 .badge-amount.basic {
-    background: #eff6ff;
-    color: #6366f1;
+    background: rgba(128, 0, 0, 0.1);
+    color: #800000;
 }
 
 /* ========================
    BUTTONS
 ======================== */
 .btn-premium-save {
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    background: linear-gradient(135deg, #800000, #5a0000);
     color: white;
     border: none;
     border-radius: 10px;
@@ -253,13 +253,13 @@
     justify-content: center;
     gap: 8px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 4px 12px rgba(128, 0, 0, 0.2);
     width: 100%;
 }
 
 .btn-premium-save:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 6px 16px rgba(128, 0, 0, 0.3);
 }
 
 .btn-premium-reset {

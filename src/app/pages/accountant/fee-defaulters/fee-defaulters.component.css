@@ -2,9 +2,9 @@
    GLOBAL PREMIUM THEME
 ======================== */
 :host {
-    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    --primary-gradient: linear-gradient(135deg, #800000 0%, #5a0000 100%);
     --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    --blue-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    --blue-gradient: linear-gradient(135deg, #800000 0%, #5a0000 100%);
     --orange-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     --red-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
@@ -54,8 +54,8 @@
 }
 
 .stat-icon-wrapper.indigo {
-    background: #eef2ff;
-    color: #6366f1;
+    background: rgba(128, 0, 0, 0.1);
+    color: #800000;
 }
 
 .stat-icon-wrapper.orange {
@@ -156,8 +156,8 @@
 }
 
 .search-input-premium:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    border-color: #800000;
+    box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
 }
 
 .filter-group {
@@ -200,7 +200,7 @@
 
 .field-select-premium:focus,
 .field-input-premium:focus {
-    border-color: #6366f1;
+    border-color: #800000;
 }
 
 .field-chevron {
@@ -245,12 +245,12 @@
 .btn-primary-premium {
     background: var(--primary-gradient);
     color: white;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 4px 12px rgba(128, 0, 0, 0.2);
 }
 
 .btn-primary-premium:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 6px 15px rgba(128, 0, 0, 0.3);
 }
 
 .btn-success-premium {
@@ -449,7 +449,7 @@
     width: 40px;
     height: 40px;
     border: 4px solid #f1f5f9;
-    border-top: 4px solid #6366f1;
+    border-top: 4px solid #800000;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -535,7 +535,7 @@
     background: var(--primary-gradient);
     border-color: transparent;
     color: white;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 12px rgba(128, 0, 0, 0.3);
 }
 
 .page-btn-premium:disabled {

@@ -99,7 +99,7 @@ export class MyAttendanceComponent implements OnInit {
             icon: 'info',
             showCancelButton: true,
             confirmButtonText: 'Yes, Confirm',
-            confirmButtonColor: '#6366f1'
+            confirmButtonColor: '#800000'
         }).then((result) => {
             if (result.isConfirmed) {
                 const payload = {

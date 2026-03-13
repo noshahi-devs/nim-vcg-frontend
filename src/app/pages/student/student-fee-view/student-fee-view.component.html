@@ -4,15 +4,15 @@
     <!-- Top Stats Bar (Matching Dashboard) -->
     <div class="teacher-stats-grid mb-24 animate-fade-in">
         <div class="t-stat-card">
-            <div class="t-stat-icon" style="background: rgba(99, 102, 241, 0.12); color: #6366f1;">
+            <div class="t-stat-icon" style="background: rgba(128, 0, 0, 0.12); color: #800000;">
                 <iconify-icon icon="solar:wallet-bold-duotone"></iconify-icon>
             </div>
             <div class="t-stat-info">
                 <span class="t-stat-label">Net Payable</span>
-                <span class="t-stat-value" style="color: #6366f1;">{{ stats.netPayable | currency:'PKR':'symbol':'1.0-0'
+                <span class="t-stat-value" style="color: #800000;">{{ stats.netPayable | currency:'PKR':'symbol':'1.0-0'
                     }}</span>
             </div>
-            <div class="t-stat-bar" style="background: #6366f1; width: 100%;"></div>
+            <div class="t-stat-bar" style="background: #800000; width: 100%;"></div>
         </div>
 
         <div class="t-stat-card">
@@ -48,10 +48,10 @@
                 <div class="t-card-header">
                     <div class="t-card-title">
                         <iconify-icon icon="solar:history-bold-duotone" class="title-icon"
-                            style="color:#6366f1;"></iconify-icon>
+                            style="color:#800000;"></iconify-icon>
                         Monthly Fee History
                     </div>
-                    <span class="t-badge" style="background:rgba(99,102,241,0.1);color:#6366f1;">{{
+                    <span class="t-badge" style="background:rgba(128,0,0,0.1);color:#800000;">{{
                         monthlyPayments.length }} Records</span>
                 </div>
 

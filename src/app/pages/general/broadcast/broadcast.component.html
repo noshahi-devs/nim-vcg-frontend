@@ -1,5 +1,5 @@
 <div class="dashboard-main-body">
-    <app-breadcrumb [title]="'Communications / Broadcast'" [main-title]="'Broadcast'"></app-breadcrumb>
+    <app-breadcrumb [title]="'Communications / Broadcast'" [main-title]="'Broadcast'" [icon]="'mdi:megaphone-outline'"></app-breadcrumb>
 
     <div class="row gy-4">
         <!-- ===== Compose Broadcast Card ===== -->
@@ -8,7 +8,7 @@
                 <div class="broadcast-card-header">
                     <div class="d-flex align-items-center gap-3">
                         <div class="broadcast-icon-wrap">
-                            <iconify-icon icon="solar:notification-lines-bold-duotone" class="text-white"
+                            <iconify-icon icon="mdi:bullhorn-outline" class="text-white"
                                 style="font-size:28px;"></iconify-icon>
                         </div>
                         <div>
@@ -157,7 +157,7 @@
                 <!-- Log List -->
                 <div class="broadcast-log-scroll" *ngIf="!loadingLogs">
                     <div *ngIf="logs.length === 0" class="broadcast-empty">
-                        <iconify-icon icon="solar:notification-lines-bold-duotone"
+                        <iconify-icon icon="mdi:bullhorn-outline"
                             style="font-size:52px; opacity:0.2;"></iconify-icon>
                         <p>No broadcasts sent yet</p>
                     </div>
@@ -165,7 +165,7 @@
                     <div *ngFor="let log of logs" class="broadcast-log-item">
                         <div class="log-type-badge"
                             [class]="'badge-' + (log.notificationType?.toLowerCase() || 'broadcast')">
-                            <iconify-icon icon="solar:notification-lines-bold-duotone"></iconify-icon>
+                            <iconify-icon icon="mdi:bullhorn-outline"></iconify-icon>
                         </div>
                         <div class="log-body">
                             <div class="log-header">

@@ -1,6 +1,6 @@
 :host ::ng-deep {
-    --auth-primary: #224abe;
-    --auth-indigo-deep: #224abe;
+    --auth-primary: #800000;
+    --auth-indigo-deep: #5a0000;
     --layout-collapse-motion: 340ms cubic-bezier(0.22, 1, 0.36, 1);
 
     --sidebar-border: rgba(255, 255, 255, 0.24);
@@ -8,7 +8,7 @@
     --sidebar-text-muted: rgba(241, 245, 249, 0.86);
     --sidebar-hover: rgba(255, 255, 255, 0.16);
     --sidebar-active-bg: rgba(255, 255, 255, 0.96);
-    --sidebar-active-text: #224abe;
+    --sidebar-active-text: #800000;
 
     --header-chip-bg: rgba(255, 255, 255, 0.16);
     --header-chip-border: rgba(255, 255, 255, 0.36);
@@ -17,7 +17,7 @@
 :host ::ng-deep aside.sidebar {
     background: var(--auth-primary);
     border-inline-end: 1px solid var(--sidebar-border);
-    box-shadow: 0 22px 44px rgba(34, 74, 186, 0.25);
+    box-shadow: 0 22px 44px rgba(128, 0, 0, 0.25);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -220,7 +220,7 @@
 :host ::ng-deep .sidebar-menu li.dropdown.open>a {
     background: var(--sidebar-active-bg);
     color: var(--sidebar-active-text);
-    box-shadow: 0 10px 20px rgba(34, 74, 186, 0.15);
+    box-shadow: 0 10px 20px rgba(128, 0, 0, 0.15);
 }
 
 :host ::ng-deep .sidebar-menu li>a.active-page:hover,
@@ -354,7 +354,7 @@
 :host ::ng-deep .navbar-header {
     background: var(--auth-primary) !important;
     border-bottom: 1px solid var(--sidebar-border) !important;
-    box-shadow: 0 10px 24px rgba(34, 74, 186, 0.2);
+    box-shadow: 0 10px 24px rgba(128, 0, 0, 0.2);
     transition: padding var(--layout-collapse-motion), box-shadow 240ms ease, border-color 240ms ease;
     position: sticky !important;
     top: 0 !important;
@@ -551,7 +551,7 @@
 :host ::ng-deep .sidebar-toggle.active {
     background: #ffffff;
     color: var(--auth-indigo-deep);
-    box-shadow: 0 8px 18px rgba(34, 74, 186, 0.2);
+    box-shadow: 0 8px 18px rgba(128, 0, 0, 0.2);
 }
 
 :host ::ng-deep .navbar-header [data-theme-toggle] {

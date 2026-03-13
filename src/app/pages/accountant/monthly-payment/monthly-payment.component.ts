@@ -146,7 +146,7 @@ export class MonthlyPaymentComponent implements OnInit {
   loadPayments() {
     this.paymentService.getAllMonthlyPayments().subscribe({
       next: r => { this.payments = r || []; this.searchPayments(); },
-      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load payments.', confirmButtonColor: '#6366f1' })
+      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load payments.', confirmButtonColor: '#800000' })
     });
   }
 
@@ -281,7 +281,7 @@ export class MonthlyPaymentComponent implements OnInit {
         },
         error: (err) => {
           console.error('Update Error:', err);
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment. ' + (err.error?.title || ''), confirmButtonColor: '#6366f1' });
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment. ' + (err.error?.title || ''), confirmButtonColor: '#800000' });
         }
       });
     } else {
@@ -293,7 +293,7 @@ export class MonthlyPaymentComponent implements OnInit {
         },
         error: (err) => {
           console.error('Create Error:', err);
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment. ' + (err.error?.title || ''), confirmButtonColor: '#6366f1' });
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment. ' + (err.error?.title || ''), confirmButtonColor: '#800000' });
         }
       });
     }
@@ -318,7 +318,7 @@ export class MonthlyPaymentComponent implements OnInit {
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Payment deleted successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#6366f1' })
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#800000' })
       });
     }
   }

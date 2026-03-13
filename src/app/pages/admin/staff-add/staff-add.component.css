@@ -1,5 +1,5 @@
 .bg-gradient-primary {
-  background: #4e73df;
+  background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
 }
 
 .header-icon-box {
@@ -30,7 +30,7 @@
 .section-number {
   width: 28px;
   height: 28px;
-  background: #4e73df;
+  background: #800000;
   color: white;
   border-radius: 50%;
   display: flex;
@@ -80,9 +80,9 @@
 .form-control-premium:focus,
 .form-select-premium:focus,
 .textarea-premium:focus {
-  border-color: #4e73df;
+  border-color: #800000;
   background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.1);
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
   outline: none;
 }
 
@@ -107,7 +107,7 @@
 }
 
 .btn-premium-primary {
-  background: #4e73df;
+  background: #800000;
   color: white;
   padding: 14px 40px;
   border-radius: 12px;
@@ -115,15 +115,15 @@
   font-size: 1rem;
   border: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(78, 115, 223, 0.25);
+  box-shadow: 0 4px 12px rgba(128, 0, 0, 0.25);
   display: flex;
   align-items: center;
 }
 
 .btn-premium-primary:hover {
-  background: #2e59d9;
+  background: #5a0000;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(78, 115, 223, 0.35);
+  box-shadow: 0 6px 16px rgba(128, 0, 0, 0.35);
   color: white;
 }
 
@@ -147,7 +147,7 @@
 }
 
 .text-primary-500 {
-  color: #4e73df;
+  color: #800000;
 }
 
 .mt-40 {

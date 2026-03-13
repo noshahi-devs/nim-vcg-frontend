@@ -1,6 +1,6 @@
 :host {
-  --campus-primary: #486cea;
-  --campus-primary-deep: #355bd4;
+  --campus-primary: #800000;
+  --campus-primary-deep: #5a0000;
 }
 
 .campus-page {
@@ -17,9 +17,9 @@
   flex-wrap: wrap;
   border-radius: 18px;
   padding: 20px 22px;
-  background: linear-gradient(130deg, #0f172a 0%, #1e2f66 42%, #486cea 100%);
+  background: linear-gradient(130deg, #1a0000 0%, #3a0000 42%, #800000 100%);
   color: #ffffff;
-  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.24);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
 }
 
 .campus-eyebrow {
@@ -65,7 +65,7 @@
   min-height: 42px;
   border-radius: 11px;
   background: #ffffff;
-  color: #1f3fa7;
+  color: #800000;
   padding: 0 16px;
   display: inline-flex;
   align-items: center;
@@ -170,7 +170,7 @@
 }
 
 .edit-btn {
-  background: rgba(72, 108, 234, 0.14);
+  background: rgba(128, 0, 0, 0.1);
   color: var(--campus-primary);
 }
 

@@ -15,7 +15,7 @@
 }
 
 .outstanding-header {
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
     padding: 40px 20px;
     color: white;
     position: relative;
@@ -39,7 +39,7 @@
     position: absolute;
     left: 15px;
     font-size: 1.4rem;
-    color: #6366f1;
+    color: #800000;
     pointer-events: none;
     z-index: 10;
 }
@@ -64,14 +64,14 @@
 
 .form-floating-custom .form-control:focus,
 .form-floating-custom .form-select:focus {
-    border-color: #6366f1;
+    border-color: #800000;
     background-color: white;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
     outline: none;
 }
 
 .outstanding-btn {
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
     color: white;
     padding: 14px 35px;
     border-radius: 14px;
@@ -79,14 +79,14 @@
     font-weight: 700;
     font-size: 1rem;
     letter-spacing: 0.5px;
-    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 10px 20px rgba(128, 0, 0, 0.3);
     transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .outstanding-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 15px 30px rgba(128, 0, 0, 0.4);
 }
 
 .outstanding-btn:active {

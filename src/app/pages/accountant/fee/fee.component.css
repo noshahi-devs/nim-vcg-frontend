@@ -48,7 +48,7 @@
 }
 
 .entries-select:focus {
-  border-color: #6366f1;
+  border-color: #800000;
 }
 
 .search-wrapper {
@@ -78,8 +78,8 @@
 }
 
 .search-input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: #800000;
+  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
 }
 
 .search-input::placeholder {
@@ -91,7 +91,7 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  background: linear-gradient(135deg, #800000, #5a0000);
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -100,7 +100,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.25s;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 14px rgba(128, 0, 0, 0.35);
 }
 
 .btn-add svg {
@@ -110,7 +110,7 @@
 
 .btn-add:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+  box-shadow: 0 6px 20px rgba(128, 0, 0, 0.45);
 }
 
 .btn-add:active {
@@ -396,16 +396,16 @@
 }
 
 .page-btn:hover:not([disabled]):not(.active) {
-  border-color: #6366f1;
-  color: #6366f1;
+  border-color: #800000;
+  color: #800000;
   background: #eef2ff;
 }
 
 .page-btn.active {
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  border-color: #6366f1;
+  background: linear-gradient(135deg, #800000, #5a0000);
+  border-color: #800000;
   color: #ffffff;
-  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 10px rgba(128, 0, 0, 0.3);
 }
 
 .page-btn:disabled {
@@ -483,7 +483,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  background: linear-gradient(135deg, #800000, #5a0000);
   color: #ffffff;
 }
 
@@ -572,9 +572,9 @@
 }
 
 .form-input:focus {
-  border-color: #6366f1;
+  border-color: #800000;
   background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
 }
 
 .form-input.input-error {
@@ -655,7 +655,7 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  background: linear-gradient(135deg, #800000, #5a0000);
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -664,7 +664,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 12px rgba(128, 0, 0, 0.3);
 }
 
 .btn-save svg {
@@ -674,7 +674,7 @@
 
 .btn-save:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 6px 18px rgba(128, 0, 0, 0.4);
 }
 
 .btn-save:disabled {
@@ -764,11 +764,11 @@
 }
 
 .toast-info {
-  border-color: #6366f1;
+  border-color: #800000;
 }
 
 .toast-info .toast-icon {
-  color: #6366f1;
+  color: #800000;
   background: #ede9fe;
 }
 

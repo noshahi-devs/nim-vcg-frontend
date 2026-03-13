@@ -2,7 +2,7 @@
 
 :host {
   --v3-primary: var(--primary-600, #487fff);
-  --v3-primary-deep: var(--primary-700, #486cea);
+  --v3-primary-deep: var(--primary-700, #800000);
   --v3-accent: var(--cyan, #00b8f2);
   --v3-bg: #ffffff;
   --v3-bg-alt: #f8fafc;
@@ -548,7 +548,7 @@
 
 .v3-feature-card:nth-child(6) {
   --card-accent: #c026d3;
-  --card-secondary: #6366f1;
+  --card-secondary: #800000;
   --card-soft: rgba(192, 38, 211, 0.16);
 }
 

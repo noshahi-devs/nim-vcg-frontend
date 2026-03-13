@@ -47,47 +47,47 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
 
   // Quick stats for teacher
   teacherStats = [
-    { label: 'Assigned Subjects', value: 0, icon: 'solar:book-bold-duotone', color: '#6366f1', bg: 'rgba(99,102,241,0.12)', pulse: false },
-    { label: 'My Classes', value: 0, icon: 'solar:buildings-bold-duotone', color: '#0ea5e9', bg: 'rgba(14,165,233,0.12)', pulse: false },
-    { label: 'My Sections', value: 0, icon: 'solar:diploma-bold-duotone', color: '#10b981', bg: 'rgba(16,185,129,0.12)', pulse: false },
-    { label: "Today's Date", value: '', icon: 'solar:calendar-bold-duotone', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', pulse: true }
+    { label: 'Assigned Subjects', value: 0, icon: 'solar:book-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)', pulse: false },
+    { label: 'My Classes', value: 0, icon: 'solar:buildings-bold-duotone', color: '#F4C430', bg: 'rgba(244,196,48,0.12)', pulse: false },
+    { label: 'My Sections', value: 0, icon: 'solar:diploma-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)', pulse: false },
+    { label: "Today's Date", value: '', icon: 'solar:calendar-bold-duotone', color: '#F4C430', bg: 'rgba(244,196,48,0.12)', pulse: true }
   ];
 
   // Quick action tiles for teachers
   quickActions = [
-    { label: 'Mark Attendance', icon: 'solar:user-check-bold-duotone', route: '/attendance', color: '#6366f1', description: 'Record today\'s attendance' },
-    { label: 'My Students', icon: 'solar:users-group-rounded-bold-duotone', route: '/students', color: '#0ea5e9', description: 'View class students' },
-    { label: 'Exam Schedule', icon: 'solar:calendar-mark-bold-duotone', route: '/exam-schedule', color: '#10b981', description: 'Check upcoming exams' },
-    { label: 'Exam Results', icon: 'solar:chart-bold-duotone', route: '/exam-result', color: '#f59e0b', description: 'View student results' },
-    { label: 'My Leaves', icon: 'solar:document-text-bold-duotone', route: '/my-leaves', color: '#ec4899', description: 'Manage leave requests' },
-    { label: 'Apply Leave', icon: 'solar:pen-new-round-bold-duotone', route: '/apply-leave', color: '#8b5cf6', description: 'Submit new leave request' },
+    { label: 'Mark Attendance', icon: 'solar:user-check-bold-duotone', route: '/attendance', color: '#800000', description: 'Record today\'s attendance' },
+    { label: 'My Students', icon: 'solar:users-group-rounded-bold-duotone', route: '/students', color: '#F4C430', description: 'View class students' },
+    { label: 'Exam Schedule', icon: 'solar:calendar-mark-bold-duotone', route: '/exam-schedule', color: '#800000', description: 'Check upcoming exams' },
+    { label: 'Exam Results', icon: 'solar:chart-bold-duotone', route: '/exam-result', color: '#F4C430', description: 'View student results' },
+    { label: 'My Leaves', icon: 'solar:document-text-bold-duotone', route: '/my-leaves', color: '#800000', description: 'Manage leave requests' },
+    { label: 'Apply Leave', icon: 'solar:pen-new-round-bold-duotone', route: '/apply-leave', color: '#F4C430', description: 'Submit new leave request' },
   ];
 
   adminQuickActions = [
-    { label: 'Add Student', icon: 'solar:user-plus-bold-duotone', route: '/student-add', color: '#6366f1', description: 'Register new student' },
-    { label: 'Add Staff', icon: 'solar:user-speak-bold-duotone', route: '/staff-add', color: '#0ea5e9', description: 'Register new team member' },
-    { label: 'Classes', icon: 'solar:buildings-bold-duotone', route: '/class-list', color: '#10b981', description: 'Manage class structure' },
-    { label: 'Assignments', icon: 'solar:book-2-bold-duotone', route: '/subject-assignment', color: '#f59e0b', description: 'Link subjects to staff' },
-    { label: 'User Roles', icon: 'solar:shield-keyhole-bold-duotone', route: '/role-access', color: '#ec4899', description: 'Manage permissions' },
-    { label: 'Settings', icon: 'solar:settings-bold-duotone', route: '/settings', color: '#8b5cf6', description: 'Global app configurations' },
+    { label: 'Add Student', icon: 'solar:user-plus-bold-duotone', route: '/student-add', color: '#800000', description: 'Register new student' },
+    { label: 'Add Staff', icon: 'solar:user-speak-bold-duotone', route: '/staff-add', color: '#F4C430', description: 'Register new team member' },
+    { label: 'Classes', icon: 'solar:buildings-bold-duotone', route: '/class-list', color: '#800000', description: 'Manage class structure' },
+    { label: 'Assignments', icon: 'solar:book-2-bold-duotone', route: '/subject-assignment', color: '#F4C430', description: 'Link subjects to staff' },
+    { label: 'User Roles', icon: 'solar:shield-keyhole-bold-duotone', route: '/role-access', color: '#800000', description: 'Manage permissions' },
+    { label: 'Settings', icon: 'solar:settings-bold-duotone', route: '/settings', color: '#F4C430', description: 'Global app configurations' },
   ];
 
   principalQuickActions = [
-    { label: 'Class Reports', icon: 'solar:document-bold-duotone', route: '/class-wise-report', color: '#6366f1', description: 'View performance by class' },
-    { label: 'Exam Analytics', icon: 'solar:chart-bold-duotone', route: '/exam-analytics', color: '#0ea5e9', description: 'Deep dive into results' },
-    { label: 'Manage Leaves', icon: 'solar:calendar-date-bold-duotone', route: '/manage-leaves', color: '#10b981', description: 'Review staff absences' },
-    { label: 'Staff Attendance', icon: 'solar:user-check-bold-duotone', route: '/staff-attendance', color: '#f59e0b', description: 'Daily staff presence list' },
-    { label: 'Student List', icon: 'solar:users-group-rounded-bold-duotone', route: '/student-list', color: '#ec4899', description: 'Browse student records' },
-    { label: 'Staff List', icon: 'solar:user-speak-bold-duotone', route: '/staff-list', color: '#8b5cf6', description: 'Browse team directory' },
+    { label: 'Class Reports', icon: 'solar:document-bold-duotone', route: '/class-wise-report', color: '#800000', description: 'View performance by class' },
+    { label: 'Exam Analytics', icon: 'solar:chart-bold-duotone', route: '/exam-analytics', color: '#F4C430', description: 'Deep dive into results' },
+    { label: 'Manage Leaves', icon: 'solar:calendar-date-bold-duotone', route: '/manage-leaves', color: '#800000', description: 'Review staff absences' },
+    { label: 'Staff Attendance', icon: 'solar:user-check-bold-duotone', route: '/staff-attendance', color: '#F4C430', description: 'Daily staff presence list' },
+    { label: 'Student List', icon: 'solar:users-group-rounded-bold-duotone', route: '/student-list', color: '#800000', description: 'Browse student records' },
+    { label: 'Staff List', icon: 'solar:user-speak-bold-duotone', route: '/staff-list', color: '#F4C430', description: 'Browse team directory' },
   ];
 
   accountantQuickActions = [
-    { label: 'Fee Collection', icon: 'solar:wallet-money-bold-duotone', route: '/collect-fee', color: '#6366f1', description: 'Record student payments' },
-    { label: 'Generate Invoice', icon: 'solar:bill-list-bold-duotone', route: '/generate-fee-invoice', color: '#0ea5e9', description: 'Create new billing records' },
-    { label: 'Expenses', icon: 'solar:card-send-bold-duotone', route: '/expense-manage', color: '#10b981', description: 'Manage outflow records' },
-    { label: 'Salary Slip', icon: 'solar:plain-2-bold-duotone', route: '/salary-slip', color: '#f59e0b', description: 'View staff payroll slips' },
-    { label: 'Accounts', icon: 'solar:document-text-bold-duotone', route: '/accounts-ledger', color: '#ec4899', description: 'View financial ledger' },
-    { label: 'Wallet', icon: 'solar:wallet-bold-duotone', route: '/wallet', color: '#8b5cf6', description: 'Manage digital transactions' },
+    { label: 'Fee Collection', icon: 'solar:wallet-money-bold-duotone', route: '/collect-fee', color: '#800000', description: 'Record student payments' },
+    { label: 'Generate Invoice', icon: 'solar:bill-list-bold-duotone', route: '/generate-fee-invoice', color: '#F4C430', description: 'Create new billing records' },
+    { label: 'Expenses', icon: 'solar:card-send-bold-duotone', route: '/expense-manage', color: '#800000', description: 'Manage outflow records' },
+    { label: 'Salary Slip', icon: 'solar:plain-2-bold-duotone', route: '/salary-slip', color: '#F4C430', description: 'View staff payroll slips' },
+    { label: 'Accounts', icon: 'solar:document-text-bold-duotone', route: '/accounts-ledger', color: '#800000', description: 'View financial ledger' },
+    { label: 'Wallet', icon: 'solar:wallet-bold-duotone', route: '/wallet', color: '#F4C430', description: 'Manage digital transactions' },
   ];
 
   overviewStats: any[] = [];
@@ -180,11 +180,11 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
     this.dashboardService.getStats().subscribe(data => {
       this.stats = data;
       this.overviewStats = [
-        { label: 'Total Students', value: data.totalStudents, icon: 'solar:users-group-rounded-bold-duotone', color: '#6366f1', bg: 'rgba(99,102,241,0.12)' },
-        { label: 'Total Teachers', value: data.totalTeachers, icon: 'solar:user-speak-bold-duotone', color: '#0ea5e9', bg: 'rgba(14,165,233,0.12)' },
+        { label: 'Total Students', value: data.totalStudents, icon: 'solar:users-group-rounded-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)' },
+        { label: 'Total Teachers', value: data.totalTeachers, icon: 'solar:user-speak-bold-duotone', color: '#F4C430', bg: 'rgba(244,196,48,0.12)' },
         { label: 'Income (Month)', value: data.incomeThisMonth, icon: 'solar:wallet-money-bold-duotone', color: '#10b981', bg: 'rgba(16,185,129,0.12)', isCurrency: true },
         { label: 'Expenses (Month)', value: data.expenseThisMonth, icon: 'solar:card-send-bold-duotone', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)', isCurrency: true },
-        { label: 'Total Classes', value: data.totalClasses, icon: 'solar:buildings-bold-duotone', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' }
+        { label: 'Total Classes', value: data.totalClasses, icon: 'solar:buildings-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)' }
       ];
     });
     this.dashboardService.getChartData().subscribe(data => { this.updateHistoricalCharts(data); });
@@ -206,7 +206,7 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   updateTeacherChart() {
-    const subjectColors = ['#6366f1', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+    const subjectColors = ['#800000', '#F4C430', '#a10000', '#dbb02b', '#6d0000', '#c29c26'];
     const pills = this.teacherSubjectPills;
     this.donutChartOptions = {
       series: pills.map((_, i) => Math.floor(Math.random() * 30 + 10)),
@@ -224,24 +224,25 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
     this.chartOptions = {
       series: [{ name: 'Fee Collection', data: [] }],
       chart: { height: 264, type: 'line', toolbar: { show: false } },
-      stroke: { curve: 'smooth', colors: ['#6366f1'], width: 3 },
+      stroke: { curve: 'smooth', colors: ['#800000'], width: 3 },
       xaxis: { categories: [] }
     };
     this.barChartOptions = {
       series: [{ name: 'New Admissions', data: [] }],
       chart: { type: 'bar', height: 235, toolbar: { show: false } },
-      xaxis: { categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] }
+      xaxis: { categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] },
+      colors: ['#F4C430']
     };
     this.donutChartOptions = {
       series: [],
-      colors: ['#6366f1', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899'],
+      colors: ['#800000', '#F4C430', '#a10000', '#dbb02b', '#6d0000'],
       labels: [],
       chart: { type: 'donut', height: 270, sparkline: { enabled: true } },
       legend: { show: false }
     };
     this.paymentStatusChartOptions = {
       series: [{ name: 'Income', data: [] }, { name: 'Expense', data: [] }],
-      colors: ['#6366f1', '#f59e0b'],
+      colors: ['#800000', '#F4C430'],
       chart: { type: 'bar', height: 250, toolbar: { show: false } },
       xaxis: { categories: [] }
     };
@@ -272,8 +273,8 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
           map: 'world_mill_en', backgroundColor: 'transparent', borderColor: '#fff', borderOpacity: 0.25,
           borderWidth: 0, color: '#000000',
           regionStyle: { initial: { fill: '#E2E8F0' } },
-          series: { regions: [{ values: { US: '#6366f1', SA: '#6366f1', AU: '#6366f1', CN: '#6366f1', GB: '#6366f1', PK: '#6366f1', IN: '#6366f1' }, attribute: 'fill' }] },
-          zoomOnScroll: false, enableZoom: false, hoverColor: '#a5b4fc',
+          series: { regions: [{ values: { US: '#800000', SA: '#800000', AU: '#800000', CN: '#800000', GB: '#800000', PK: '#800000', IN: '#800000' }, attribute: 'fill' }] },
+          zoomOnScroll: false, enableZoom: false, hoverColor: '#a10000',
         });
       } catch (e) { }
     }

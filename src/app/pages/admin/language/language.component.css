@@ -1,6 +1,6 @@
 :host {
-  --lang-primary: #486cea;
-  --lang-primary-deep: #355bd4;
+  --lang-primary: #800000;
+  --lang-primary-deep: #5a0000;
 }
 
 .language-page {
@@ -17,7 +17,7 @@
   flex-wrap: wrap;
   border-radius: 18px;
   padding: 20px 22px;
-  background: linear-gradient(130deg, #0f172a 0%, #1f3478 44%, #486cea 100%);
+  background: linear-gradient(130deg, #1a1a1a 0%, #3a0000 44%, #800000 100%);
   color: #ffffff;
   box-shadow: 0 18px 38px rgba(15, 23, 42, 0.24);
 }
@@ -166,7 +166,7 @@
 }
 
 .action-btn.edit {
-  background: rgba(72, 108, 234, 0.14);
+  background: rgba(128, 0, 0, 0.14);
   color: var(--lang-primary);
 }
 
@@ -197,6 +197,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #486cea;
+  background: #800000;
   color: #ffffff;
 }

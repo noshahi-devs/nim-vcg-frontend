@@ -113,7 +113,7 @@ export class OtherPaymentComponent implements OnInit {
   loadPayments() {
     this.paymentService.getOtherPayments().subscribe({
       next: r => { this.payments = r || []; this.searchPayments(); },
-      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load payments.', confirmButtonColor: '#6366f1' })
+      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load payments.', confirmButtonColor: '#800000' })
     });
   }
 
@@ -237,7 +237,7 @@ export class OtherPaymentComponent implements OnInit {
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Updated!', text: 'Payment updated successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment.', confirmButtonColor: '#6366f1' })
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment.', confirmButtonColor: '#800000' })
       });
     } else {
       this.paymentService.createOthersPayment(payload).subscribe({
@@ -246,7 +246,7 @@ export class OtherPaymentComponent implements OnInit {
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Created!', text: 'Payment created successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment.', confirmButtonColor: '#6366f1' })
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment.', confirmButtonColor: '#800000' })
       });
     }
   }
@@ -270,7 +270,7 @@ export class OtherPaymentComponent implements OnInit {
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Payment deleted successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#6366f1' })
+        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#800000' })
       });
     }
   }
