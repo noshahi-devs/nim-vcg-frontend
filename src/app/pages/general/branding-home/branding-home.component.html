@@ -1,100 +1,123 @@
 <section class="topbar">
-  <div class="topbar-left">
-    <a href="mailto:visioncollegegojra@gmail.com">
-      <i class="fas fa-envelope"></i> visioncollegegojra&#64;gmail.com
-    </a>
-    <a href="tel:03074800049">
-      <i class="fas fa-phone-alt"></i> 0307-4800049
-    </a>
-  </div>
-  <div class="topbar-right">
-    <a href="https://www.facebook.com/visioncollegegojra" target="_blank" rel="noreferrer" title="Facebook">
-      <i class="fab fa-facebook-f"></i>
-    </a>
-    <a href="https://www.linkedin.com/in/visioncollegegojra" target="_blank" rel="noreferrer" title="LinkedIn">
-      <i class="fab fa-linkedin-in"></i>
-    </a>
-    <a href="https://www.instagram.com/visioncollegegojra" target="_blank" rel="noreferrer" title="Instagram">
-      <i class="fab fa-instagram"></i>
-    </a>
+  <div class="flex-container">
+    <div class="topbar-left">
+      <a href="mailto:visioncollegegojra@gmail.com">
+        <iconify-icon icon="solar:letter-bold"></iconify-icon> visioncollegegojra&#64;gmail.com
+      </a>
+      <a href="tel:03074800049">
+        <iconify-icon icon="solar:phone-bold"></iconify-icon> 0307-4800049
+      </a>
+    </div>
+    <div class="topbar-right">
+      <div class="social-mini">
+        <a href="https://facebook.com/visioncollegegojra" target="_blank"><iconify-icon icon="brandico:facebook"></iconify-icon></a>
+        <a href="https://instagram.com/visioncollegegojra" target="_blank"><iconify-icon icon="brandico:instagram"></iconify-icon></a>
+        <a href="https://linkedin.com/in/visioncollegegojra" target="_blank"><iconify-icon icon="brandico:linkedin"></iconify-icon></a>
+      </div>
+    </div>
   </div>
 </section>
 
 <nav class="navbar">
-  <div class="navbar-logo">
-    <img src="assets/img/vision_logo.png" alt="Vision College Gojra Logo">
-    <div>
-      <span class="college-name">Vision College</span>
-      <span class="college-tagline">Inspiring Minds, Building Futures</span>
+  <div class="flex-container navbar-container">
+    <a href="#home" class="navbar-logo">
+      <img src="assets/img/vision_logo.png" alt="Vision College Gojra Logo">
+      <div class="logo-text">
+        <span class="college-name">Vision College</span>
+        <span class="college-tagline">Inspiring Minds, Building Futures</span>
+      </div>
+    </a>
+    
+    <div class="navbar-links" [class.active]="isMenuOpen">
+      <a href="#home" class="nav-link">Home</a>
+      <a href="#programs" class="nav-link">Programs</a>
+      <a href="#highlights" class="nav-link">Why VC</a>
+      <a href="#campus" class="nav-link">Campus Life</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </div>
+
+    <div class="navbar-actions">
+      <a routerLink="/sign-in" class="portal-btn">
+        <span>Portal Login</span>
+        <iconify-icon icon="solar:alt-arrow-right-bold"></iconify-icon>
+      </a>
+      <button class="hamburger-btn" aria-label="Menu" (click)="toggleMobileMenu()" [class.active]="isMenuOpen">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
     </div>
   </div>
-  <div class="navbar-links">
-    <a href="#home">Home</a>
-    <a href="#programs">Programs</a>
-    <a href="#highlights">Why VC</a>
-    <a href="#campus">Campus Life</a>
-    <a href="#contact">Contact</a>
-  </div>
-  <a routerLink="/sign-in" class="portal-btn">
-    Portal Login <i class="fas fa-sign-in-alt"></i>
-  </a>
-  <button class="hamburger" aria-label="Open navigation menu" (click)="toggleMobileMenu()">
-    <i class="fas fa-bars"></i>
-  </button>
 </nav>
 
-<div class="mobile-menu" [class.open]="isMenuOpen">
-  <div class="mobile-top">
-    <div class="mobile-logo">
-      <img src="assets/img/vision_logo.png" alt="Vision College">
-      <span>Vision College</span>
-    </div>
-    <button class="close-btn" aria-label="Close menu" (click)="closeMobileMenu()">
-      <i class="fas fa-times"></i>
-    </button>
-  </div>
-  <a href="#home" (click)="closeMobileMenu()">Home</a>
-  <a href="#programs" (click)="closeMobileMenu()">Programs</a>
-  <a href="#highlights" (click)="closeMobileMenu()">Why VC</a>
-  <a href="#campus" (click)="closeMobileMenu()">Campus Life</a>
-  <a href="#contact" (click)="closeMobileMenu()">Contact</a>
-  <a routerLink="/sign-in" class="mobile-cta" (click)="closeMobileMenu()">
-    Portal Login <i class="fas fa-sign-in-alt"></i>
-  </a>
-</div>
+<!-- Hero Carousel -->
+<section class="hero-carousel" id="home">
+  <div class="carousel-container">
+    <div class="carousel-slide" *ngFor="let slide of slides; let i = index" [class.active]="i === currentSlide">
+      <div class="slide-bg" [style.backgroundImage]="'linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.45)), url(' + slide.image + ')'"></div>
+      
+      <div class="flex-container slide-grid">
+        <!-- Split Layout: Text Left, Interactive Card Right -->
+        <div class="slide-content">
+          <div class="content-wrapper">
+            <span class="slide-eyebrow">{{ slide.eyebrow }}</span>
+            <h1 class="slide-title" [innerHTML]="slide.title.replace('\n', '<br>')"></h1>
+            <p class="slide-description">{{ slide.description }}</p>
+            <div class="slide-actions">
+              <a href="#programs" class="btn-primary">Explore Programs</a>
+              <a href="#contact" class="btn-outline">Plan a Visit</a>
+            </div>
+          </div>
+        </div>
 
-<section class="hero" id="home">
-  <div class="hero-content">
-    <p class="eyebrow">Vision College Gojra</p>
-    <h1>Empowering Future Leaders with a Single Vision</h1>
-    <p>
-      A modern campus in the heart of Gojra offering Matric, Intermediate, and Undergraduate pathways anchored
-      in character-driven teaching, labs, and student care. Step into a campus where ambition meets support.
-    </p>
-    <div class="hero-actions">
-      <a href="#programs" class="primary-btn">Explore Programs</a>
-      <a href="#contact" class="ghost-btn">Plan a Visit</a>
+        <div class="slide-visual">
+          <div class="interactive-card">
+            <img [src]="slide.featureImage" alt="Highlight">
+            <div class="card-overlay">
+              <iconify-icon icon="solar:play-circle-bold-duotone"></iconify-icon>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="hero-stats">
-      <div>
-        <strong>18+</strong>
-        Years of Education
-      </div>
-      <div>
-        <strong>3,000+</strong>
-        Active Scholars
-      </div>
-      <div>
-        <strong>100%</strong>
-        Campus Wi-Fi
-      </div>
+
+    <!-- Carousel Controls -->
+    <div class="carousel-nav">
+      <button (click)="prevSlide()" class="nav-btn prev">
+        <iconify-icon icon="solar:alt-arrow-left-bold"></iconify-icon>
+      </button>
+      <button (click)="nextSlide()" class="nav-btn next">
+        <iconify-icon icon="solar:alt-arrow-right-bold"></iconify-icon>
+      </button>
+    </div>
+
+    <!-- Carousel Dots -->
+    <div class="carousel-dots">
+      <button *ngFor="let slide of slides; let i = index" 
+              (click)="goToSlide(i)" 
+              [class.active]="i === currentSlide"
+              class="dot-btn">
+      </button>
     </div>
   </div>
-  <div class="hero-visual">
-    <div class="hero-image"></div>
-    <div class="hero-card">
-      <h4>State-of-the-art Campus</h4>
-      <p>Modern classrooms, labs, and a vibrant student lounge designed for collaboration and wellbeing.</p>
+</section>
+
+<!-- Stats Grid section below carousel -->
+<section class="hero-stats-overlay">
+  <div class="flex-container">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-num">18+</span>
+        <span class="stat-label">Years of Excellence</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">3,000+</span>
+        <span class="stat-label">Active Scholars</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">100%</span>
+        <span class="stat-label">Campus Wi-Fi</span>
+      </div>
     </div>
   </div>
 </section>
