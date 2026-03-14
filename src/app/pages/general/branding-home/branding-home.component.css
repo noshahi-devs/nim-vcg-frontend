@@ -130,10 +130,14 @@
 
 /* Hero Carousel Visibility */
 .hero-carousel {
-  height: clamp(650px, 90vh, 850px);
+  height: 100vh !important; /* Force full screen */
   position: relative;
   background-color: #000000;
   overflow: hidden;
+}
+
+.carousel-container {
+  height: 100%;
 }
 
 .carousel-slide {
@@ -144,6 +148,7 @@
   display: flex;
   align-items: center;
   visibility: hidden;
+  height: 100%;
 }
 .carousel-slide.active { opacity: 1; z-index: 1; visibility: visible; }
 
@@ -160,9 +165,9 @@
 
 .slide-grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: 1fr 1fr; /* Equal split for more right-side room */
   align-items: center;
-  gap: 60px;
+  gap: 40px;
   position: relative;
   z-index: 10;
   height: 100%;
@@ -214,60 +219,137 @@
 .btn-outline { border: 2px solid #ffffff; color: #ffffff !important; padding: 16px 36px; border-radius: 50px; text-decoration: none; font-weight: 700; transition: 0.3s; font-size: 16px; }
 .btn-outline:hover { background-color: #ffffff; color: #800000 !important; transform: translateY(-5px); }
 
-/* Interactive Visual Side */
+/* Orbit System Styles - Abstract Motion */
 .slide-visual {
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end; /* Push to the far right */
   opacity: 0;
   transform: scale(0.9) translateX(50px);
-  transition: 1s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+  transition: 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
 }
 .active .slide-visual { opacity: 1; transform: scale(1) translateX(0); }
 
-.interactive-card {
+.orbit-system {
   position: relative;
-  width: 100%;
-  max-width: 420px;
-  aspect-ratio: 4/5;
-  border-radius: 50px !important; /* Beautifully rounded */
-  overflow: hidden;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-  cursor: pointer;
-  transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: hero-floating 6s ease-in-out infinite, hero-glow 8s infinite !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
-}
-
-.interactive-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: 0.5s;
-}
-
-.interactive-card:hover { transform: translateY(-15px) rotate(2deg); box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
-.interactive-card:hover img { transform: scale(1.1); }
-
-.card-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(128,0,0,0.8), transparent);
+  width: 440px;
+  height: 440px;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transition: 0.4s;
+  margin-right: -10px;
 }
 
-.interactive-card:hover .card-overlay { opacity: 1; }
+.central-vision {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  z-index: 10;
+}
 
-.card-overlay iconify-icon {
-  font-size: 80px;
+.core-inner {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 50px rgba(244, 196, 48, 0.6);
+  border: 4px solid #f4c430;
+  overflow: hidden;
+  z-index: 2;
+  animation: hero-floating 6s ease-in-out infinite;
+}
+
+.core-inner img {
+  width: 70%;
+  height: auto;
+  object-fit: contain;
+}
+
+.pulse-ring {
+  position: absolute;
+  inset: -25px;
+  border: 2px solid rgba(244, 196, 48, 0.4);
+  border-radius: 50%;
+  animation: pulseIn 3s ease-out infinite;
+}
+
+.pulse-ring:nth-child(2) {
+  animation-delay: 1.5s;
+}
+
+@keyframes pulseIn {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* Satellite Orbiting Logic */
+.satellite-orbit {
+  position: absolute;
+  inset: 0;
+  animation: masterRotate 15s linear infinite;
+}
+
+@keyframes masterRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.satellite {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  margin-top: -40px;
+  margin-left: -40px;
+}
+
+.sat-card {
+  width: 100%;
+  height: 100%;
+  background: #f4c430;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  border: 3px solid #800000;
+  animation: counterRotate 15s linear infinite;
+  transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.sat-card iconify-icon {
+  font-size: 34px;
+  color: #800000;
+}
+
+@keyframes counterRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Positioning Satellites in Orbit - Reduced radius for safety */
+.sat-1 { transform: rotate(0deg) translate(175px); }
+.sat-2 { transform: rotate(90deg) translate(175px); }
+.sat-3 { transform: rotate(180deg) translate(175px); }
+.sat-4 { transform: rotate(270deg) translate(175px); }
+
+.sat-card:hover {
+  background: #800000;
+  border-color: #f4c430;
+  transform: scale(1.3) rotate(-360deg);
+  box-shadow: 0 0 40px rgba(244, 196, 48, 0.5);
+}
+
+.sat-card:hover iconify-icon {
   color: #f4c430;
-  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
 }
+
 
 /* Carousel Controls */
 .carousel-nav { position: absolute; width: 100%; top: 50%; padding: 0 40px; display: flex; justify-content: space-between; z-index: 10; transform: translateY(-50%); pointer-events: none; }
