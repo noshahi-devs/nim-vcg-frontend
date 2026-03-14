@@ -10,9 +10,12 @@
     </div>
     <div class="topbar-right">
       <div class="social-mini">
-        <a href="https://facebook.com/visioncollegegojra" target="_blank"><iconify-icon icon="brandico:facebook"></iconify-icon></a>
-        <a href="https://instagram.com/visioncollegegojra" target="_blank"><iconify-icon icon="brandico:instagram"></iconify-icon></a>
-        <a href="https://linkedin.com/in/visioncollegegojra" target="_blank"><iconify-icon icon="brandico:linkedin"></iconify-icon></a>
+        <a href="https://facebook.com/visioncollegegojra" target="_blank"><iconify-icon
+            icon="brandico:facebook"></iconify-icon></a>
+        <a href="https://instagram.com/visioncollegegojra" target="_blank"><iconify-icon
+            icon="brandico:instagram"></iconify-icon></a>
+        <a href="https://linkedin.com/in/visioncollegegojra" target="_blank"><iconify-icon
+            icon="brandico:linkedin"></iconify-icon></a>
       </div>
     </div>
   </div>
@@ -27,7 +30,7 @@
         <span class="college-tagline">Inspiring Minds, Building Futures</span>
       </div>
     </a>
-    
+
     <div class="navbar-links" [class.active]="isMenuOpen">
       <a href="#home" class="nav-link">Home</a>
       <a href="#programs" class="nav-link">Programs</a>
@@ -54,8 +57,9 @@
 <section class="hero-carousel" id="home">
   <div class="carousel-container">
     <div class="carousel-slide" *ngFor="let slide of slides; let i = index" [class.active]="i === currentSlide">
-      <div class="slide-bg" [style.backgroundImage]="'linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.45)), url(' + slide.image + ')'"></div>
-      
+      <div class="slide-bg"
+        [style.backgroundImage]="'linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.45)), url(' + slide.image + ')'"></div>
+
       <div class="flex-container slide-grid">
         <!-- Split Layout: Text Left, Interactive Card Right -->
         <div class="slide-content">
@@ -121,10 +125,8 @@
 
     <!-- Carousel Dots -->
     <div class="carousel-dots">
-      <button *ngFor="let slide of slides; let i = index" 
-              (click)="goToSlide(i)" 
-              [class.active]="i === currentSlide"
-              class="dot-btn">
+      <button *ngFor="let slide of slides; let i = index" (click)="goToSlide(i)" [class.active]="i === currentSlide"
+        class="dot-btn">
       </button>
     </div>
   </div>
@@ -134,212 +136,549 @@
 <section class="hero-stats-overlay">
   <div class="flex-container">
     <div class="stats-grid">
-      <div class="stat-item">
-        <span class="stat-num">18+</span>
-        <span class="stat-label">Years of Excellence</span>
+      <div class="stat-item glass-stat">
+        <div class="stat-icon-box">
+          <iconify-icon icon="solar:history-bold-duotone"></iconify-icon>
+        </div>
+        <div class="stat-data">
+          <span class="stat-num glow-text">{{ stats.years }}+</span>
+          <span class="stat-label">Years of Excellence</span>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="stat-num">3,000+</span>
-        <span class="stat-label">Active Scholars</span>
+      <div class="stat-item glass-stat">
+        <div class="stat-icon-box">
+          <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
+        </div>
+        <div class="stat-data">
+          <span class="stat-num glow-text">{{ (stats.scholars | number) }}+</span>
+          <span class="stat-label">Active Scholars</span>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="stat-num">100%</span>
-        <span class="stat-label">Campus Wi-Fi</span>
+      <div class="stat-item glass-stat">
+        <div class="stat-icon-box">
+          <iconify-icon icon="solar:globus-bold-duotone"></iconify-icon>
+        </div>
+        <div class="stat-data">
+          <span class="stat-num glow-text">{{ stats.wifi }}%</span>
+          <span class="stat-label">Campus Wi-Fi</span>
+        </div>
+      </div>
+      <div class="stat-item glass-stat">
+        <div class="stat-icon-box">
+          <iconify-icon icon="solar:medal-ribbon-bold-duotone"></iconify-icon>
+        </div>
+        <div class="stat-data">
+          <span class="stat-num glow-text">{{ stats.faculty }}+</span>
+          <span class="stat-label">Expert Faculty</span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <section class="section highlights" id="highlights">
-  <div class="section-heading">
-    <p class="section-subtitle">A single page with many reasons</p>
-    <h2>Our pillars keep the student at the center</h2>
-  </div>
-  <div class="highlight-grid">
-    <article>
-      <h3>Academic Excellence</h3>
-      <p>Cohesive syllabi, extra tutoring, and teacher mentorship so every student masters the concepts.</p>
-    </article>
-    <article>
-      <h3>Holistic Support</h3>
-      <p>Counselors, career coaches, and financial advisors keep the corridor clear from admission to graduation.</p>
-    </article>
-    <article>
-      <h3>Community Focused</h3>
-      <p>Sports, arts, and service clubs create balanced students who lead with empathy and grit.</p>
-    </article>
+  <div class="spiritual-aura"></div>
+  <div class="dots-overlay"></div>
+  <div class="flex-container">
+    <div class="section-heading">
+      <p class="section-subtitle">A legacy of quality</p>
+      <h2 class="premium-title">Our pillars keep the student at the center</h2>
+    </div>
+    <div class="highlight-grid">
+      <div class="pillar-card">
+        <div class="pillar-icon">
+          <iconify-icon icon="solar:medal-star-bold-duotone"></iconify-icon>
+        </div>
+        <div class="pillar-content">
+          <h3>Academic Excellence</h3>
+          <p>Cohesive syllabi, extra tutoring, and teacher mentorship so every student masters the concepts with ease.
+          </p>
+        </div>
+        <div class="pillar-glow"></div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon">
+          <iconify-icon icon="solar:heart-angle-bold-duotone"></iconify-icon>
+        </div>
+        <div class="pillar-content">
+          <h3>Holistic Support</h3>
+          <p>Counselors, career coaches, and advisors keep the path clear from admission to successful graduation.</p>
+        </div>
+        <div class="pillar-glow"></div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon">
+          <iconify-icon icon="solar:star-fall-bold-duotone"></iconify-icon>
+        </div>
+        <div class="pillar-content">
+          <h3>Community Focused</h3>
+          <p>Sports, arts, and service clubs create balanced students who lead the world with empathy and professional
+            grit.</p>
+        </div>
+        <div class="pillar-glow"></div>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="section programs" id="programs">
-  <div class="section-heading">
-    <p class="section-subtitle">Designed for every ambition</p>
-    <h2>Programs that stack credentials</h2>
-  </div>
-  <div class="program-grid">
-    <article>
-      <h3>Matriculation</h3>
-      <p>Science and arts classes with lab exposure, STEM clubs, and Olympiad prep.</p>
-      <span>Day/Weekend coaching</span>
-    </article>
-    <article>
-      <h3>Intermediate</h3>
-      <p>Pre-engineering, pre-medical, commerce & arts with internship tie-ups.</p>
-      <span>Career guidance + scholarship</span>
-    </article>
-    <article>
-      <h3>Undergraduate</h3>
-      <p>BS in Computer Science, Business, and Education with mentorship from industry partners.</p>
-      <span>Startup incubation lab</span>
-    </article>
+  <div class="flex-container">
+    <div class="section-heading centered">
+      <p class="section-subtitle">Designed for every ambition</p>
+      <h2 class="premium-title">Programs that stack credentials</h2>
+    </div>
+    <div class="program-grid">
+      <article class="program-card">
+        <div class="program-icon-box">
+          <iconify-icon icon="solar:book-bookmark-bold-duotone"></iconify-icon>
+        </div>
+        <div class="program-content">
+          <h3>Matriculation</h3>
+          <p>Science and arts classes with lab exposure, STEM clubs, and Olympiad prep.</p>
+          <div class="program-badge">Day/Weekend coaching</div>
+        </div>
+        <div class="program-hover-glow"></div>
+      </article>
+
+      <article class="program-card">
+        <div class="program-icon-box">
+          <iconify-icon icon="solar:globus-bold-duotone"></iconify-icon>
+        </div>
+        <div class="program-content">
+          <h3>Intermediate</h3>
+          <p>Pre-engineering, pre-medical, commerce & arts with internship tie-ups.</p>
+          <div class="program-badge">Career guidance + scholarship</div>
+        </div>
+        <div class="program-hover-glow"></div>
+      </article>
+
+      <article class="program-card">
+        <div class="program-icon-box">
+          <iconify-icon icon="solar:laptop-minimalistic-bold-duotone"></iconify-icon>
+        </div>
+        <div class="program-content">
+          <h3>Undergraduate</h3>
+          <p>BS in Computer Science, Business, and Education with mentorship from industry partners.</p>
+          <div class="program-badge">Startup incubation lab</div>
+        </div>
+        <div class="program-hover-glow"></div>
+      </article>
+    </div>
   </div>
 </section>
 
-<section class="section impact" id="impact">
-  <div class="impact-grid">
-    <div>
-      <h2>We measure impact in every classroom</h2>
-      <p>
-        Our faculty curate personalized learning plans, harnessing technology and lab-based activities to ensure
-        every student leaves prepared for university, the workforce, and global citizenship.
-      </p>
-      <ul>
-        <li><i class="fas fa-check-circle"></i> Regular progress checks & parent updates</li>
-        <li><i class="fas fa-users"></i> Peer-led study circles</li>
-        <li><i class="fas fa-laptop-code"></i> Digital learning, coding, robotics, and media labs</li>
-      </ul>
+<section class="section staff-preview" id="faculty">
+  <div class="flex-container">
+    <div class="section-heading centered">
+      <p class="section-subtitle">The hearts of Vision College</p>
+      <h2 class="premium-title">Meet our dedicated academic team</h2>
     </div>
-    <div class="timeline-card">
-      <h3>Campus Culture</h3>
-      <div>
-        <strong>07:30 AM</strong>
-        Fresh breakfast clubs.
+
+    <div class="staff-carousel-container">
+      <div class="staff-track" [style.transform]="'translateX(-' + (currentStaff * 100) + '%)'">
+        <!-- Page 1 -->
+        <div class="staff-slide">
+          <div class="staff-grid">
+            <div class="staff-card">
+              <div class="staff-visual">
+                <div class="staff-img-container">
+                  <img src="assets/img/hod1.jpg" alt="Prof. Adeel" class="staff-img">
+                </div>
+                <div class="staff-socials">
+                  <a href="#"><iconify-icon icon="logos:facebook"></iconify-icon></a>
+                  <a href="#"><iconify-icon icon="logos:linkedin-icon"></iconify-icon></a>
+                </div>
+              </div>
+              <div class="staff-info">
+                <h3>Adeel</h3>
+                <span>Mathematics & HOD</span>
+              </div>
+            </div>
+
+            <div class="staff-card">
+              <div class="staff-visual">
+                <div class="staff-img-container">
+                  <img src="assets/img/hod2.jpg" alt="Ms. Sarah" class="staff-img">
+                </div>
+                <div class="staff-socials">
+                  <a href="#"><iconify-icon icon="logos:facebook"></iconify-icon></a>
+                  <a href="#"><iconify-icon icon="logos:linkedin-icon"></iconify-icon></a>
+                </div>
+              </div>
+              <div class="staff-info">
+                <h3>Sarah</h3>
+                <span>Science & Lab Lead</span>
+              </div>
+            </div>
+
+            <div class="staff-card">
+              <div class="staff-visual">
+                <div class="staff-img-container">
+                  <img src="assets/img/hod3.jpg" alt="Mr. Usman" class="staff-img">
+                </div>
+                <div class="staff-socials">
+                  <a href="#"><iconify-icon icon="logos:facebook"></iconify-icon></a>
+                  <a href="#"><iconify-icon icon="logos:linkedin-icon"></iconify-icon></a>
+                </div>
+              </div>
+              <div class="staff-info">
+                <h3>Usman</h3>
+                <span>English & Literature</span>
+              </div>
+            </div>
+
+            <div class="staff-card">
+              <div class="staff-visual">
+                <div class="staff-img-container">
+                  <img src="assets/img/Adeel.jpg" alt="Mr. Adeel" class="staff-img">
+                </div>
+                <div class="staff-socials">
+                  <a href="#"><iconify-icon icon="logos:facebook"></iconify-icon></a>
+                  <a href="#"><iconify-icon icon="logos:linkedin-icon"></iconify-icon></a>
+                </div>
+              </div>
+              <div class="staff-info">
+                <h3>Adeel</h3>
+                <span>Lead Coordinator</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page 2 (Extra Profiles) -->
+        <div class="staff-slide">
+          <div class="staff-grid">
+            <div class="staff-card">
+              <div class="staff-visual">
+                <div class="staff-img-container">
+                  <img src="assets/img/hod1.jpg" alt="Staff 5" class="staff-img">
+                </div>
+                <div class="staff-socials">
+                  <a href="#"><iconify-icon icon="logos:facebook"></iconify-icon></a>
+                </div>
+              </div>
+              <div class="staff-info">
+                <h3>Hamza</h3>
+                <span>CS Faculty</span>
+              </div>
+            </div>
+
+            <div class="staff-card">
+              <div class="staff-visual">
+                <div class="staff-img-container">
+                  <img src="assets/img/hod2.jpg" alt="Staff 6" class="staff-img">
+                </div>
+              </div>
+              <div class="staff-info">
+                <h3>Zainab</h3>
+                <span>Bio Professor</span>
+              </div>
+            </div>
+
+            <div class="staff-card">
+              <div class="staff-visual">
+                <div class="staff-img-container">
+                  <img src="assets/img/hod3.jpg" alt="Staff 7" class="staff-img">
+                </div>
+              </div>
+              <div class="staff-info">
+                <h3>Ali</h3>
+                <span>Physics Dept</span>
+              </div>
+            </div>
+
+            <div class="staff-card">
+              <div class="staff-visual">
+                <div class="staff-img-container">
+                  <img src="assets/img/Adeel.jpg" alt="Staff 8" class="staff-img">
+                </div>
+              </div>
+              <div class="staff-info">
+                <h3>Bilal</h3>
+                <span>Sports Coach</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <strong>11:30 AM</strong>
-        Labs, coaching & mentoring.
-      </div>
-      <div>
-        <strong>05:00 PM</strong>
-        Sports & student activities.
-      </div>
-      <div>
-        <strong>07:00 PM</strong>
-        Study lounges + digital library.
+
+      <!-- Carousel Nav -->
+      <div class="staff-nav">
+        <div class="slider-dots">
+          <span *ngFor="let i of [0, 1]" class="slider-dot" [class.active]="currentStaff === i"
+            (click)="setStaff(i)"></span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section campus" id="campus">
-  <div class="campus-visual">
-    <div class="campus-image" role="img" aria-label="Vision College campus"></div>
-  </div>
-  <div class="campus-details">
-    <p class="section-subtitle">Explore the campus</p>
-    <h2>Grounded in Gojra with a global outlook</h2>
-    <p>
-      The campus sits beside Imamia Colony with sprawling lawns, sports turf, and classrooms designed to bring
-      energy to every lesson. Transparent governance, safety protocols, and a warm student community make it a hub
-      for families across Punjab.
-    </p>
-    <div class="campus-features">
-      <span><i class="fas fa-check"></i> Secure and accessible location</span>
-      <span><i class="fas fa-check"></i> Cafeteria serving balanced meals</span>
-      <span><i class="fas fa-check"></i> Transport routes across the district</span>
+<section class="section campus-gallery" id="gallery">
+  <div class="dots-overlay" style="opacity: 0.1;"></div>
+  <div class="flex-container">
+    <div class="section-heading centered">
+      <p class="section-subtitle">Life inside the campus</p>
+      <h2 class="premium-title">A sanctuary of learning and growth</h2>
+    </div>
+    <div class="gallery-wrapper">
+      <div class="gallery-item large">
+        <img src="assets/img/Campus1.jpeg" alt="Main Entrance">
+        <div class="gallery-overlay">
+          <span>Vision Main Entrance</span>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="assets/img/Campus2.jpeg" alt="Garden Space">
+        <div class="gallery-overlay">
+          <span>Lush Green Lawns</span>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="assets/img/Campus3.jpeg" alt="Classroom">
+        <div class="gallery-overlay">
+          <span>Interactive Classrooms</span>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="assets/img/Campus4.jpeg" alt="Library">
+        <div class="gallery-overlay">
+          <span>Digital Library</span>
+        </div>
+      </div>
+      <div class="gallery-item tall">
+        <img src="assets/img/Campus5.jpeg" alt="Campus Life">
+        <div class="gallery-overlay">
+          <span>Vibrant Student Life</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="section stats" id="stats">
-  <div class="stat-card">
-    <strong>1:15</strong>
-    Student-to-teacher ratio
-  </div>
-  <div class="stat-card">
-    <strong>98%</strong>
-    Regular attendance
-  </div>
-  <div class="stat-card">
-    <strong>20+</strong>
-    Extracurricular squads
-  </div>
-  <div class="stat-card">
-    <strong>12</strong>
-    Industry partners
+<section class="section impact-premium">
+  <div class="spiritual-aura" style="opacity: 0.05; right: 0;"></div>
+  <div class="flex-container">
+    <div class="impact-content-grid">
+      <div class="impact-text">
+        <p class="section-subtitle">Institutional Excellence</p>
+        <h2 class="premium-title">Grounded in Gojra with a global outlook</h2>
+        <p class="description">
+          The campus sits beside Imamia Colony with sprawling lawns, sports turf, and classrooms designed to bring
+          energy to every lesson. Transparent governance, safety protocols, and a warm student community make it a hub
+          for families across Punjab.
+        </p>
+        <div class="impact-stats-mini">
+          <div class="impact-stat-pill">
+            <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
+            <span>1:15 Ratio</span>
+          </div>
+          <div class="impact-stat-pill">
+            <iconify-icon icon="solar:calendar-mark-bold-duotone"></iconify-icon>
+            <span>98% Attendance</span>
+          </div>
+          <div class="impact-stat-pill">
+            <iconify-icon icon="solar:medal-star-bold-duotone"></iconify-icon>
+            <span>20+ Squads</span>
+          </div>
+        </div>
+      </div>
+      <div class="impact-visual">
+        <div class="visual-stack">
+          <div class="main-visual">
+            <img src="assets/img/Campus.jpeg" alt="Vision Campus">
+          </div>
+          <div class="floating-badge">
+            <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
+            <span>HEC Recognized</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="section testimonials" id="testimonials">
-  <div class="section-heading">
-    <p class="section-subtitle">What families share</p>
-    <h2>Stories from the Vision College community</h2>
+<section class="section testimonials-premium" id="testimonials">
+  <div class="top-aura"></div>
+  <div class="floating-icons-container">
+    <div class="floating-icon icon-1"><iconify-icon icon="solar:star-fall-bold-duotone"></iconify-icon></div>
+    <div class="floating-icon icon-2"><iconify-icon icon="solar:library-bold-duotone"></iconify-icon></div>
+    <div class="floating-icon icon-3"><iconify-icon icon="solar:medal-star-bold-duotone"></iconify-icon></div>
+    <div class="floating-icon icon-4"><iconify-icon icon="solar:letter-bold-duotone"></iconify-icon></div>
+    <div class="floating-icon icon-5"><iconify-icon icon="solar:diploma-verified-bold-duotone"></iconify-icon></div>
+    <div class="floating-icon icon-6"><iconify-icon icon="solar:crown-bold-duotone"></iconify-icon></div>
   </div>
-  <div class="testimonials-grid">
-    <article>
-      <p>
-        “The teachers' guidance kept my daughter confident during board exams and the feel of the campus is like home.”
-      </p>
-      <span>– Mrs. Sabir, Parent</span>
-    </article>
-    <article>
-      <p>
-        “From robotics labs to leadership clubs, Vision College unlocked the curiosity I needed to secure my scholarship.”
-      </p>
-      <span>– Ali Hamza, Alumni</span>
-    </article>
-    <article>
-      <p>
-        “Attendance, discipline, and encouragement are part of their everyday routine. That consistency matters.”
-      </p>
-      <span>– Mr. Akram, Faculty</span>
-    </article>
+  <div class="flex-container">
+    <div class="section-heading centered">
+      <p class="section-subtitle">What families share</p>
+      <h2 class="premium-title">Stories from the Vision College community</h2>
+    </div>
+
+    <div class="testimonials-slider">
+      <div class="testimonial-track" [style.transform]="'translateX(' + (-currentTestimonial * 100) + '%)'">
+        <article class="testimonial-card">
+          <div class="testimonial-quote">“</div>
+          <p>“The teachers' guidance kept my daughter confident during board exams and the feel of the campus is like
+            home.”</p>
+          <div class="testimonial-author">
+            <div class="author-img">
+              <span class="initials">MS</span>
+            </div>
+            <div class="author-info">
+              <strong>Mrs. Sabir</strong>
+              <span>Proud Parent</span>
+            </div>
+            <div class="testimonial-logo">
+              <img src="assets/img/vision_logo.png" alt="Vision College">
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card">
+          <div class="testimonial-quote">“</div>
+          <p>“From robotics labs to leadership clubs, Vision College unlocked the curiosity I needed to secure my
+            scholarship.”</p>
+          <div class="testimonial-author">
+            <div class="author-img">
+              <span class="initials">AH</span>
+            </div>
+            <div class="author-info">
+              <strong>Ali Hamza</strong>
+              <span>Successful Alumni</span>
+            </div>
+            <div class="testimonial-logo">
+              <img src="assets/img/vision_logo.png" alt="Vision College">
+            </div>
+          </div>
+        </article>
+
+        <article class="testimonial-card">
+          <div class="testimonial-quote">“</div>
+          <p>“Attendance, discipline, and encouragement are part of their everyday routine. That consistency matters.”
+          </p>
+          <div class="testimonial-author">
+            <div class="author-img">
+              <span class="initials">MA</span>
+            </div>
+            <div class="author-info">
+              <strong>Mr. Akram</strong>
+              <span>Expert Faculty</span>
+            </div>
+            <div class="testimonial-logo">
+              <img src="assets/img/vision_logo.png" alt="Vision College">
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="slider-controls">
+        <button (click)="prevTestimonial()" class="slider-btn prev">
+          <iconify-icon icon="solar:alt-arrow-left-bold"></iconify-icon>
+        </button>
+        <div class="slider-dots">
+          <span *ngFor="let i of testimonialIndices" class="slider-dot" [class.active]="currentTestimonial === i"
+            (click)="setTestimonial(i)"></span>
+        </div>
+        <button (click)="nextTestimonial()" class="slider-btn next">
+          <iconify-icon icon="solar:alt-arrow-right-bold"></iconify-icon>
+        </button>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="cta" id="contact">
-  <div>
-    <p class="section-subtitle">Ready to experience Vision College?</p>
-    <h2>Visit the campus, meet the team, and ask anything</h2>
-    <p>Schedule a tour or submit your questions. We will respond within one business day.</p>
-  </div>
-  <div class="cta-actions">
-    <a routerLink="/sign-in" class="primary-btn">Portal Login</a>
-    <a href="mailto:admissions@visioncollegegojra.com" class="ghost-btn">Email Admissions</a>
+<section class="cta-premium" id="contact">
+  <div class="flex-container">
+    <div class="cta-content">
+      <span class="cta-badge">Ready to experience Vision College?</span>
+      <h2>Visit the campus, meet the team, and ask anything</h2>
+      <p>Schedule a tour or submit your questions. We will respond within one business day.</p>
+
+      <div class="cta-actions">
+        <a routerLink="/sign-in" class="cta-btn primary">
+          <span>Portal Login</span>
+          <iconify-icon icon="solar:login-3-bold"></iconify-icon>
+        </a>
+        <a href="mailto:info&#64;visioncollegegojra.com" class="cta-btn ghost">
+          <span>Email Admissions</span>
+          <iconify-icon icon="solar:letter-bold"></iconify-icon>
+        </a>
+      </div>
+    </div>
   </div>
 </section>
 
-<footer class="footer">
-  <div class="footer-container">
-    <div>
-      <img src="assets/img/vision_logo.png" alt="Vision College" class="footer-logo">
-      <p>Imamia Colony, Near Islamia Ground, Gojra</p>
-      <p>+92 3074800049</p>
-      <a href="mailto:info@visioncollegegojra.com">info&#64;visioncollegegojra.com</a>
-    </div>
-    <div>
-      <h3>Explore</h3>
-      <a href="#programs">Programs</a>
-      <a href="#campus">Campus</a>
-      <a href="/vision-college/life-at-VC.html">Life &#64; VC</a>
-    </div>
-    <div>
-      <h3>Resources</h3>
-      <a href="/vision-college/Entrance-Requirements.html">Admission Guide</a>
-      <a href="/vision-college/fee-structure.html">Fee Structure</a>
-      <a href="/vision-college/massege-director.html">Director's Message</a>
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/923074800049" target="_blank" class="whatsapp-float" aria-label="Chat on WhatsApp">
+  <iconify-icon icon="logos:whatsapp-icon"></iconify-icon>
+  <span class="wa-tooltip">Chat with us</span>
+</a>
+
+<footer class="footer-premium">
+  <div class="footer-glow"></div>
+  <div class="flex-container">
+    <div class="footer-main-grid">
+      <div class="footer-brand">
+        <img src="assets/img/vision_logo.png" alt="Vision College" class="footer-logo">
+        <p class="brand-desc">Inspiring Minds, Building Futures. The elite educational institution in Gojra for academic
+          and spiritual excellence.</p>
+        <div class="contact-vines">
+          <a href="tel:+923074800049">
+            <iconify-icon icon="solar:phone-bold-duotone"></iconify-icon>
+            +92 307 4800049
+          </a>
+          <a href="mailto:info&#64;visioncollegegojra.com">
+            <iconify-icon icon="solar:letter-bold-duotone"></iconify-icon>
+            info&#64;visioncollegegojra.com
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <h3>Institutional</h3>
+        <a href="#hero">Genesis</a>
+        <a href="#programs">Degree Programs</a>
+        <a href="#gallery">Campus Life</a>
+        <a href="#faculty">Expert Faculty</a>
+      </div>
+
+      <div class="footer-links">
+        <h3>Support</h3>
+        <a href="#">Admission Guide</a>
+        <a href="#">Fee Structure</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#contact">Contact Us</a>
+      </div>
+
+      <div class="footer-newsletter">
+        <h3>Join the Legacy</h3>
+        <p>Subscribe to receive news and event updates.</p>
+        <div class="newsletter-box">
+          <input type="email" placeholder="Your email address">
+          <button><iconify-icon icon="solar:arrow-right-bold"></iconify-icon></button>
+        </div>
+        <div class="footer-social-wrap">
+          <a href="#" class="social-btn" aria-label="Facebook"><iconify-icon icon="ri:facebook-fill"></iconify-icon></a>
+          <a href="#" class="social-btn" aria-label="Instagram"><iconify-icon icon="ri:instagram-fill"></iconify-icon></a>
+          <a href="#" class="social-btn" aria-label="LinkedIn"><iconify-icon icon="ri:linkedin-fill"></iconify-icon></a>
+          <a href="#" class="social-btn" aria-label="YouTube"><iconify-icon icon="ri:youtube-fill"></iconify-icon></a>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="footer-bottom">
-    <p>© 2024 Vision College Gojra</p>
-    <div class="social-icons">
-      <a href="https://www.facebook.com/visioncollegegojra" target="_blank" rel="noreferrer"><i class="fab fa-facebook-f"></i></a>
-      <a href="https://www.linkedin.com/in/visioncollegegojra" target="_blank" rel="noreferrer"><i class="fab fa-linkedin-in"></i></a>
-      <a href="https://www.instagram.com/visioncollegegojra" target="_blank" rel="noreferrer"><i class="fab fa-instagram"></i></a>
+
+  <div class="footer-bottom-tier">
+    <div class="copyright">
+      <p>© 2024 Vision College Gojra – Excellence in Education</p>
+    </div>
+    <div class="footer-legal">
+      <a href="#">Terms of Service</a>
+      <span class="sep">|</span>
+      <a href="#">Cookie Policy</a>
     </div>
   </div>
 </footer>
 
-<button class="back-to-top" [style.display]="showBackToTop ? 'flex' : 'none'" (click)="scrollToTop()">
-  ↑
+<button class="back-to-top" [style.display]="showBackToTop ? 'flex' : 'none'" (click)="scrollToTop()"
+  aria-label="Back to Top">
+  <iconify-icon icon="solar:alt-arrow-up-bold-duotone"></iconify-icon>
 </button>

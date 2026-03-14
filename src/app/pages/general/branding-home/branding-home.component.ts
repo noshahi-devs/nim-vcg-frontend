@@ -14,8 +14,21 @@ export class BrandingHomeComponent {
   isMenuOpen = false;
   showBackToTop = false;
 
+  // Stats Counters
+  stats = {
+    years: 0,
+    scholars: 0,
+    wifi: 0,
+    faculty: 0
+  };
+  private statsStarted = false;
+
   // Carousel Logic
   currentSlide = 0;
+  currentTestimonial = 0;
+  currentStaff = 0;
+  testimonialIndices = [0, 1, 2];
+  staffIndices = [0, 1, 2, 3]; // Adjust based on how many "pages" or groups you want
   slides = [
     {
       image: 'assets/img/serene-campus.png',
@@ -44,6 +57,9 @@ export class BrandingHomeComponent {
 
   ngOnInit(): void {
     this.startAutoPlay();
+    this.setupIntersectionObserver();
+    this.startTestimonialAutoSlide();
+    this.startStaffAutoSlide();
   }
 
   ngOnDestroy(): void {
@@ -98,5 +114,86 @@ export class BrandingHomeComponent {
   private resetAutoPlay(): void {
     this.stopAutoPlay();
     this.startAutoPlay();
+  }
+
+  // Stats Animation Logic
+  private setupIntersectionObserver(): void {
+    const options = {
+      root: null,
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !this.statsStarted) {
+          this.animateStats();
+          this.statsStarted = true;
+          observer.unobserve(entry.target);
+        }
+      });
+    }, options);
+
+    const statsSection = document.querySelector('.hero-stats-overlay');
+    if (statsSection) {
+      observer.observe(statsSection);
+    }
+  }
+
+  private animateStats(): void {
+    this.animateValue('years', 0, 18, 2000);
+    this.animateValue('scholars', 0, 3000, 2500);
+    this.animateValue('wifi', 0, 100, 2000);
+    this.animateValue('faculty', 0, 150, 2200);
+  }
+
+  private animateValue(key: keyof typeof this.stats, start: number, end: number, duration: number): void {
+    let startTimestamp: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      this.stats[key] = Math.floor(progress * (end - start) + start);
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }
+
+  // --- Testimonials Slider Logic ---
+  startTestimonialAutoSlide(): void {
+    setInterval(() => {
+      this.nextTestimonial();
+    }, 8000);
+  }
+
+  nextTestimonial(): void {
+    this.currentTestimonial = (this.currentTestimonial + 1) % 3;
+  }
+
+  prevTestimonial(): void {
+    this.currentTestimonial = (this.currentTestimonial - 1 + 3) % 3;
+  }
+
+  setTestimonial(index: number): void {
+    this.currentTestimonial = index;
+  }
+
+  // --- Staff Slider Logic ---
+  startStaffAutoSlide(): void {
+    setInterval(() => {
+      this.nextStaff();
+    }, 10000);
+  }
+
+  nextStaff(): void {
+    this.currentStaff = (this.currentStaff + 1) % 2; // Fixed to 2 slides
+  }
+
+  prevStaff(): void {
+    this.currentStaff = (this.currentStaff - 1 + 2) % 2;
+  }
+
+  setStaff(index: number): void {
+    this.currentStaff = index;
   }
 }
