@@ -818,148 +818,269 @@ html body .modal-box select {
 }
 
 /* ===========================
-   Wavy Alert Design
+   Enhanced Wavy Alert Design - Outstanding Version
    =========================== */
-.swal2-popup.nim-swal-wavy {
+.swal2-popup.nim-swal-wavy-enhanced {
   padding: 0 !important;
-  border-radius: 28px !important;
+  border-radius: 32px !important;
   overflow: hidden !important;
   border: none !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 35px 70px -15px rgba(128, 0, 0, 0.35), 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+  backdrop-filter: blur(20px);
+  transform: scale(0.9);
+  opacity: 0;
+  animation: nimWavyEnhancedEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.nim-wavy-container {
+@keyframes nimWavyEnhancedEntrance {
+  0% {
+    transform: scale(0.8) translateY(20px);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.02) translateY(-2px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.nim-wavy-container-enhanced {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
 
-.nim-wavy-header {
+.nim-wavy-header-enhanced {
   width: 100%;
-  height: 120px;
-  background: #ef4444;
+  height: 140px;
   position: relative;
   display: flex;
   justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
-.nim-wavy-header::after {
+/* Animated particles background */
+.nim-wavy-particles {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: nimParticlesFloat 20s linear infinite;
+}
+
+@keyframes nimParticlesFloat {
+  from { background-position: 0 0; }
+  to { background-position: -100px -100px; }
+}
+
+/* Enhanced wave divider with SVG */
+.nim-wavy-header-enhanced::after {
   content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 60px;
-  background-color: #ffffff;
-  /* Complex wave shape using clip-path */
-  clip-path: polygon(100% 100%, 0% 100%, 0% 30%, 15% 45%, 30% 25%, 50% 10%, 70% 25%, 85% 45%, 100% 30%);
+  height: 40px;
+  background: #ffffff;
+  clip-path: ellipse(70% 100% at 50% 100%);
 }
 
-/* Better wave using SVG data URI for accuracy */
-.nim-wavy-header {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M0,224L60,202.7C120,181,240,139,360,138.7C480,139,600,181,720,170.7C840,160,960,96,1080,80C1200,64,1320,96,1380,112L1440,128L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
-  background-position: bottom;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-color: #ef4444;
-  /* Main red */
-}
-
-.nim-wavy-icon-circle {
-  width: 80px;
-  height: 80px;
+.nim-wavy-icon-circle-enhanced {
+  width: 90px;
+  height: 90px;
   background: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 60px;
-  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.2);
+  margin-top: 70px;
   z-index: 10;
-  animation: nimWavyIconBounce 1s ease-out;
+  animation: nimWavyIconEnhancedBounce 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
 }
 
-.nim-wavy-icon-circle iconify-icon {
-  font-size: 48px;
-  color: #ef4444;
+.nim-wavy-icon-circle-enhanced::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  animation: nimIconPulse 2s ease-in-out infinite;
 }
 
-.nim-wavy-content {
-  padding: 24px 32px 32px;
+.nim-wavy-icon-circle-enhanced iconify-icon {
+  font-size: 52px;
+  z-index: 2;
+}
+
+/* Shimmer effect */
+.nim-wavy-shimmer {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  animation: nimShimmer 3s ease-in-out infinite;
+}
+
+@keyframes nimShimmer {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+  100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+}
+
+.nim-wavy-content-enhanced {
+  padding: 28px 36px 50px;
   text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
 }
 
-.nim-wavy-title {
-  font-size: 24px;
-  font-weight: 800;
+.nim-wavy-title-enhanced {
+  font-size: 26px;
+  font-weight: 900;
   color: #1f2937;
   margin-bottom: 12px;
+  letter-spacing: -0.3px;
+  animation: nimSlideInUp 0.6s ease-out 0.3s both;
 }
 
-.nim-wavy-message {
-  font-size: 15px;
+.nim-wavy-message-enhanced {
+  font-size: 16px;
   color: #6b7280;
   line-height: 1.6;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  animation: nimSlideInUp 0.6s ease-out 0.4s both;
 }
 
-.nim-wavy-actions {
+.nim-wavy-status-indicator {
   display: flex;
-  gap: 12px;
+  align-items: center;
   justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  animation: nimSlideInUp 0.6s ease-out 0.5s both;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: nimStatusPulse 2s ease-in-out infinite;
+}
+
+@keyframes nimStatusPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.2); }
+}
+
+.nim-wavy-actions-enhanced {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  animation: nimSlideInUp 0.6s ease-out 0.5s both;
+  margin-top: 0;
+  margin-bottom: 16px;
 }
 
 .nim-wavy-btn {
-  padding: 12px 32px;
-  border-radius: 12px;
-  font-weight: 700;
+  padding: 14px 36px;
+  border-radius: 16px;
+  font-weight: 800;
   font-size: 15px;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: pointer;
-  border: none;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  min-width: 120px;
+  z-index: 1;
 }
 
-.nim-wavy-btn-primary {
-  background: #ef4444;
+.nim-wavy-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  z-index: -1;
+}
+
+.nim-wavy-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.nim-wavy-btn-primary-enhanced {
   color: white;
-  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+  transform: translateY(0);
 }
 
-.nim-wavy-btn-secondary {
-  background: white;
-  color: #ef4444;
-  border: 1.5px solid #ef4444;
-}
-
-.nim-wavy-btn:hover {
-  transform: translateY(-2px);
+.nim-wavy-btn-primary-enhanced:hover {
+  transform: translateY(-3px) scale(1.02);
   filter: brightness(1.1);
+  box-shadow: 0 12px 30px rgba(128, 0, 0, 0.4) !important;
 }
 
-@keyframes nimWavyIconBounce {
+.nim-wavy-btn-secondary-enhanced {
+  background: white;
+  color: #800000;
+  border: 2px solid #800000;
+}
+
+.nim-wavy-btn-secondary-enhanced:hover {
+  background: rgba(128, 0, 0, 0.05);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(128, 0, 0, 0.15);
+}
+
+@keyframes nimWavyIconEnhancedBounce {
   0% {
-    transform: scale(0);
+    transform: scale(0) rotate(-180deg);
     opacity: 0;
   }
-
-  60% {
-    transform: scale(1.1);
+  50% {
+    transform: scale(1.2) rotate(10deg);
   }
-
   100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
     opacity: 1;
   }
 }
 
-/* ===========================
-   Backdrop Blur (all popups)
-   =========================== */
+@keyframes nimSlideInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes nimIconPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(1.1); }
+}
+
+/* Enhanced backdrop blur - Applied to all popups */
 .swal2-backdrop-show {
-  backdrop-filter: blur(10px) saturate(1.5) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(1.5) !important;
-  background-color: rgba(50, 0, 0, 0.15) !important;
+  backdrop-filter: blur(15px) saturate(1.8) !important;
+  -webkit-backdrop-filter: blur(15px) saturate(1.8) !important;
+  background: radial-gradient(circle at center, rgba(128, 0, 0, 0.12) 0%, rgba(128, 0, 0, 0.25) 100%) !important;
 }
 
 /* ===========================

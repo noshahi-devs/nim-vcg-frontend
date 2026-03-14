@@ -37,41 +37,75 @@ export const ToastSwal = SweetAlert.mixin({
 });
 
 /**
- * Premium Wavy Alert (e.g. Task Fail)
+ * Premium Wavy Alert (e.g. Task Fail) - Enhanced Outstanding Version
  */
 export const WavyAlert = (title: string, message: string, type: 'error' | 'success' | 'warning' = 'error') => {
   const icon = type === 'error' ? 'solar:danger-bold' : (type === 'success' ? 'solar:check-circle-bold' : 'solar:notification-lines-bold');
-  const color = type === 'error' ? '#ef4444' : (type === 'success' ? '#10b981' : '#f59e0b');
+  const color = type === 'error' ? '#800000' : (type === 'success' ? '#10b981' : '#f59e0b');
+  const lightColor = type === 'error' ? '#a52a2a' : (type === 'success' ? '#34d399' : '#fbbf24');
 
   return SweetAlert.fire({
     html: `
-      <div class="nim-wavy-container">
-        <div class="nim-wavy-header" style="background-color: ${color}">
-          <div class="nim-wavy-icon-circle" style="box-shadow: 0 10px 25px ${color}33">
+      <div class="nim-wavy-container-enhanced">
+        <div class="nim-wavy-header-enhanced" style="background: linear-gradient(135deg, ${color} 0%, ${lightColor} 100%)">
+          <div class="nim-wavy-particles"></div>
+          <div class="nim-wavy-icon-circle-enhanced" style="box-shadow: 0 15px 35px ${color}40, 0 0 0 3px ${color}20">
             <iconify-icon icon="${icon}" style="color: ${color}"></iconify-icon>
           </div>
+          <div class="nim-wavy-shimmer"></div>
         </div>
-        <div class="nim-wavy-content">
-          <h2 class="nim-wavy-title">${title}</h2>
-          <p class="nim-wavy-message">${message}</p>
+        <div class="nim-wavy-content-enhanced">
+          <h2 class="nim-wavy-title-enhanced">${title}</h2>
+          <p class="nim-wavy-message-enhanced">${message}</p>
+          <div class="nim-wavy-status-indicator">
+            <div class="status-dot" style="background: ${color}"></div>
+            <span style="color: ${color}">Authentication Required</span>
+          </div>
         </div>
       </div>
     `,
     customClass: {
-      popup: 'nim-swal-wavy',
-      actions: 'nim-wavy-actions',
-      confirmButton: 'nim-wavy-btn nim-wavy-btn-primary',
-      cancelButton: 'nim-wavy-btn nim-wavy-btn-secondary'
+      popup: 'nim-swal-wavy-enhanced',
+      actions: 'nim-wavy-actions-enhanced',
+      confirmButton: 'nim-wavy-btn nim-wavy-btn-primary-enhanced',
+      cancelButton: 'nim-wavy-btn nim-wavy-btn-secondary-enhanced'
     },
     buttonsStyling: false,
     showCancelButton: true,
-    confirmButtonText: 'Retry',
-    cancelButtonText: 'Close',
+    confirmButtonText: '🔄 Retry',
+    cancelButtonText: '✖ Close',
     reverseButtons: true,
+    focusConfirm: false,
+    returnFocus: false,
+    allowOutsideClick: false,
+    allowEscapeKey: true,
     didOpen: (popup) => {
-      // Apply the specific colors to buttons via JS as well if needed to match the 'type'
-      const confirmBtn = popup.querySelector('.nim-wavy-btn-primary') as HTMLElement;
-      if (confirmBtn) confirmBtn.style.backgroundColor = color;
+      // Enhanced animations
+      const confirmBtn = popup.querySelector('.nim-wavy-btn-primary-enhanced') as HTMLElement;
+      const cancelBtn = popup.querySelector('.nim-wavy-btn-secondary-enhanced') as HTMLElement;
+      if (confirmBtn) {
+        confirmBtn.style.background = `linear-gradient(135deg, ${color} 0%, ${lightColor} 100%)`;
+        confirmBtn.style.boxShadow = `0 8px 25px ${color}40`;
+      }
+      if (cancelBtn) {
+        cancelBtn.style.color = color;
+        cancelBtn.style.borderColor = color;
+      }
+
+      // Add entrance animations
+      popup.classList.add('nim-wavy-entrance');
+
+      // Ensure buttons are clickable
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+          SweetAlert.clickConfirm();
+        });
+      }
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+          SweetAlert.clickCancel();
+        });
+      }
     }
   });
 };
@@ -111,6 +145,11 @@ export const WelcomeAccessPopup = (userName: string, role: string) => {
     showCloseButton: true,
     buttonsStyling: false,
     allowOutsideClick: false,
+  });
+};
+
+export default SweetAlert;
+allowOutsideClick: false,
   });
 };
 

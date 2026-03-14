@@ -138,8 +138,28 @@ export class SignInComponent {
           errMsg = err.error?.message || 'An unexpected error occurred during login.';
         }
 
-        WavyAlert('Sign In Failed', errMsg, 'error').then(() => {
-           this.isSubmitting = false;
+        WavyAlert('Sign In Failed', errMsg, 'error').then((result) => {
+           if (result.isConfirmed) {
+             // Retry button clicked - prepare for retry
+             this.isSubmitting = false;
+             // Clear any existing errors and focus on email field
+             this.errorMessage = '';
+             // Re-enable form for retry
+             this.signInForm.enable();
+             setTimeout(() => {
+               const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
+               if (emailInput) {
+                 emailInput.focus();
+                 emailInput.select(); // Select text for easy editing
+               }
+             }, 300);
+           } else if (result.isDismissed) {
+             // Close button clicked - just stop submitting
+             this.isSubmitting = false;
+             this.errorMessage = '';
+             // Re-enable form
+             this.signInForm.enable();
+           }
         });
       }
     });
