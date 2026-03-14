@@ -1,5 +1,17 @@
 @import url('./print.css');
 
+@keyframes hero-floating {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes hero-glow {
+  0% { box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+  50% { box-shadow: 0 30px 100px rgba(244,196,48,0.2); }
+  100% { box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+}
+
 :root {
   --primary-color: #800000;
   /* Maroon */

@@ -61,7 +61,7 @@
         <div class="slide-content">
           <div class="content-wrapper">
             <span class="slide-eyebrow">{{ slide.eyebrow }}</span>
-            <h1 class="slide-title" [innerHTML]="slide.title.replace('\n', '<br>')"></h1>
+            <h1 class="slide-title" [innerHTML]="slide.title.split('\n').join('<br>')"></h1>
             <p class="slide-description">{{ slide.description }}</p>
             <div class="slide-actions">
               <a href="#programs" class="btn-primary">Explore Programs</a>

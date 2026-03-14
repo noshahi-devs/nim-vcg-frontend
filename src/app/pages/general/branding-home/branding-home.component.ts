@@ -18,25 +18,25 @@ export class BrandingHomeComponent {
   currentSlide = 0;
   slides = [
     {
-      image: 'assets/img/vision-building.jpeg',
-      featureImage: 'assets/img/vision_logo.png', // Temporary, will use actual assets or icons
-      eyebrow: 'Welcome to Vision College',
-      title: 'Empowering Future Leaders \nWith a Single Vision',
-      description: 'A modern campus in the heart of Gojra offering Matric, Intermediate, and Undergraduate paths.'
+      image: 'assets/img/serene-campus.png',
+      featureImage: 'assets/img/vision_logo.png',
+      eyebrow: 'Our Visionary Campus',
+      title: 'Empowering\nFuture Leaders',
+      description: 'Experience a sanctuary of learning in the heart of Gojra, where academic excellence meets spiritual growth.'
     },
     {
-      image: 'assets/img/carousel-lab.png',
-      featureImage: 'assets/img/ai-lab.jpg',
-      eyebrow: 'Advanced Learning',
-      title: 'State-of-the-Art \nScience & Tech Labs',
-      description: 'Hands-on experience with modern equipment and expert faculty guidance for the future.'
+      image: 'assets/img/serene-lab.png',
+      featureImage: 'assets/img/carousel-lab.png',
+      eyebrow: 'Future-Ready Labs',
+      title: 'Innovation Meets\nModern Tech',
+      description: 'Unlock your potential in our modern laboratories designed to inspire the next generation of scientists.'
     },
     {
-      image: 'assets/img/carousel-lib.png',
-      featureImage: 'assets/img/study.jpg',
-      eyebrow: 'Resource Rich',
-      title: 'Hub for Research \n& Digital Discovery',
-      description: 'Explore thousands of resources in our modern library and digital lounge for deep focus.'
+      image: 'assets/img/serene-library.png',
+      featureImage: 'assets/img/carousel-lib.png',
+      eyebrow: 'Serene Study Spaces',
+      title: 'A Sanctuary for\nKnowledge',
+      description: 'Discover peace and focus in our light-filled library, housing thousands of resources for your academic journey.'
     }
   ];
 
