@@ -61,51 +61,49 @@ export const WavyAlert = (title: string, message: string, type: 'error' | 'succe
             <div class="status-dot" style="background: ${color}"></div>
             <span style="color: ${color}">Authentication Required</span>
           </div>
+          
+          <div class="nim-wavy-actions-enhanced">
+            <button class="nim-wavy-btn nim-wavy-btn-secondary-enhanced btn-close-wavy">
+               ✖ Close
+            </button>
+            <button class="nim-wavy-btn nim-wavy-btn-primary-enhanced btn-retry-wavy">
+               🔄 Retry
+            </button>
+          </div>
         </div>
       </div>
     `,
     customClass: {
       popup: 'nim-swal-wavy-enhanced',
-      actions: 'nim-wavy-actions-enhanced',
-      confirmButton: 'nim-wavy-btn nim-wavy-btn-primary-enhanced',
-      cancelButton: 'nim-wavy-btn nim-wavy-btn-secondary-enhanced'
     },
     buttonsStyling: false,
-    showCancelButton: true,
-    confirmButtonText: '🔄 Retry',
-    cancelButtonText: '✖ Close',
-    reverseButtons: true,
-    focusConfirm: false,
-    returnFocus: false,
+    showConfirmButton: false,
+    showCancelButton: false,
     allowOutsideClick: false,
     allowEscapeKey: true,
     didOpen: (popup) => {
-      // Enhanced animations
-      const confirmBtn = popup.querySelector('.nim-wavy-btn-primary-enhanced') as HTMLElement;
-      const cancelBtn = popup.querySelector('.nim-wavy-btn-secondary-enhanced') as HTMLElement;
-      if (confirmBtn) {
-        confirmBtn.style.background = `linear-gradient(135deg, ${color} 0%, ${lightColor} 100%)`;
-        confirmBtn.style.boxShadow = `0 8px 25px ${color}40`;
+      // Enhanced animations for custom buttons
+      const retryBtn = popup.querySelector('.btn-retry-wavy') as HTMLElement;
+      const closeBtn = popup.querySelector('.btn-close-wavy') as HTMLElement;
+      
+      if (retryBtn) {
+        retryBtn.style.background = `linear-gradient(135deg, ${color} 0%, ${lightColor} 100%)`;
+        retryBtn.style.boxShadow = `0 8px 25px ${color}40`;
+        retryBtn.addEventListener('click', () => {
+          SweetAlert.clickConfirm();
+        });
       }
-      if (cancelBtn) {
-        cancelBtn.style.color = color;
-        cancelBtn.style.borderColor = color;
+      
+      if (closeBtn) {
+        closeBtn.style.color = color;
+        closeBtn.style.borderColor = color;
+        closeBtn.addEventListener('click', () => {
+          SweetAlert.clickCancel();
+        });
       }
 
       // Add entrance animations
       popup.classList.add('nim-wavy-entrance');
-
-      // Ensure buttons are clickable
-      if (confirmBtn) {
-        confirmBtn.addEventListener('click', () => {
-          SweetAlert.clickConfirm();
-        });
-      }
-      if (cancelBtn) {
-        cancelBtn.addEventListener('click', () => {
-          SweetAlert.clickCancel();
-        });
-      }
     }
   });
 };
@@ -133,7 +131,7 @@ export const WelcomeAccessPopup = (userName: string, role: string) => {
             Authenticated to the <strong style="color:#800000;">Vision College System</strong>. Your portal is ready.
           </p>
         </div>
-        <button class="nim-welcome-btn swal2-confirm" onclick="Swal.clickConfirm()">
+        <button class="nim-welcome-btn">
           🚀 Launch Dashboard
         </button>
       </div>
@@ -145,12 +143,18 @@ export const WelcomeAccessPopup = (userName: string, role: string) => {
     showCloseButton: true,
     buttonsStyling: false,
     allowOutsideClick: false,
+    returnFocus: false,
+    focusConfirm: false,
+    didOpen: (popup) => {
+      const launchBtn = popup.querySelector('.nim-welcome-btn') as HTMLElement;
+      if (launchBtn) {
+        launchBtn.addEventListener('click', () => {
+          SweetAlert.clickConfirm();
+        });
+      }
+    }
   });
 };
 
 export default SweetAlert;
-allowOutsideClick: false,
-  });
-};
-
-export default SweetAlert;
+  
