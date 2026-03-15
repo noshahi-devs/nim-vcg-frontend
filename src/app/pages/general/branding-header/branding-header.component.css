@@ -78,12 +78,16 @@
   z-index: 1000;
   position: sticky;
   top: 0;
-  transition: padding 0.3s;
+  transition: padding 0.3s, z-index 0s;
+}
+
+.navbar.is-menu-open {
+  z-index: 9999 !important; /* Force high z-index to cover topbar */
 }
 
 :host-context(.is-sticky) .navbar,
 .navbar.is-sticky {
-  padding: 15px 0 12px;
+  padding: 25px 0 12px; /* Increased top padding from 15px to 25px */
   /* Top padding added */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   border-top: 4px solid #800000;
@@ -266,16 +270,16 @@
   .navbar-links {
     position: fixed;
     top: 0;
-    right: -100%;
+    left: -100%; /* Move to left side */
+    right: auto;
     width: 280px;
     height: 100vh;
     background-color: #ffffff;
     flex-direction: column;
-    padding: 80px 30px 40px;
-    /* Adjusted top padding for close button */
-    box-shadow: -15px 0 50px rgba(0, 0, 0, 0.15);
+    padding: 100px 30px 40px;
+    box-shadow: 15px 0 50px rgba(0, 0, 0, 0.15); /* Shadow on the right now */
     transition: 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-    z-index: 1001;
+    z-index: 3000;
     text-align: left !important;
     transform: translateX(0);
     gap: 0;
@@ -285,8 +289,8 @@
     display: flex;
     /* Show only on mobile */
     position: absolute;
-    top: 25px;
-    right: 25px;
+    top: 35px; /* Slightly lower */
+    left: 20px; /* Aligned left */
     background: none;
     border: none;
     color: #800000;
@@ -306,7 +310,8 @@
   }
 
   .navbar-links.active {
-    right: 0;
+    left: 0;
+    right: auto;
   }
 
   .nav-link {
@@ -335,23 +340,27 @@
 }
 
 @media (max-width: 576px) {
+  .topbar {
+    padding: 6px 0; /* Reduce padding for smaller height */
+  }
+
   .topbar-left {
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row; /* Put email and phone on the same line if they fit */
+    flex-wrap: wrap;
+    gap: 15px;
     align-items: center;
+    justify-content: center;
     width: 100%;
   }
 
   .topbar-left a {
     justify-content: center;
-    width: 100%;
     white-space: nowrap;
-    /* Keep icon and text in one row */
   }
 
   .topbar .flex-container {
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: column; /* Contacts on top, socials below -> 2 lines */
+    gap: 6px;
   }
 
   .social-mini {
@@ -386,11 +395,12 @@
   }
 
   .college-tagline {
-    font-size: 8px !important;
+    font-size: 9px !important;
     letter-spacing: 0.2px !important;
     display: block !important;
-    opacity: 0.7;
-    margin-top: 2px;
+    opacity: 0.8;
+    margin-top: 1px;
+    white-space: nowrap;
   }
 
   .navbar-actions {
@@ -409,7 +419,26 @@
   }
 
   .topbar {
-    font-size: 11px;
+    font-size: 10px;
+    padding: 4px 0;
+  }
+
+  .topbar-left {
+    gap: 10px;
+  }
+
+  .topbar .flex-container {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .social-mini {
+    gap: 10px;
+  }
+  
+  .social-mini a {
+    font-size: 14px;
   }
 
   .bar {
@@ -427,7 +456,10 @@
   }
 
   .college-tagline {
-    display: none !important;
+    font-size: 8px !important;
+    display: block !important;
+    opacity: 0.8;
+    margin-top: 1px;
   }
 }
 

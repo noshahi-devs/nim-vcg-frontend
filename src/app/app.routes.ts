@@ -2,13 +2,13 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './SecurityModels/auth.guard';
 
 export const routes: Routes = [
-  { path: 'vision-college', loadComponent: () => import('./pages/general/branding-home/branding-home.component').then(m => m.BrandingHomeComponent) },
+  { path: '', loadComponent: () => import('./pages/general/branding-home/branding-home.component').then(m => m.BrandingHomeComponent), pathMatch: 'full' },
   { path: 'why-vc', loadComponent: () => import('./pages/general/why-vc/why-vc.component').then(m => m.WhyVcComponent) },
   { path: 'campus-life', loadComponent: () => import('./pages/general/campus-life/campus-life.component').then(m => m.CampusLifeComponent) },
   { path: 'programs', loadComponent: () => import('./pages/general/programs/programs.component').then(m => m.ProgramsComponent) },
   { path: 'contact', loadComponent: () => import('./pages/general/contact/contact.component').then(m => m.ContactComponent) },
-  { path: '', redirectTo: 'vision-college', pathMatch: 'full' },
-  { path: 'home', redirectTo: 'vision-college', pathMatch: 'full' },
+  { path: 'vision-college', redirectTo: '', pathMatch: 'full' },
+  { path: 'home', redirectTo: '', pathMatch: 'full' },
   { path: 'sign-in', loadComponent: () => import('./pages/auth/sign-in/sign-in.component').then(m => m.SignInComponent) },
   { path: 'sign-up', loadComponent: () => import('./pages/auth/sign-up/sign-up.component').then(m => m.SignUpComponent) },
   { path: 'forgot-password', loadComponent: () => import('./pages/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent) },

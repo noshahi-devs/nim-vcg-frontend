@@ -21,9 +21,9 @@
   </div>
 </section>
 
-<nav class="navbar" [class.is-sticky]="isSticky">
+<nav class="navbar" [class.is-sticky]="isSticky" [class.is-menu-open]="isMenuOpen">
   <div class="flex-container navbar-container">
-    <a routerLink="/vision-college" class="navbar-logo">
+    <a routerLink="/" class="navbar-logo">
       <img src="assets/img/vision_logo.png" alt="Vision College Gojra Logo">
       <div class="logo-text">
         <span class="college-name">Vision College</span>
@@ -39,7 +39,7 @@
         <button class="close-drawer" aria-label="Close Menu" (click)="closeMobileMenu()">
           <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
         </button>
-        <a routerLink="/vision-college" class="nav-link" (click)="closeMobileMenu()">
+        <a routerLink="/" class="nav-link" (click)="closeMobileMenu()">
           <iconify-icon icon="solar:home-2-bold"></iconify-icon> Home
         </a>
         <a routerLink="/programs" class="nav-link" (click)="closeMobileMenu()">
