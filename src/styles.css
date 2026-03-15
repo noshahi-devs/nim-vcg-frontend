@@ -647,7 +647,7 @@ body {
 }
 
 .nim-swal-hide {
-  animation: nimSwalOut 0.18s ease;
+  animation: nimSwalOut 0.18s ease forwards !important;
 }
 
 @keyframes nimPopupShine {

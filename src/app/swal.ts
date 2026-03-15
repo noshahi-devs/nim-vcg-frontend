@@ -61,45 +61,44 @@ export const WavyAlert = (title: string, message: string, type: 'error' | 'succe
             <div class="status-dot" style="background: ${color}"></div>
             <span style="color: ${color}">Authentication Required</span>
           </div>
-          
-          <div class="nim-wavy-actions-enhanced">
-            <button class="nim-wavy-btn nim-wavy-btn-secondary-enhanced btn-close-wavy">
-               ✖ Close
-            </button>
-            <button class="nim-wavy-btn nim-wavy-btn-primary-enhanced btn-retry-wavy">
-               🔄 Retry
-            </button>
-          </div>
         </div>
       </div>
     `,
     customClass: {
       popup: 'nim-swal-wavy-enhanced',
+      actions: 'nim-wavy-actions-enhanced',
+      confirmButton: 'nim-wavy-btn nim-wavy-btn-primary-enhanced',
+      cancelButton: 'nim-wavy-btn nim-wavy-btn-secondary-enhanced'
     },
     buttonsStyling: false,
-    showConfirmButton: false,
-    showCancelButton: false,
+    showConfirmButton: true,
+    showCancelButton: true,
+    confirmButtonText: '🔄 Retry',
+    cancelButtonText: '✖ Close',
+    reverseButtons: true, // Puts Retry on the right, Close on the left in some environments, but flex order determines it.
     allowOutsideClick: false,
     allowEscapeKey: true,
+    timer: 5000,
+    timerProgressBar: true,
     didOpen: (popup) => {
-      // Enhanced animations for custom buttons
-      const retryBtn = popup.querySelector('.btn-retry-wavy') as HTMLElement;
-      const closeBtn = popup.querySelector('.btn-close-wavy') as HTMLElement;
-
+      // Apply dynamic colors to native confirm button
+      const retryBtn = SweetAlert.getConfirmButton();
       if (retryBtn) {
-        retryBtn.style.background = `linear-gradient(135deg, ${color} 0%, ${lightColor} 100%)`;
-        retryBtn.style.boxShadow = `0 8px 25px ${color}40`;
-        retryBtn.addEventListener('click', () => {
-          SweetAlert.clickConfirm();
-        });
+        const btnBgFrom = type === 'error' ? '#F4C430' : color;
+        const btnBgTo = type === 'error' ? '#FDE68A' : lightColor;
+        const btnShadow = type === 'error' ? 'rgba(244, 196, 48, 0.4)' : `${color}40`;
+
+        retryBtn.style.background = `linear-gradient(135deg, ${btnBgFrom} 0%, ${btnBgTo} 100%)`;
+        retryBtn.style.color = type === 'error' ? '#800000' : '#fff';
+        retryBtn.style.textShadow = type === 'error' ? 'none' : '0 1px 2px rgba(0,0,0,0.2)';
+        retryBtn.style.boxShadow = `0 8px 25px ${btnShadow}`;
       }
 
+      // Apply dynamic colors to native cancel button
+      const closeBtn = SweetAlert.getCancelButton();
       if (closeBtn) {
-        closeBtn.style.color = color;
-        closeBtn.style.borderColor = color;
-        closeBtn.addEventListener('click', () => {
-          SweetAlert.clickCancel();
-        });
+        closeBtn.style.color = '#800000';
+        closeBtn.style.borderColor = '#800000';
       }
 
       // Add entrance animations
@@ -131,28 +130,20 @@ export const WelcomeAccessPopup = (userName: string, role: string) => {
             Authenticated to the <strong style="color:#800000;">Vision College System</strong>. Your portal is ready.
           </p>
         </div>
-        <button class="nim-welcome-btn">
-          🚀 Launch Dashboard
-        </button>
       </div>
     `,
     customClass: {
       popup: 'nim-welcome-premium',
+      confirmButton: 'nim-welcome-btn',
+      actions: 'nim-welcome-actions'
     },
-    showConfirmButton: false,
+    showConfirmButton: true,
+    confirmButtonText: '🚀 Launch Dashboard',
     showCloseButton: true,
     buttonsStyling: false,
     allowOutsideClick: false,
     returnFocus: false,
-    focusConfirm: false,
-    didOpen: (popup) => {
-      const launchBtn = popup.querySelector('.nim-welcome-btn') as HTMLElement;
-      if (launchBtn) {
-        launchBtn.addEventListener('click', () => {
-          SweetAlert.clickConfirm();
-        });
-      }
-    }
+    focusConfirm: false
   });
 };
 
