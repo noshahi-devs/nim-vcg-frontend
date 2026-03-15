@@ -1,18 +1,23 @@
 :host {
   display: block;
   position: sticky;
-  top: -42px; /* Offset for topbar height to allow it to scroll away */
+  top: -42px;
+  /* Offset for topbar height to allow it to scroll away */
   z-index: 2000;
   width: 100%;
 }
+
 @media (max-width: 768px) {
   :host {
-    top: -85px; /* Different offset for stacked mobile topbar */
+    top: -85px;
+    /* Different offset for stacked mobile topbar */
   }
 }
+
 @media (max-width: 576px) {
   :host {
-    top: -95px; /* Adjust for even taller mobile topbar */
+    top: -95px;
+    /* Adjust for even taller mobile topbar */
   }
 }
 
@@ -78,13 +83,26 @@
 
 :host-context(.is-sticky) .navbar,
 .navbar.is-sticky {
-  padding: 15px 0 12px; /* Top padding added */
+  padding: 15px 0 12px;
+  /* Top padding added */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   border-top: 4px solid #800000;
 }
 
 .navbar-container {
-  gap: 40px;
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center;
+  width: 100%;
+}
+
+/* Right-side group: takes all remaining space, aligns content right */
+.navbar-right {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* All content pushed to the right edge */
+  gap: 0;
 }
 
 .navbar-logo {
@@ -92,7 +110,7 @@
   align-items: center;
   gap: 18px;
   text-decoration: none;
-  flex-shrink: 0;
+  flex: 0 0 auto; /* Never grow or shrink - stays at natural width */
 }
 
 .navbar-logo img {
@@ -118,13 +136,18 @@
 
 .navbar-links {
   display: flex;
-  gap: 35px;
-  flex-grow: 1;
-  justify-content: center;
+  gap: 28px;
+  align-items: center;
+  margin-right: 28px;  /* Gap between menu links and Portal Login */
+}
+
+/* Hide close button on desktop */
+.close-drawer {
+  display: none;
 }
 
 .nav-link {
-  color: #1a1a1a;
+  color: #2d2d2d;
   text-decoration: none;
   font-weight: 600;
   font-size: 15px;
@@ -136,7 +159,8 @@
 }
 
 .nav-link iconify-icon {
-  display: none; /* Hide icons on desktop */
+  display: none;
+  /* Hide icons on desktop */
 }
 
 .nav-link:hover {
@@ -222,18 +246,18 @@
 }
 
 @media (max-width: 991px) {
-  .hamburger-btn { 
-    display: flex; 
+  .hamburger-btn {
+    display: flex;
     z-index: 1002;
     transition: 0.3s;
   }
-  
+
   .hamburger-btn.active {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
   }
-  
+
   .navbar-container {
     justify-content: space-between;
     gap: 10px;
@@ -247,7 +271,8 @@
     height: 100vh;
     background-color: #ffffff;
     flex-direction: column;
-    padding: 80px 30px 40px; /* Adjusted top padding for close button */
+    padding: 80px 30px 40px;
+    /* Adjusted top padding for close button */
     box-shadow: -15px 0 50px rgba(0, 0, 0, 0.15);
     transition: 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
     z-index: 1001;
@@ -257,6 +282,8 @@
   }
 
   .close-drawer {
+    display: flex;
+    /* Show only on mobile */
     position: absolute;
     top: 25px;
     right: 25px;
@@ -266,7 +293,6 @@
     font-size: 32px;
     cursor: pointer;
     padding: 5px;
-    display: flex;
     align-items: center;
     justify-content: center;
     transition: 0.3s;
@@ -288,7 +314,7 @@
     padding: 18px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     font-size: 17px;
-    color: #333;
+    color: #3e3e3e;
     gap: 15px;
   }
 
@@ -315,18 +341,23 @@
     align-items: center;
     width: 100%;
   }
+
   .topbar-left a {
     justify-content: center;
     width: 100%;
-    white-space: nowrap; /* Keep icon and text in one row */
+    white-space: nowrap;
+    /* Keep icon and text in one row */
   }
+
   .topbar .flex-container {
     flex-direction: column;
     gap: 12px;
   }
+
   .social-mini {
     justify-content: center;
   }
+
   .flex-container {
     padding: 0 15px;
   }
@@ -334,19 +365,26 @@
 
 @media (max-width: 480px) {
   .navbar-logo {
-    gap: 10px; /* Tighter gap */
+    gap: 10px;
+    /* Tighter gap */
     flex-grow: 1;
   }
+
   .navbar-logo img {
-    height: 44px; /* Slightly larger logo icon */
+    height: 44px;
+    /* Slightly larger logo icon */
   }
+
   .college-name {
-    font-size: 19px !important; /* Force larger size */
+    font-size: 19px !important;
+    /* Force larger size */
     font-weight: 800 !important;
     white-space: nowrap;
     display: block !important;
-    letter-spacing: -0.5px; /* Tighten for small screens */
+    letter-spacing: -0.5px;
+    /* Tighten for small screens */
   }
+
   .college-tagline {
     font-size: 8px !important;
     letter-spacing: 0.2px !important;
@@ -354,21 +392,26 @@
     opacity: 0.7;
     margin-top: 2px;
   }
+
   .navbar-actions {
     gap: 10px;
   }
+
   .portal-btn {
     width: 42px;
     height: 42px;
     padding: 0;
     justify-content: center;
   }
+
   .portal-btn span {
     display: none;
   }
+
   .topbar {
     font-size: 11px;
   }
+
   .bar {
     width: 26px;
   }
@@ -378,9 +421,11 @@
   .college-name {
     font-size: 17px !important;
   }
+
   .navbar-logo img {
     height: 40px;
   }
+
   .college-tagline {
     display: none !important;
   }
@@ -391,12 +436,15 @@
     font-size: 15px !important;
     font-weight: 900 !important;
   }
+
   .navbar-logo img {
     height: 36px;
   }
+
   .navbar-actions {
     gap: 6px;
   }
+
   .portal-btn {
     width: 38px;
     height: 38px;

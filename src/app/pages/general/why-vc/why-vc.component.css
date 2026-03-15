@@ -5,7 +5,7 @@
   --gold: #f4c430;
   --gold-dark: #d4a017;
   --white: #ffffff;
-  --text-dark: #1a1a1a;
+  --text-dark: #2d2d2d;
   --text-muted: #555555;
   --bg-light: #f9fafb;
 }
@@ -23,6 +23,9 @@
 /* Hero Section */
 .hero-simple {
   position: relative;
+  min-height: 450px;
+  display: flex;
+  align-items: center;
   padding: 120px 0 80px;
   background-color: var(--maroon);
   color: white;
@@ -33,7 +36,7 @@
 .hero-bg {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(128, 0, 0, 0.85), rgba(128, 0, 0, 0.95)), url('/assets/img/Campus.jpeg');
+  background-image: linear-gradient(rgba(128, 0, 0, 0.72), rgba(100, 0, 0, 0.82)), url('/assets/img/serene-campus.png');
   background-size: cover;
   background-position: center;
   z-index: 1;
@@ -44,6 +47,7 @@
   z-index: 2;
   max-width: 800px;
   margin: 0 auto;
+  text-align: center;
 }
 
 .eyebrow {
@@ -61,12 +65,14 @@
   font-weight: 900;
   margin-bottom: 25px;
   line-height: 1.1;
+  color: #ffffff;
 }
 
 .hero-content p {
   font-size: 18px;
   opacity: 0.9;
   line-height: 1.6;
+  color: #ffffff;
 }
 
 /* Section Headings */

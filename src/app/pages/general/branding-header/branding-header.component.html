@@ -32,37 +32,41 @@
     </a>
 
     <div class="nav-backdrop" [class.active]="isMenuOpen" (click)="closeMobileMenu()"></div>
-    <div class="navbar-links" [class.active]="isMenuOpen">
-      <button class="close-drawer" aria-label="Close Menu" (click)="closeMobileMenu()">
-        <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
-      </button>
-      <a routerLink="/vision-college" class="nav-link" (click)="closeMobileMenu()">
-        <iconify-icon icon="solar:home-2-bold"></iconify-icon> Home
-      </a>
-      <a routerLink="/programs" class="nav-link" (click)="closeMobileMenu()">
-        <iconify-icon icon="solar:case-minimalistic-bold"></iconify-icon> Programs
-      </a>
-      <a routerLink="/why-vc" class="nav-link" (click)="closeMobileMenu()">
-        <iconify-icon icon="solar:star-bold"></iconify-icon> Why VC
-      </a>
-      <a routerLink="/vision-college" fragment="gallery" class="nav-link" (click)="closeMobileMenu()">
-        <iconify-icon icon="solar:gallery-bold"></iconify-icon> Campus Life
-      </a>
-      <a routerLink="/vision-college" fragment="contact" class="nav-link" (click)="closeMobileMenu()">
-        <iconify-icon icon="solar:letter-bold"></iconify-icon> Contact
-      </a>
-    </div>
 
-    <div class="navbar-actions">
-      <a routerLink="/sign-in" class="portal-btn">
-        <span>Portal Login</span>
-        <iconify-icon icon="solar:alt-arrow-right-bold"></iconify-icon>
-      </a>
-      <button class="hamburger-btn" aria-label="Menu" (click)="toggleMobileMenu()" [class.active]="isMenuOpen">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </button>
+    <!-- Right side: links + action button grouped together -->
+    <div class="navbar-right">
+      <div class="navbar-links" [class.active]="isMenuOpen">
+        <button class="close-drawer" aria-label="Close Menu" (click)="closeMobileMenu()">
+          <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+        </button>
+        <a routerLink="/vision-college" class="nav-link" (click)="closeMobileMenu()">
+          <iconify-icon icon="solar:home-2-bold"></iconify-icon> Home
+        </a>
+        <a routerLink="/programs" class="nav-link" (click)="closeMobileMenu()">
+          <iconify-icon icon="solar:case-minimalistic-bold"></iconify-icon> Programs
+        </a>
+        <a routerLink="/why-vc" class="nav-link" (click)="closeMobileMenu()">
+          <iconify-icon icon="solar:star-bold"></iconify-icon> Why VC
+        </a>
+        <a routerLink="/campus-life" class="nav-link" (click)="closeMobileMenu()">
+          <iconify-icon icon="solar:gallery-bold"></iconify-icon> Campus Life
+        </a>
+        <a routerLink="/contact" class="nav-link" (click)="closeMobileMenu()">
+          <iconify-icon icon="solar:letter-bold"></iconify-icon> Contact
+        </a>
+      </div>
+
+      <div class="navbar-actions">
+        <a routerLink="/sign-in" class="portal-btn">
+          <span>Portal Login</span>
+          <iconify-icon icon="solar:alt-arrow-right-bold"></iconify-icon>
+        </a>
+        <button class="hamburger-btn" aria-label="Menu" (click)="toggleMobileMenu()" [class.active]="isMenuOpen">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+      </div>
     </div>
   </div>
 </nav>

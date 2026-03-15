@@ -1,0 +1,137 @@
+<app-branding-header></app-branding-header>
+
+<main class="contact-page">
+  <!-- Hero Section -->
+  <section class="hero-simple">
+    <div class="hero-bg"></div>
+    <div class="flex-container">
+      <div class="hero-content">
+        <span class="eyebrow">Connect With Us</span>
+        <h1>Get in Touch</h1>
+        <p>We're here to answer your questions and help you start your journey at Vision College.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-grid-section">
+    <div class="flex-container">
+      <div class="contact-wrapper">
+        <!-- Contact Info Cards -->
+        <div class="contact-sidebar">
+          <div class="info-card gold-border">
+            <div class="icon-box">
+              <iconify-icon icon="solar:map-point-wave-bold-duotone"></iconify-icon>
+            </div>
+            <div class="info-text">
+              <h3>Visit Our Campus</h3>
+              <p>Beside Imamia Colony, Gojra, Punjab, Pakistan</p>
+              <a href="https://maps.google.com" target="_blank" class="map-link">
+                View on Google Maps <iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon>
+              </a>
+            </div>
+          </div>
+
+          <div class="info-card maroon-card">
+            <div class="icon-box">
+              <iconify-icon icon="solar:phone-calling-bold-duotone"></iconify-icon>
+            </div>
+            <div class="info-text">
+              <h3>Direct Contact</h3>
+              <p>Admissions: +92 307 4800049</p>
+              <p>General: 0307-4800049</p>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="icon-box">
+              <iconify-icon icon="solar:letter-bold-duotone"></iconify-icon>
+            </div>
+            <div class="info-text">
+              <h3>Email Us</h3>
+              <p>visioncollegegojra&#64;gmail.com</p>
+              <p>info&#64;visioncollegegojra.com</p>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="icon-box">
+              <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
+            </div>
+            <div class="info-text">
+              <h3>Office Hours</h3>
+              <p>Monday - Friday: 8:00 AM - 4:00 PM</p>
+              <p>Saturday: 8:00 AM - 1:00 PM</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form-container">
+          <div class="form-header">
+            <h2>Send a Message</h2>
+            <p>Fill out the form below and our admissions team will get back to you within 24 hours.</p>
+          </div>
+
+          <form (submit)="submitForm($event)" class="premium-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" placeholder="John Doe" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="john&#64;example.com" required>
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" placeholder="+92 XXX XXXXXXX" required>
+              </div>
+              <div class="form-group">
+                <label for="subject">Interested Program</label>
+                <select id="subject">
+                  <option value="">Select a Program</option>
+                  <option value="matric">Matriculation</option>
+                  <option value="inter">Intermediate</option>
+                  <option value="undergrad">Undergraduate</option>
+                  <option value="other">Other Inquiry</option>
+                </select>
+              </div>
+              <div class="form-group full-width">
+                <label for="message">Your Message</label>
+                <textarea id="message" rows="5" placeholder="Tell us how we can help you..." required></textarea>
+              </div>
+            </div>
+
+            <button type="submit" class="submit-btn" [disabled]="formSubmitted">
+              <span *ngIf="!formSubmitted">Send Message</span>
+              <span *ngIf="formSubmitted">Message Sent!</span>
+              <iconify-icon icon="solar:paper-plane-bold-duotone" *ngIf="!formSubmitted"></iconify-icon>
+              <iconify-icon icon="solar:check-circle-bold-duotone" *ngIf="formSubmitted"></iconify-icon>
+            </button>
+
+            <div class="success-message" [class.show]="formSubmitted">
+              Thanks for reaching out! We've received your inquiry.
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Google Map Section -->
+  <section class="map-section">
+    <div class="map-container">
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3408.0!2d72.67844!3d31.15545!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3923a1eaaa!2sVision%20College%20Gojra!5e0!3m2!1sen!2spk!4v1710460000000!5m2!1sen!2spk" 
+        width="100%" 
+        height="100%" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </section>
+</main>
+
+<app-branding-footer></app-branding-footer>

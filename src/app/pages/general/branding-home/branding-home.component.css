@@ -5,7 +5,7 @@
   --gold: #f4c430;
   --gold-dark: #d4a017;
   --white: #ffffff;
-  --text-dark: #1a1a1a;
+  --text-dark: #2d2d2d;
   --text-muted: #555555;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
@@ -146,7 +146,7 @@
 }
 
 .nav-link {
-  color: #1a1a1a;
+  color: #2d2d2d;
   text-decoration: none;
   font-weight: 600;
   font-size: 15px;
