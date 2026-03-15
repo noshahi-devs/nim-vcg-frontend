@@ -1255,6 +1255,18 @@ html body .modal-box select {
   transform: translateY(0) scale(0.99);
 }
 
+/* Actions container - move button up */
+.swal2-actions.nim-welcome-actions {
+  margin: 10px 0 26px !important; /* Increased bottom margin to move button up */
+  width: 100% !important;
+  padding: 0 24px !important;
+}
+
+/* Timer progress bar styling */
+.swal2-timer-progress-bar {
+  background: rgba(244, 196, 48, 0.4) !important;
+}
+
 /* Animations */
 @keyframes nimWelcomeBgScroll {
   from { background-position: 0 0; }

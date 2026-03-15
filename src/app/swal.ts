@@ -143,7 +143,9 @@ export const WelcomeAccessPopup = (userName: string, role: string) => {
     buttonsStyling: false,
     allowOutsideClick: false,
     returnFocus: false,
-    focusConfirm: false
+    focusConfirm: false,
+    timer: 6000,
+    timerProgressBar: true
   });
 };
 

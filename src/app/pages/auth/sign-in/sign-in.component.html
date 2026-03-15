@@ -1,18 +1,16 @@
 <div class="auth-wrapper">
-  <div class="fee-card auth-card">
-    <div class="auth-card-left position-relative">
-      <div class="position-absolute" style="top: 24px; left: 24px; z-index: 10;">
-        <img src="assets/images/Vision College emblem design.png" alt="Logo" style="height: 85px; width: 85px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));">
-      </div>
-      <img src="assets/images/auth/auth-img.png" alt="Auth Image">
-    </div>
-
-    <div class="auth-card-right">
-      <div class="max-w-464-px mx-auto w-100 mt-16">
-        <div class="mb-24 text-center">
-          <h1 class="auth-header-title m-0 pb-4" style="font-size: 24px;">Welcome Back</h1>
-          <p class="auth-header-subtitle m-0" style="font-size: 14px;">Enter your details below</p>
+  <!-- Windsurf-style Particle Animation Canvas -->
+  <canvas id="windsurf-canvas" class="windsurf-canvas"></canvas>
+  
+  <div class="premium-auth-card">
+    <div class="auth-card-inner">
+      <div class="auth-header">
+        <div class="auth-logo-wrapper">
+          <img src="assets/images/Vision College emblem design.png" alt="Vision College">
         </div>
+        <h1 class="auth-header-title">Welcome Back</h1>
+        <p class="auth-header-subtitle">Enter your details below</p>
+      </div>
 
         <form [formGroup]="signInForm" (ngSubmit)="submit()">
           <!-- Email -->
@@ -49,10 +47,10 @@
             <div class="form-check style-check d-flex align-items-center m-0">
               <input type="checkbox" class="form-check-input border border-neutral-300" formControlName="remember"
                 id="remember" style="width: 16px; height: 16px; border-radius: 4px; cursor: pointer;">
-              <label class="form-check-label text-sm fw-medium ms-2 cursor-pointer text-secondary-light"
+              <label class="form-check-label text-sm fw-medium ms-2 cursor-pointer text-slate-700"
                 for="remember">Remember me</label>
             </div>
-            <a href="javascript:void(0)" class="text-primary-600 fw-bold text-sm text-decoration-none">Forgot
+            <a href="javascript:void(0)" class="text-maroon fw-bold text-sm text-decoration-none hover-yellow">Forgot
               Password?</a>
           </div>
 
@@ -65,7 +63,6 @@
 
           <!-- Error is handled by SweetAlert now -->
         </form>
-      </div>
     </div>
   </div>
 </div>
