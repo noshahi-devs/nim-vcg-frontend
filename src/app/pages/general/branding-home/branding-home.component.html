@@ -1,57 +1,4 @@
-<section class="topbar">
-  <div class="flex-container">
-    <div class="topbar-left">
-      <a href="mailto:visioncollegegojra@gmail.com">
-        <iconify-icon icon="solar:letter-bold"></iconify-icon> visioncollegegojra&#64;gmail.com
-      </a>
-      <a href="tel:03074800049">
-        <iconify-icon icon="solar:phone-bold"></iconify-icon> 0307-4800049
-      </a>
-    </div>
-    <div class="topbar-right">
-      <div class="social-mini">
-        <a href="https://facebook.com/visioncollegegojra" target="_blank"><iconify-icon
-            icon="brandico:facebook"></iconify-icon></a>
-        <a href="https://instagram.com/visioncollegegojra" target="_blank"><iconify-icon
-            icon="brandico:instagram"></iconify-icon></a>
-        <a href="https://linkedin.com/in/visioncollegegojra" target="_blank"><iconify-icon
-            icon="brandico:linkedin"></iconify-icon></a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<nav class="navbar">
-  <div class="flex-container navbar-container">
-    <a href="#home" class="navbar-logo">
-      <img src="assets/img/vision_logo.png" alt="Vision College Gojra Logo">
-      <div class="logo-text">
-        <span class="college-name">Vision College</span>
-        <span class="college-tagline">Inspiring Minds, Building Futures</span>
-      </div>
-    </a>
-
-    <div class="navbar-links" [class.active]="isMenuOpen">
-      <a href="#home" class="nav-link">Home</a>
-      <a href="#programs" class="nav-link">Programs</a>
-      <a href="#highlights" class="nav-link">Why VC</a>
-      <a href="#campus" class="nav-link">Campus Life</a>
-      <a href="#contact" class="nav-link">Contact</a>
-    </div>
-
-    <div class="navbar-actions">
-      <a routerLink="/sign-in" class="portal-btn">
-        <span>Portal Login</span>
-        <iconify-icon icon="solar:alt-arrow-right-bold"></iconify-icon>
-      </a>
-      <button class="hamburger-btn" aria-label="Menu" (click)="toggleMobileMenu()" [class.active]="isMenuOpen">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </button>
-    </div>
-  </div>
-</nav>
+<app-branding-header></app-branding-header>
 
 <!-- Hero Carousel -->
 <section class="hero-carousel" id="home">
@@ -68,7 +15,7 @@
             <h1 class="slide-title" [innerHTML]="slide.title.split('\n').join('<br>')"></h1>
             <p class="slide-description">{{ slide.description }}</p>
             <div class="slide-actions">
-              <a href="#programs" class="btn-primary">Explore Programs</a>
+              <a routerLink="/programs" class="btn-primary">Explore Programs</a>
               <a href="#contact" class="btn-outline">Plan a Visit</a>
             </div>
           </div>
@@ -607,78 +554,4 @@
   </div>
 </section>
 
-<!-- WhatsApp Floating Button -->
-<a href="https://wa.me/923074800049" target="_blank" class="whatsapp-float" aria-label="Chat on WhatsApp">
-  <iconify-icon icon="logos:whatsapp-icon"></iconify-icon>
-  <span class="wa-tooltip">Chat with us</span>
-</a>
-
-<footer class="footer-premium">
-  <div class="footer-glow"></div>
-  <div class="flex-container">
-    <div class="footer-main-grid">
-      <div class="footer-brand">
-        <img src="assets/img/vision_logo.png" alt="Vision College" class="footer-logo">
-        <p class="brand-desc">Inspiring Minds, Building Futures. The elite educational institution in Gojra for academic
-          and spiritual excellence.</p>
-        <div class="contact-vines">
-          <a href="tel:+923074800049">
-            <iconify-icon icon="solar:phone-bold-duotone"></iconify-icon>
-            +92 307 4800049
-          </a>
-          <a href="mailto:info&#64;visioncollegegojra.com">
-            <iconify-icon icon="solar:letter-bold-duotone"></iconify-icon>
-            info&#64;visioncollegegojra.com
-          </a>
-        </div>
-      </div>
-
-      <div class="footer-links">
-        <h3>Institutional</h3>
-        <a href="#hero">Genesis</a>
-        <a href="#programs">Degree Programs</a>
-        <a href="#gallery">Campus Life</a>
-        <a href="#faculty">Expert Faculty</a>
-      </div>
-
-      <div class="footer-links">
-        <h3>Support</h3>
-        <a href="#">Admission Guide</a>
-        <a href="#">Fee Structure</a>
-        <a href="#">Privacy Policy</a>
-        <a href="#contact">Contact Us</a>
-      </div>
-
-      <div class="footer-newsletter">
-        <h3>Join the Legacy</h3>
-        <p>Subscribe to receive news and event updates.</p>
-        <div class="newsletter-box">
-          <input type="email" placeholder="Your email address">
-          <button><iconify-icon icon="solar:arrow-right-bold"></iconify-icon></button>
-        </div>
-        <div class="footer-social-wrap">
-          <a href="#" class="social-btn" aria-label="Facebook"><iconify-icon icon="ri:facebook-fill"></iconify-icon></a>
-          <a href="#" class="social-btn" aria-label="Instagram"><iconify-icon icon="ri:instagram-fill"></iconify-icon></a>
-          <a href="#" class="social-btn" aria-label="LinkedIn"><iconify-icon icon="ri:linkedin-fill"></iconify-icon></a>
-          <a href="#" class="social-btn" aria-label="YouTube"><iconify-icon icon="ri:youtube-fill"></iconify-icon></a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer-bottom-tier">
-    <div class="copyright">
-      <p>© 2024 Vision College Gojra – Excellence in Education</p>
-    </div>
-    <div class="footer-legal">
-      <a href="#">Terms of Service</a>
-      <span class="sep">|</span>
-      <a href="#">Cookie Policy</a>
-    </div>
-  </div>
-</footer>
-
-<button class="back-to-top" [style.display]="showBackToTop ? 'flex' : 'none'" (click)="scrollToTop()"
-  aria-label="Back to Top">
-  <iconify-icon icon="solar:alt-arrow-up-bold-duotone"></iconify-icon>
-</button>
+<app-branding-footer></app-branding-footer>

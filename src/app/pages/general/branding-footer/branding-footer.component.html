@@ -1,0 +1,75 @@
+<footer class="footer-premium">
+  <div class="footer-glow"></div>
+  <div class="container">
+    <div class="footer-main-grid">
+      <div class="footer-brand">
+        <img src="assets/img/vision_logo.png" alt="Vision College" class="footer-logo">
+        <p class="brand-desc">Inspiring Minds, Building Futures. The elite educational institution in Gojra for academic
+          and spiritual excellence.</p>
+        <div class="contact-vines">
+          <a href="tel:+923074800049">
+            <iconify-icon icon="solar:phone-bold-duotone"></iconify-icon>
+            +92 307 4800049
+          </a>
+          <a href="mailto:info&#64;visioncollegegojra.com">
+            <iconify-icon icon="solar:letter-bold-duotone"></iconify-icon>
+            info&#64;visioncollegegojra.com
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <h3>Institutional</h3>
+        <a routerLink="/vision-college" fragment="hero">Genesis</a>
+        <a routerLink="/programs">Degree Programs</a>
+        <a routerLink="/vision-college" fragment="gallery">Campus Life</a>
+        <a routerLink="/vision-college" fragment="faculty">Expert Faculty</a>
+      </div>
+
+      <div class="footer-links">
+        <h3>Support</h3>
+        <a href="#">Admission Guide</a>
+        <a href="#">Fee Structure</a>
+        <a href="#">Privacy Policy</a>
+        <a routerLink="/vision-college" fragment="contact">Contact Us</a>
+      </div>
+
+      <div class="footer-newsletter">
+        <h3>Join the Legacy</h3>
+        <p>Subscribe to receive news and event updates.</p>
+        <div class="newsletter-box">
+          <input type="email" placeholder="Your email address">
+          <button><iconify-icon icon="solar:arrow-right-bold"></iconify-icon></button>
+        </div>
+        <div class="footer-social-wrap">
+          <a href="#" class="social-btn" aria-label="Facebook"><iconify-icon icon="ri:facebook-fill"></iconify-icon></a>
+          <a href="#" class="social-btn" aria-label="Instagram"><iconify-icon icon="ri:instagram-fill"></iconify-icon></a>
+          <a href="#" class="social-btn" aria-label="LinkedIn"><iconify-icon icon="ri:linkedin-fill"></iconify-icon></a>
+          <a href="#" class="social-btn" aria-label="YouTube"><iconify-icon icon="ri:youtube-fill"></iconify-icon></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom-tier">
+    <div class="copyright">
+      <p>© 2024 Vision College Gojra – Excellence in Education</p>
+    </div>
+    <div class="footer-legal">
+      <a href="#">Terms of Service</a>
+      <span class="sep">|</span>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Shared Sticky Buttons -->
+<a href="https://wa.me/923074800049" target="_blank" class="whatsapp-float" aria-label="Chat on WhatsApp">
+  <iconify-icon icon="logos:whatsapp-icon"></iconify-icon>
+  <span class="wa-tooltip">Chat with us</span>
+</a>
+
+<button class="back-to-top" [style.display]="showBackToTop ? 'flex' : 'none'" (click)="scrollToTop()"
+  aria-label="Back to Top">
+  <iconify-icon icon="solar:alt-arrow-up-bold-duotone"></iconify-icon>
+</button>

@@ -1,0 +1,99 @@
+<app-branding-header></app-branding-header>
+
+<div class="programs-page">
+  <!-- Hero Section -->
+  <section class="programs-hero">
+    <div class="hero-overlay"></div>
+    <div class="container">
+      <div class="hero-content">
+        <span class="badge fade-in">Global Standard Education</span>
+        <h1 class="fade-up">Academic Programs at <br><span class="highlight">Vision College</span></h1>
+        <p class="fade-up-delay">Designed to ignite curiosity, drive excellence, and prepare you for a prestigious career.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter Section -->
+  <section class="filter-section">
+    <div class="container">
+      <div class="filter-tabs">
+        <button [class.active]="currentCategory === 'all'" (click)="setCategory('all')">All Programs</button>
+        <button [class.active]="currentCategory === 'matric'" (click)="setCategory('matric')">Matriculation</button>
+        <button [class.active]="currentCategory === 'inter'" (click)="setCategory('inter')">Intermediate</button>
+        <button [class.active]="currentCategory === 'undergrad'" (click)="setCategory('undergrad')">Undergraduate</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Programs Grid -->
+  <section class="programs-grid-section">
+    <div class="container">
+      <div class="programs-grid">
+        <article *ngFor="let program of filteredPrograms; let i = index" 
+                 class="program-detail-card" 
+                 [id]="program.id"
+                 [style.animationDelay]="(i * 0.1) + 's'">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="icon-wrap">
+                <iconify-icon [icon]="program.icon"></iconify-icon>
+              </div>
+              <div class="card-content">
+                <span class="program-type">{{ program.subtitle }}</span>
+                <h2>{{ program.title }}</h2>
+                <p>{{ program.description }}</p>
+                
+                <div class="feature-tags">
+                  <span *ngFor="let feat of program.features.slice(0, 2)" class="tag">{{ feat }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-overlay">
+              <h3>Key Learning Paths</h3>
+              <ul>
+                <li *ngFor="let feature of program.features">
+                  <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
+                  {{ feature }}
+                </li>
+              </ul>
+              <a routerLink="/sign-up" class="apply-btn">Apply Now</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Faculty Quote / Highlight -->
+  <section class="quote-section">
+    <div class="container">
+      <div class="quote-card">
+        <div class="quote-icon">“</div>
+        <p>Education is not merely the transmission of knowledge; it is the ignition of potential. At Vision College, we transform potential into professional excellence.</p>
+        <div class="quote-author">
+          <strong>Dr. Shagufta</strong>
+          <span>Director of Academics</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick CTA -->
+  <section class="programs-cta">
+    <div class="container">
+      <div class="cta-banner">
+        <h2>Unsure which path to choose?</h2>
+        <p>Our academic advisors are ready to help you map your future.</p>
+        <div class="cta-btns">
+          <a href="https://wa.me/923074800049" target="_blank" class="btn primary">
+            <iconify-icon icon="logos:whatsapp-icon"></iconify-icon>
+            Talk to an Advisor
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<app-branding-footer></app-branding-footer>

@@ -85,7 +85,7 @@ export const WavyAlert = (title: string, message: string, type: 'error' | 'succe
       // Enhanced animations for custom buttons
       const retryBtn = popup.querySelector('.btn-retry-wavy') as HTMLElement;
       const closeBtn = popup.querySelector('.btn-close-wavy') as HTMLElement;
-      
+
       if (retryBtn) {
         retryBtn.style.background = `linear-gradient(135deg, ${color} 0%, ${lightColor} 100%)`;
         retryBtn.style.boxShadow = `0 8px 25px ${color}40`;
@@ -93,7 +93,7 @@ export const WavyAlert = (title: string, message: string, type: 'error' | 'succe
           SweetAlert.clickConfirm();
         });
       }
-      
+
       if (closeBtn) {
         closeBtn.style.color = color;
         closeBtn.style.borderColor = color;
@@ -157,4 +157,3 @@ export const WelcomeAccessPopup = (userName: string, role: string) => {
 };
 
 export default SweetAlert;
-  

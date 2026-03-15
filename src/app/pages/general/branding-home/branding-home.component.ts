@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { BrandingHeaderComponent } from '../branding-header/branding-header.component';
+import { BrandingFooterComponent } from '../branding-footer/branding-footer.component';
 
 @Component({
   selector: 'app-branding-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, BrandingHeaderComponent, BrandingFooterComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './branding-home.component.html',
   styleUrls: ['./branding-home.component.css']

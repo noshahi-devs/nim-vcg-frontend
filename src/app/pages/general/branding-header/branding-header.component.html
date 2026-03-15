@@ -1,0 +1,54 @@
+<section class="topbar">
+  <div class="flex-container">
+    <div class="topbar-left">
+      <a href="mailto:visioncollegegojra@gmail.com">
+        <iconify-icon icon="solar:letter-bold"></iconify-icon> visioncollegegojra&#64;gmail.com
+      </a>
+      <a href="tel:03074800049">
+        <iconify-icon icon="solar:phone-bold"></iconify-icon> 0307-4800049
+      </a>
+    </div>
+    <div class="topbar-right">
+      <div class="social-mini">
+        <a href="https://facebook.com/visioncollegegojra" target="_blank"><iconify-icon
+            icon="brandico:facebook"></iconify-icon></a>
+        <a href="https://instagram.com/visioncollegegojra" target="_blank"><iconify-icon
+            icon="brandico:instagram"></iconify-icon></a>
+        <a href="https://linkedin.com/in/visioncollegegojra" target="_blank"><iconify-icon
+            icon="brandico:linkedin"></iconify-icon></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="navbar">
+  <div class="flex-container navbar-container">
+    <a routerLink="/vision-college" class="navbar-logo">
+      <img src="assets/img/vision_logo.png" alt="Vision College Gojra Logo">
+      <div class="logo-text">
+        <span class="college-name">Vision College</span>
+        <span class="college-tagline">Inspiring Minds, Building Futures</span>
+      </div>
+    </a>
+
+    <div class="navbar-links" [class.active]="isMenuOpen">
+      <a routerLink="/vision-college" class="nav-link" (click)="closeMobileMenu()">Home</a>
+      <a routerLink="/programs" class="nav-link" (click)="closeMobileMenu()">Programs</a>
+      <a routerLink="/vision-college" fragment="highlights" class="nav-link" (click)="closeMobileMenu()">Why VC</a>
+      <a routerLink="/vision-college" fragment="campus" class="nav-link" (click)="closeMobileMenu()">Campus Life</a>
+      <a routerLink="/vision-college" fragment="contact" class="nav-link" (click)="closeMobileMenu()">Contact</a>
+    </div>
+
+    <div class="navbar-actions">
+      <a routerLink="/sign-in" class="portal-btn">
+        <span>Portal Login</span>
+        <iconify-icon icon="solar:alt-arrow-right-bold"></iconify-icon>
+      </a>
+      <button class="hamburger-btn" aria-label="Menu" (click)="toggleMobileMenu()" [class.active]="isMenuOpen">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+    </div>
+  </div>
+</nav>
