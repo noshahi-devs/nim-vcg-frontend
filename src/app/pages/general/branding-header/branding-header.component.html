@@ -21,7 +21,7 @@
   </div>
 </section>
 
-<nav class="navbar">
+<nav class="navbar" [class.is-sticky]="isSticky">
   <div class="flex-container navbar-container">
     <a routerLink="/vision-college" class="navbar-logo">
       <img src="assets/img/vision_logo.png" alt="Vision College Gojra Logo">
@@ -31,12 +31,26 @@
       </div>
     </a>
 
+    <div class="nav-backdrop" [class.active]="isMenuOpen" (click)="closeMobileMenu()"></div>
     <div class="navbar-links" [class.active]="isMenuOpen">
-      <a routerLink="/vision-college" class="nav-link" (click)="closeMobileMenu()">Home</a>
-      <a routerLink="/programs" class="nav-link" (click)="closeMobileMenu()">Programs</a>
-      <a routerLink="/vision-college" fragment="highlights" class="nav-link" (click)="closeMobileMenu()">Why VC</a>
-      <a routerLink="/vision-college" fragment="campus" class="nav-link" (click)="closeMobileMenu()">Campus Life</a>
-      <a routerLink="/vision-college" fragment="contact" class="nav-link" (click)="closeMobileMenu()">Contact</a>
+      <button class="close-drawer" aria-label="Close Menu" (click)="closeMobileMenu()">
+        <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+      </button>
+      <a routerLink="/vision-college" class="nav-link" (click)="closeMobileMenu()">
+        <iconify-icon icon="solar:home-2-bold"></iconify-icon> Home
+      </a>
+      <a routerLink="/programs" class="nav-link" (click)="closeMobileMenu()">
+        <iconify-icon icon="solar:case-minimalistic-bold"></iconify-icon> Programs
+      </a>
+      <a routerLink="/why-vc" class="nav-link" (click)="closeMobileMenu()">
+        <iconify-icon icon="solar:star-bold"></iconify-icon> Why VC
+      </a>
+      <a routerLink="/vision-college" fragment="gallery" class="nav-link" (click)="closeMobileMenu()">
+        <iconify-icon icon="solar:gallery-bold"></iconify-icon> Campus Life
+      </a>
+      <a routerLink="/vision-college" fragment="contact" class="nav-link" (click)="closeMobileMenu()">
+        <iconify-icon icon="solar:letter-bold"></iconify-icon> Contact
+      </a>
     </div>
 
     <div class="navbar-actions">

@@ -604,6 +604,17 @@
   transform: scale(1.1);
 }
 
+@media (max-width: 768px) {
+  .carousel-nav {
+    display: none !important;
+  }
+  .nav-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+}
+
 .carousel-dots {
   position: absolute;
   bottom: 40px;
@@ -913,56 +924,80 @@
 
 @media (max-width: 991px) {
   .hero-carousel {
-    height: auto;
-    padding: 100px 0;
+    height: 100vh !important;
+    min-height: 560px; /* Reduced min-height */
+    padding: 0;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 40px; /* Even higher than 60px */
   }
 
   .carousel-slide {
-    position: relative;
-    display: block;
-    height: auto;
+    position: absolute;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
   }
 
   .slide-grid {
     grid-template-columns: 1fr;
     text-align: center;
-    gap: 50px;
+    gap: 15px; /* Tighter gap */
+    transform: none;
+    padding: 0 15px;
+    width: 100%;
   }
 
   .slide-content {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .slide-title {
+    font-size: 26px !important;
+    margin-bottom: 20px !important;
+    max-width: 100% !important;
+    line-height: 1.2 !important;
   }
 
   .slide-description {
-    margin: 0 auto 40px;
+    font-size: 15px;
+    margin: 0 auto 30px;
+    max-width: 100%;
+    line-height: 1.5;
   }
 
   .slide-actions {
     justify-content: center;
+    width: 100%;
+    flex-direction: column;
+    gap: 12px;
   }
 
+  .btn-primary, .btn-outline {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 15px;
+  }
+
+  /* Hide complex orbit system on mobile for performance/clarity */
   .slide-visual {
-    transform: none !important;
-    opacity: 1;
-    animation: none;
-    padding-top: 40px;
-  }
-
-  .interactive-card {
-    margin: 0 auto;
-    max-width: 320px;
+    display: none !important;
   }
 
   .navbar-links {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 300px;
+    width: 280px;
     height: 100vh;
     background-color: #ffffff;
     flex-direction: column;
-    padding: 100px 40px;
+    padding: 100px 30px;
     box-shadow: -10px 0 40px rgba(0, 0, 0, 0.1);
     transition: 0.4s;
     z-index: 1001;
@@ -982,8 +1017,8 @@
 
   .portal-btn {
     padding: 0;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     justify-content: center;
     border-radius: 50%;
   }
@@ -995,24 +1030,36 @@
   }
 
   .navbar-logo img {
-    height: 45px;
+    height: 40px;
   }
 
   .college-name {
-    font-size: 18px;
+    font-size: 16px;
   }
 
-  .slide-title {
-    font-size: 32px;
-  }
-
-  .carousel-nav {
-    display: none;
+  .college-tagline {
+    font-size: 9px;
   }
 
   .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 30px;
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+
+  .highlight-grid {
+    grid-template-columns: 1fr !important;
+    gap: 25px !important;
+  }
+
+  .pillar-card {
+    padding: 40px 30px;
+    min-height: auto;
+    text-align: center;
+  }
+
+  .program-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
   }
 }
 
@@ -1073,13 +1120,20 @@
 
 .program-grid {
   display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 30px !important;
-  max-width: 1200px !important; /* Slightly narrower grid */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 1200px;
   width: 100%;
-  margin: 30px auto 0 !important; /* Re-introduced gap */
+  margin: 30px auto 0;
   position: relative;
   z-index: 2;
+}
+
+@media (max-width: 991px) {
+  .program-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
 }
 
 .program-card {
@@ -1410,9 +1464,21 @@
 .staff-grid {
   display: flex !important;
   justify-content: center;
-  gap: 40px; /* Reduced from 50px */
+  gap: 30px;
   padding: 20px 0;
   width: 100%;
+}
+
+@media (max-width: 991px) {
+  .staff-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .staff-card {
+    width: 100%;
+    max-width: 300px;
+  }
 }
 
 .staff-card {
@@ -1837,11 +1903,56 @@
   .impact-content-grid {
     grid-template-columns: 1fr;
     gap: 40px;
+    text-align: center;
+  }
+
+  .impact-stats-mini {
+    justify-content: center;
+    flex-wrap: wrap;
   }
   
   .gallery-wrapper {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: auto;
+  }
+
+  .floating-badge {
+    right: 20px;
+    padding: 15px 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .gallery-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-item.large {
+    grid-column: span 1;
+  }
+
+  .cta-actions {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  .cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cta-content h2 {
+    font-size: 26px;
+  }
+
+  .hero-carousel {
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .slide-bg {
+    opacity: 0.7; /* Slightly darker for better text readability on small screens */
   }
 }
 

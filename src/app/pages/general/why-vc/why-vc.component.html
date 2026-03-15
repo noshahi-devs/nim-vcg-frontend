@@ -1,0 +1,127 @@
+<app-branding-header></app-branding-header>
+
+<main class="why-vc-page">
+  <!-- Hero Section -->
+  <section class="hero-simple">
+    <div class="hero-bg"></div>
+    <div class="flex-container">
+      <div class="hero-content">
+        <span class="eyebrow">Excellence Defined</span>
+        <h1>Why Vision College?</h1>
+        <p>Discover the pillars of our institution and why we are the top choice for students in Gojra.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Values Grid -->
+  <section class="section values-grid">
+    <div class="flex-container">
+      <div class="section-heading centered">
+        <p class="section-subtitle">Our Foundation</p>
+        <h2 class="premium-title">The Values That Drive Us Forward</h2>
+      </div>
+      
+      <div class="premium-grid">
+        <div class="value-card" *ngFor="let value of coreValues">
+          <div class="card-icon">
+            <iconify-icon [icon]="value.icon"></iconify-icon>
+          </div>
+          <h3>{{ value.title }}</h3>
+          <p>{{ value.description }}</p>
+          <div class="card-glow"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Section -->
+  <section class="section impact-premium">
+    <div class="spiritual-aura" style="opacity: 0.05; right: 0;"></div>
+    <div class="flex-container">
+      <div class="impact-content-grid">
+        <div class="impact-text">
+          <p class="section-subtitle">Academic Impact</p>
+          <h2 class="premium-title">A Legacy of High Benchmark Results</h2>
+          <p class="description">
+            Vision College isn't just about classrooms; it's about measurable results. Year after year, our students break records in board examinations and secure admissions in the most prestigious universities across Pakistan.
+          </p>
+          
+          <div class="stats-mini-grid">
+            <div class="stat-box">
+              <span class="num">{{ stats.results }}</span>
+              <span class="label">Board Success</span>
+            </div>
+            <div class="stat-box">
+              <span class="num">{{ stats.scholarships }}</span>
+              <span class="label">Scholarships</span>
+            </div>
+          </div>
+        </div>
+        <div class="impact-visual">
+          <div class="visual-stack">
+            <div class="main-visual">
+              <img src="assets/img/Campus.jpeg" alt="Vision Campus">
+            </div>
+            <div class="floating-badge">
+              <iconify-icon icon="solar:medal-ribbon-bold-duotone"></iconify-icon>
+              <span>Ranked #1 in Gojra</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="section dual-features">
+    <div class="flex-container">
+      <div class="feature-row">
+        <div class="feature-img">
+          <img src="assets/img/Campus1.jpeg" alt="Advanced Facilities">
+        </div>
+        <div class="feature-text">
+          <span class="tag">Facilities</span>
+          <h2>World-Class Infrastructure</h2>
+          <p>From digital libraries to state-of-the-art science labs, we provide the tools every student needs to thrive in a competitive world.</p>
+          <ul class="feature-list">
+            <li><iconify-icon icon="solar:check-circle-bold"></iconify-icon> High-speed Campus Wi-Fi</li>
+            <li><iconify-icon icon="solar:check-circle-bold"></iconify-icon> Modern Multimedia Classrooms</li>
+            <li><iconify-icon icon="solar:check-circle-bold"></iconify-icon> Dedicated Sports Complex</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-row reverse">
+        <div class="feature-img">
+          <img src="assets/img/Campus3.jpeg" alt="Expert Faculty">
+        </div>
+        <div class="feature-text">
+          <span class="tag">Faculty</span>
+          <h2>Guided by the Best</h2>
+          <p>Our teachers are more than educators; they are mentors. With years of experience, they provide personalized attention to every student.</p>
+          <ul class="feature-list">
+            <li><iconify-icon icon="solar:check-circle-bold"></iconify-icon> Expert Industry Professionals</li>
+            <li><iconify-icon icon="solar:check-circle-bold"></iconify-icon> 1:15 Teacher-Student Ratio</li>
+            <li><iconify-icon icon="solar:check-circle-bold"></iconify-icon> 24/7 Academic Support</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-banner">
+    <div class="flex-container">
+      <div class="cta-inner">
+        <h2>Start Your Journey Today</h2>
+        <p>Join the thousands of successful graduates who started their journey at Vision College.</p>
+        <div class="cta-btns">
+          <a routerLink="/programs" class="btn-primary">View Programs</a>
+          <a routerLink="/sign-up" class="btn-secondary">Apply Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-branding-footer></app-branding-footer>

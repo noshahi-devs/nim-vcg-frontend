@@ -3,6 +3,7 @@ import { AuthGuard } from './SecurityModels/auth.guard';
 
 export const routes: Routes = [
   { path: 'vision-college', loadComponent: () => import('./pages/general/branding-home/branding-home.component').then(m => m.BrandingHomeComponent) },
+  { path: 'why-vc', loadComponent: () => import('./pages/general/why-vc/why-vc.component').then(m => m.WhyVcComponent) },
   { path: 'programs', loadComponent: () => import('./pages/general/programs/programs.component').then(m => m.ProgramsComponent) },
   { path: '', redirectTo: 'vision-college', pathMatch: 'full' },
   { path: 'home', redirectTo: 'vision-college', pathMatch: 'full' },

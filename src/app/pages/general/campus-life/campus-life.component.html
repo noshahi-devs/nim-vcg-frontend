@@ -1,0 +1,114 @@
+<app-branding-header></app-branding-header>
+
+<main class="campus-life-page">
+  <!-- Interactive Hero -->
+  <section class="hero-campus">
+    <div class="hero-overlay"></div>
+    <div class="flex-container">
+      <div class="hero-content">
+        <span class="badge">Vibrant Lifestyle</span>
+        <h1>Life at Vision College</h1>
+        <p>A perfect balance of academic excellence, extracurricular joy, and community spirit.</p>
+        <div class="hero-actions">
+          <a href="#activities" class="btn-primary">Explore Activities</a>
+          <a href="#gallery" class="btn-outline">View Gallery</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Activities Section -->
+  <section class="section activities" id="activities">
+    <div class="flex-container">
+      <div class="section-heading centered">
+        <p class="section-subtitle">Beyond the Books</p>
+        <h2 class="premium-title">Dynamic Student Experiences</h2>
+      </div>
+
+      <div class="activities-grid">
+        <div class="activity-card" *ngFor="let activity of activities">
+          <div class="activity-icon">
+            <iconify-icon [icon]="activity.icon"></iconify-icon>
+          </div>
+          <div class="activity-info">
+            <h3>{{ activity.title }}</h3>
+            <p>{{ activity.description }}</p>
+          </div>
+          <div class="card-glow"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Facilities Spotlight -->
+  <section class="section facilities-spotlight">
+    <div class="flex-container">
+      <div class="spotlight-grid">
+        <div class="spotlight-text">
+          <span class="tag">The Hub</span>
+          <h2>A Campus Built for You</h2>
+          <p>Our campus is designed to inspire. From green spaces that offer tranquility to high-tech hubs that drive innovation, every corner exists to support your growth.</p>
+          <div class="feature-bullets">
+            <div class="bullet">
+              <iconify-icon icon="solar:shield-check-bold"></iconify-icon>
+              <span>Safe & Secure Environment</span>
+            </div>
+            <div class="bullet">
+              <iconify-icon icon="solar:globus-bold"></iconify-icon>
+              <span>Smart Campus Connectivity</span>
+            </div>
+            <div class="bullet">
+              <iconify-icon icon="solar:users-group-rounded-bold"></iconify-icon>
+              <span>Inclusive Student Clubs</span>
+            </div>
+          </div>
+        </div>
+        <div class="spotlight-visual">
+          <div class="visual-stack">
+            <img src="assets/img/Campus4.jpeg" alt="Library View" class="main-img">
+            <div class="floating-stat">
+              <span class="num">24/7</span>
+              <span class="label">Access to Resources</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section class="section gallery" id="gallery">
+    <div class="flex-container">
+      <div class="section-heading centered">
+        <p class="section-subtitle">Moments in Vision</p>
+        <h2 class="premium-title">Our Vibrant Campus Gallery</h2>
+      </div>
+
+      <div class="gallery-masonry">
+        <div class="gallery-item" *ngFor="let item of galleryItems; let i = index" [class.wide]="i === 0 || i === 5">
+          <img [src]="item.image" [alt]="item.title">
+          <div class="item-overlay">
+            <span class="category">{{ item.category }}</span>
+            <h3>{{ item.title }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="flex-container">
+      <div class="cta-box">
+        <h2>Experience it for yourself</h2>
+        <p>Book a campus tour today and feel the energy of Vision College Gojra.</p>
+        <div class="cta-btns">
+          <a routerLink="/sign-up" class="btn-solid">Join the Community</a>
+          <a href="mailto:info&#64;visioncollegegojra.com" class="btn-ghost">Schedule a Visit</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-branding-footer></app-branding-footer>
