@@ -3,7 +3,8 @@
 ======================== */
 .auth-wrapper {
     min-height: 100vh;
-    background: #020617; /* Very dark background */
+    background: #020617;
+    /* Very dark background */
     padding: 16px;
     display: flex;
     align-items: center;
@@ -26,13 +27,14 @@
 .premium-auth-card {
     max-width: 480px;
     width: 95%;
-    background: rgba(255, 255, 255, 0.95); /* High-quality white background */
+    background: rgba(255, 255, 255, 0.95);
+    /* High-quality white background */
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 32px;
     padding: 40px 32px;
-    box-shadow: 
+    box-shadow:
         0 25px 50px -12px rgba(0, 0, 0, 0.6),
         0 10px 20px -5px rgba(0, 0, 0, 0.3);
     position: relative;
@@ -74,7 +76,8 @@
 .field-label {
     font-size: 13px;
     font-weight: 700;
-    color: #1e293b; /* High-contrast dark label */
+    color: #1e293b;
+    /* High-contrast dark label */
     margin-bottom: 6px;
     letter-spacing: 0.01em;
 }
@@ -89,7 +92,8 @@
     top: 50%;
     left: 14px;
     transform: translateY(-50%);
-    color: #F4C430; /* Golden Yellow icons as requested */
+    color: #F4C430;
+    /* Golden Yellow icons as requested */
     font-size: 20px;
     z-index: 2;
     pointer-events: none;
@@ -102,7 +106,8 @@
     border-radius: 12px;
     padding: 12px 14px 12px 48px;
     font-size: 14px;
-    color: #0f172a; /* Dark text for light card */
+    color: #0f172a;
+    /* Dark text for light card */
     background: #f8fafc;
     outline: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -113,12 +118,13 @@
 }
 
 .field-input:focus {
-    border-color: #800000; /* Institutional Maroon on focus */
+    border-color: #800000;
+    /* Institutional Maroon on focus */
     background: #ffffff;
     box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
 }
 
-.field-input:focus + .icon {
+.field-input:focus+.icon {
     transform: translateY(-50%) scale(1.1);
 }
 
@@ -150,7 +156,10 @@
 .btn-primary-gradient::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: linear-gradient(135deg, #F4C430, #FDE68A);
     z-index: -1;
     opacity: 0;
@@ -180,13 +189,15 @@
     margin-bottom: 2px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    text-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    text-align: center; /* Centered as requested */
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    /* Centered as requested */
 }
 
 .auth-header-subtitle {
     font-size: 13px;
-    color: #475569; /* Darker subtitle for light card */
+    color: #475569;
+    /* Darker subtitle for light card */
     margin-bottom: 24px;
     text-align: center;
 }
@@ -197,7 +208,8 @@
     right: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b8; /* Professional gray for toggle */
+    color: #94a3b8;
+    /* Professional gray for toggle */
     cursor: pointer;
     font-size: 20px;
     transition: all 0.2s ease;
@@ -228,4 +240,3 @@
         font-size: 20px !important;
     }
 }
-

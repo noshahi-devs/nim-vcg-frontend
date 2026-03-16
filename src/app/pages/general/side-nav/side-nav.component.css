@@ -199,8 +199,13 @@
 
 :host ::ng-deep .sidebar-menu li a:hover {
     background: var(--sidebar-hover);
-    color: #ffffff;
+    color: #F4C430 !important;
     transform: translateX(2px);
+}
+
+:host ::ng-deep .sidebar-menu li a:hover i,
+:host ::ng-deep .sidebar-menu li a:hover iconify-icon {
+    color: #F4C430 !important;
 }
 
 :host ::ng-deep .sidebar-menu li a .menu-icon,
@@ -252,17 +257,25 @@
     font-size: 0.82rem;
     font-weight: 500;
     color: var(--sidebar-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+:host ::ng-deep .sidebar-menu .sidebar-submenu li a i.circle-icon {
+    color: #F4C430 !important;
+    font-size: 8px;
 }
 
 :host ::ng-deep .sidebar-menu .sidebar-submenu li a:hover {
     background: rgba(255, 255, 255, 0.16);
-    color: #ffffff;
+    color: #F4C430;
 }
 
 :host ::ng-deep .sidebar-menu .sidebar-submenu li.active-page a,
 :host ::ng-deep .sidebar-menu .sidebar-submenu li a.active-page {
     background: rgba(255, 255, 255, 0.24);
-    color: #ffffff;
+    color: #F4C430;
     font-weight: 600;
 }
 
@@ -352,9 +365,9 @@
 }
 
 :host ::ng-deep .navbar-header {
-    background: var(--auth-primary) !important;
-    border-bottom: 1px solid var(--sidebar-border) !important;
-    box-shadow: 0 10px 24px rgba(128, 0, 0, 0.2);
+    background: #ffffff !important; /* Pure White */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
     transition: padding var(--layout-collapse-motion), box-shadow 240ms ease, border-color 240ms ease;
     position: sticky !important;
     top: 0 !important;
@@ -451,23 +464,26 @@
 }
 
 :host ::ng-deep .navbar-search input {
-    background: rgba(255, 255, 255, 0.16);
-    border: 1px solid var(--header-chip-border);
-    color: #ffffff;
+    background: #ffffff;
+    border: 1px solid rgba(128, 0, 0, 0.12); /* Subtle Maroon tint */
+    color: #1e293b;
+    border-radius: 12px;
+    outline: none !important;
+    transition: all 0.2s ease;
 }
 
 :host ::ng-deep .navbar-search input::placeholder {
-    color: rgba(255, 255, 255, 0.82);
+    color: #94a3b8;
 }
 
 :host ::ng-deep .navbar-search .icon {
-    color: rgba(255, 255, 255, 0.95);
+    color: #F4C430; /* Golden Yellow */
 }
 
 :host ::ng-deep .navbar-search input:focus {
-    background: rgba(255, 255, 255, 0.24);
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+    background: #ffffff;
+    border-color: #F4C430; /* Golden Yellow border on focus */
+    box-shadow: 0 0 0 4px rgba(244, 196, 48, 0.15); /* Yellow glow */
 }
 
 /* Fix mobile crowding */
@@ -496,9 +512,9 @@
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    border: 1px solid var(--header-chip-border);
-    background: var(--header-chip-bg);
-    color: #ffffff;
+    border: 1px solid rgba(244, 196, 48, 0.4); /* Yellow tint border */
+    background: rgba(244, 196, 48, 0.05); /* Very light yellow background */
+    color: #F4C430; /* Golden Yellow Icon */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -555,27 +571,43 @@
 }
 
 :host ::ng-deep .navbar-header [data-theme-toggle] {
-    background: var(--header-chip-bg) !important;
-    border: 1px solid var(--header-chip-border) !important;
+    background: rgba(244, 196, 48, 0.06) !important;
+    border: 1px solid transparent !important;
 }
 
 :host ::ng-deep .navbar-header [data-theme-toggle]::after {
-    color: #ffffff !important;
+    color: #F4C430 !important; /* Golden Yellow */
 }
 
 :host ::ng-deep .navbar-header [data-theme-toggle]:hover {
-    background: #ffffff !important;
+    background: #F4C430 !important;
 }
 
 :host ::ng-deep .navbar-header [data-theme-toggle]:hover::after {
-    color: var(--auth-indigo-deep) !important;
+    color: #800000 !important; /* Maroon toggle icon on yellow hover */
 }
 
 :host ::ng-deep .navbar-header .has-indicator {
-    background: var(--header-chip-bg) !important;
-    border: 1px solid var(--header-chip-border);
+    background: rgba(244, 196, 48, 0.06) !important;
+    border: 1px solid transparent;
 }
 
 :host ::ng-deep .navbar-header .has-indicator iconify-icon {
+    color: #F4C430 !important; /* Golden Yellow */
+}
+
+:host ::ng-deep .navbar-header .has-indicator:hover {
+    background: #800000 !important; /* Hover stays Maroon or goes Yellow? Maroon feels more premium for background */
+}
+
+:host ::ng-deep .navbar-header .has-indicator:hover iconify-icon {
+    color: #ffffff !important;
+}
+
+:host ::ng-deep .navbar-header .has-indicator:hover {
+    background: #800000 !important;
+}
+
+:host ::ng-deep .navbar-header .has-indicator:hover iconify-icon {
     color: #ffffff !important;
 }

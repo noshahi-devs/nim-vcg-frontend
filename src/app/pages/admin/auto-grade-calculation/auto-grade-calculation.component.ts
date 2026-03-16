@@ -206,9 +206,21 @@ export class AutoGradeCalculationComponent implements OnInit {
       return;
     }
 
+    Swal.fire({
+      title: 'Saving Grade Scale...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     if (this.isEditMode && this.gradeScaleForm.gradeId) {
       this.examService.updateGradeScale(this.gradeScaleForm.gradeId, this.gradeScaleForm).subscribe({
         next: (res) => {
+          Swal.close();
           const index = this.gradeScales.findIndex(g => g.gradeId === this.gradeScaleForm.gradeId);
           if (index !== -1) {
             this.gradeScales[index] = { ...res };
@@ -224,6 +236,7 @@ export class AutoGradeCalculationComponent implements OnInit {
           });
         },
         error: (err) => {
+          Swal.close();
           console.error('Update failed:', err);
           Swal.fire({
             icon: 'error',
@@ -235,6 +248,7 @@ export class AutoGradeCalculationComponent implements OnInit {
     } else {
       this.examService.addGradeScale(this.gradeScaleForm).subscribe({
         next: (res) => {
+          Swal.close();
           this.gradeScales.push(res);
           this.filteredGradeScales = [...this.gradeScales];
           this.updatePagination();
@@ -247,6 +261,7 @@ export class AutoGradeCalculationComponent implements OnInit {
           });
         },
         error: (err) => {
+          Swal.close();
           console.error('Add failed:', err);
           Swal.fire({
             icon: 'error',

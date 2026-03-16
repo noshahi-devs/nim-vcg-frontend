@@ -96,6 +96,17 @@ export class SubjectAddComponent implements OnInit {
 
     if (!confirmResult.isConfirmed) return;
 
+    Swal.fire({
+      title: 'Saving Subjects...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     // Save subjects to API
     const saveObservables = this.subjects.map(sub => {
       sub.standardId = this.selectedClassId!;
@@ -105,10 +116,14 @@ export class SubjectAddComponent implements OnInit {
     // Execute all API calls
     Promise.all(saveObservables.map(obs => obs.toPromise()))
       .then(() => {
+        Swal.close();
         Swal.fire('Success', 'Subjects saved successfully!', 'success');
         this.router.navigate(['/subject-list']);
       })
-      .catch(() => Swal.fire('Error', 'Failed to save subjects', 'error'));
+      .catch(() => {
+        Swal.close();
+        Swal.fire('Error', 'Failed to save subjects', 'error');
+      });
   }
 }
 

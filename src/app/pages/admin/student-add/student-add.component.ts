@@ -109,6 +109,10 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     // Initialize date strings for input binding (YYYY-MM-DD)
     this.studentDOBStr = (this.newStudent.studentDOB as any).toISOString().split('T')[0];
     this.admissionDateStr = (this.newStudent.admissionDate as any).toISOString().split('T')[0];
+
+    // Explicitly clear email/password to prevent some browser autofills on load
+    this.newStudent.studentEmail = '';
+    this.newStudent.studentPassword = '';
   }
 
   loadClasses() {
@@ -179,10 +183,62 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     form.form.markAllAsTouched();
 
     if (form.invalid) {
-      this.showPopup('validationModal');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Form',
+        text: 'Please fill in all required fields correctly.',
+        confirmButtonColor: '#800020'
+      });
       return;
     }
 
+    Swal.fire({
+      title: 'Creating Student...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    if (this.newStudent.studentEmail) {
+
+      this.studentService.CheckEmail(this.newStudent.studentEmail).subscribe({
+        next: (res) => {
+          if (res.exists) {
+            Swal.close();
+            Swal.fire({
+              title: 'Email Already Exists!',
+              text: `The email address "${this.newStudent.studentEmail}" is already registered. Please use a different one.`,
+              icon: 'warning',
+              confirmButtonText: 'OK',
+              customClass: {
+                popup: 'nim-swal-popup',
+                title: 'nim-swal-title',
+                htmlContainer: 'nim-swal-text',
+                confirmButton: 'nim-swal-btn nim-swal-confirm'
+              }
+            });
+            this.newStudent.studentEmail = '';
+            this.newStudent.studentPassword = '';
+          } else {
+            this.saveStudentData();
+          }
+        },
+        error: (err) => {
+          console.error('Error checking email', err);
+          Swal.close();
+          Swal.fire('Error', 'Unable to validate email at this time.', 'error');
+        }
+      });
+    } else {
+      this.saveStudentData();
+    }
+  }
+
+  private saveStudentData(): void {
     // Prepare payload exactly for backend
     const studentToSave: any = {
       studentId: this.newStudent.studentId,
@@ -222,28 +278,22 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
       imagePath: this.newStudent.imageUpload.getBase64 || null
     };
 
-
-
-    // Set image data correctly for backend
-
     console.log('Payload to API:', studentToSave); // optional debug
 
     this.studentService.SaveStudent(studentToSave).subscribe({
       next: () => {
-        this.showPopup('successModal');
-
-        setTimeout(() => {
-          const modalEl = document.getElementById('successModal');
-          const modal = bootstrap.Modal.getInstance(modalEl);
-          if (modal) modal.hide();
-
-          document.querySelectorAll('.modal-backdrop')
-            .forEach(b => b.remove());
-
+        Swal.close();
+        Swal.fire({
+          icon: 'success',
+          title: 'Student Enrolled Successfully!',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
           this.router.navigate(['/student-list']);
-        }, 1200);
+        });
       },
       error: err => {
+        Swal.close();
         console.error('Error while saving student', err);
         const errorMsg = err.error && typeof err.error === 'string'
           ? err.error

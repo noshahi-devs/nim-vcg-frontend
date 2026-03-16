@@ -223,6 +223,17 @@ export class SalarySlipComponent implements OnInit {
       return;
     }
 
+    Swal.fire({
+      title: 'Saving Salary...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     const newSalary: StaffSalary = {
       staffSalaryId: 0,
       staffName: this.staffName,
@@ -260,6 +271,7 @@ export class SalarySlipComponent implements OnInit {
 
         this.salaryRecords.unshift(newRecord);
 
+        Swal.close();
         Swal.fire({
           icon: 'success',
           title: 'Salary Saved!',
@@ -271,6 +283,7 @@ export class SalarySlipComponent implements OnInit {
         this.resetForm();
       },
       error: (error) => {
+        Swal.close();
         console.error('Error saving salary:', error);
         Swal.fire({
           icon: 'error',
@@ -392,8 +405,14 @@ export class SalarySlipComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Deleting...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading()
+        });
         this.staffSalaryService.deleteStaffSalary(id).subscribe({
           next: () => {
+            Swal.close();
             this.salaryRecords = this.salaryRecords.filter(r => r.id !== id);
             Swal.fire({
               icon: 'success',
@@ -404,6 +423,7 @@ export class SalarySlipComponent implements OnInit {
             });
           },
           error: (error) => {
+            Swal.close();
             console.error('Error deleting salary:', error);
             Swal.fire({
               icon: 'error',

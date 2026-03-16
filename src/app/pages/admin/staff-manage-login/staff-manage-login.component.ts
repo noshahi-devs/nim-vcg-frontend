@@ -226,13 +226,26 @@ export class StaffManageLoginComponent implements OnInit {
         Role: [this.loginForm.role] // Backend expects array
       };
 
+      Swal.fire({
+        title: 'Creating User...',
+        text: 'Please wait while we process the request.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
       this.userService.registerUser(registerData).subscribe({
         next: () => {
+          Swal.close();
           Swal.fire({ icon: 'success', title: 'Created!', text: 'User created successfully', timer: 1500, showConfirmButton: false });
           this.loadStaffData();
           this.closeDialog();
         },
         error: (err) => {
+          Swal.close();
           console.error('Error creating user:', err);
           Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'Failed to create user' });
         }

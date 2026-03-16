@@ -142,89 +142,126 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    Swal.fire({
-      title: 'Confirm Save',
-      text: 'Do you want to save this staff member?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, Save',
-      cancelButtonText: 'Cancel'
-    }).then(async result => {
-      if (result.isConfirmed) {
-        const designationMap: { [key: string]: Designation } = {
-          'Teacher': Designation.Teacher,
-          'Admin': Designation.Admin,
-          'Principal': Designation.Principal,
-          'Accountant': Designation.Accountant
-        };
+    // Email check before proceeding
+    if (this.newStaff.email) {
+      Swal.fire({
+        title: 'Checking Email...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
 
-        const genderMap: { [key: string]: Gender } = {
-          'Male': Gender.Male,
-          'Female': Gender.Female,
-          'Other': Gender.Other
-        };
-
-        const staffData: any = {
-          staffId: 0,
-          staffName: this.newStaff.staffName,
-          uniqueStaffAttendanceNumber: this.newStaff.uniqueStaffAttendanceNumber,
-          gender: genderMap[this.newStaff.gender] ?? Gender.Male,
-          dob: this.dobStr,
-          cnic: this.newStaff.cnic || null,
-          experience: this.newStaff.experience || null,
-          contactNumber1: this.newStaff.contactNumber1,
-          email: this.newStaff.email || null,
-          qualifications: this.newStaff.qualifications || null,
-          joiningDate: this.joiningDateStr ? new Date(this.joiningDateStr) : typeof this.joiningDateStr,
-          designation: designationMap[this.newStaff.designation] ?? Designation.Teacher,
-          permanentAddress: this.newStaff.permanentAddress || null,
-          status: this.newStaff.status || null,
-          imagePath: this.newStaff.profile,
-          imageUpload: this.newStaff.imageUpload,
-          staffExperiences: []
-        };
-
-        console.log('🚀 Sending staffData to API:', staffData);
-
-        const loginPayload = {
-          email: this.newStaff.email,
-          username: this.newStaff.email,
-          password: this.newStaff.password,
-          role: [this.newStaff.designation]
-        };
-
-        this.authService.register(loginPayload).subscribe({
-          next: (authRes) => {
-            this.staffService.addStaff(staffData).subscribe({
-              next: () => {
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Staff Profile and Login Created Successfully!',
-                  showConfirmButton: false,
-                  timer: 1500
-                });
-                this.router.navigate(['/staff-list']);
-              },
-              error: (err) => {
-                console.error('❌ Full error:', err);
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Failed to Add Staff Profile',
-                  text: 'Error in creating staff profile.'
-                });
-              }
+      this.staffService.getStaffByEmail(this.newStaff.email).subscribe({
+        next: (exists) => {
+          Swal.close();
+          if (exists && exists.staffId) {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Email Already Exists',
+              text: 'This email is already registered to a staff member. Please use a different email.'
             });
+            return;
+          }
+          this.proceedWithStaffCreation();
+        },
+        error: () => {
+          // If 404/error, assume it doesn't exist or just proceed
+          Swal.close();
+          this.proceedWithStaffCreation();
+        }
+      });
+    } else {
+      this.proceedWithStaffCreation();
+    }
+  }
+
+  private proceedWithStaffCreation() {
+    const designationMap: { [key: string]: Designation } = {
+      'Teacher': Designation.Teacher,
+      'Admin': Designation.Admin,
+      'Principal': Designation.Principal,
+      'Accountant': Designation.Accountant
+    };
+
+    const genderMap: { [key: string]: Gender } = {
+      'Male': Gender.Male,
+      'Female': Gender.Female,
+      'Other': Gender.Other
+    };
+
+    const staffData: any = {
+      staffId: 0,
+      staffName: this.newStaff.staffName,
+      uniqueStaffAttendanceNumber: this.newStaff.uniqueStaffAttendanceNumber,
+      gender: genderMap[this.newStaff.gender] ?? Gender.Male,
+      dob: this.dobStr || null,
+      cnic: this.newStaff.cnic || null,
+      experience: this.newStaff.experience || null,
+      contactNumber1: this.newStaff.contactNumber1,
+      email: this.newStaff.email || null,
+      qualifications: this.newStaff.qualifications || null,
+      joiningDate: this.joiningDateStr ? new Date(this.joiningDateStr) : null,
+      designation: designationMap[this.newStaff.designation] ?? Designation.Teacher,
+      permanentAddress: this.newStaff.permanentAddress || null,
+      status: this.newStaff.status || "Active",
+      imagePath: this.newStaff.profile || "assets/images/user-grid/user-grid-img2.png",
+      imageUpload: this.newStaff.imageUpload?.fileBase64 ? {
+        imageData: this.newStaff.imageUpload.fileBase64,
+        imageName: this.newStaff.imageUpload.fileName || 'profile.png'
+      } : null,
+      staffExperiences: []
+    };
+
+    console.log('🚀 Sending staffData to API:', staffData);
+
+    Swal.fire({
+      title: 'Creating Staff...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    const loginPayload = {
+      email: this.newStaff.email,
+      username: this.newStaff.email,
+      password: this.newStaff.password,
+      role: [this.newStaff.designation]
+    };
+
+    this.authService.register(loginPayload).subscribe({
+      next: (authRes) => {
+        this.staffService.addStaff(staffData).subscribe({
+          next: () => {
+            Swal.close();
+            Swal.fire({
+              icon: 'success',
+              title: 'Staff Profile and Login Created Successfully!',
+              showConfirmButton: false,
+              timer: 1500
+            });
+            this.router.navigate(['/staff-list']);
           },
-          error: (authErr) => {
-            console.error('Auth Registration error:', authErr);
+          error: (err) => {
+            Swal.close();
+            console.error('❌ Full error:', err);
             Swal.fire({
               icon: 'error',
-              title: 'Login Creation Failed',
-              text: 'Could not create account.'
+              title: 'Failed to Add Staff Profile',
+              text: 'Error in creating staff profile.'
             });
           }
+        });
+      },
+      error: (authErr) => {
+        Swal.close();
+        console.error('Auth Registration error:', authErr);
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Creation Failed',
+          text: 'Could not create account.'
         });
       }
     });

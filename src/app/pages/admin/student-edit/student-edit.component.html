@@ -62,7 +62,7 @@
             </div>
             <label for="imageUpload" class="avatar-edit-btn">
               <iconify-icon icon="solar:camera-bold"></iconify-icon>
-              <input type="file" id="imageUpload" hidden (change)="readURL($event.target)">
+              <input type="file" id="imageUpload" hidden (change)="onImageSelected($event)">
             </label>
           </div>
           <div class="avatar-info">
@@ -102,10 +102,9 @@
               </select>
             </div>
 
-            <!-- DOB -->
             <div class="col-md-4 form-group-premium">
               <label class="field-label">Date of Birth</label>
-              <input type="date" class="field-input" [(ngModel)]="studentData.studentDOB">
+              <input type="date" class="field-input" [(ngModel)]="studentDOBStr">
             </div>
 
             <!-- Religion -->
@@ -195,10 +194,9 @@
               <input type="text" class="field-input" [(ngModel)]="studentData.enrollmentNo" placeholder="ENR-xxxx">
             </div>
 
-            <!-- Admission Date -->
             <div class="col-md-4 form-group-premium">
               <label class="field-label">Admission Date</label>
-              <input type="date" class="field-input" [(ngModel)]="studentData.admissionDate">
+              <input type="date" class="field-input" [(ngModel)]="admissionDateStr">
             </div>
 
             <!-- Class (Standard) -->

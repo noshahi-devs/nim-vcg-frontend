@@ -132,6 +132,18 @@ export class ApplyLeavesComponent implements OnInit {
     if (!this.validateForm()) return;
 
     this.submitting = true;
+
+    Swal.fire({
+      title: 'Applying Leave...',
+      text: 'Please wait while we process your request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     const leaveData: Leave = {
       staffId: this.staffId!,
       leaveType: LeaveType[this.leaveTypeStr as keyof typeof LeaveType],
@@ -142,7 +154,10 @@ export class ApplyLeavesComponent implements OnInit {
     };
 
     this.leaveService.createLeave(leaveData)
-      .pipe(finalize(() => this.submitting = false))
+      .pipe(finalize(() => {
+        this.submitting = false;
+        Swal.close();
+      }))
       .subscribe({
         next: (resp) => {
           Swal.fire({

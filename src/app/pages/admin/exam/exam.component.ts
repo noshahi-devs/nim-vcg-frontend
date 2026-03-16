@@ -6,6 +6,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../SecurityModels/auth.service';
+import Swal from '../../../swal';
 
 @Component({
   selector: 'app-exam',
@@ -128,16 +129,43 @@ export class ExamComponent implements OnInit {
   saveExamType() {
     if (this.form.invalid) return;
 
+    Swal.fire({
+      title: 'Saving Exam Type...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     const payload = this.form.value;
     if (this.isEditMode) {
-      this.examTypeService.UpdateExamType(payload).subscribe(() => {
-        this.closeDialog();
-        this.loadExamTypes();
+      this.examTypeService.UpdateExamType(payload).subscribe({
+        next: () => {
+          Swal.close();
+          Swal.fire({ icon: 'success', title: 'Updated!', timer: 1500, showConfirmButton: false });
+          this.closeDialog();
+          this.loadExamTypes();
+        },
+        error: () => {
+          Swal.close();
+          Swal.fire('Error', 'Failed to update exam type', 'error');
+        }
       });
     } else {
-      this.examTypeService.SaveExamType(payload).subscribe(() => {
-        this.closeDialog();
-        this.loadExamTypes();
+      this.examTypeService.SaveExamType(payload).subscribe({
+        next: () => {
+          Swal.close();
+          Swal.fire({ icon: 'success', title: 'Saved!', timer: 1500, showConfirmButton: false });
+          this.closeDialog();
+          this.loadExamTypes();
+        },
+        error: () => {
+          Swal.close();
+          Swal.fire('Error', 'Failed to save exam type', 'error');
+        }
       });
     }
   }
@@ -151,10 +179,22 @@ export class ExamComponent implements OnInit {
   deleteExamType() {
     if (!this.examTypeToDelete) return;
 
+    Swal.fire({
+      title: 'Deleting...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
     this.examTypeService.DeleteExamType(this.examTypeToDelete.examTypeId).subscribe({
       next: () => {
+        Swal.close();
+        Swal.fire({ icon: 'success', title: 'Deleted!', timer: 1500, showConfirmButton: false });
         this.loadExamTypes();
         this.showDeleteDialog = false;
+      },
+      error: () => {
+        Swal.close();
+        Swal.fire('Error', 'Failed to delete exam type', 'error');
       }
     });
   }

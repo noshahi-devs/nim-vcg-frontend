@@ -128,13 +128,28 @@ export class SalaryComponent implements OnInit {
 
     this.salary.netSalary = this.calculatedNetSalary;
 
+    Swal.fire({
+      title: 'Saving Salary...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     this.staffSalaryService.addStaffSalary(this.salary).subscribe({
       next: () => {
+        Swal.close();
         Swal.fire('Success', 'Salary saved successfully', 'success');
         this.resetForm();
         this.loadSalaries();
       },
-      error: () => Swal.fire('Error', 'Failed to save salary', 'error')
+      error: () => {
+        Swal.close();
+        Swal.fire('Error', 'Failed to save salary', 'error');
+      }
     });
   }
 
@@ -147,9 +162,21 @@ export class SalaryComponent implements OnInit {
       confirmButtonText: 'Yes'
     }).then(res => {
       if (res.isConfirmed) {
-        this.staffSalaryService.deleteStaffSalary(id).subscribe(() => {
-          Swal.fire('Deleted', '', 'success');
-          this.loadSalaries();
+        Swal.fire({
+          title: 'Deleting...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading()
+        });
+        this.staffSalaryService.deleteStaffSalary(id).subscribe({
+          next: () => {
+            Swal.close();
+            Swal.fire('Deleted', '', 'success');
+            this.loadSalaries();
+          },
+          error: () => {
+            Swal.close();
+            Swal.fire('Error', 'Failed to delete salary', 'error');
+          }
         });
       }
     });

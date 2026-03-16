@@ -267,6 +267,17 @@ export class MonthlyPaymentComponent implements OnInit {
   savePayment() {
     if (this.form.invalid) return;
 
+    Swal.fire({
+      title: 'Saving Payment...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     const payload = this.form.getRawValue();
     payload.totalAmount = this.form.get('totalAmount')?.value;
     payload.amountRemaining = payload.totalAmount - (payload.amountPaid || 0);
@@ -275,11 +286,13 @@ export class MonthlyPaymentComponent implements OnInit {
     if (this.isEditMode) {
       this.paymentService.updateMonthlyPayment(payload).subscribe({
         next: () => {
+          Swal.close();
           this.closeDialog();
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Updated!', text: 'Payment updated successfully.', showConfirmButton: false, timer: 1800 });
         },
         error: (err) => {
+          Swal.close();
           console.error('Update Error:', err);
           Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment. ' + (err.error?.title || ''), confirmButtonColor: '#800000' });
         }
@@ -287,11 +300,13 @@ export class MonthlyPaymentComponent implements OnInit {
     } else {
       this.paymentService.createMonthlyPayment(payload).subscribe({
         next: () => {
+          Swal.close();
           this.closeDialog();
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Created!', text: 'Payment created successfully.', showConfirmButton: false, timer: 1800 });
         },
         error: (err) => {
+          Swal.close();
           console.error('Create Error:', err);
           Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment. ' + (err.error?.title || ''), confirmButtonColor: '#800000' });
         }
@@ -313,12 +328,21 @@ export class MonthlyPaymentComponent implements OnInit {
     });
 
     if (result.isConfirmed) {
+      Swal.fire({
+        title: 'Deleting...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
       this.paymentService.deleteMonthlyPayment(p.monthlyPaymentId).subscribe({
         next: () => {
+          Swal.close();
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Payment deleted successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#800000' })
+        error: () => {
+          Swal.close();
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#800000' });
+        }
       });
     }
   }

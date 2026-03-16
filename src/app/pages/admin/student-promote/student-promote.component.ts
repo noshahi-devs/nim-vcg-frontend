@@ -62,6 +62,7 @@ export class StudentPromoteComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedYearId = this.sessionService.getCurrentYearId();
+    this.nextAcademicYearId = this.sessionService.getCurrentYearId() || 0;
     this.loadInitialData();
   }
 

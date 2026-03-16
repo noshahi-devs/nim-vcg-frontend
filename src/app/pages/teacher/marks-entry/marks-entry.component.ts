@@ -151,10 +151,21 @@ export class MarksEntryComponent implements OnInit {
 
   onSubmit(): void {
     if (this.entryForm.valid) {
-      //alert(JSON.stringify(this.markEntry));
-      //return;
+      
+      Swal.fire({
+        title: 'Saving Student Marks...',
+        text: 'Please wait while we record the grades.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
       this.markEntryService.createMarkEntry(this.markEntry).subscribe(
         (response) => {
+          Swal.close();
           Swal.fire({
             title: 'Submitted!',
             text: 'Student grades have been successfully recorded.',
@@ -167,6 +178,7 @@ export class MarksEntryComponent implements OnInit {
           });
         },
         (error) => {
+          Swal.close();
           console.error('Error creating Mark Entry:', error);
           Swal.fire({
             title: 'Error!',

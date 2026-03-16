@@ -103,8 +103,20 @@ export class NewClassComponent implements OnInit {
 
     console.log('Class payload:', payload);
 
+    Swal.fire({
+      title: 'Creating Class...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     this.standardService.createStandard(payload).subscribe({
       next: () => {
+        Swal.close();
         Swal.fire({
           icon: 'success',
           title: 'Class Created!',
@@ -115,6 +127,7 @@ export class NewClassComponent implements OnInit {
         setTimeout(() => this.router.navigate(['/class-list']), 1500);
       },
       error: (err) => {
+        Swal.close();
         console.error('Error creating class:', err);
         Swal.fire({
           icon: 'error',

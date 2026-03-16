@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { StaffService } from '../../../services/staff.service';
 import { Staff, Designation, Gender } from '../../../Models/staff';
 import { finalize } from 'rxjs';
+import Swal from '../../../swal';
 
 declare var $: any;
 declare var bootstrap: any;
@@ -28,6 +29,8 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
 
   modalMessage: string = '';
   modalType: 'success' | 'error' = 'success';
+  selectedImageBase64: string | null = null;
+  selectedImageName: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -122,11 +125,29 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
         designation: this.getDesignationEnum(this.staffData.role),
         gender: this.getGenderEnum(this.staffData.gender),
         dob: this.staffData.dob,
-        experience: this.staffData.experience
+        experience: this.staffData.experience,
+        imageUpload: this.selectedImageBase64 ? {
+          imageData: this.selectedImageBase64,
+          imageName: this.selectedImageName || `${this.staffData.name}_profile.png`
+        } : null
       };
+
+      console.log('🚀 Sending updatedStaff to API:', updatedStaff);
+
+      Swal.fire({
+        title: 'Updating Staff...',
+        text: 'Please wait while we process the request.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
 
       this.staffService.updateStaff(this.staffId, updatedStaff).subscribe({
         next: () => {
+          Swal.close();
           this.loading = false;
           this.modalMessage = 'Staff information updated successfully!';
           this.modalType = 'success';
@@ -137,6 +158,7 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
           }, 1500);
         },
         error: (err) => {
+          Swal.close();
           console.error('Error updating staff:', err);
           this.loading = false;
           this.modalMessage = 'Failed to update staff profile.';
@@ -188,10 +210,6 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
 
   ngAfterViewInit() {
     this.initializePasswordToggle('.toggle-password');
-
-    $("#imageUpload").on('change', (event: any) => {
-      this.readURL(event.target);
-    });
   }
 
   initializePasswordToggle(toggleSelector: string) {
@@ -202,15 +220,19 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
     });
   }
 
-  readURL(input: any) {
+  onImageSelected(event: any) {
+    const input = event.target;
     if (input.files && input.files[0]) {
+      const file = input.files[0];
+      this.selectedImageName = file.name;
+      
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        $('#imagePreview').attr('src', e.target.result);
-        $('#imagePreview').hide();
-        $('#imagePreview').fadeIn(650);
+        const base64Content = e.target.result;
+        this.selectedImageBase64 = base64Content;
+        this.staffData.profile = base64Content; // Update Angular model for preview
       }
-      reader.readAsDataURL(input.files[0]);
+      reader.readAsDataURL(file);
     }
   }
 }

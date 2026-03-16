@@ -226,6 +226,17 @@ export class OtherPaymentComponent implements OnInit {
   savePayment() {
     if (this.form.invalid) return;
 
+    Swal.fire({
+      title: 'Saving Payment...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     const payload = this.form.getRawValue();
     payload.totalAmount = this.form.get('totalAmount')?.value;
     payload.amountRemaining = payload.totalAmount - (payload.amountPaid || 0);
@@ -233,20 +244,28 @@ export class OtherPaymentComponent implements OnInit {
     if (this.isEditMode) {
       this.paymentService.updateOthersPayment(payload).subscribe({
         next: () => {
+          Swal.close();
           this.closeDialog();
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Updated!', text: 'Payment updated successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment.', confirmButtonColor: '#800000' })
+        error: () => {
+          Swal.close();
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment.', confirmButtonColor: '#800000' });
+        }
       });
     } else {
       this.paymentService.createOthersPayment(payload).subscribe({
         next: () => {
+          Swal.close();
           this.closeDialog();
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Created!', text: 'Payment created successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment.', confirmButtonColor: '#800000' })
+        error: () => {
+          Swal.close();
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment.', confirmButtonColor: '#800000' });
+        }
       });
     }
   }
@@ -265,12 +284,21 @@ export class OtherPaymentComponent implements OnInit {
     });
 
     if (result.isConfirmed) {
+      Swal.fire({
+        title: 'Deleting...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
       this.paymentService.deleteOthersPayment(p.othersPaymentId).subscribe({
         next: () => {
+          Swal.close();
           this.loadPayments();
           Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Payment deleted successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#800000' })
+        error: () => {
+          Swal.close();
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#800000' });
+        }
       });
     }
   }

@@ -148,10 +148,12 @@ export class StaffAttendanceComponent implements OnInit {
 
     forkJoin(attendanceRequests).subscribe({
       next: () => {
+        Swal.close();
         Swal.fire('Saved!', 'Staff attendance saved successfully', 'success');
         this.resetForm();
       },
       error: (err) => {
+        Swal.close();
         console.error('Attendance save error', err);
         Swal.fire('Error', 'Failed to save staff attendance.', 'error');
       }

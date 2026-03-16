@@ -438,23 +438,42 @@ export class IncomeManageComponent implements OnInit {
   saveIncome(): void {
     if (!this.validateForm()) return;
 
+    Swal.fire({
+      title: 'Saving Income...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     if (this.isEditMode && this.currentIncome.id) {
       this.accountsService.updateIncome(this.currentIncome.id, this.currentIncome).subscribe({
         next: () => {
+          Swal.close();
           Swal.fire('Success', 'Income updated successfully', 'success');
           this.loadIncomeList();
           this.closeModal();
         },
-        error: () => Swal.fire('Error', 'Failed to update income', 'error')
+        error: () => {
+          Swal.close();
+          Swal.fire('Error', 'Failed to update income', 'error');
+        }
       });
     } else {
       this.accountsService.addIncome(this.currentIncome).subscribe({
         next: () => {
+          Swal.close();
           Swal.fire('Success', 'Income added successfully', 'success');
           this.loadIncomeList();
           this.closeModal();
         },
-        error: () => Swal.fire('Error', 'Failed to add income', 'error')
+        error: () => {
+          Swal.close();
+          Swal.fire('Error', 'Failed to add income', 'error');
+        }
       });
     }
   }
@@ -470,12 +489,21 @@ export class IncomeManageComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!'
     }).then(result => {
       if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Deleting...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading()
+        });
         this.accountsService.deleteIncome(income.id).subscribe({
           next: () => {
+            Swal.close();
             Swal.fire('Deleted!', 'Income record deleted.', 'success');
             this.loadIncomeList();
           },
-          error: () => Swal.fire('Error', 'Failed to delete income', 'error')
+          error: () => {
+            Swal.close();
+            Swal.fire('Error', 'Failed to delete income', 'error');
+          }
         });
       }
     });

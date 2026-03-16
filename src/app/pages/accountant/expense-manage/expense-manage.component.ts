@@ -92,14 +92,27 @@ export class ExpenseManageComponent implements OnInit {
   saveExpense(): void {
     if (!this.validateForm()) return;
 
+    Swal.fire({
+      title: 'Saving Expense...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     if (this.isEditMode && this.currentExpense.id) {
       this.accountsService.updateExpense(this.currentExpense.id, this.currentExpense).subscribe({
         next: () => {
+          Swal.close();
           Swal.fire('Success', 'Expense updated successfully', 'success');
           this.loadExpenseList();
           this.closeModal();
         },
         error: (err) => {
+          Swal.close();
           console.error('Error updating expense:', err);
           Swal.fire('Error', 'Failed to update expense', 'error');
         }
@@ -107,11 +120,13 @@ export class ExpenseManageComponent implements OnInit {
     } else {
       this.accountsService.addExpense(this.currentExpense).subscribe({
         next: () => {
+          Swal.close();
           Swal.fire('Success', 'Expense added successfully', 'success');
           this.loadExpenseList();
           this.closeModal();
         },
         error: (err) => {
+          Swal.close();
           console.error('Error adding expense:', err);
           Swal.fire('Error', 'Failed to add expense', 'error');
         }
@@ -130,12 +145,19 @@ export class ExpenseManageComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Deleting...',
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading()
+        });
         this.accountsService.deleteExpense(expense.id).subscribe({
           next: () => {
+            Swal.close();
             Swal.fire('Deleted!', 'Expense has been deleted.', 'success');
             this.loadExpenseList();
           },
           error: (err) => {
+            Swal.close();
             console.error('Error deleting expense:', err);
             Swal.fire('Error', 'Failed to delete expense', 'error');
           }

@@ -97,14 +97,27 @@ export class LeaveTypeComponent implements OnInit {
   saveLeaveType(): void {
     if (!this.validateForm()) return;
 
+    Swal.fire({
+      title: 'Saving Leave Type...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     if (this.isEditMode) {
       this.leaveTypeService.updateLeaveType(this.leaveTypeForm.leaveTypeMasterId, this.leaveTypeForm).subscribe({
         next: () => {
+          Swal.close();
           Swal.fire({ icon: 'success', title: 'Updated!', text: 'Leave type updated successfully.', timer: 2000, showConfirmButton: false });
           this.loadLeaveTypes();
           this.closeModal();
         },
         error: (err) => {
+          Swal.close();
           console.error('Error updating leave type:', err);
           Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update leave type.' });
         }
@@ -112,11 +125,13 @@ export class LeaveTypeComponent implements OnInit {
     } else {
       this.leaveTypeService.createLeaveType(this.leaveTypeForm).subscribe({
         next: () => {
+          Swal.close();
           Swal.fire({ icon: 'success', title: 'Added!', text: 'Leave type added successfully.', timer: 2000, showConfirmButton: false });
           this.loadLeaveTypes();
           this.closeModal();
         },
         error: (err) => {
+          Swal.close();
           console.error('Error creating leave type:', err);
           Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create leave type.' });
         }

@@ -111,12 +111,23 @@ export class MyAttendanceComponent implements OnInit {
                     description: 'Self Marked'
                 };
 
+                Swal.fire({
+                    title: 'Checking In...',
+                    text: 'Please wait while we record your presence.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
                 this.attendanceService.addAttendance(payload as any).subscribe({
                     next: () => {
+                        Swal.close();
                         Swal.fire('Checked In!', 'Your attendance has been recorded.', 'success');
                         this.loadHistory();
                     },
                     error: (err) => {
+                        Swal.close();
                         console.error(err);
                         Swal.fire('Error', 'Database rejected attendance. Please contact admin.', 'error');
                     }
@@ -149,12 +160,23 @@ export class MyAttendanceComponent implements OnInit {
                     description: 'Self Checked Out'
                 };
 
+                Swal.fire({
+                    title: 'Checking Out...',
+                    text: 'Please wait while we record your check-out.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
                 this.attendanceService.checkOutStaff(payload as any).subscribe({
                     next: () => {
+                        Swal.close();
                         Swal.fire('Checked Out!', 'Your check-out time has been recorded.', 'success');
                         this.loadHistory();
                     },
                     error: (err) => {
+                        Swal.close();
                         console.error(err);
                         Swal.fire('Error', err?.error || 'Database rejected check-out. Please contact admin.', 'error');
                     }

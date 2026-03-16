@@ -94,8 +94,20 @@ export class SectionAddComponent implements OnInit {
         capacity: formValue.capacity
       };
 
+      Swal.fire({
+        title: 'Saving Section...',
+        text: 'Please wait while we process the request.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
       this.sectionService.createSection(newSection).subscribe({
         next: async () => {
+          Swal.close();
           await Swal.fire({
             icon: 'success',
             title: 'Section Added Successfully!',
@@ -106,6 +118,7 @@ export class SectionAddComponent implements OnInit {
           this.router.navigate(['/section-list']);
         },
         error: (err) => {
+          Swal.close();
           Swal.fire({
             icon: 'error',
             title: 'Error',

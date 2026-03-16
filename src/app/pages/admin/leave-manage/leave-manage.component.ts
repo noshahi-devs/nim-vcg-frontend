@@ -153,12 +153,24 @@ export class LeaveManageComponent implements OnInit {
     const newStatus = this.modalAction === 'approve' ? LeaveStatus.Approved : LeaveStatus.Rejected;
     const adminId = 1; // Placeholder: In real app, get from auth service
 
+    Swal.fire({
+      title: 'Processing...',
+      text: 'Please wait while we update the leave status.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     this.leaveService.updateLeaveStatus(this.selectedLeave.leaveId, {
       status: newStatus,
       adminId: adminId,
       remarks: this.remarks
     }).subscribe({
       next: () => {
+        Swal.close();
         Swal.fire({
           icon: 'success',
           title: `Leave ${this.modalAction === 'approve' ? 'Approved' : 'Rejected'}!`,
@@ -169,6 +181,7 @@ export class LeaveManageComponent implements OnInit {
         this.closeModal();
       },
       error: (err) => {
+        Swal.close();
         console.error('Error updating leave status:', err);
         Swal.fire('Error', 'Failed to update leave status', 'error');
       }

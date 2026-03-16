@@ -40,8 +40,8 @@
 }
 
 .stat-icon-wrapper.blue {
-  background: #eff6ff;
-  color: #2563eb;
+  background: rgba(128, 0, 0, 0.1);
+  color: #800000;
 }
 
 .stat-icon-wrapper.green {
@@ -255,8 +255,8 @@
 }
 
 .enrollment-badge {
-  background: #e0f2fe;
-  color: #0284c7;
+  background: rgba(128, 0, 0, 0.1);
+  color: #800000;
   padding: 4px 11px;
   border-radius: 20px;
   font-size: 12.5px;
@@ -318,12 +318,12 @@
 }
 
 .view-btn {
-  background: #dbeafe;
-  color: #2563eb;
+  background: rgba(128, 0, 0, 0.1);
+  color: #800000;
 }
 
 .view-btn:hover {
-  background: #2563eb;
+  background: #800000;
   color: #fff;
   transform: scale(1.08);
 }
@@ -547,8 +547,8 @@
 }
 
 .card-dot.blue {
-  background: #3b82f6;
-  box-shadow: 0 0 6px rgba(59, 130, 246, 0.5);
+  background: #800000;
+  box-shadow: 0 0 6px rgba(128, 0, 0, 0.5);
 }
 
 .card-dot.indigo {
@@ -753,7 +753,7 @@
 }
 
 .check-row:hover {
-  background: #eef2ff;
+  background: rgba(128, 0, 0, 0.05);
 }
 
 .all-row {
@@ -817,7 +817,7 @@
 }
 
 .check-row:hover .styled-check {
-  border-color: #818cf8;
+  border-color: #800000;
 }
 
 .check-text {
@@ -855,8 +855,8 @@
 }
 
 .summary-card.total {
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
-  border: 1px solid #bfdbfe;
+  background: linear-gradient(135deg, rgba(128, 0, 0, 0.05), rgba(128, 0, 0, 0.1));
+  border: 1px solid rgba(128, 0, 0, 0.2);
 }
 
 .summary-card.due {
@@ -884,7 +884,7 @@
 }
 
 .summary-card.total .summary-value {
-  color: #1e40af;
+  color: #800000;
 }
 
 .summary-card.due .summary-value {
@@ -1042,7 +1042,7 @@
 }
 
 .modal-icon.view-icon {
-  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  background: linear-gradient(135deg, #800000, #5a0000);
 }
 
 .modal-icon svg {
@@ -1114,7 +1114,7 @@
 }
 
 .badge-method {
-  background: #eef2ff;
+  background: rgba(128, 0, 0, 0.1);
   color: #800000;
   padding: 3px 10px;
   border-radius: 15px;

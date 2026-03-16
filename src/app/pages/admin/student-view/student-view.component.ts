@@ -13,6 +13,7 @@ import { Attendance } from '../../../Models/attendance';
 import { Mark } from '../../../Models/marks';
 import { MonthlyPayment } from '../../../Models/monthly-payment';
 import { forkJoin } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 declare var $: any;
 @Component({
   selector: 'app-student-view',
@@ -96,9 +97,22 @@ export class StudentViewComponent implements OnInit, AfterViewInit {
   }
 
   getStudentImage(): string {
+    // 1. Check if we have a base64 image (unsaved upload or preview)
     if (this.studentData?.imageUpload?.imageData) {
       return this.studentData.imageUpload.imageData;
     }
+
+    // 2. Check if we have a saved path from the server
+    if (this.studentData?.imagePath) {
+      // If it's already a full URL or base64, return as is
+      if (this.studentData.imagePath.startsWith('http') || this.studentData.imagePath.startsWith('data:')) {
+        return this.studentData.imagePath;
+      }
+      // Otherwise prepend API base URL
+      return `${environment.apiBaseUrl}/${this.studentData.imagePath}`;
+    }
+
+    // 3. Fallback to default
     return 'assets/images/user-grid/user-grid-img2.png';
   }
 

@@ -114,23 +114,42 @@ export class FeeComponent implements OnInit {
     if (this.form.invalid) return;
     const payload = this.form.value;
 
+    Swal.fire({
+      title: 'Saving Fee Type...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     if (this.isEditMode) {
       this.feeTypeService.updateFeeType(payload).subscribe({
         next: () => {
+          Swal.close();
           this.closeDialog();
           this.loadFeeTypes();
           Swal.fire({ icon: 'success', title: 'Updated!', text: 'Fee type updated successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee type.', confirmButtonColor: '#800000' })
+        error: () => {
+          Swal.close();
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee type.', confirmButtonColor: '#800000' });
+        }
       });
     } else {
       this.feeTypeService.createFeeType(payload).subscribe({
         next: () => {
+          Swal.close();
           this.closeDialog();
           this.loadFeeTypes();
           Swal.fire({ icon: 'success', title: 'Added!', text: 'Fee type added successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to add fee type.', confirmButtonColor: '#800000' })
+        error: () => {
+          Swal.close();
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to add fee type.', confirmButtonColor: '#800000' });
+        }
       });
     }
   }
@@ -148,12 +167,21 @@ export class FeeComponent implements OnInit {
     });
 
     if (result.isConfirmed) {
+      Swal.fire({
+        title: 'Deleting...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
       this.feeTypeService.deleteFeeType(ft.feeTypeId).subscribe({
         next: () => {
+          Swal.close();
           this.loadFeeTypes();
           Swal.fire({ icon: 'success', title: 'Deleted!', text: `"${ft.typeName}" has been deleted.`, showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee type.', confirmButtonColor: '#800000' })
+        error: () => {
+          Swal.close();
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee type.', confirmButtonColor: '#800000' });
+        }
       });
     }
   }

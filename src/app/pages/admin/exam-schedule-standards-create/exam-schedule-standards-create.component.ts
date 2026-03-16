@@ -13,6 +13,7 @@ import { SubjectService } from '../../../services/subject.service';
 import { ExamScheduleStandardService } from '../../../services/exam-schedule-standard.service';
 import { BreadcrumbComponent } from "../../ui-elements/breadcrumb/breadcrumb.component";
 import { FormsModule } from '@angular/forms';
+import Swal from '../../../swal';
 
 @Component({
   selector: 'app-exam-schedule-standards-create',
@@ -102,9 +103,39 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
 
   onSubmit() {
     console.log(this.model);
+
+    Swal.fire({
+      title: 'Saving Schedule...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     this.examScheduleStandardsService.SaveExamScheduleStandards(this.model).subscribe({
-      next: () => this.router.navigate(['/exam-schedule-standards-list']),
-      error: err => console.log(err)
+      next: () => {
+        Swal.close();
+        Swal.fire({
+          icon: 'success',
+          title: 'Schedule Saved!',
+          text: 'Exam schedule has been added successfully.',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        this.router.navigate(['/exam-schedule-standards-list']);
+      },
+      error: err => {
+        Swal.close();
+        console.log(err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to save exam schedule. Please try again.'
+        });
+      }
     });
   }
 }

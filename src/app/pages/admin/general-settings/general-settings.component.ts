@@ -131,26 +131,75 @@ export class GeneralSettingsComponent implements OnInit {
             category: 'General'
         }));
 
+        Swal.fire({
+            title: 'Saving Settings...',
+            text: 'Please wait while we process the request.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         this.settingsService.updateGeneralSettings(settingsToSend).subscribe({
             next: () => {
+                Swal.close();
                 Swal.fire('Success', 'General settings saved', 'success');
                 this.sessionService.refreshSession(true);
             },
-            error: () => Swal.fire('Error', 'Failed to save settings', 'error')
+            error: () => {
+                Swal.close();
+                Swal.fire('Error', 'Failed to save settings', 'error');
+            }
         });
     }
 
     saveNotifications() {
+        Swal.fire({
+            title: 'Saving Notifications...',
+            text: 'Please wait while we process the request.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         this.settingsService.updateNotificationSettings(this.notificationSettings).subscribe({
-            next: () => Swal.fire('Success', 'Notification preferences updated', 'success'),
-            error: () => Swal.fire('Error', 'Failed to update notifications', 'error')
+            next: () => {
+                Swal.close();
+                Swal.fire('Success', 'Notification preferences updated', 'success');
+            },
+            error: () => {
+                Swal.close();
+                Swal.fire('Error', 'Failed to update notifications', 'error');
+            }
         });
     }
 
     savePaymentGateway(setting: PaymentGatewaySetting) {
+        Swal.fire({
+            title: 'Saving Gateway...',
+            text: 'Please wait while we process the request.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         this.settingsService.updatePaymentGatewaySetting(setting).subscribe({
-            next: () => Swal.fire('Success', `${setting.gatewayName} settings updated`, 'success'),
-            error: () => Swal.fire('Error', `Failed to update ${setting.gatewayName}`, 'error')
+            next: () => {
+                Swal.close();
+                Swal.fire('Success', `${setting.gatewayName} settings updated`, 'success');
+            },
+            error: () => {
+                Swal.close();
+                Swal.fire('Error', `Failed to update ${setting.gatewayName}`, 'error');
+            }
         });
     }
 

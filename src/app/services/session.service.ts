@@ -26,29 +26,36 @@ export class SessionService {
     this.academicYearService.getAcademicYears().subscribe(years => {
       this.allYearsSubject.next(years);
 
-      // 2. Determine which one is active
-      const savedYearId = forceSystemUpdate ? null : localStorage.getItem('SELECTED_ACADEMIC_YEAR_ID');
-      if (savedYearId) {
-        const found = years.find(y => y.academicYearId === Number(savedYearId));
-        if (found) {
-          this.currentYearSubject.next(found);
-          return;
-        }
-      }
-
-      // 3. Fallback to global "Active Year" from settings
+      // 2. Fetch Settings and Decide
       this.settingsService.getGeneralSettings().subscribe(settings => {
         const activeYearName = settings.find(s => s.settingKey === 'academicYear')?.settingValue;
-        if (activeYearName) {
-          const found = years.find(y => y.name === activeYearName);
-          if (found) {
-            this.setContextYear(found);
-          } else if (years.length > 0) {
-            // Last fallback: first year in list
-            this.setContextYear(years[0]);
-          }
-        } else if (years.length > 0) {
-          this.setContextYear(years[0]);
+        const savedYearId = localStorage.getItem('SELECTED_ACADEMIC_YEAR_ID');
+        
+        let found = null;
+
+        // NEW PRIORITY 1: Current Calendar Year (e.g. "2026")
+        // The user wants 2026 to be the "understood" default.
+        const currentCalendarYear = new Date().getFullYear().toString();
+        found = years.find(y => y.name.includes(currentCalendarYear));
+
+        // Priority 2: Global Active Year from Settings (if Priority 1 failed or we want to allow override)
+        if (!found && activeYearName) {
+          found = years.find(y => y.name === activeYearName);
+        }
+
+        // Priority 3: Saved LocalStorage (only if not forcing a system update)
+        if (!found && savedYearId && !forceSystemUpdate) {
+          found = years.find(y => y.academicYearId === Number(savedYearId));
+        }
+
+        // Priority 4: Highest ID (latest added)
+        if (!found && years.length > 0) {
+          found = [...years].sort((a, b) => b.academicYearId - a.academicYearId)[0];
+        }
+
+        if (found) {
+          // If we found a valid year, set it as the context
+          this.setContextYear(found);
         }
       });
     });

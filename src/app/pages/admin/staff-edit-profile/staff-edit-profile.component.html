@@ -65,7 +65,7 @@
             </div>
             <label for="imageUpload" class="avatar-edit-btn">
               <iconify-icon icon="solar:camera-bold"></iconify-icon>
-              <input type="file" id="imageUpload" hidden>
+              <input type="file" id="imageUpload" hidden (change)="onImageSelected($event)">
             </label>
           </div>
           <div class="avatar-info">

@@ -257,8 +257,20 @@ export class SubjectAssignmentComponent implements OnInit {
       } as any);
     });
 
+    Swal.fire({
+      title: 'Assigning Subjects...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     forkJoin(requests).subscribe({
       next: (res: any[]) => {
+        Swal.close();
         this.isSubmitting = false;
         Swal.fire('Assigned!', `${res.length} subjects assigned successfully.`, 'success');
 
@@ -266,6 +278,7 @@ export class SubjectAssignmentComponent implements OnInit {
         this.model.selectedSubjectIds = [];
       },
       error: (err) => {
+        Swal.close();
         this.isSubmitting = false;
         Swal.fire('Error', err.error?.message || 'Failed to assign subjects.', 'error');
       }

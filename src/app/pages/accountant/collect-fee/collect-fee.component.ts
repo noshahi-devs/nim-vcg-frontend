@@ -7,6 +7,7 @@ import { MonthlyPayment } from '../../../Models/monthly-payment';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AuthService } from '../../../SecurityModels/auth.service';
+import Swal from '../../../swal';
 
 @Component({
   selector: 'app-collect-fee',
@@ -101,9 +102,20 @@ export class CollectFeeComponent implements OnInit {
     if (!this.selectedStudent || !this.studentId || this.paymentForm.invalid) return;
 
     if (this.paymentForm.value.amountPaid > this.remainingAmount) {
-      alert("Amount cannot exceed remaining balance!");
+      Swal.fire({ icon: 'warning', title: 'Invalid Amount', text: 'Amount cannot exceed remaining balance!' });
       return;
     }
+
+    Swal.fire({
+      title: 'Processing Payment...',
+      text: 'Please wait while we process the fee collection.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
 
     const val = this.paymentForm.value;
 
@@ -123,13 +135,15 @@ export class CollectFeeComponent implements OnInit {
 
     this.commonService.createMonthlyPayment(newPayment as MonthlyPayment).subscribe({
       next: (savedPayment) => {
-        alert("Payment collected successfully!");
+        Swal.close();
+        Swal.fire({ icon: 'success', title: 'Success', text: 'Payment collected successfully!', timer: 1500, showConfirmButton: false });
         this.paymentForm.reset({ paymentDate: new Date().toISOString().substring(0, 10), paymentType: 'Cash' });
         this.loadFeeInfo(); // Reload to get updated balance and list
       },
       error: (err) => {
+        Swal.close();
         console.error('Error collecting fee', err);
-        alert('Failed to collect fee.');
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to collect fee.' });
       }
     });
   }

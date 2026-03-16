@@ -6,6 +6,7 @@ import { StudentService } from '../../../services/student.service';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { Student } from '../../../Models/student';
+import { SessionService } from '../../../services/session.service';
 
 @Component({
   selector: 'app-student-attendance-report',
@@ -27,6 +28,7 @@ export class StudentAttendanceReportComponent implements OnInit {
   constructor(
     private attendanceService: AttendanceService,
     private studentService: StudentService,
+    private sessionService: SessionService,
     private eRef: ElementRef
   ) { }
 
@@ -49,7 +51,8 @@ export class StudentAttendanceReportComponent implements OnInit {
   }
 
   loadStudents(): void {
-    this.studentService.GetStudents().subscribe({
+    const yearId = this.sessionService.getCurrentYearId();
+    this.studentService.GetStudents(yearId).subscribe({
       next: (res) => this.students = res,
       error: (err) => console.error('Error loading students:', err)
     });

@@ -4,6 +4,7 @@ import { RoleService } from '../../../services/role.service';
 import { Role } from '../../../Models/role';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import Swal from '../../../swal';
 
 @Component({
     selector: 'app-role-access',
@@ -51,21 +52,59 @@ export class RoleAccessComponent implements OnInit {
             permissions: []
         };
 
+        Swal.fire({
+            title: 'Creating Role...',
+            text: 'Please wait while we process the request.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         this.roleService.createRole(newRole).subscribe({
             next: (res) => {
+                Swal.close();
+                Swal.fire({ icon: 'success', title: 'Success', text: 'Role created successfully', timer: 1500, showConfirmButton: false });
                 this.loadRoles();
                 this.newRoleName = '';
             },
-            error: () => alert('Failed to create role (Simulated)')
+            error: () => {
+                Swal.close();
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create role' });
+            }
         });
     }
 
     deleteRole(id: string): void {
-        if (confirm('Are you sure?')) {
-            this.roleService.deleteRole(id).subscribe({
-                next: () => this.loadRoles(),
-                error: () => alert('Failed to delete role (Simulated)')
-            });
-        }
+        Swal.fire({
+            title: 'Delete Role?',
+            text: 'Are you sure you want to delete this role?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Delete',
+            confirmButtonColor: '#d33',
+            cancelButtonText: 'Cancel'
+        }).then(result => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Deleting...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+                this.roleService.deleteRole(id).subscribe({
+                    next: () => {
+                        Swal.close();
+                        Swal.fire({ icon: 'success', title: 'Deleted!', timer: 1500, showConfirmButton: false });
+                        this.loadRoles();
+                    },
+                    error: () => {
+                        Swal.close();
+                        Swal.fire('Error', 'Failed to delete role', 'error');
+                    }
+                });
+            }
+        });
     }
 }

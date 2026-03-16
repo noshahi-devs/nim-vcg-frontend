@@ -15,7 +15,9 @@ import { StaffService } from '../../../services/staff.service';
 import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
 import { finalize, forkJoin, Subscription } from 'rxjs';
 import { SessionService } from '../../../services/session.service';
+import { Action } from 'rxjs/internal/scheduler/Action';
 import { AcademicYear } from '../../../Models/academic-year';
+import { environment } from '../../../../environments/environment';
 
 
 declare var bootstrap: any;
@@ -93,16 +95,23 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
     this.sessionSubscription = this.sessionService.currentYear$.subscribe(year => {
       if (year) {
-        // Only update local selection if session year changes and we're following it
-        if (this.selectedYearId === null) {
-          this.selectedYearId = year.academicYearId;
-        }
+        this.selectedYearId = year.academicYearId;
         this.checkTeacherContext();
       }
     });
 
     this.yearsSubscription = this.sessionService.allYears$.subscribe(years => {
       this.academicYears = years;
+      // If we have years but no selection (or selection is weirdly old), try to pick best one
+      if (this.academicYears.length > 0 && (!this.selectedYearId || this.yearDisplayName.includes('2001'))) {
+        const currentYear = new Date().getFullYear().toString();
+        const found = this.academicYears.find(y => y.name.includes(currentYear)) || 
+                      [...this.academicYears].sort((a,b) => b.academicYearId - a.academicYearId)[0];
+        if (found && found.academicYearId !== this.selectedYearId) {
+          this.selectedYearId = found.academicYearId;
+          this.checkTeacherContext();
+        }
+      }
     });
   }
 
@@ -329,9 +338,22 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   // Convert Base64 Image
   // -------------------------------------------------------
   getStudentImage(student: any): string {
+    // 1. Check if we have a base64 image (unsaved upload or preview)
     if (student.imageUpload && student.imageUpload.imageData) {
       return student.imageUpload.imageData;
     }
+
+    // 2. Check if we have a saved path from the server
+    if (student.imagePath) {
+      // If it's already a full URL or base64, return as is
+      if (student.imagePath.startsWith('http') || student.imagePath.startsWith('data:')) {
+        return student.imagePath;
+      }
+      // Otherwise prepend API base URL
+      return `${environment.apiBaseUrl}/${student.imagePath}`;
+    }
+
+    // 3. Fallback to default
     return 'assets/images/user-grid/user-grid-img2.png';
   }
 

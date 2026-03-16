@@ -15,6 +15,7 @@ import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
 import { Staff } from '../../../Models/staff';
+import { SessionService } from '../../../services/session.service';
 
 @Component({
   selector: 'app-exam-result',
@@ -60,7 +61,8 @@ export class ExamResultComponent implements OnInit {
     private studentService: StudentService,
     private authService: AuthService,
     private staffService: StaffService,
-    private assignmentService: SubjectAssignmentService
+    private assignmentService: SubjectAssignmentService,
+    private sessionService: SessionService
   ) { }
 
   ngOnInit() {
@@ -243,7 +245,8 @@ export class ExamResultComponent implements OnInit {
   }
 
   loadStudentsByClass() {
-    this.studentService.GetStudents().subscribe({
+    const yearId = this.sessionService.getCurrentYearId();
+    this.studentService.GetStudents(yearId).subscribe({
       next: (res) => {
         const allStudents = res || [];
         if (this.authService.hasAnyRole(['Teacher'])) {

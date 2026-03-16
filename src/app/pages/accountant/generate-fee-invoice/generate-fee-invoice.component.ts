@@ -156,23 +156,42 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     if (this.feeForm.invalid) return;
     const feeData = this.feeForm.value as Fee;
 
+    Swal.fire({
+      title: 'Saving Fee Invoice...',
+      text: 'Please wait while we process the request.',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     if (this.isEditMode) {
       this.feeService.updateFee(feeData).subscribe({
         next: () => {
+          Swal.close();
           this.showFeeDialog = false;
           this.loadFees();
           Swal.fire({ icon: 'success', title: 'Updated!', text: 'Fee updated successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee.', confirmButtonColor: '#800000' })
+        error: () => {
+          Swal.close();
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee.', confirmButtonColor: '#800000' });
+        }
       });
     } else {
       this.feeService.createFee(feeData).subscribe({
         next: () => {
+          Swal.close();
           this.showFeeDialog = false;
           this.loadFees();
           Swal.fire({ icon: 'success', title: 'Created!', text: 'Fee created successfully.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create fee.', confirmButtonColor: '#800000' })
+        error: () => {
+          Swal.close();
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create fee.', confirmButtonColor: '#800000' });
+        }
       });
     }
   }
@@ -191,12 +210,21 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     });
 
     if (result.isConfirmed) {
+      Swal.fire({
+        title: 'Deleting...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
       this.feeService.deleteFee(fee.feeId).subscribe({
         next: () => {
+          Swal.close();
           this.loadFees();
           Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Fee record has been deleted.', showConfirmButton: false, timer: 1800 });
         },
-        error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee.', confirmButtonColor: '#800000' })
+        error: () => {
+          Swal.close();
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee.', confirmButtonColor: '#800000' });
+        }
       });
     }
   }
