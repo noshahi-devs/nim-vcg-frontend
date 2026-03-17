@@ -3,7 +3,7 @@
 
   <div class="es-page">
     <!-- ── Stats Row ── -->
-    <div class="stats-row">
+    <div class="stats-row animate-fade-up">
       <div class="stat-card">
         <div class="stat-icon blue">
           <iconify-icon icon="solar:square-academic-cap-bold-duotone"></iconify-icon>
@@ -34,7 +34,7 @@
     </div>
 
     <!-- ── Top Bar ── -->
-    <div class="es-topbar">
+    <div class="es-topbar animate-fade-up delay-100">
       <div class="es-topbar-left">
         <div class="es-search-wrap">
           <iconify-icon icon="solar:magnifer-linear" class="es-search-icon"></iconify-icon>
@@ -52,7 +52,7 @@
     </div>
 
     <!-- ── Empty State ── -->
-    <div class="es-empty" *ngIf="filteredClassList.length === 0">
+    <div class="es-empty" *ngIf="filteredClassList.length === 0 && !loading">
       <div class="es-empty-icon">
         <iconify-icon icon="solar:school-bold-duotone"></iconify-icon>
       </div>
@@ -65,7 +65,7 @@
     </div>
 
     <!-- ── Class Grid ── -->
-    <div class="es-grid" *ngIf="filteredClassList.length > 0">
+    <div class="es-grid" *ngIf="filteredClassList.length > 0 && !loading">
       <div class="es-card" *ngFor="let classItem of filteredClassList; let i = index">
         <div class="es-card-accent" [ngClass]="'accent-' + (i % 5)"></div>
 
@@ -106,113 +106,195 @@
     </div>
   </div>
 
-
   <!-- VIEW MODAL -->
-  <div class="modal fade" id="viewModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content radius-12 shadow-lg border-0">
-        <div class="modal-header border-bottom-0 pb-0">
-          <h5 class="modal-title fw-bold text-primary-600">Class Information</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body p-24" *ngIf="selectedClassForView">
-          <div class="text-center mb-24">
-            <div
-              class="w-80-px h-80-px rounded-circle bg-primary-50 d-flex justify-content-center align-items-center text-primary-600 mx-auto mb-16 shadow-sm">
-              <iconify-icon icon="mdi:google-classroom" style="font-size: 40px;"></iconify-icon>
-            </div>
-            <h4 class="fw-bold mb-4">{{ selectedClassForView.standardName }}</h4>
-            <span class="badge bg-primary-100 text-primary-600 px-16 py-6 radius-pill">Academic Class</span>
+  <div class="modal-overlay" *ngIf="showViewModal" (click)="showViewModal = false">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header-premium">
+        <div class="header-gradient"></div>
+        <div class="header-content">
+          <div class="modal-icon-premium">
+            <iconify-icon icon="solar:square-academic-cap-bold-duotone"></iconify-icon>
           </div>
+          <div>
+            <h5 class="modal-title-premium">Class Information</h5>
+            <p class="modal-subtitle-premium">Academic Record View</p>
+          </div>
+          <button class="modal-close-premium" (click)="showViewModal = false">
+            <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+          </button>
+        </div>
+      </div>
 
-          <div class="row g-16">
-            <div class="col-6">
-              <div class="p-16 radius-8 bg-neutral-50 border border-neutral-100 text-center">
-                <h6 class="text-sm text-secondary-light mb-8">Subjects</h6>
-                <h4 class="fw-bold text-primary-600">{{ selectedClassForView.subjects?.length || 0 }}</h4>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="p-16 radius-8 bg-neutral-50 border border-neutral-100 text-center">
-                <h6 class="text-sm text-secondary-light mb-8">Students</h6>
-                <h4 class="fw-bold text-success-600">{{ selectedClassForView.students?.length || 0 }}</h4>
-              </div>
-            </div>
+      <div class="modal-body-premium" *ngIf="selectedClassForView">
+        <div class="text-center mb-24 mt-16">
+          <div
+            class="w-80-px h-80-px rounded-circle bg-yellow-light d-flex justify-content-center align-items-center text-yellow-premium mx-auto mb-16 shadow-sm border border-yellow-premium">
+            <iconify-icon icon="mdi:google-classroom" style="font-size: 40px;"></iconify-icon>
           </div>
+          <h4 class="fw-bold mb-4">{{ selectedClassForView.standardName }}</h4>
+          <span class="badge bg-yellow-premium text-maroon px-16 py-6 radius-pill fw-bold">Academic Class</span>
+        </div>
 
-          <div class="mt-24">
-            <h6 class="fw-bold text-secondary-dark mb-12 border-bottom pb-8">Registration Details</h6>
-            <div class="d-flex justify-content-between mb-8">
-              <span class="text-secondary-light">Standard ID:</span>
-              <span class="fw-medium">#{{ selectedClassForView.standardId }}</span>
+        <div class="row g-16">
+          <div class="col-6">
+            <div class="p-16 radius-16 bg-f8-gradient border border-f1 text-center">
+              <h6 class="text-sm text-secondary-light mb-8">Subjects</h6>
+              <h4 class="fw-extrabold text-maroon">{{ selectedClassForView.subjects?.length || 0 }}</h4>
             </div>
-            <div class="d-flex justify-content-between">
-              <span class="text-secondary-light">Section Prefix:</span>
-              <span class="fw-medium">{{ selectedClassForView.section || 'A' }}</span>
+          </div>
+          <div class="col-6">
+            <div class="p-16 radius-16 bg-f8-gradient border border-f1 text-center">
+              <h6 class="text-sm text-secondary-light mb-8">Students</h6>
+              <h4 class="fw-extrabold text-yellow-premium">{{ selectedClassForView.students?.length || 0 }}</h4>
             </div>
           </div>
         </div>
-        <div class="modal-footer border-top-0 pt-0">
-          <button type="button" class="btn btn-primary w-100 radius-8" data-bs-dismiss="modal">Close View</button>
+
+        <div class="mt-24 view-receipt">
+          <h6 class="fw-bold text-secondary-dark mb-12 border-bottom pb-8">Registration Details</h6>
+          <div class="d-flex justify-content-between mb-8 receipt-item">
+            <span class="label">Standard ID:</span>
+            <span class="value">#{{ selectedClassForView.standardId }}</span>
+          </div>
+          <div class="d-flex justify-content-between receipt-item">
+            <span class="label">Section Prefix:</span>
+            <span class="value">{{ selectedClassForView.section || 'A' }}</span>
+          </div>
         </div>
+      </div>
+      <div class="modal-footer-premium">
+        <button class="btn-ghost w-100" (click)="showViewModal = false">Close View</button>
       </div>
     </div>
   </div>
 
   <!-- EDIT MODAL -->
-  <div class="modal fade" id="editModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content radius-12 shadow-lg border-0">
-        <div class="modal-header">
-          <h5 class="modal-title fw-bold">Edit Class Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  <div class="modal-overlay" *ngIf="showEditModal" (click)="showEditModal = false">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header-premium">
+        <div class="header-gradient"></div>
+        <div class="header-content">
+          <div class="modal-icon-premium edit-mode">
+            <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
+          </div>
+          <div>
+            <h5 class="modal-title-premium">Edit Class Details</h5>
+            <p class="modal-subtitle-premium">Update academic structure</p>
+          </div>
+          <button class="modal-close-premium" (click)="showEditModal = false">
+            <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+          </button>
         </div>
-        <form #editForm="ngForm" (ngSubmit)="updateClass()" *ngIf="selectedClassForEdit">
-          <div class="modal-body p-24">
+      </div>
+
+      <form #editForm="ngForm" (ngSubmit)="updateClass()" *ngIf="selectedClassForEdit">
+        <div class="modal-body-premium">
+          <div class="form-card mt-16">
+            <div class="form-card-label">
+              <span class="card-dot yellow"></span>
+              Class Configuration
+            </div>
             <div class="mb-20">
-              <label class="form-label fw-bold text-secondary-dark">Class Name <span
-                  class="text-danger">*</span></label>
+              <label class="form-label">Class Name <span class="text-danger">*</span></label>
               <input type="text" name="standardName" [(ngModel)]="selectedClassForEdit.standardName" required
-                class="form-control radius-8 border-neutral-200 py-10" placeholder="e.g. Class Four">
+                class="form-control premium-input" placeholder="e.g. Class Four">
             </div>
             <div class="mb-20">
-              <label class="form-label fw-bold text-secondary-dark">Default Section</label>
+              <label class="form-label">Default Section</label>
               <input type="text" name="section" [(ngModel)]="selectedClassForEdit.section"
-                class="form-control radius-8 border-neutral-200 py-10" placeholder="e.g. A">
+                class="form-control premium-input" placeholder="e.g. A">
             </div>
           </div>
-          <div class="modal-footer bg-neutral-50 rounded-bottom-12">
-            <button type="button" class="btn btn-outline-secondary px-24 py-10 radius-8"
-              data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary px-32 py-10 radius-8 shadow-sm"
-              [disabled]="!editForm.valid || loading">
-              {{ loading ? 'Saving...' : 'Save Changes' }}
-            </button>
-          </div>
-        </form>
+        </div>
+        <div class="modal-footer-premium">
+          <button type="button" class="btn-ghost" (click)="showEditModal = false">Cancel</button>
+          <button type="button" class="btn-primary-gradient px-32" [disabled]="!editForm.valid || isProcessing"
+            (click)="updateClass()"
+            style="background: linear-gradient(135deg, #F4C430, #d4a71c); color: #800000; box-shadow: 0 4px 14px rgba(244, 196, 48, 0.3);">
+            <iconify-icon icon="solar:diskette-bold-duotone" *ngIf="!isProcessing" class="me-2"></iconify-icon>
+            <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+            {{ isProcessing ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PREMIUM ACTION MODALS & OVERLAYS
+       ============================================================ -->
+
+  <!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+  <div class="premium-overlay" *ngIf="showFeedbackModal">
+    <div class="premium-modal feedback-modal">
+      <div class="pm-sparkles">
+        <div class="pm-sparkle sp1"></div>
+        <div class="pm-sparkle sp2"></div>
+        <div class="pm-sparkle sp3"></div>
+      </div>
+
+      <div class="pm-icon-ring" [ngClass]="{
+             'success-ring': feedbackType === 'success',
+             'danger-ring': feedbackType === 'error',
+             'warning-ring': feedbackType === 'warning'
+           }">
+        <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                          feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+          style="font-size: 38px; color: #fff;"></iconify-icon>
+      </div>
+
+      <h3 class="pm-title">{{ feedbackTitle }}</h3>
+      <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
+
+      <div class="pm-actions">
+        <button class="pm-btn pm-acknowledge" [ngClass]="{
+                  'pm-success-btn': feedbackType === 'success',
+                  'pm-error-btn': feedbackType === 'error',
+                  'pm-warning-btn': feedbackType === 'warning'
+                }" (click)="showFeedbackModal = false">
+          Acknowledge
+        </button>
       </div>
     </div>
   </div>
 
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div class="premium-overlay" *ngIf="showDeleteModal">
+    <div class="premium-modal confirmation-modal">
+      <div class="pm-icon-ring danger-ring">
+        <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
+      </div>
 
-  <!-- Delete Confirmation Modal -->
-  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content radius-12">
-        <div class="modal-header border-0">
-          <h5 class="modal-title fw-semibold text-danger" id="deleteModalLabel">Confirm Delete</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center">
-          <iconify-icon icon="mdi:alert-circle-outline" class="text-danger mb-3"
-            style="font-size: 48px;"></iconify-icon>
-          <p>Are you sure you want to delete <strong>{{ classToDelete?.standardName }}</strong>?</p>
-        </div>
-        <div class="modal-footer border-0 d-flex justify-content-center gap-2">
-          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger px-4" (click)="deleteClass()">Yes, Delete</button>
-        </div>
+      <h3 class="pm-title">Delete Class?</h3>
+      <p class="pm-subtitle">
+        Are you sure you want to delete <strong>{{ classToDelete?.standardName }}</strong>?<br>
+        This action cannot be undone.
+      </p>
+
+      <div class="pm-actions">
+        <button class="pm-btn pm-cancel" (click)="showDeleteModal = false" [disabled]="isProcessing">
+          Discard
+        </button>
+        <button class="pm-btn pm-save" (click)="deleteClass()" [disabled]="isProcessing"
+          style="background: #ef4444; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
+          <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+          Confirm Delete
+        </button>
       </div>
     </div>
   </div>
+
+  <!-- PROCESSING / LOADING OVERLAY -->
+  <div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+    <div class="processing-card">
+      <div class="loader-ring">
+        <div class="loader-inner"></div>
+      </div>
+      <div class="processing-content">
+        <h4 class="pc-title">Securely Processing</h4>
+        <p class="pc-subtitle">Syncing academic hierarchy...</p>
+      </div>
+    </div>
+  </div>
+
 </div>

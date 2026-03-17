@@ -122,7 +122,8 @@
     font-size: 0.63rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: rgba(241, 245, 249, 0.84);
+    color: #F4C430;
+    /* Golden Yellow */
 }
 
 :host ::ng-deep .sidebar-menu-area {
@@ -158,18 +159,18 @@
     transition: all 0.25s ease;
 }
 
-:host ::ng-deep .sidebar-menu > li > a > span {
+:host ::ng-deep .sidebar-menu>li>a>span {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-:host ::ng-deep .sidebar-menu > li.dropdown > a[data-desc] {
+:host ::ng-deep .sidebar-menu>li.dropdown>a[data-desc] {
     position: relative;
     overflow: visible;
 }
 
-:host ::ng-deep .sidebar-menu > li.dropdown > a[data-desc]::before {
+:host ::ng-deep .sidebar-menu>li.dropdown>a[data-desc]::before {
     content: attr(data-desc);
     position: absolute;
     inset-inline-start: calc(100% + 12px);
@@ -191,7 +192,7 @@
     z-index: 20;
 }
 
-:host ::ng-deep .sidebar-menu > li.dropdown > a[data-desc]:hover::before {
+:host ::ng-deep .sidebar-menu>li.dropdown>a[data-desc]:hover::before {
     opacity: 1;
     visibility: visible;
     transform: translateY(-50%) translateX(0);
@@ -319,7 +320,7 @@
     margin-inline-end: 0.75rem;
 }
 
-:host ::ng-deep .sidebar.active .sidebar-menu > li.dropdown > a[data-desc]::before {
+:host ::ng-deep .sidebar.active .sidebar-menu>li.dropdown>a[data-desc]::before {
     display: none;
 }
 
@@ -365,14 +366,16 @@
 }
 
 :host ::ng-deep .navbar-header {
-    background: #ffffff !important; /* Pure White */
+    background: #ffffff !important;
+    /* Pure White */
     border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
     transition: padding var(--layout-collapse-motion), box-shadow 240ms ease, border-color 240ms ease;
     position: sticky !important;
     top: 0 !important;
     z-index: 1000 !important;
-    padding: 0.75rem 1rem !important; /* Mobile padding */
+    padding: 0.75rem 1rem !important;
+    /* Mobile padding */
 }
 
 @media (min-width: 1200px) {
@@ -384,6 +387,7 @@
 /* === sidebar-hover-expand: width expansion (mirrors .sidebar.active:hover) === */
 /* Triggered when hovering the toggle button (JS adds the class) */
 @media (min-width: 1200px) {
+
     :host ::ng-deep .sidebar.active:hover,
     :host ::ng-deep .sidebar.active.sidebar-hover-expand {
         width: 13.75rem;
@@ -396,6 +400,7 @@
 }
 
 @media (min-width: 1400px) {
+
     :host ::ng-deep .sidebar.active:hover,
     :host ::ng-deep .sidebar.active.sidebar-hover-expand {
         width: 17.1875rem;
@@ -403,6 +408,7 @@
 }
 
 @media (min-width: 1650px) {
+
     :host ::ng-deep .sidebar.active:hover,
     :host ::ng-deep .sidebar.active.sidebar-hover-expand {
         width: 19.5rem;
@@ -443,29 +449,33 @@
 
 /* Sync dashboard margin when sidebar is expanded on hover in collapsed state */
 @media (min-width: 1200px) {
-    :host ::ng-deep .sidebar.active:hover + .dashboard-main.active,
-    :host ::ng-deep .sidebar.active.sidebar-hover-expand + .dashboard-main.active {
+
+    :host ::ng-deep .sidebar.active:hover+.dashboard-main.active,
+    :host ::ng-deep .sidebar.active.sidebar-hover-expand+.dashboard-main.active {
         margin-inline-start: 13.75rem;
     }
 }
 
 @media (min-width: 1400px) {
-    :host ::ng-deep .sidebar.active:hover + .dashboard-main.active,
-    :host ::ng-deep .sidebar.active.sidebar-hover-expand + .dashboard-main.active {
+
+    :host ::ng-deep .sidebar.active:hover+.dashboard-main.active,
+    :host ::ng-deep .sidebar.active.sidebar-hover-expand+.dashboard-main.active {
         margin-inline-start: 17.1875rem;
     }
 }
 
 @media (min-width: 1650px) {
-    :host ::ng-deep .sidebar.active:hover + .dashboard-main.active,
-    :host ::ng-deep .sidebar.active.sidebar-hover-expand + .dashboard-main.active {
+
+    :host ::ng-deep .sidebar.active:hover+.dashboard-main.active,
+    :host ::ng-deep .sidebar.active.sidebar-hover-expand+.dashboard-main.active {
         margin-inline-start: 19.5rem;
     }
 }
 
 :host ::ng-deep .navbar-search input {
     background: #ffffff;
-    border: 1px solid rgba(128, 0, 0, 0.12); /* Subtle Maroon tint */
+    border: 1px solid rgba(128, 0, 0, 0.12);
+    /* Subtle Maroon tint */
     color: #1e293b;
     border-radius: 12px;
     outline: none !important;
@@ -477,13 +487,16 @@
 }
 
 :host ::ng-deep .navbar-search .icon {
-    color: #F4C430; /* Golden Yellow */
+    color: #F4C430;
+    /* Golden Yellow */
 }
 
 :host ::ng-deep .navbar-search input:focus {
     background: #ffffff;
-    border-color: #F4C430; /* Golden Yellow border on focus */
-    box-shadow: 0 0 0 4px rgba(244, 196, 48, 0.15); /* Yellow glow */
+    border-color: #F4C430;
+    /* Golden Yellow border on focus */
+    box-shadow: 0 0 0 4px rgba(244, 196, 48, 0.15);
+    /* Yellow glow */
 }
 
 /* Fix mobile crowding */
@@ -491,14 +504,17 @@
     :host ::ng-deep .navbar-header .col-auto:first-child .d-flex {
         gap: 0.5rem !important;
     }
+
     :host ::ng-deep .navbar-header .col-auto:last-child .d-flex {
         gap: 0.5rem !important;
     }
-    :host ::ng-deep .sidebar-toggle, 
+
+    :host ::ng-deep .sidebar-toggle,
     :host ::ng-deep .sidebar-mobile-toggle {
         width: 36px;
         height: 36px;
     }
+
     :host ::ng-deep .navbar-header [data-theme-toggle],
     :host ::ng-deep .navbar-header .has-indicator,
     :host ::ng-deep .navbar-header .dropdown button img {
@@ -512,9 +528,12 @@
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    border: 1px solid rgba(244, 196, 48, 0.4); /* Yellow tint border */
-    background: rgba(244, 196, 48, 0.05); /* Very light yellow background */
-    color: #F4C430; /* Golden Yellow Icon */
+    border: 1px solid rgba(244, 196, 48, 0.4);
+    /* Yellow tint border */
+    background: rgba(244, 196, 48, 0.05);
+    /* Very light yellow background */
+    color: #F4C430;
+    /* Golden Yellow Icon */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -540,7 +559,7 @@
 }
 
 @media (max-width: 1199px) {
-    :host ::ng-deep .sidebar-menu > li.dropdown > a[data-desc]::before {
+    :host ::ng-deep .sidebar-menu>li.dropdown>a[data-desc]::before {
         display: none;
     }
 }
@@ -576,7 +595,8 @@
 }
 
 :host ::ng-deep .navbar-header [data-theme-toggle]::after {
-    color: #F4C430 !important; /* Golden Yellow */
+    color: #F4C430 !important;
+    /* Golden Yellow */
 }
 
 :host ::ng-deep .navbar-header [data-theme-toggle]:hover {
@@ -584,7 +604,8 @@
 }
 
 :host ::ng-deep .navbar-header [data-theme-toggle]:hover::after {
-    color: #800000 !important; /* Maroon toggle icon on yellow hover */
+    color: #800000 !important;
+    /* Maroon toggle icon on yellow hover */
 }
 
 :host ::ng-deep .navbar-header .has-indicator {
@@ -593,11 +614,13 @@
 }
 
 :host ::ng-deep .navbar-header .has-indicator iconify-icon {
-    color: #F4C430 !important; /* Golden Yellow */
+    color: #F4C430 !important;
+    /* Golden Yellow */
 }
 
 :host ::ng-deep .navbar-header .has-indicator:hover {
-    background: #800000 !important; /* Hover stays Maroon or goes Yellow? Maroon feels more premium for background */
+    background: #800000 !important;
+    /* Hover stays Maroon or goes Yellow? Maroon feels more premium for background */
 }
 
 :host ::ng-deep .navbar-header .has-indicator:hover iconify-icon {

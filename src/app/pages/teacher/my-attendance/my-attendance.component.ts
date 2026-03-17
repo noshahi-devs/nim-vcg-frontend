@@ -23,6 +23,20 @@ export class MyAttendanceComponent implements OnInit {
     userName: string | null = null;
     staffId: number | null = null;
     history: any[] = [];
+    isProcessing = false;
+
+    // Premium Modal States
+    showFeedbackModal = false;
+    feedbackType: 'success' | 'error' | 'warning' = 'success';
+    feedbackTitle = '';
+    feedbackMessage = '';
+    onAcknowledgeFeedback: (() => void) | null = null;
+
+    // Confirmation Modal States
+    showConfirmModal = false;
+    confirmTitle = '';
+    confirmMessage = '';
+    confirmActionType: 'checkIn' | 'checkOut' = 'checkIn';
 
     constructor(
         private authService: AuthService,
@@ -43,7 +57,7 @@ export class MyAttendanceComponent implements OnInit {
                         this.staffId = staff.staffId;
                         this.loadHistory();
                     } else {
-                        Swal.fire('Warning', 'Staff profile could not be found for this user.', 'warning');
+                        this.showFeedback('warning', 'Profile Warning', 'Staff profile could not be found for this user.');
                         this.loadHistory(); // Still try to load if there's old data, though unlikely
                     }
                 },
@@ -89,101 +103,83 @@ export class MyAttendanceComponent implements OnInit {
 
     markAttendance() {
         if (!this.staffId) {
-            Swal.fire('Error', 'Staff profile not found. Cannot mark attendance.', 'error');
+            this.showFeedback('error', 'Profile Error', 'Staff profile not found. Cannot mark attendance.');
             return;
         }
 
-        Swal.fire({
-            title: 'Confirm Check-In',
-            text: `Record your presence for today, ${this.today.toLocaleDateString()}?`,
-            icon: 'info',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, Confirm',
-            confirmButtonColor: '#800000'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const payload = {
-                    attendanceId: 0,
-                    date: this.getLocalIsoString(new Date()),
-                    type: 1, // Staff
-                    attendanceIdentificationNumber: this.staffId,
-                    isPresent: true,
-                    description: 'Self Marked'
-                };
+        this.openConfirmModal(
+            'checkIn',
+            'Confirm Check-In',
+            `Record your presence for today, ${this.today.toLocaleDateString()}?`
+        );
+    }
 
-                Swal.fire({
-                    title: 'Checking In...',
-                    text: 'Please wait while we record your presence.',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    showConfirmButton: false,
-                    didOpen: () => Swal.showLoading()
-                });
+    processCheckIn() {
+        this.isProcessing = true;
+        const payload = {
+            attendanceId: 0,
+            date: this.getLocalIsoString(new Date()),
+            type: 1, // Staff
+            attendanceIdentificationNumber: this.staffId,
+            isPresent: true,
+            description: 'Self Marked'
+        };
 
-                this.attendanceService.addAttendance(payload as any).subscribe({
-                    next: () => {
-                        Swal.close();
-                        Swal.fire('Checked In!', 'Your attendance has been recorded.', 'success');
-                        this.loadHistory();
-                    },
-                    error: (err) => {
-                        Swal.close();
-                        console.error(err);
-                        Swal.fire('Error', 'Database rejected attendance. Please contact admin.', 'error');
-                    }
+        this.attendanceService.addAttendance(payload as any).subscribe({
+            next: () => {
+                this.isProcessing = false;
+                this.showFeedback('success', 'Checked In!', 'Your attendance has been recorded.', () => {
+                    this.loadHistory();
                 });
+            },
+            error: (err) => {
+                this.isProcessing = false;
+                console.error(err);
+                this.showFeedback('error', 'Error', 'Database rejected attendance. Please contact admin.');
             }
         });
     }
 
     markCheckOut() {
         if (!this.staffId) {
-            Swal.fire('Error', 'Staff profile not found. Cannot mark check-out.', 'error');
+            this.showFeedback('error', 'Profile Error', 'Staff profile not found. Cannot mark check-out.');
             return;
         }
 
-        Swal.fire({
-            title: 'Confirm Check-Out',
-            text: `Are you sure you want to clock out for today?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, Check Out',
-            confirmButtonColor: '#ff5b5b'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const payload = {
-                    attendanceId: 0,
-                    date: this.getLocalIsoString(new Date()),
-                    type: 1, // Staff
-                    attendanceIdentificationNumber: this.staffId,
-                    isPresent: true,
-                    description: 'Self Checked Out'
-                };
+        this.openConfirmModal(
+            'checkOut',
+            'Confirm Check-Out',
+            `Are you sure you want to clock out for today?`
+        );
+    }
 
-                Swal.fire({
-                    title: 'Checking Out...',
-                    text: 'Please wait while we record your check-out.',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    showConfirmButton: false,
-                    didOpen: () => Swal.showLoading()
-                });
+    processCheckOut() {
+        this.isProcessing = true;
+        const payload = {
+            attendanceId: 0,
+            date: this.getLocalIsoString(new Date()),
+            type: 1, // Staff
+            attendanceIdentificationNumber: this.staffId,
+            isPresent: true,
+            description: 'Self Checked Out'
+        };
 
-                this.attendanceService.checkOutStaff(payload as any).subscribe({
-                    next: () => {
-                        Swal.close();
-                        Swal.fire('Checked Out!', 'Your check-out time has been recorded.', 'success');
-                        this.loadHistory();
-                    },
-                    error: (err) => {
-                        Swal.close();
-                        console.error(err);
-                        Swal.fire('Error', err?.error || 'Database rejected check-out. Please contact admin.', 'error');
-                    }
+        this.attendanceService.checkOutStaff(payload as any).subscribe({
+            next: () => {
+                this.isProcessing = false;
+                this.showFeedback('success', 'Checked Out!', 'Your check-out time has been recorded.', () => {
+                    this.loadHistory();
                 });
+            },
+            error: (err) => {
+                this.isProcessing = false;
+                console.error(err);
+                this.showFeedback('error', 'Error', err?.error || 'Database rejected check-out. Please contact admin.');
             }
         });
     }
+
+    // Removed Swals from here, logic transferred to processing functions.
 
     calculateHours(checkIn: Date | string, checkOut: Date | string | undefined): string {
         if (!checkIn || !checkOut) return '--';
@@ -211,6 +207,43 @@ export class MyAttendanceComponent implements OnInit {
             'T' + pad(date.getHours()) +
             ':' + pad(date.getMinutes()) +
             ':' + pad(date.getSeconds());
+    }
+
+    // Modal Helpers
+    showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, cb?: () => void) {
+        this.feedbackType = type;
+        this.feedbackTitle = title;
+        this.feedbackMessage = message;
+        this.showFeedbackModal = true;
+        this.onAcknowledgeFeedback = cb || null;
+    }
+
+    closeFeedback() {
+        this.showFeedbackModal = false;
+        if (this.onAcknowledgeFeedback) {
+            this.onAcknowledgeFeedback();
+            this.onAcknowledgeFeedback = null;
+        }
+    }
+
+    openConfirmModal(type: 'checkIn' | 'checkOut', title: string, message: string) {
+        this.confirmActionType = type;
+        this.confirmTitle = title;
+        this.confirmMessage = message;
+        this.showConfirmModal = true;
+    }
+
+    closeConfirmModal() {
+        this.showConfirmModal = false;
+    }
+
+    confirmAction() {
+        this.showConfirmModal = false;
+        if (this.confirmActionType === 'checkIn') {
+            this.processCheckIn();
+        } else {
+            this.processCheckOut();
+        }
     }
 }
 

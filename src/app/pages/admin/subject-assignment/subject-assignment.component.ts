@@ -44,7 +44,19 @@ export class SubjectAssignmentComponent implements OnInit {
   };
 
   loading: boolean = false;
-  isSubmitting: boolean = false;
+  isProcessing: boolean = false;
+  
+  // Premium Modal State
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  redirectOnClose = false;
+
+  // For Deletion Confirmation
+  showDeleteModal = false;
+  assignmentToDelete: number | null = null;
+
   errorMessage: string | null = null;
   searchTerm: string = '';
 
@@ -244,11 +256,11 @@ export class SubjectAssignmentComponent implements OnInit {
 
   assignSubject(): void {
     if (!this.model.staffId || !this.model.sectionId || this.model.selectedSubjectIds.length === 0) {
-      Swal.fire('Validation Error', 'Please select Teacher, Section, and at least one Subject.', 'warning');
+      this.showFeedback('warning', 'Validation Error', 'Please select Teacher, Section, and at least one Subject.');
       return;
     }
 
-    this.isSubmitting = true;
+    this.isProcessing = true;
     const requests = this.model.selectedSubjectIds.map((subjectId: number) => {
       return this.assignmentService.addAssignment({
         staffId: this.model.staffId,
@@ -257,51 +269,58 @@ export class SubjectAssignmentComponent implements OnInit {
       } as any);
     });
 
-    Swal.fire({
-      title: 'Assigning Subjects...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    // No extra step needed here as we use isProcessing for overlay
 
     forkJoin(requests).subscribe({
       next: (res: any[]) => {
-        Swal.close();
-        this.isSubmitting = false;
-        Swal.fire('Assigned!', `${res.length} subjects assigned successfully.`, 'success');
+        this.isProcessing = false;
+        this.showFeedback('success', 'Assigned!', `${res.length} subjects assigned successfully.`);
 
         this.loadInitialData();
         this.model.selectedSubjectIds = [];
       },
       error: (err) => {
-        Swal.close();
-        this.isSubmitting = false;
-        Swal.fire('Error', err.error?.message || 'Failed to assign subjects.', 'error');
+        this.isProcessing = false;
+        const msg = err.error?.message || 'Failed to assign subjects.';
+        this.showFeedback('error', 'Error', msg);
       }
     });
   }
 
-  removeAssignment(id: number): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, remove it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.assignmentService.deleteAssignment(id).subscribe({
-          next: () => {
-            Swal.fire('Removed!', 'The assignment has been deleted.', 'success');
-            this.loadInitialData();
-          },
-          error: () => Swal.fire('Error', 'Could not delete assignment', 'error')
-        });
+  confirmDelete(id: number): void {
+    this.assignmentToDelete = id;
+    this.showDeleteModal = true;
+  }
+
+  removeAssignment(id: number | null): void {
+    const assignmentId = id || this.assignmentToDelete;
+    if (!assignmentId) return;
+
+    this.isProcessing = true;
+    this.assignmentService.deleteAssignment(assignmentId).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.showFeedback('success', 'Removed!', 'The assignment has been deleted.');
+        this.loadInitialData();
+        this.showDeleteModal = false;
+        this.assignmentToDelete = null;
+      },
+      error: () => {
+        this.isProcessing = false;
+        this.showFeedback('error', 'Error', 'Could not delete assignment');
+        this.showDeleteModal = false;
       }
     });
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 }

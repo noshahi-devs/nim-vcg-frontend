@@ -26,7 +26,7 @@
   pointer-events: none;
 }
 
-.report-shell > * {
+.report-shell>* {
   position: relative;
   z-index: 1;
 }

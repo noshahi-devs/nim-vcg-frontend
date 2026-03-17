@@ -9,8 +9,9 @@ import { ImageUpload } from '../../../Models/StaticImageModel/imageUpload';
 import { StandardService } from '../../../services/standard.service';
 import { Standard } from '../../../Models/standard';
 import { OnInit } from '@angular/core';
-import Swal from '../../../swal';
 import { SessionService } from '../../../services/session.service';
+import { finalize } from 'rxjs';
+import Swal from '../../../swal';
 
 declare var bootstrap: any;
 
@@ -88,6 +89,14 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
 
   classes: Standard[] = [];
 
+  // Premium Modal Visibility State
+  showConfirmModal = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -137,12 +146,24 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     reader.readAsDataURL(file);
   }
 
-  // -------------------------------------------------------
-  // MODAL SHOW HELPERS
-  // -------------------------------------------------------
-  showPopup(id: string) {
-    const modalEl = document.getElementById(id);
-    if (modalEl) new bootstrap.Modal(modalEl).show();
+  // ── Premium Feedback ──
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+    if (autoClose) {
+      setTimeout(() => {
+        this.showFeedbackModal = false;
+        if (type === 'success') {
+          this.router.navigate(['/student-list']);
+        }
+      }, 2200);
+    }
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 
   // -------------------------------------------------------
@@ -154,18 +175,7 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     this.studentService.CheckEmail(email).subscribe({
       next: (res) => {
         if (res.exists) {
-          Swal.fire({
-            title: 'Email Already Exists!',
-            text: `The email address "${email}" is already registered. Please use a different one.`,
-            icon: 'warning',
-            confirmButtonText: 'OK',
-            customClass: {
-              popup: 'nim-swal-popup',
-              title: 'nim-swal-title',
-              htmlContainer: 'nim-swal-text',
-              confirmButton: 'nim-swal-btn nim-swal-confirm'
-            }
-          });
+          this.showFeedback('warning', 'Email Already Exists!', `The email address "${email}" is already registered. Please use a different one.`);
           // Optionally clear the field:
           if (this.newStudent.studentEmail === email) this.newStudent.studentEmail = '';
           if (this.newStudent.parentEmail === email) this.newStudent.parentEmail = '';
@@ -183,44 +193,23 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     form.form.markAllAsTouched();
 
     if (form.invalid) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Incomplete Form',
-        text: 'Please fill in all required fields correctly.',
-        confirmButtonColor: '#800020'
-      });
+      this.showFeedback('warning', 'Incomplete Form', 'Please fill in all required fields correctly.');
       return;
     }
 
-    Swal.fire({
-      title: 'Creating Student...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    if (!this.studentDOBStr || !this.admissionDateStr) {
+      this.showFeedback('warning', 'Dates Required', 'Please provide both Date of Birth and Admission Date.');
+      return;
+    }
+
+    this.isProcessing = true;
 
     if (this.newStudent.studentEmail) {
-
       this.studentService.CheckEmail(this.newStudent.studentEmail).subscribe({
         next: (res) => {
           if (res.exists) {
-            Swal.close();
-            Swal.fire({
-              title: 'Email Already Exists!',
-              text: `The email address "${this.newStudent.studentEmail}" is already registered. Please use a different one.`,
-              icon: 'warning',
-              confirmButtonText: 'OK',
-              customClass: {
-                popup: 'nim-swal-popup',
-                title: 'nim-swal-title',
-                htmlContainer: 'nim-swal-text',
-                confirmButton: 'nim-swal-btn nim-swal-confirm'
-              }
-            });
+            this.isProcessing = false;
+            this.showFeedback('warning', 'Email Already Exists!', `The email address "${this.newStudent.studentEmail}" is already registered.`);
             this.newStudent.studentEmail = '';
             this.newStudent.studentPassword = '';
           } else {
@@ -229,8 +218,8 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
         },
         error: (err) => {
           console.error('Error checking email', err);
-          Swal.close();
-          Swal.fire('Error', 'Unable to validate email at this time.', 'error');
+          this.isProcessing = false;
+          this.showFeedback('error', 'Validation Error', 'Unable to validate email at this time.');
         }
       });
     } else {
@@ -278,27 +267,18 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
       imagePath: this.newStudent.imageUpload.getBase64 || null
     };
 
-    console.log('Payload to API:', studentToSave); // optional debug
-
-    this.studentService.SaveStudent(studentToSave).subscribe({
+    this.studentService.SaveStudent(studentToSave).pipe(
+      finalize(() => this.isProcessing = false)
+    ).subscribe({
       next: () => {
-        Swal.close();
-        Swal.fire({
-          icon: 'success',
-          title: 'Student Enrolled Successfully!',
-          showConfirmButton: false,
-          timer: 1500
-        }).then(() => {
-          this.router.navigate(['/student-list']);
-        });
+        this.showFeedback('success', 'Enrolled Successfully', 'Student has been registered in the system. Redirecting...', true);
       },
       error: err => {
-        Swal.close();
         console.error('Error while saving student', err);
         const errorMsg = err.error && typeof err.error === 'string'
           ? err.error
-          : 'Failed to save student. Please check all fields.';
-        Swal.fire('Error', errorMsg, 'error');
+          : (err.error?.message ? err.error.message : 'Failed to save student. Please check all fields.');
+        this.showFeedback('error', 'Enrollment Failed', errorMsg);
       }
     });
   }

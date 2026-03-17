@@ -11,11 +11,12 @@
         <!-- Header Section -->
         <div class="card-header border-bottom bg-base px-32 py-24 d-flex align-items-center gap-16">
           <div
-            class="w-48-px h-48-px rounded-circle bg-primary-50 d-flex justify-content-center align-items-center text-primary-600 flex-shrink-0">
+            class="w-48-px h-48-px rounded-circle text-white d-flex justify-content-center align-items-center flex-shrink-0"
+            style="background: linear-gradient(135deg, #800000, #5a0000);">
             <iconify-icon icon="solar:document-add-bold-duotone" class="text-xxl"></iconify-icon>
           </div>
           <div>
-            <h5 class="fw-bold mb-4 text-primary-light">New Leave Application</h5>
+            <h5 class="fw-bold mb-4" style="color: #800000;">New Leave Application</h5>
             <p class="text-secondary-light mb-0 text-sm">Fill out the details below to submit a time-off request.</p>
           </div>
           <div *ngIf="loadingProfile" class="ms-auto">
@@ -35,7 +36,8 @@
                 <div class="col-md-6">
                   <div class="d-flex align-items-center gap-12 bg-base px-16 py-12 radius-8 border border-neutral-200">
                     <div
-                      class="w-32-px h-32-px rounded-circle bg-primary-100 d-flex justify-content-center align-items-center text-primary-600 fw-bold">
+                      class="w-32-px h-32-px rounded-circle d-flex justify-content-center align-items-center text-white fw-bold"
+                      style="background: linear-gradient(135deg, #800000, #F4C430);">
                       {{ employeeName ? employeeName.charAt(0) : '?' }}
                     </div>
                     <div>
@@ -165,8 +167,8 @@
                   Reset Fields
                 </button>
                 <button type="submit"
-                  class="btn btn-primary d-flex align-items-center gap-2 radius-8 px-32 py-10 fw-semibold"
-                  [disabled]="submitting || !staffId">
+                  class="btn d-flex align-items-center gap-2 radius-8 px-32 py-10 fw-semibold text-white premium-maroon-btn"
+                  [disabled]="submitting || !staffId" style="border-radius: 8px !important; background: linear-gradient(135deg, #800000, #5a0000); border: none; box-shadow: 0 4px 14px rgba(128,0,0,0.35); transition: all 0.25s;">
                   <span *ngIf="submitting" class="spinner-border spinner-border-sm" role="status"></span>
                   <iconify-icon *ngIf="!submitting" icon="solar:check-circle-bold" class="text-lg"></iconify-icon>
                   <span>{{ staffId ? 'Confirm Submit' : 'Wait for Profile...' }}</span>
@@ -178,6 +180,53 @@
         </div>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+<div class="premium-overlay" *ngIf="showFeedbackModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-sparkles">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring" [ngClass]="{
+           'success-ring': feedbackType === 'success',
+           'danger-ring': feedbackType === 'error',
+           'warning-ring': feedbackType === 'warning'
+         }">
+      <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+        style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">{{ feedbackTitle }}</h3>
+    <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-acknowledge" [ngClass]="{
+                'pm-success-btn': feedbackType === 'success',
+                'pm-error-btn': feedbackType === 'error',
+                'pm-warning-btn': feedbackType === 'warning'
+              }" (click)="closeFeedback()">
+        Acknowledge
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESSING / LOADING OVERLAY -->
+<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+  <div class="processing-card">
+    <div class="loader-ring">
+      <div class="loader-inner"></div>
+    </div>
+    <div class="processing-content">
+      <h4 class="pc-title">Securely Processing</h4>
+      <p class="pc-subtitle">Submitting your application...</p>
     </div>
   </div>
 </div>

@@ -60,9 +60,9 @@
         <!-- Header -->
         <div class="es-card-head">
           <div class="es-card-icon" [ngClass]="'icon-' + (i % 5)">
-            <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon>
+            <iconify-icon icon="solar:calendar-date-bold-duotone" style="pointer-events: none;"></iconify-icon>
           </div>
-          <span class="es-year-badge">{{ sch.examYear }}</span>
+          <span class="es-year-badge">{{ sch.examYear || 'TBD' }}</span>
         </div>
 
         <!-- Name -->
@@ -72,20 +72,20 @@
         <div class="es-date-row">
           <div class="es-date-block">
             <span class="es-date-label">
-              <iconify-icon icon="solar:calendar-linear"></iconify-icon>
+              <iconify-icon icon="solar:calendar-linear" style="pointer-events: none;"></iconify-icon>
               Start
             </span>
-            <span class="es-date-val">{{ sch.startDate | date:'dd MMM yyyy' }}</span>
+            <span class="es-date-val">{{ (sch.startDate | date:'dd MMM yyyy') || 'TBD' }}</span>
           </div>
           <div class="es-date-arrow">
-            <iconify-icon icon="solar:arrow-right-bold-duotone"></iconify-icon>
+            <iconify-icon icon="solar:arrow-right-bold-duotone" style="pointer-events: none;"></iconify-icon>
           </div>
           <div class="es-date-block">
             <span class="es-date-label">
-              <iconify-icon icon="solar:calendar-linear"></iconify-icon>
+              <iconify-icon icon="solar:calendar-linear" style="pointer-events: none;"></iconify-icon>
               End
             </span>
-            <span class="es-date-val">{{ sch.endDate | date:'dd MMM yyyy' }}</span>
+            <span class="es-date-val">{{ (sch.endDate | date:'dd MMM yyyy') || 'TBD' }}</span>
           </div>
         </div>
 
@@ -94,18 +94,18 @@
 
         <!-- Actions -->
         <div class="es-card-actions">
-          <button class="es-action-btn view" (click)="openViewDialog(sch)" title="View details">
-            <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
+          <button type="button" class="es-action-btn view" (click)="openViewDialog(sch)" title="View details">
+            <iconify-icon icon="solar:eye-bold-duotone" style="pointer-events: none;"></iconify-icon>
             <span>View</span>
           </button>
-          <button class="es-action-btn edit" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])"
+          <button type="button" class="es-action-btn edit" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])"
             (click)="openEditDialog(sch)" title="Edit">
-            <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
+            <iconify-icon icon="solar:pen-new-square-bold-duotone" style="pointer-events: none;"></iconify-icon>
             <span>Edit</span>
           </button>
-          <button class="es-action-btn delete" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])"
+          <button type="button" class="es-action-btn delete" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])"
             (click)="confirmDelete(sch)" title="Delete">
-            <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+            <iconify-icon icon="solar:trash-bin-trash-bold-duotone" style="pointer-events: none;"></iconify-icon>
           </button>
         </div>
       </div>
@@ -247,6 +247,51 @@
         (click)="openEditDialog(selectedSchedule); closeDialog()">
         <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
         Edit Schedule
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- == Premium Feedback Modal == -->
+<div class="premium-overlay" *ngIf="showFeedbackModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span class="pm-sparkle sp3"></span></div>
+    <div class="pm-icon-ring" [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
+      <iconify-icon [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'" style="font-size:2.4rem; color:#fff"></iconify-icon>
+    </div>
+    <p class="pm-title">{{ feedbackTitle }}</p>
+    <p class="pm-subtitle">{{ feedbackMessage }}</p>
+    <div class="pm-actions">
+      <button class="pm-btn pm-acknowledge" [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}" (click)="closeFeedback()">
+        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Acknowledge
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- == Processing Overlay == -->
+<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+  <div class="processing-card">
+    <div class="loader-ring"></div>
+    <div><p class="pc-title">Processing...</p><p class="pc-subtitle">Please wait a moment</p></div>
+  </div>
+</div>
+
+<!-- == Delete Confirmation Modal == -->
+<div class="premium-overlay" *ngIf="showConfirmModal">
+  <div class="premium-modal">
+    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span class="pm-sparkle sp3"></span></div>
+    <div class="pm-icon-ring danger-ring">
+      <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size:2.4rem; color:#fff"></iconify-icon>
+    </div>
+    <p class="pm-title">{{ confirmTitle }}</p>
+    <p class="pm-subtitle">{{ confirmMessage }}</p>
+    <div class="pm-actions">
+      <button class="pm-btn pm-cancel" (click)="cancelConfirm()">
+        <iconify-icon icon="solar:close-circle-linear"></iconify-icon> Cancel
+      </button>
+      <button class="pm-btn pm-save pm-error-btn" (click)="executeDelete()">
+        <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon> Confirm Delete
       </button>
     </div>
   </div>

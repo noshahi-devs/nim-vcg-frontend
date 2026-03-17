@@ -43,11 +43,17 @@ export class OtherPaymentComponent implements OnInit {
 
   showAddEditDialog = false;
   showViewDialog = false;
-  showDeleteDialog = false;
-  isEditMode = false;
-
   selectedPayment!: OthersPayment;
-  paymentToDelete!: OthersPayment;
+  paymentToDelete: OthersPayment | null = null;
+
+  // Premium Modal States
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+  showDeleteModal = false;
+  isEditMode = false;
 
   // Dropdown & Search state
   showFeesDropdown = false;
@@ -111,9 +117,17 @@ export class OtherPaymentComponent implements OnInit {
   }
 
   loadPayments() {
+    this.isProcessing = true;
     this.paymentService.getOtherPayments().subscribe({
-      next: r => { this.payments = r || []; this.searchPayments(); },
-      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load payments.', confirmButtonColor: '#800000' })
+      next: r => {
+        this.payments = r || [];
+        this.isProcessing = false;
+        this.searchPayments();
+      },
+      error: () => {
+        this.isProcessing = false;
+        this.showFeedback('error', 'Critical Error', 'Encountered an issue while retrieving payment records. Please try again.');
+      }
     });
   }
 
@@ -210,12 +224,28 @@ export class OtherPaymentComponent implements OnInit {
   openEditDialog(p: OthersPayment) {
     this.isEditMode = true;
     this.showAddEditDialog = true;
+
+    // Fallback reconstruction if backend relationship has One-To-Many flaw
+    let selectedFees: Fee[] = p.fees && p.fees.length > 0 ? p.fees as any : [];
+    if (!selectedFees.length && p.otherPaymentDetails && p.otherPaymentDetails.length > 0) {
+      const detailNames = p.otherPaymentDetails.map(d => d.feeName?.trim().toLowerCase());
+      selectedFees = this.fees.filter(f => detailNames.includes(f.feeType?.typeName?.trim().toLowerCase()));
+    }
+
+    let selectedMonths: AcademicMonth[] = p.academicMonths && p.academicMonths.length > 0 ? p.academicMonths : [];
+    if (!selectedMonths.length && p.otherPaymentDetails?.length) {
+      // For months, we might not have them in OtherPaymentDetail names, 
+      // but let's check if the backend actually returned them now with our fix.
+    }
+
     this.form.patchValue({
       ...p,
-      fees: p.fees || [],
-      academicMonths: p.academicMonths || [],
+      fees: selectedFees,
+      academicMonths: selectedMonths,
+      waver: p.waver || 0,
       paymentDate: p.paymentDate ? new Date(p.paymentDate).toISOString().split('T')[0] : ''
     });
+    this.calculateAmounts();
   }
 
   openViewDialog(p: OthersPayment) {
@@ -224,19 +254,9 @@ export class OtherPaymentComponent implements OnInit {
   }
 
   savePayment() {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.isProcessing) return;
 
-    Swal.fire({
-      title: 'Saving Payment...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
-
+    this.isProcessing = true;
     const payload = this.form.getRawValue();
     payload.totalAmount = this.form.get('totalAmount')?.value;
     payload.amountRemaining = payload.totalAmount - (payload.amountPaid || 0);
@@ -244,63 +264,65 @@ export class OtherPaymentComponent implements OnInit {
     if (this.isEditMode) {
       this.paymentService.updateOthersPayment(payload).subscribe({
         next: () => {
-          Swal.close();
+          this.isProcessing = false;
           this.closeDialog();
           this.loadPayments();
-          Swal.fire({ icon: 'success', title: 'Updated!', text: 'Payment updated successfully.', showConfirmButton: false, timer: 1800 });
+          this.showFeedback('success', 'Payment Updated', `The record for <b>${payload.studentId}</b> has been successfully revised.`);
         },
         error: () => {
-          Swal.close();
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment.', confirmButtonColor: '#800000' });
+          this.isProcessing = false;
+          this.showFeedback('error', 'Update Failed', 'An error occurred while attempting to update the payment record.');
         }
       });
     } else {
       this.paymentService.createOthersPayment(payload).subscribe({
         next: () => {
-          Swal.close();
+          this.isProcessing = false;
           this.closeDialog();
           this.loadPayments();
-          Swal.fire({ icon: 'success', title: 'Created!', text: 'Payment created successfully.', showConfirmButton: false, timer: 1800 });
+          this.showFeedback('success', 'Payment Recorded', 'The new financial transaction has been securely logged.');
         },
         error: () => {
-          Swal.close();
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment.', confirmButtonColor: '#800000' });
+          this.isProcessing = false;
+          this.showFeedback('error', 'Submission Failed', 'Failed to log the new payment. Please verify the details and retry.');
         }
       });
     }
   }
 
   /* ---------- DELETE (SweetAlert2) ---------- */
-  async confirmDelete(p: OthersPayment) {
-    const result = await Swal.fire({
-      title: 'Delete Payment?',
-      html: `Are you sure you want to delete the payment for <strong>${p.student?.studentName}</strong>?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Delete',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6b7280'
-    });
+  confirmDelete(p: OthersPayment) {
+    this.paymentToDelete = p;
+    this.showDeleteModal = true;
+  }
 
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: 'Deleting...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-      this.paymentService.deleteOthersPayment(p.othersPaymentId).subscribe({
-        next: () => {
-          Swal.close();
-          this.loadPayments();
-          Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Payment deleted successfully.', showConfirmButton: false, timer: 1800 });
-        },
-        error: () => {
-          Swal.close();
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#800000' });
-        }
-      });
-    }
+  deletePayment() {
+    if (!this.paymentToDelete || this.isProcessing) return;
+
+    this.isProcessing = true;
+    this.paymentService.deleteOthersPayment(this.paymentToDelete.othersPaymentId).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.showDeleteModal = false;
+        this.loadPayments();
+        this.showFeedback('success', 'Deletion Complete', 'The payment record has been permanently removed from the system.');
+      },
+      error: () => {
+        this.isProcessing = false;
+        this.showFeedback('error', 'Cleanup Failed', 'A system error prevented the deletion of this record.');
+      }
+    });
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 
   closeDialog() {
@@ -357,6 +379,12 @@ export class OtherPaymentComponent implements OnInit {
     const months = this.form.value.academicMonths || [];
     if (!months.length) return 'Select Months';
     return months.map((m: any) => m.monthName).join(', ');
+  }
+
+  getStandardName(standardId: any): string {
+    if (!standardId) return '--';
+    const std = this.standards.find(s => s.standardId == standardId);
+    return std ? std.standardName : '--';
   }
 }
 

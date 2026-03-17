@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
-import Swal from '../../../swal';
 import { StandardService } from '../../../services/standard.service';
 import { StaffService } from '../../../services/staff.service';
 import { Standard } from '../../../Models/standard';
 import { Staff, Designation } from '../../../Models/staff';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-new-class',
@@ -24,6 +24,14 @@ export class NewClassComponent implements OnInit {
   standards: Standard[] = [];
 
   newClass: Standard = new Standard();
+
+  // Premium Modal State
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+  redirectOnClose = false;
 
   constructor(
     private router: Router,
@@ -51,20 +59,12 @@ export class NewClassComponent implements OnInit {
         }
 
         if (this.teachers.length === 0) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'No Teachers Found',
-            text: 'Please add a teacher in the Staff Module before creating a class.',
-          });
+          this.showFeedback('warning', 'No Teachers Found', 'Please add a teacher in the Staff Module before creating a class.');
         }
       },
       error: (err) => {
         console.error('Error loading teachers:', err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to load teachers.'
-        });
+        this.showFeedback('error', 'Error', 'Failed to load teachers.');
       }
     });
   }
@@ -75,19 +75,14 @@ export class NewClassComponent implements OnInit {
         this.standards = res;
       },
       error: () => {
-        Swal.fire('Error', 'Could not load classes from API', 'error');
+        this.showFeedback('error', 'Error', 'Could not load classes from API');
       }
     });
   }
 
   onSubmit(form: any): void {
     if (form.invalid) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Invalid Form',
-        text: 'Please fill in all required fields.',
-        confirmButtonColor: '#3085d6'
-      });
+      this.showFeedback('warning', 'Invalid Form', 'Please fill in all required fields.');
       return;
     }
 
@@ -103,40 +98,37 @@ export class NewClassComponent implements OnInit {
 
     console.log('Class payload:', payload);
 
-    Swal.fire({
-      title: 'Creating Class...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    this.isProcessing = true;
 
-    this.standardService.createStandard(payload).subscribe({
+    this.standardService.createStandard(payload).pipe(
+      finalize(() => this.isProcessing = false)
+    ).subscribe({
       next: () => {
-        Swal.close();
-        Swal.fire({
-          icon: 'success',
-          title: 'Class Created!',
-          text: 'The new class has been added successfully.',
-          showConfirmButton: false,
-          timer: 1500
-        });
-        setTimeout(() => this.router.navigate(['/class-list']), 1500);
+        this.showFeedback('success', 'Class Created!', 'The new class has been added successfully.', true);
       },
       error: (err) => {
-        Swal.close();
         console.error('Error creating class:', err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to create class. ' + (err.error?.message || err.message || 'Unknown error')
-        });
+        this.showFeedback('error', 'Error', 'Failed to create class. ' + (err.error?.message || err.message || 'Unknown error'));
       }
     });
   }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, redirect = false) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+    this.redirectOnClose = redirect;
+
+    if (type === 'success' && redirect) {
+      setTimeout(() => this.closeFeedback(), 2000);
+    }
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
+    if (this.redirectOnClose) {
+      this.router.navigate(['/class-list']);
+    }
+  }
 }
-
-

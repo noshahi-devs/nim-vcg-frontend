@@ -206,6 +206,57 @@ body {
   border-radius: 2px;
 }
 
+/* ========================
+   YELLOW THEME UTILITIES
+   ======================== */
+.text-yellow-premium {
+  color: #F4C430 !important;
+}
+
+.bg-yellow-premium {
+  background-color: #F4C430 !important;
+}
+
+.bg-yellow-light {
+  background: rgba(244, 196, 48, 0.1) !important;
+}
+
+.icon-yellow-premium {
+  color: #F4C430 !important;
+}
+
+.btn-premium-yellow {
+  background: linear-gradient(135deg, #F4C430, #d4a71c);
+  color: #800000 !important; /* Maroon text on yellow for contrast */
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(244, 196, 48, 0.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.btn-premium-yellow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(244, 196, 48, 0.45);
+  filter: brightness(1.05);
+}
+
+.btn-premium-yellow:active {
+  transform: translateY(0);
+}
+
+.card-dot.yellow {
+  background: #F4C430;
+  box-shadow: 0 0 8px rgba(244, 196, 48, 0.6);
+}
+
 /* PREMIUM GLASSMORPHISM UTILITIES */
 .glass-card {
   background: var(--card-bg);
@@ -630,8 +681,8 @@ body {
 }
 
 .swal2-container .swal2-timer-progress-bar {
-  background: var(--primary-color) !important;
-  opacity: 0.95 !important;
+  background: #F4C430 !important;
+  opacity: 1 !important;
 }
 
 @keyframes nimSwalIn {
@@ -824,6 +875,14 @@ html body .modal-box {
 html body .modal-header-premium {
   background: var(--primary-deep) !important;
   color: #ffffff !important;
+}
+
+html body .modal-header-premium .modal-title-premium {
+  color: #ffffff !important;
+}
+
+html body .modal-header-premium .modal-subtitle-premium {
+  color: rgba(255, 255, 255, 0.85) !important;
 }
 
 html body .modal-body-premium {
@@ -1317,7 +1376,7 @@ html body .modal-box select {
 
 /* Timer progress bar styling */
 .swal2-timer-progress-bar {
-  background: rgba(244, 196, 48, 0.4) !important;
+  background: #F4C430 !important;
 }
 
 /* Animations */

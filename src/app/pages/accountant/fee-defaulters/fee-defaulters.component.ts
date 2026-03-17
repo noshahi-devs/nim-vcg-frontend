@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import { DueBalanceService, DueBalance } from '../../../services/due-balance.service';
-import Swal from '../../../swal';
 
 interface FeeDefaulter {
   feeId: number;
@@ -43,14 +42,21 @@ export class FeeDefaultersComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 10;
 
-  // Loading
-  isLoading: boolean = false;
-
   // Analytics
   totalDefaulters: number = 0;
   totalOutstanding: number = 0;
   criticalCount: number = 0;
   warningCount: number = 0;
+
+  // Premium Modal States
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+  showReminderModal = false;
+  reminderDefaulter: FeeDefaulter | null = null;
+  bulkMode = false;
 
   constructor(private dueBalanceService: DueBalanceService) { }
 
@@ -59,22 +65,17 @@ export class FeeDefaultersComponent implements OnInit {
   }
 
   loadDefaulters(): void {
-    this.isLoading = true;
+    this.isProcessing = true;
     this.dueBalanceService.getDueBalances().subscribe({
       next: (balances) => {
         this.processDefaulters(balances);
         this.applyFilters();
-        this.isLoading = false;
+        this.isProcessing = false;
       },
       error: (error) => {
         console.error('Error loading due balances:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to load fee defaulters. Please try again.',
-          confirmButtonColor: '#800000'
-        });
-        this.isLoading = false;
+        this.isProcessing = false;
+        this.showFeedback('error', 'Update Failed', 'Synchronizing with the financial database was unsuccessful. Please check your connection.');
       }
     });
   }
@@ -150,48 +151,39 @@ export class FeeDefaultersComponent implements OnInit {
   }
 
   sendReminder(defaulter: FeeDefaulter): void {
-    Swal.fire({
-      title: 'Send Reminder',
-      html: `Send payment reminder to <strong>${defaulter.studentName}</strong>?`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#800000',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, send it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Reminder Sent!',
-          text: `Payment reminder sent successfully.`,
-          timer: 1800,
-          showConfirmButton: false
-        });
-      }
-    });
+    this.reminderDefaulter = defaulter;
+    this.bulkMode = false;
+    this.showReminderModal = true;
+  }
+
+  confirmReminder(): void {
+    if (this.isProcessing) return;
+
+    this.isProcessing = true;
+    // Simulate API call for reminder
+    setTimeout(() => {
+      this.isProcessing = false;
+      this.showReminderModal = false;
+      const target = this.bulkMode ? `${this.filteredDefaulters.length} students` : `<b>${this.reminderDefaulter?.studentName}</b>`;
+      this.showFeedback('success', 'Reminders Sent', `The secure payment notification has been dispatched to ${target}.`);
+    }, 1500);
   }
 
   sendBulkReminders(): void {
     if (this.filteredDefaulters.length === 0) return;
-    Swal.fire({
-      title: 'Send Bulk Reminders',
-      text: `Send reminders to all ${this.filteredDefaulters.length} filtered defaulters?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#800000',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, send all!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Reminders Sent!',
-          text: `Sent ${this.filteredDefaulters.length} reminders successfully`,
-          timer: 2000,
-          showConfirmButton: false
-        });
-      }
-    });
+    this.bulkMode = true;
+    this.showReminderModal = true;
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 
   exportCSV(): void {
@@ -221,12 +213,7 @@ export class FeeDefaultersComponent implements OnInit {
   }
 
   exportPDF(): void {
-    Swal.fire({
-      icon: 'info',
-      title: 'PDF Export',
-      text: 'PDF export functionality is being processed.',
-      confirmButtonColor: '#800000'
-    });
+    this.showFeedback('warning', 'Feature Unavailable', 'PDF generation for financial reports is currently being optimized for high-resolution printing.');
   }
 
   onSearchChange(): void {

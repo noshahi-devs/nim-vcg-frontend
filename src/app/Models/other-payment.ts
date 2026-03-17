@@ -12,4 +12,5 @@ export class OthersPayment {
   fees: { feeId: number }[] = [];
   otherPaymentDetails: OtherPaymentDetail[] = [];
   academicMonths: any[];
+  waver!: number;
 }

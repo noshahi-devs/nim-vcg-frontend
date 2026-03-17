@@ -29,6 +29,8 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
 
   modalMessage: string = '';
   modalType: 'success' | 'error' = 'success';
+  showFeedbackModal = false;
+  isSaveSuccess = false;
   selectedImageBase64: string | null = null;
   selectedImageName: string | null = null;
 
@@ -45,22 +47,8 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
     });
   }
 
-  showModal(id: string) {
-    const modalEl = document.getElementById(id);
-    if (modalEl) {
-      const modal = new bootstrap.Modal(modalEl);
-      modal.show();
-    }
-  }
-
-  hideModal(id: string) {
-    const modalEl = document.getElementById(id);
-    if (modalEl) {
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      if (modal) {
-        modal.hide();
-      }
-    }
+  closeFeedbackModal() {
+    this.showFeedbackModal = false;
   }
 
   loadStaffData() {
@@ -149,21 +137,23 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
         next: () => {
           Swal.close();
           this.loading = false;
+          this.isSaveSuccess = false;
           this.modalMessage = 'Staff information updated successfully!';
           this.modalType = 'success';
-          this.showModal('messageModal');
+          this.showFeedbackModal = true;
           setTimeout(() => {
-            this.hideModal('messageModal');
+            this.showFeedbackModal = false;
             this.router.navigate(['/staff-list']);
-          }, 1500);
+          }, 2200);
         },
         error: (err) => {
           Swal.close();
           console.error('Error updating staff:', err);
           this.loading = false;
-          this.modalMessage = 'Failed to update staff profile.';
+          this.isSaveSuccess = false;
+          this.modalMessage = err.error?.message || 'Failed to update staff profile.';
           this.modalType = 'error';
-          this.showModal('messageModal');
+          this.showFeedbackModal = true;
         }
       });
     }
@@ -191,7 +181,7 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
     if (newPass !== confPass) {
       this.modalMessage = 'Passwords do not match.';
       this.modalType = 'error';
-      this.showModal('messageModal');
+      this.showFeedbackModal = true;
       return;
     }
 
@@ -200,12 +190,12 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
       this.loading = false;
       this.modalMessage = 'Security credentials updated!';
       this.modalType = 'success';
-      this.showModal('messageModal');
+      this.showFeedbackModal = true;
     }, 1500);
   }
 
   ngOnDestroy() {
-    this.hideModal('messageModal');
+    this.showFeedbackModal = false;
   }
 
   ngAfterViewInit() {

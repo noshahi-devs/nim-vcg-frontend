@@ -2,7 +2,7 @@ import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
-import Swal from '../../../swal';
+import { finalize } from 'rxjs';
 import { BankAccount, BankAccountService } from '../../../services/bank-account.service';
 import { PaymentGatewaySetting, PaymentGatewayService } from '../../../services/payment-gateway.service';
 
@@ -40,6 +40,27 @@ export class BankCashComponent implements OnInit {
   totalBankBalance = 0;
   totalCashBalance = 0;
   totalBalance = 0;
+
+  // ── Premium Modal State ──
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+
+  showDeleteDialog = false;
+  itemToDeleteId: number | null = null;
+  itemToDeleteDesc = '';
+  deleteTarget: 'bank' | 'cash' | 'gateway' = 'bank';
+
+  // ── Helpers ──
+  triggerSuccess(title: string, msg: string) {
+    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  triggerError(title: string, msg: string) {
+    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  closeFeedback() { this.showFeedbackModal = false; }
 
   constructor(
     private bankAccountService: BankAccountService,
@@ -82,44 +103,72 @@ export class BankCashComponent implements OnInit {
   }
 
   saveBankAccount(): void {
-    if (!this.currentBankAccount.accountName || !this.currentBankAccount.accountNumber) {
-      Swal.fire('Error', 'Please fill all required fields', 'warning');
+    const account = this.currentBankAccount as BankAccount;
+    if (!account.accountName || !account.accountNumber) {
+      this.triggerError('Error', 'Please fill all required fields');
       return;
     }
-
-    const account = this.currentBankAccount as BankAccount;
     account.accountType = 'Bank';
 
+    this.isProcessing = true;
     if (this.isEditBankMode) {
-      this.bankAccountService.updateBankAccount(account.bankAccountId, account).subscribe(() => {
-        Swal.fire('Success', 'Bank account updated', 'success');
-        this.loadData();
-        this.closeBankModal();
-      });
+      this.bankAccountService.updateBankAccount(account.bankAccountId, account)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Updated!', 'Bank account updated');
+            this.loadData();
+            this.closeBankModal();
+          },
+          error: () => this.triggerError('Error', 'Failed to update bank account')
+        });
     } else {
-      this.bankAccountService.createBankAccount(account).subscribe(() => {
-        Swal.fire('Success', 'Bank account added', 'success');
-        this.loadData();
-        this.closeBankModal();
-      });
+      this.bankAccountService.createBankAccount(account)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Added!', 'Bank account added');
+            this.loadData();
+            this.closeBankModal();
+          },
+          error: () => this.triggerError('Error', 'Failed to add bank account')
+        });
     }
   }
 
   deleteBankAccount(account: BankAccount): void {
-    Swal.fire({
-      title: 'Delete?',
-      text: `Delete ${account.accountName}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.bankAccountService.deleteBankAccount(account.bankAccountId).subscribe(() => {
-          Swal.fire('Deleted!', '', 'success');
-          this.loadData();
+    this.itemToDeleteId = account.bankAccountId;
+    this.itemToDeleteDesc = account.accountName;
+    this.deleteTarget = account.accountType === 'Cash' ? 'cash' : 'bank';
+    this.showDeleteDialog = true;
+  }
+
+  executeDelete() {
+    if (this.itemToDeleteId === null) return;
+    this.showDeleteDialog = false;
+    this.isProcessing = true;
+
+    if (this.deleteTarget === 'gateway') {
+      this.gatewayService.deleteGateway(this.itemToDeleteId)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Deleted!', 'Gateway has been removed.');
+            this.loadData();
+          },
+          error: () => this.triggerError('Error', 'Failed to delete gateway')
         });
-      }
-    });
+    } else {
+      this.bankAccountService.deleteBankAccount(this.itemToDeleteId)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Deleted!', (this.deleteTarget === 'bank' ? 'Bank account' : 'Cash account') + ' deleted');
+            this.loadData();
+          },
+          error: () => this.triggerError('Error', 'Failed to delete account')
+        });
+    }
   }
 
   closeBankModal(): void { this.showBankModal = false; }
@@ -139,25 +188,36 @@ export class BankCashComponent implements OnInit {
   }
 
   saveCashAccount(): void {
-    if (!this.currentCashAccount.accountName) {
-      Swal.fire('Error', 'Please fill name', 'warning');
+    const account = this.currentCashAccount as BankAccount;
+    if (!account.accountName) {
+      this.triggerError('Error', 'Please fill name');
       return;
     }
-    const account = this.currentCashAccount as BankAccount;
     account.accountType = 'Cash';
 
+    this.isProcessing = true;
     if (this.isEditCashMode) {
-      this.bankAccountService.updateBankAccount(account.bankAccountId, account).subscribe(() => {
-        Swal.fire('Success', 'Cash account updated', 'success');
-        this.loadData();
-        this.closeCashModal();
-      });
+      this.bankAccountService.updateBankAccount(account.bankAccountId, account)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Updated!', 'Cash account updated');
+            this.loadData();
+            this.closeCashModal();
+          },
+          error: () => this.triggerError('Error', 'Failed to update cash account')
+        });
     } else {
-      this.bankAccountService.createBankAccount(account).subscribe(() => {
-        Swal.fire('Success', 'Cash account added', 'success');
-        this.loadData();
-        this.closeCashModal();
-      });
+      this.bankAccountService.createBankAccount(account)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Added!', 'Cash account added');
+            this.loadData();
+            this.closeCashModal();
+          },
+          error: () => this.triggerError('Error', 'Failed to add cash account')
+        });
     }
   }
 
@@ -182,32 +242,43 @@ export class BankCashComponent implements OnInit {
   }
 
   saveGateway(): void {
-    if (!this.currentGateway.gatewayName) {
-      Swal.fire('Error', 'Please fill required fields', 'warning');
+    const gw = this.currentGateway as PaymentGatewaySetting;
+    if (!gw.gatewayName) {
+      this.triggerError('Error', 'Please fill required fields');
       return;
     }
-    const gw = this.currentGateway as PaymentGatewaySetting;
 
+    this.isProcessing = true;
     if (this.isEditGatewayMode) {
-      this.gatewayService.updateGateway(gw.id, gw).subscribe(() => {
-        Swal.fire('Success', 'Gateway updated', 'success');
-        this.loadData();
-        this.closeGatewayModal();
-      });
+      this.gatewayService.updateGateway(gw.id, gw)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Updated!', 'Gateway settings updated');
+            this.loadData();
+            this.closeGatewayModal();
+          },
+          error: () => this.triggerError('Error', 'Failed to update gateway')
+        });
     } else {
-      this.gatewayService.createGateway(gw).subscribe(() => {
-        Swal.fire('Success', 'Gateway added', 'success');
-        this.loadData();
-        this.closeGatewayModal();
-      });
+      this.gatewayService.createGateway(gw)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Added!', 'Gateway settings added');
+            this.loadData();
+            this.closeGatewayModal();
+          },
+          error: () => this.triggerError('Error', 'Failed to add gateway')
+        });
     }
   }
 
   deleteGateway(gateway: PaymentGatewaySetting): void {
-    this.gatewayService.deleteGateway(gateway.id).subscribe(() => {
-      Swal.fire('Deleted', '', 'success');
-      this.loadData();
-    });
+    this.itemToDeleteId = gateway.id;
+    this.itemToDeleteDesc = gateway.gatewayName;
+    this.deleteTarget = 'gateway';
+    this.showDeleteDialog = true;
   }
 
   closeGatewayModal(): void { this.showGatewayModal = false; }

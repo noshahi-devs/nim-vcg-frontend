@@ -5,8 +5,6 @@ import { Router } from '@angular/router';
 import { UserManagementService, User } from '../../../services/user-management.service';
 import Swal from '../../../swal';
 
-declare var bootstrap: any;
-
 interface Login {
   id: string;
   name: string;
@@ -28,7 +26,7 @@ interface Login {
 })
 export class StaffManageLoginComponent implements OnInit {
   title = 'Manage Logins';
-  Math = Math; // For template usage
+  Math = Math;
 
   // Data
   logins: Login[] = [];
@@ -38,10 +36,17 @@ export class StaffManageLoginComponent implements OnInit {
   showDialog: boolean = false;
   isEditMode: boolean = false;
 
-  // Modal states
-  modalMessage: string = '';
-  modalType: 'success' | 'error' | 'confirm' = 'success';
+  // Premium Modal States
+  showDeleteModal = false;
+  showFeedbackModal = false;
+  showStatusModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
   deleteTarget: Login | null = null;
+  statusTarget: Login | null = null;
+  pendingStatus = '';
+  isSaving = false;
 
   // Form Data
   loginForm: Login = this.getEmptyForm();
@@ -66,43 +71,25 @@ export class StaffManageLoginComponent implements OnInit {
 
   loading = false;
 
-  get totalLogins(): number {
-    return this.logins.length;
-  }
-
-  get activeLogins(): number {
-    return this.logins.filter(x => x.status?.toLowerCase() === 'active').length;
-  }
-
-  get inactiveLogins(): number {
-    return this.logins.filter(x => x.status?.toLowerCase() === 'inactive').length;
-  }
+  get totalLogins(): number { return this.logins.length; }
+  get activeLogins(): number { return this.logins.filter(x => x.status?.toLowerCase() === 'active').length; }
+  get inactiveLogins(): number { return this.logins.filter(x => x.status?.toLowerCase() === 'inactive').length; }
 
   constructor(private userService: UserManagementService, private router: Router) { }
 
-  ngOnInit(): void {
-    this.loadStaffData();
-  }
+  ngOnInit(): void { this.loadStaffData(); }
 
-  // Show modal by ID
-  showModal(id: string) {
-    const modalEl = document.getElementById(id);
-    if (modalEl) {
-      const modal = new bootstrap.Modal(modalEl);
-      modal.show();
+  // ── Feedback Modal ──
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+    if (autoClose) {
+      setTimeout(() => { this.showFeedbackModal = false; }, 2200);
     }
   }
-
-  // Hide modal by ID
-  hideModal(id: string) {
-    const modalEl = document.getElementById(id);
-    if (modalEl) {
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      if (modal) {
-        modal.hide();
-      }
-    }
-  }
+  closeFeedback() { this.showFeedbackModal = false; }
 
   loadStaffData(): void {
     this.loading = true;
@@ -122,9 +109,8 @@ export class StaffManageLoginComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading users:', err);
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load users' });
+        this.showFeedback('error', 'Load Failed', 'Failed to load users. Please try again.');
         this.loading = false;
-        // Fallback to empty array
         this.logins = [];
         this.filteredLogins = [];
       }
@@ -132,28 +118,15 @@ export class StaffManageLoginComponent implements OnInit {
   }
 
   getEmptyForm(): Login {
-    return {
-      id: '0',
-      name: '',
-      email: '',
-      password: '',
-      role: '',
-      phone: '',
-      status: 'Active',
-      createdOn: new Date().toISOString().split('T')[0]
-    };
+    return { id: '0', name: '', email: '', password: '', role: '', phone: '', status: 'Active', createdOn: new Date().toISOString().split('T')[0] };
   }
 
-  // Dialog Methods
-  openAddDialog(): void {
-    this.router.navigate(['/staff-add']);
-  }
+  openAddDialog(): void { this.router.navigate(['/staff-add']); }
 
   openViewDialog(login: Login): void {
     this.viewLogin = { ...login };
     this.showViewDialog = true;
   }
-
   closeViewDialog(): void {
     this.showViewDialog = false;
     this.viewLogin = null;
@@ -165,163 +138,145 @@ export class StaffManageLoginComponent implements OnInit {
     this.confirmPassword = '';
     this.showDialog = true;
   }
-
   closeDialog(): void {
     this.showDialog = false;
     this.loginForm = this.getEmptyForm();
     this.confirmPassword = '';
   }
 
-  // Toggle Active/Inactive
+  // ── Toggle Status with Premium Modal ──
   toggleStatus(login: Login): void {
     const newStatus = login.status?.toLowerCase() === 'active' ? 'Inactive' : 'Active';
-    const action = newStatus === 'Active' ? 'Activate' : 'Deactivate';
-    Swal.fire({
-      title: `${action} User?`,
-      text: `Are you sure you want to ${action.toLowerCase()} ${login.name}?`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: `Yes, ${action}`,
-      confirmButtonColor: newStatus === 'Active' ? '#10b981' : '#ef4444',
-      cancelButtonColor: '#6b7280'
-    }).then(result => {
-      if (result.isConfirmed) {
-        this.userService.toggleUserStatus(login.id, newStatus).subscribe({
-          next: () => {
-            login.status = newStatus;
-            Swal.fire({ icon: 'success', title: `${action}d!`, text: `${login.name} has been ${action.toLowerCase()}d.`, timer: 1500, showConfirmButton: false });
-          },
-          error: (err) => {
-            console.error('Error toggling status:', err);
-            Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update user status.' });
-          }
-        });
+    this.statusTarget = login;
+    this.pendingStatus = newStatus;
+    this.showStatusModal = true;
+  }
+
+  confirmToggleStatus(): void {
+    if (!this.statusTarget) return;
+    const login = this.statusTarget;
+    const newStatus = this.pendingStatus;
+    const action = newStatus === 'Active' ? 'Activated' : 'Deactivated';
+    this.showStatusModal = false;
+
+    this.userService.toggleUserStatus(login.id, newStatus).subscribe({
+      next: () => {
+        login.status = newStatus;
+        this.showFeedback('success', `${action}!`, `${login.name} has been ${action.toLowerCase()} successfully.`, true);
+        this.statusTarget = null;
+      },
+      error: (err) => {
+        console.error('Error toggling status:', err);
+        this.showFeedback('error', 'Action Failed', 'Failed to update user status. Please try again.');
+        this.statusTarget = null;
       }
     });
   }
 
-  // CRUD Operations
+  cancelToggleStatus(): void {
+    this.showStatusModal = false;
+    this.statusTarget = null;
+  }
+
+  // ── CRUD ──
   saveLogin(): void {
-    // Validation
     if (!this.loginForm.name || !this.loginForm.email || !this.loginForm.role || !this.loginForm.phone) {
-      Swal.fire({ icon: 'warning', title: 'Incomplete', text: 'Please fill all required fields' });
+      this.showFeedback('warning', 'Incomplete Form', 'Please fill all required fields before saving.');
       return;
     }
 
     if (!this.isEditMode) {
       if (!this.loginForm.password || !this.confirmPassword) {
-        Swal.fire({ icon: 'warning', title: 'Missing Password', text: 'Please enter password' });
+        this.showFeedback('warning', 'Missing Password', 'Please enter and confirm the password.');
         return;
       }
       if (this.loginForm.password !== this.confirmPassword) {
-        Swal.fire({ icon: 'error', title: 'Mismatch', text: 'Passwords do not match' });
+        this.showFeedback('error', 'Password Mismatch', 'The passwords you entered do not match. Please try again.');
         return;
       }
 
-      // Create new user
       const registerData = {
         Username: this.loginForm.name,
         Email: this.loginForm.email,
         Password: this.loginForm.password,
-        Role: [this.loginForm.role] // Backend expects array
+        Role: [this.loginForm.role]
       };
 
-      Swal.fire({
-        title: 'Creating User...',
-        text: 'Please wait while we process the request.',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        didOpen: () => {
-          Swal.showLoading();
-        }
-      });
-
+      this.isSaving = true;
       this.userService.registerUser(registerData).subscribe({
         next: () => {
-          Swal.close();
-          Swal.fire({ icon: 'success', title: 'Created!', text: 'User created successfully', timer: 1500, showConfirmButton: false });
-          this.loadStaffData();
+          this.isSaving = false;
           this.closeDialog();
+          this.showFeedback('success', 'Login Created!', `Account for ${this.loginForm.name || 'the user'} was created successfully.`, true);
+          this.loadStaffData();
         },
         error: (err) => {
-          Swal.close();
+          this.isSaving = false;
           console.error('Error creating user:', err);
-          Swal.fire({ icon: 'error', title: 'Error', text: err.error?.message || 'Failed to create user' });
+          this.showFeedback('error', 'Creation Failed', err.error?.message || 'Failed to create the user account. Please try again.');
         }
       });
     } else {
-      // For edit mode, we might need to call a different endpoint
-      // For now, just show a message that edit is not supported via this interface
-      Swal.fire({ icon: 'info', title: 'Not Supported', text: 'User editing is not yet implemented' });
       this.closeDialog();
+      this.showFeedback('warning', 'Not Supported', 'User editing is not yet implemented. Please use the Staff Edit Profile page.');
     }
   }
 
-  // Open delete confirmation modal
+  // ── Delete with Premium Modal ──
   confirmDelete(login: Login): void {
-    Swal.fire({
-      title: 'Delete User?',
-      text: `Are you sure you want to delete ${login.name}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, delete',
-      confirmButtonColor: '#d33'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.deleteLogin(login.id);
-      }
-    });
+    this.deleteTarget = login;
+    this.showDeleteModal = true;
   }
 
-  // Execute delete
-  deleteLogin(userId: string): void {
-    this.userService.deleteUser(userId).subscribe({
+  cancelDelete(): void {
+    this.deleteTarget = null;
+    this.showDeleteModal = false;
+  }
+
+  executeDelete(): void {
+    if (!this.deleteTarget) return;
+    const login = this.deleteTarget;
+    this.showDeleteModal = false;
+
+    this.userService.deleteUser(login.id).subscribe({
       next: () => {
-        Swal.fire({ icon: 'success', title: 'Deleted!', timer: 1500, showConfirmButton: false });
+        this.deleteTarget = null;
+        this.showFeedback('success', 'Deleted!', `Login account for "${login.name}" has been permanently deleted.`, true);
         this.loadStaffData();
       },
       error: (err) => {
         console.error('Error deleting user:', err);
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete user' });
+        const errorMsg = err.error?.message || 'This staff account cannot be deleted because it may have linked data (such as assigned subjects, classes, or student records). To maintain data integrity, please remove these links before deleting the account.';
+        this.deleteTarget = null;
+        this.showFeedback('error', 'Cannot Delete', errorMsg);
       }
     });
   }
 
-  // Search
+  // ── Search & Pagination ──
   searchLogins(): void {
     if (!this.searchTerm.trim()) {
       this.filteredLogins = [...this.logins];
       this.currentPage = 1;
       return;
     }
-
     const search = this.searchTerm.toLowerCase();
     this.filteredLogins = this.logins.filter(login =>
       login.name.toLowerCase().includes(search) ||
       login.email.toLowerCase().includes(search) ||
       login.role.toLowerCase().includes(search)
     );
-
     this.currentPage = 1;
   }
 
-  // Pagination
   get paginatedLogins(): Login[] {
     const start = (this.currentPage - 1) * this.rowsPerPage;
-    const end = start + this.rowsPerPage;
-    return this.filteredLogins.slice(start, end);
+    return this.filteredLogins.slice(start, start + this.rowsPerPage);
   }
 
-  get totalPages(): number {
-    return Math.ceil(this.filteredLogins.length / this.rowsPerPage);
-  }
+  get totalPages(): number { return Math.ceil(this.filteredLogins.length / this.rowsPerPage); }
 
   changePage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-    }
+    if (page >= 1 && page <= this.totalPages) this.currentPage = page;
   }
 }
-
-

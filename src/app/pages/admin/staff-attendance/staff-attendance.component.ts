@@ -1,7 +1,6 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import Swal from '../../../swal';
 import { StaffService } from '../../../services/staff.service';
 import { AttendanceService } from '../../../services/attendance.service';
 import { Staff } from '../../../Models/staff';
@@ -31,6 +30,16 @@ export class StaffAttendanceComponent implements OnInit {
 
   // Permissions
   canMarkAttendance = false;
+
+  /** PREMIUM UI STATES */
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  
+  showConfirmModal = false;
+  pendingRecords: any[] = [];
 
   // Pagination & Search
   itemsPerPage: number = 10;
@@ -76,7 +85,7 @@ export class StaffAttendanceComponent implements OnInit {
         this.staffLoaded = true;
       },
       error: (err) => {
-        Swal.fire('Error', 'Unable to load staff data', 'error');
+        this.triggerError('Error', 'Unable to load staff data');
         console.error(err);
       }
     });
@@ -84,57 +93,24 @@ export class StaffAttendanceComponent implements OnInit {
 
   markAllPresent(): void {
     this.staffMembers.forEach(s => s.status = 'Present');
-    Swal.fire({
-      icon: 'success',
-      title: 'All Marked Present',
-      timer: 1000,
-      showConfirmButton: false
-    });
+    this.triggerSuccess('Updated', 'All Marked Present');
   }
 
   markAllAbsent(): void {
     this.staffMembers.forEach(s => s.status = 'Absent');
-    Swal.fire({
-      icon: 'info',
-      title: 'All Marked Absent',
-      timer: 1000,
-      showConfirmButton: false
-    });
+    this.triggerSuccess('Updated', 'All Marked Absent');
   }
 
-  async saveAttendance(): Promise<void> {
+  saveAttendance(): void {
     const markedRecords = this.staffMembers.filter(s => s.status);
     const unmarked = this.staffMembers.filter(s => !s.status);
 
-    if (unmarked.length > 0) {
-      const result = await Swal.fire({
-        icon: 'warning',
-        title: 'Incomplete Attendance',
-        text: `${unmarked.length} staff member(s) are not marked. Continue anyway?`,
-        showCancelButton: true,
-        confirmButtonText: 'Yes, Save',
-        cancelButtonText: 'Cancel',
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33'
-      });
-      if (!result.isConfirmed) return;
-    }
-
     if (markedRecords.length === 0) {
-      Swal.fire('No Data', 'No staff to mark attendance for.', 'info');
+      this.triggerWarning('No Data', 'No staff to mark attendance for.');
       return;
     }
 
-    Swal.fire({
-      title: 'Saving...',
-      text: 'Please wait while we save the attendance.',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
-
-    const attendanceRequests = markedRecords.map(s => {
+    this.pendingRecords = markedRecords.map(s => {
       const attendance: Attendance = {
         attendanceId: 0,
         date: new Date(this.selectedDate),
@@ -146,16 +122,27 @@ export class StaffAttendanceComponent implements OnInit {
       return this.attendanceService.addAttendance(attendance);
     });
 
-    forkJoin(attendanceRequests).subscribe({
+    if (unmarked.length > 0) {
+      this.showConfirmModal = true;
+    } else {
+      this.confirmSave();
+    }
+  }
+
+  confirmSave(): void {
+    this.showConfirmModal = false;
+    this.isProcessing = true;
+
+    forkJoin(this.pendingRecords).subscribe({
       next: () => {
-        Swal.close();
-        Swal.fire('Saved!', 'Staff attendance saved successfully', 'success');
+        this.isProcessing = false;
+        this.triggerSuccess('Saved!', 'Staff attendance saved successfully');
         this.resetForm();
       },
       error: (err) => {
-        Swal.close();
         console.error('Attendance save error', err);
-        Swal.fire('Error', 'Failed to save staff attendance.', 'error');
+        this.isProcessing = false;
+        this.triggerError('Error', 'Failed to save staff attendance.');
       }
     });
   }
@@ -197,6 +184,32 @@ export class StaffAttendanceComponent implements OnInit {
     const absent = this.staffMembers.filter(s => s.status === 'Absent').length;
     const unmarked = this.staffMembers.filter(s => !s.status).length;
     return { present, absent, unmarked, total: this.staffMembers.length };
+  }
+
+  // Helper Methods for Modals
+  triggerSuccess(title: string, message: string) {
+    this.feedbackType = 'success';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  triggerError(title: string, message: string) {
+    this.feedbackType = 'error';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  triggerWarning(title: string, message: string) {
+    this.feedbackType = 'warning';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 }
 

@@ -46,42 +46,28 @@
     <!-- ===================== STATS CARDS ===================== -->
     <div class="stats-row mb-24">
       <div class="stat-card">
-        <div class="stat-icon-wrapper primary">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="16" />
-            <line x1="8" y1="12" x2="16" y2="12" />
-          </svg>
+        <div class="stat-icon-wrapper primary" style="background: rgba(128, 0, 0, 0.1); color: #800000;">
+          <iconify-icon icon="solar:round-alt-arrow-up-bold-duotone" style="font-size: 1.5rem;"></iconify-icon>
         </div>
         <div class="stat-content">
           <span class="stat-label">Total Income</span>
-          <h3 class="stat-value text-success-main">{{ formatCurrency(report.totalIncome) }}</h3>
+          <h3 class="stat-value" style="color: #15803d;">{{ formatCurrency(report.totalIncome) }}</h3>
         </div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon-wrapper orange">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="8" y1="12" x2="16" y2="12" />
-          </svg>
+        <div class="stat-icon-wrapper orange" style="background: #fffbeb; color: #b45309;">
+          <iconify-icon icon="solar:round-alt-arrow-down-bold-duotone" style="font-size: 1.5rem;"></iconify-icon>
         </div>
         <div class="stat-content">
           <span class="stat-label">Total Expenses</span>
-          <h3 class="stat-value text-danger-main">{{ formatCurrency(report.totalExpenses) }}</h3>
+          <h3 class="stat-value" style="color: #b45309;">{{ formatCurrency(report.totalExpenses) }}</h3>
         </div>
       </div>
 
-      <div class="stat-card" [style.border]="report.netProfit >= 0 ? '1px solid #d1fae5' : '1px solid #fee2e2'">
-        <div class="stat-icon-wrapper" [ngClass]="report.netProfit >= 0 ? 'green' : 'orange'">
-          <svg *ngIf="report.netProfit >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-            <polyline points="16 7 22 7 22 13" />
-          </svg>
-          <svg *ngIf="report.netProfit < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="22 17 13.5 8.5 8.5 13.5 2 7" />
-            <polyline points="16 17 22 17 22 11" />
-          </svg>
+      <div class="stat-card" [style.border]="report.netProfit >= 0 ? '1px solid #d1fae5' : '1px solid #fde68a'">
+        <div class="stat-icon-wrapper" [ngClass]="report.netProfit >= 0 ? 'green' : 'orange'" [style.background]="report.netProfit >= 0 ? '#f0fdf4' : '#fffbeb'" [style.color]="report.netProfit >= 0 ? '#16a34a' : '#b45309'">
+          <iconify-icon [icon]="report.netProfit >= 0 ? 'solar:graph-up-bold-duotone' : 'solar:graph-down-bold-duotone'" style="font-size: 1.5rem;"></iconify-icon>
         </div>
         <div class="stat-content">
           <span class="stat-label">{{ getProfitLossLabel() }}</span>
@@ -96,12 +82,12 @@
       <!-- Pie Chart section -->
       <div class="col-lg-5">
         <div class="fee-card h-100">
-          <div class="fee-card-header">
+          <div class="fee-card-header" style="background: #f8fafc;">
             <h6 class="text-lg fw-semibold mb-0 text-secondary-dark">Income vs Expenses</h6>
           </div>
           <div class="fee-card-body d-flex align-items-center justify-content-center p-24">
             <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [labels]="chartOptions.labels"
-              [colors]="chartOptions.colors" [legend]="chartOptions.legend" [dataLabels]="chartOptions.dataLabels"
+              [colors]="['#800000', '#fbbf24']" [legend]="chartOptions.legend" [dataLabels]="chartOptions.dataLabels"
               [responsive]="chartOptions.responsive" style="width: 100%; min-height: 350px;"></apx-chart>
           </div>
         </div>
@@ -110,15 +96,10 @@
       <!-- Categories section -->
       <div class="col-lg-7">
         <div class="fee-card h-100">
-          <div class="fee-card-header d-flex justify-content-between align-items-center">
+          <div class="fee-card-header d-flex justify-content-between align-items-center" style="background: #f8fafc;">
             <h6 class="text-lg fw-semibold mb-0 text-secondary-dark">Category Breakdown</h6>
-            <button type="button" (click)="exportReport()" class="btn-add"
-              style="background: linear-gradient(135deg, #10b981, #059669);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
+            <button type="button" (click)="exportReport()" class="btn-export-premium">
+              <iconify-icon icon="solar:file-download-bold-duotone" style="font-size: 1.2rem;"></iconify-icon>
               Export PDF
             </button>
           </div>
@@ -128,25 +109,28 @@
               <!-- Income Table -->
               <div class="col-12">
                 <h6 class="text-md fw-semibold mb-12"
-                  style="color: #059669; border-bottom: 1px solid #d1fae5; padding-bottom: 8px;">Income Categories</h6>
-                <div class="table-wrapper" style="box-shadow: none; border: 1px solid #e2e8f0;">
+                  style="color: #800000; border-bottom: 2px solid #fee2e2; padding-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                  <span style="width: 8px; height: 8px; border-radius: 50%; background: #800000;"></span>
+                  Income Categories
+                </h6>
+                <div class="table-wrapper" style="box-shadow: none; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
                   <table class="fee-table">
                     <thead style="background: #f8fafc;">
                       <tr>
-                        <th>Category</th>
-                        <th class="text-end">Amount</th>
-                        <th class="text-end">% Of Total</th>
+                        <th style="color: #800000;">Category</th>
+                        <th class="text-end" style="color: #800000;">Amount</th>
+                        <th class="text-end" style="color: #800000;">% Of Total</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr class="table-row" *ngFor="let item of report.incomeByCategory">
-                        <td><span class="amount-chip paid">{{ item.category }}</span></td>
-                        <td class="text-end fw-semibold text-success-main">{{ formatCurrency(item.amount) }}</td>
+                        <td><span class="amount-chip" style="background: rgba(128, 0, 0, 0.08); color: #800000;">{{ item.category }}</span></td>
+                        <td class="text-end fw-bold" style="color: #800000;">{{ formatCurrency(item.amount) }}</td>
                         <td class="text-end text-secondary-light">{{ ((item.amount / report.totalIncome) *
                           100).toFixed(1) }}%</td>
                       </tr>
                       <tr *ngIf="report.incomeByCategory.length === 0">
-                        <td colspan="3" class="empty-state py-12">No income records</td>
+                        <td colspan="3" class="empty-state py-24">No income records</td>
                       </tr>
                     </tbody>
                   </table>
@@ -156,25 +140,28 @@
               <!-- Expense Table -->
               <div class="col-12">
                 <h6 class="text-md fw-semibold mb-12"
-                  style="color: #e11d48; border-bottom: 1px solid #fee2e2; padding-bottom: 8px;">Expense Categories</h6>
-                <div class="table-wrapper" style="box-shadow: none; border: 1px solid #e2e8f0;">
+                  style="color: #b45309; border-bottom: 2px solid #fef3c7; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; margin-top: 16px;">
+                  <span style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
+                  Expense Categories
+                </h6>
+                <div class="table-wrapper" style="box-shadow: none; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
                   <table class="fee-table">
-                    <thead style="background: #f8fafc;">
+                    <thead style="background: #fffbeb;">
                       <tr>
-                        <th>Category</th>
-                        <th class="text-end">Amount</th>
-                        <th class="text-end">% Of Total</th>
+                        <th style="color: #b45309;">Category</th>
+                        <th class="text-end" style="color: #b45309;">Amount</th>
+                        <th class="text-end" style="color: #b45309;">% Of Total</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr class="table-row" *ngFor="let item of report.expenseByCategory">
-                        <td><span class="amount-chip due">{{ item.category }}</span></td>
-                        <td class="text-end fw-semibold text-danger-main">{{ formatCurrency(item.amount) }}</td>
+                      <tr class="table-row" *ngFor="let item of report.expenseByCategory" style="border-left: 3px solid #fbbf24;">
+                        <td><span class="amount-chip" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a;">{{ item.category }}</span></td>
+                        <td class="text-end fw-bold" style="color: #b45309;">{{ formatCurrency(item.amount) }}</td>
                         <td class="text-end text-secondary-light">{{ ((item.amount / report.totalExpenses) *
                           100).toFixed(1) }}%</td>
                       </tr>
                       <tr *ngIf="report.expenseByCategory.length === 0">
-                        <td colspan="3" class="empty-state py-12">No expense records</td>
+                        <td colspan="3" class="empty-state py-24">No expense records</td>
                       </tr>
                     </tbody>
                   </table>
@@ -280,4 +267,25 @@
     </div>
   </div>
 
+  <!-- ===================== PROCESSING OVERLAY ===================== -->
+  <div class="processing-overlay" *ngIf="isProcessing">
+    <div class="loader-content">
+      <div class="premium-loader"></div>
+      <p class="loader-text">Generating Report...</p>
+    </div>
+  </div>
+
+  <!-- ===================== FEEDBACK MODAL ===================== -->
+  <div class="p-modal-overlay" *ngIf="showFeedbackModal" (click)="closeFeedback()">
+    <div class="p-modal-box feedback-modal" (click)="$event.stopPropagation()">
+      <div class="feedback-icon" [ngClass]="feedbackType">
+        <iconify-icon *ngIf="feedbackType === 'success'" icon="solar:check-circle-bold-duotone"></iconify-icon>
+        <iconify-icon *ngIf="feedbackType === 'error'" icon="solar:danger-circle-bold-duotone"></iconify-icon>
+        <iconify-icon *ngIf="feedbackType === 'warning'" icon="solar:info-circle-bold-duotone"></iconify-icon>
+      </div>
+      <h3 class="feedback-title">{{ feedbackTitle }}</h3>
+      <p class="feedback-msg">{{ feedbackMessage }}</p>
+      <button class="btn-primary-gradient w-100 mt-20" (click)="closeFeedback()" style="padding: 12px;">OK</button>
+    </div>
+  </div>
 </div>

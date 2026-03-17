@@ -45,6 +45,19 @@ export class MonthlyPaymentComponent implements OnInit {
   showAddEditDialog = false;
   showViewDialog = false;
   isEditMode = false;
+  showPaymentDialog = false;
+  paymentForm!: FormGroup;
+
+  // Premium Modal State
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+
+  // For Deletion Confirmation
+  showDeleteModal = false;
+  paymentToDelete: MonthlyPayment | null = null;
 
   selectedPayment!: MonthlyPayment;
 
@@ -66,8 +79,9 @@ export class MonthlyPaymentComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.initPaymentForm(); // Initialize the new payment form
     this.loadAll();
-    this.loadPayments();
+    this.loadPaymentHistory(); // Changed from loadPayments
     this.loadSchoolInfo();
   }
 
@@ -108,6 +122,19 @@ export class MonthlyPaymentComponent implements OnInit {
     this.form.get('waver')!.valueChanges.subscribe(_ => this.calculateAmounts());
   }
 
+  initPaymentForm() {
+    this.paymentForm = new FormGroup({
+      monthlyPaymentId: new FormControl(0),
+      studentId: new FormControl('', Validators.required),
+      amountPaid: new FormControl(0, Validators.required),
+      paymentDate: new FormControl(this.todayDate, Validators.required),
+      paymentMethod: new FormControl('Cash', Validators.required),
+      transactionId: new FormControl(''),
+      sendSms: new FormControl(true),
+      printReceipt: new FormControl(true)
+    });
+  }
+
   onStudentSelect(studentId: any) {
     const student = this.students.find(s => s.studentId == studentId);
     if (student && student.standardId) {
@@ -115,7 +142,7 @@ export class MonthlyPaymentComponent implements OnInit {
     } else {
       this.availableFees = [...this.fees];
     }
-    // Clear selected fees if they are no longer available? 
+    // Clear selected fees if they are no longer available?
     // Usually better to just keep them if editing, but for new records we filter.
   }
 
@@ -135,7 +162,10 @@ export class MonthlyPaymentComponent implements OnInit {
   /* ---------- LOADERS ---------- */
   loadAll() {
     this.commonService.getAllStudents().subscribe(r => this.students = r);
-    this.commonService.getAllStandards().subscribe(r => this.standards = r);
+    this.commonService.getAllStandards().subscribe({
+      next: r => this.standards = r,
+      error: () => this.showFeedback('error', 'Error', 'Failed to load standards.')
+    });
     this.commonService.getAllFees().subscribe(r => {
       this.fees = r;
       this.availableFees = [...this.fees];
@@ -143,20 +173,20 @@ export class MonthlyPaymentComponent implements OnInit {
     this.commonService.getAllAcademicMonths().subscribe(r => this.academicMonths = r);
   }
 
-  loadPayments() {
+  loadPaymentHistory() {
     this.paymentService.getAllMonthlyPayments().subscribe({
-      next: r => { this.payments = r || []; this.searchPayments(); },
-      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load payments.', confirmButtonColor: '#800000' })
+      next: res => { this.payments = res || []; this.applyFilters(); },
+      error: () => this.showFeedback('error', 'Error', 'Failed to load payment history.')
     });
   }
 
   /* ---------- STATS ---------- */
-  get totalRecords() { return this.payments.length; }
-  get totalCollected() { return this.payments.reduce((a, c) => a + (c.amountPaid || 0), 0); }
-  get totalPending() { return this.payments.reduce((a, c) => a + (c.amountRemaining || 0), 0); }
+  get totalRecords() { return this.filteredPayments.length; }
+  get totalCollected() { return this.filteredPayments.reduce((a, c) => a + (c.amountPaid || 0), 0); }
+  get totalPending() { return this.filteredPayments.reduce((a, c) => a + (c.amountRemaining || 0), 0); }
 
   /* ---------- SEARCH & FILTER ---------- */
-  searchPayments() {
+  applyFilters() {
     const term = this.searchTerm.toLowerCase();
     this.filteredPayments = this.payments.filter(p =>
       (!this.selectedStandardId || p.student?.standardId === this.selectedStandardId) &&
@@ -248,15 +278,54 @@ export class MonthlyPaymentComponent implements OnInit {
   openEditDialog(p: MonthlyPayment) {
     this.isEditMode = true;
     this.showAddEditDialog = true;
-    this.onStudentSelect(p.studentId); // Load student specific fees
+    
+    // Ensure studentId is treated as string for the select binding if necessary
+    // though [value] handles numbers fine, patchValue might need exact match.
+    this.onStudentSelect(p.studentId); 
+
+    // Reconstruct selected fields from snapshots (fallback for backend One-To-Many flaw)
+    let selectedFees: Fee[] = p.fees && p.fees.length > 0 ? p.fees : [];
+    if (!selectedFees.length && p.paymentDetails && p.paymentDetails.length > 0) {
+      const pDetailsNames = p.paymentDetails.map((pd: any) => pd.feeName?.trim().toLowerCase() || '');
+      selectedFees = this.availableFees.filter(f => {
+        const typeName = f.feeType?.typeName?.trim().toLowerCase() || '';
+        return typeName && pDetailsNames.includes(typeName);
+      });
+      // Fallback to all fees if standard filter hid it
+      if (!selectedFees.length) {
+        selectedFees = this.fees.filter(f => {
+          const typeName = f.feeType?.typeName?.trim().toLowerCase() || '';
+          return typeName && pDetailsNames.includes(typeName);
+        });
+      }
+    }
+
+    let selectedMonths: AcademicMonth[] = p.academicMonths && p.academicMonths.length > 0 ? p.academicMonths : [];
+    if (!selectedMonths.length && p.paymentMonths && p.paymentMonths.length > 0) {
+      const pMonthNames = p.paymentMonths.map((pm: any) => pm.monthName?.trim().toLowerCase() || '');
+      selectedMonths = this.academicMonths.filter(m => {
+        const mName = m.monthName?.trim().toLowerCase() || '';
+        return mName && pMonthNames.includes(mName);
+      });
+    }
+
     this.form.patchValue({
-      ...p,
-      fees: p.fees || [],
-      academicMonths: p.academicMonths || [],
-      paymentDate: p.paymentDate ? new Date(p.paymentDate).toISOString().split('T')[0] : '',
+      monthlyPaymentId: p.monthlyPaymentId,
+      studentId: p.studentId || '',
+      fees: selectedFees,
+      academicMonths: selectedMonths,
+      waver: p.waver || 0,
+      amountPaid: p.amountPaid || 0,
+      paymentDate: p.paymentDate ? new Date(p.paymentDate).toISOString().split('T')[0] : this.todayDate,
       paymentMethod: p.paymentMethod || 'Cash',
-      transactionId: p.transactionId || ''
+      transactionId: p.transactionId || '',
+      sendSms: p.sendSms ?? true,
+      printReceipt: p.printReceipt ?? true,
+      totalAmount: p.totalAmount || 0,
+      dueBalance: p.amountRemaining || 0
     });
+
+    this.calculateAmounts(); // Recalculate based on patched values
   }
 
   openViewDialog(p: MonthlyPayment) {
@@ -265,18 +334,12 @@ export class MonthlyPaymentComponent implements OnInit {
   }
 
   savePayment() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.showFeedback('warning', 'Validation Error', 'Please fill in all required fields.');
+      return;
+    }
 
-    Swal.fire({
-      title: 'Saving Payment...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    this.isProcessing = true;
 
     const payload = this.form.getRawValue();
     payload.totalAmount = this.form.get('totalAmount')?.value;
@@ -286,70 +349,101 @@ export class MonthlyPaymentComponent implements OnInit {
     if (this.isEditMode) {
       this.paymentService.updateMonthlyPayment(payload).subscribe({
         next: () => {
-          Swal.close();
+          this.isProcessing = false;
           this.closeDialog();
-          this.loadPayments();
-          Swal.fire({ icon: 'success', title: 'Updated!', text: 'Payment updated successfully.', showConfirmButton: false, timer: 1800 });
+          this.loadPaymentHistory(); // Changed from loadPayments
+          this.showFeedback('success', 'Updated!', 'Payment updated successfully.');
         },
         error: (err) => {
-          Swal.close();
+          this.isProcessing = false;
           console.error('Update Error:', err);
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update payment. ' + (err.error?.title || ''), confirmButtonColor: '#800000' });
+          this.showFeedback('error', 'Error', 'Failed to update payment. ' + (err.error?.title || err.message || ''));
         }
       });
     } else {
       this.paymentService.createMonthlyPayment(payload).subscribe({
         next: () => {
-          Swal.close();
+          this.isProcessing = false;
           this.closeDialog();
-          this.loadPayments();
-          Swal.fire({ icon: 'success', title: 'Created!', text: 'Payment created successfully.', showConfirmButton: false, timer: 1800 });
+          this.loadPaymentHistory(); // Changed from loadPayments
+          this.showFeedback('success', 'Created!', 'Payment created successfully.');
         },
         error: (err) => {
-          Swal.close();
+          this.isProcessing = false;
           console.error('Create Error:', err);
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create payment. ' + (err.error?.title || ''), confirmButtonColor: '#800000' });
+          this.showFeedback('error', 'Error', 'Failed to create payment. ' + (err.error?.title || err.message || ''));
         }
       });
     }
   }
 
   /* ---------- DELETE (SweetAlert2) ---------- */
-  async confirmDelete(p: MonthlyPayment) {
-    const result = await Swal.fire({
-      title: 'Delete Payment?',
-      html: `Are you sure you want to delete the payment for <strong>${p.student?.studentName}</strong>?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Delete',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6b7280'
-    });
+  confirmDelete(p: MonthlyPayment) {
+    this.paymentToDelete = p;
+    this.showDeleteModal = true;
+  }
 
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: 'Deleting...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-      this.paymentService.deleteMonthlyPayment(p.monthlyPaymentId).subscribe({
-        next: () => {
-          Swal.close();
-          this.loadPayments();
-          Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Payment deleted successfully.', showConfirmButton: false, timer: 1800 });
-        },
-        error: () => {
-          Swal.close();
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete payment.', confirmButtonColor: '#800000' });
-        }
-      });
+  deletePayment() {
+    if (!this.paymentToDelete) return;
+
+    this.isProcessing = true;
+    this.paymentService.deleteMonthlyPayment(this.paymentToDelete.monthlyPaymentId).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.showDeleteModal = false;
+        this.paymentToDelete = null;
+        this.loadPaymentHistory(); // Changed from loadPayments
+        this.showFeedback('success', 'Deleted!', 'Payment deleted successfully.');
+      },
+      error: (err) => {
+        this.isProcessing = false;
+        this.showDeleteModal = false;
+        console.error('Delete Error:', err);
+        this.showFeedback('error', 'Error', 'Failed to delete payment. ' + (err.error?.title || err.message || ''));
+      }
+    });
+  }
+
+  collectPayment() {
+    if (this.paymentForm.invalid) {
+      this.showFeedback('warning', 'Validation Error', 'Please fill in all required fields for payment collection.');
+      return;
     }
+    const payload = this.paymentForm.value;
+
+    this.isProcessing = true;
+
+    this.paymentService.createMonthlyPayment(payload).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.showPaymentDialog = false;
+        this.loadPaymentHistory();
+        this.showFeedback('success', 'Success!', 'Payment has been collected successfully.');
+      },
+      error: (err) => {
+        this.isProcessing = false;
+        const msg = err.error?.message || 'Failed to collect payment.';
+        this.showFeedback('error', 'Error', msg);
+      }
+    });
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 
   closeDialog() {
     this.showAddEditDialog = false;
     this.showViewDialog = false;
+    this.showDeleteModal = false; // Close delete modal
+    this.showPaymentDialog = false; // Close payment dialog
     this.feeSearchTerm = '';
     this.monthSearchTerm = '';
     this.form.reset();
@@ -408,6 +502,12 @@ export class MonthlyPaymentComponent implements OnInit {
     const months = this.form.value.academicMonths || [];
     if (!months.length) return 'Select Months';
     return months.map((m: any) => m.monthName).join(', ');
+  }
+
+  getStandardName(standardId: any): string {
+    if (!standardId) return '--';
+    const std = this.standards.find(s => s.standardId == standardId);
+    return std ? std.standardName : '--';
   }
 }
 

@@ -71,14 +71,14 @@
             <path d="M21 21l-4.35-4.35" />
           </svg>
           <input class="search-input-premium" [(ngModel)]="searchQuery" (input)="onSearchChange()"
-            placeholder="Search by student name or class..." />
+            placeholder="Search by student name or class..." [disabled]="isProcessing" />
         </div>
 
         <!-- Class Filter -->
         <div class="filter-group">
           <label class="filter-label">Class</label>
           <div class="select-wrapper-premium">
-            <select class="field-select-premium" [(ngModel)]="selectedClass" (change)="onFilterChange()">
+            <select class="field-select-premium" [(ngModel)]="selectedClass" (change)="onFilterChange()" [disabled]="isProcessing">
               <option value="all">All Classes</option>
               <option *ngFor="let cls of uniqueClasses" [value]="cls">{{ cls }}</option>
             </select>
@@ -92,7 +92,7 @@
         <div class="filter-group">
           <label class="filter-label">Status</label>
           <div class="select-wrapper-premium">
-            <select class="field-select-premium" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+            <select class="field-select-premium" [(ngModel)]="selectedStatus" (change)="onFilterChange()" [disabled]="isProcessing">
               <option value="all">All Status</option>
               <option value="Critical">Critical</option>
               <option value="Warning">Warning</option>
@@ -109,30 +109,33 @@
           <label class="filter-label">Min Amount</label>
           <div class="input-wrapper-premium">
             <input type="number" class="field-input-premium" [(ngModel)]="minAmount" (input)="onFilterChange()"
-              placeholder="0" />
+              placeholder="0" [disabled]="isProcessing" />
           </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="header-actions">
-        <button class="btn-primary-premium" (click)="loadDefaulters()" title="Refresh Data">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="btn-primary-premium" (click)="loadDefaulters()" title="Refresh Data" [disabled]="isProcessing">
+          <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+          <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
           </svg>
           Refresh
         </button>
-        <button class="btn-success-premium" (click)="sendBulkReminders()" [disabled]="filteredDefaulters.length === 0"
+        <button class="btn-success-premium" (click)="sendBulkReminders()" [disabled]="filteredDefaulters.length === 0 || isProcessing"
           title="Send Bulk Reminders">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+          <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
           </svg>
           Bulk Reminders
         </button>
         <div class="action-divider"></div>
-        <button class="btn-secondary-premium" (click)="exportCSV()" [disabled]="filteredDefaulters.length === 0"
+        <button class="btn-secondary-premium" (click)="exportCSV()" [disabled]="filteredDefaulters.length === 0 || isProcessing"
           title="Export CSV">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+          <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
@@ -142,14 +145,8 @@
       </div>
     </div>
 
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="loading-container">
-      <div class="spinner-premium"></div>
-      <p>Fetching defaulters data...</p>
-    </div>
-
     <!-- Table Body -->
-    <div *ngIf="!isLoading" class="fee-card-body p-0">
+    <div *ngIf="!isProcessing" class="fee-card-body p-0">
       <div class="table-wrapper">
         <table class="fee-table">
           <thead>
@@ -247,6 +244,83 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PREMIUM MODALS (Feedback, Confirmation, Processing)
+     ============================================================ -->
+
+<!-- Reminder Confirmation Modal -->
+<div class="premium-overlay" *ngIf="showReminderModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-icon-ring warning-ring">
+      <iconify-icon icon="solar:notification-lines-remove-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">{{ bulkMode ? 'Bulk Notification' : 'Send Reminder' }}</h3>
+    <p class="pm-subtitle">
+      <span *ngIf="!bulkMode">Are you sure you want to dispatch a payment reminder to <strong>{{
+          reminderDefaulter?.studentName }}</strong>?</span>
+      <span *ngIf="bulkMode">Are you sure you want to dispatch payment reminders to all <strong>{{
+          filteredDefaulters.length }}</strong> filtered students?</span>
+    </p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-cancel" (click)="showReminderModal = false" [disabled]="isProcessing">Discard</button>
+      <button class="pm-btn pm-save" (click)="confirmReminder()" [disabled]="isProcessing"
+        style="background: #f59e0b; box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2);">
+        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+        {{ isProcessing ? 'Sending...' : 'Dispatch Now' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+<div class="premium-overlay" *ngIf="showFeedbackModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-sparkles">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring" [ngClass]="{
+           'success-ring': feedbackType === 'success',
+           'danger-ring': feedbackType === 'error',
+           'warning-ring': feedbackType === 'warning'
+         }">
+      <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+        style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">{{ feedbackTitle }}</h3>
+    <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-acknowledge" [ngClass]="{
+                'pm-success-btn': feedbackType === 'success',
+                'pm-error-btn': feedbackType === 'error',
+                'pm-warning-btn': feedbackType === 'warning'
+              }" (click)="closeFeedback()">
+        Acknowledge
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESSING OVERLAY -->
+<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+  <div class="processing-card">
+    <div class="loader-ring">
+      <div class="loader-inner"></div>
+    </div>
+    <div class="processing-content">
+      <h4 class="pc-title">Securing Data</h4>
+      <p class="pc-subtitle">Updating financial standing...</p>
     </div>
   </div>
 </div>

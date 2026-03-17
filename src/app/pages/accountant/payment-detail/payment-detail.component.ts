@@ -44,12 +44,17 @@ export class PaymentDetailComponent implements OnInit {
   toEntry = 0;
   searchTerm = '';
 
-  showAddEditDialog = false;
-  showViewDialog = false;
-  showDeleteDialog = false;
-  isEditMode = false;
   selectedPayment: any = null;
   paymentToDelete: any = null;
+
+  // Premium Modal States
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+  showDeleteModal = false;
+  showViewDialog = false;
 
   constructor(private commonService: CommonServices) { }
 
@@ -80,9 +85,17 @@ export class PaymentDetailComponent implements OnInit {
   }
 
   fetchStudents() {
-    this.commonService.getAllStudents().subscribe(r => {
-      this.students = r;
-      this.filteredStudents = r;
+    this.isProcessing = true;
+    this.commonService.getAllStudents().subscribe({
+      next: r => {
+        this.students = r;
+        this.filteredStudents = r;
+        this.isProcessing = false;
+      },
+      error: () => {
+        this.isProcessing = false;
+        this.showFeedback('error', 'Sync Failed', 'Unable to retrieve student directory.');
+      }
     });
   }
 
@@ -103,23 +116,60 @@ export class PaymentDetailComponent implements OnInit {
   }
 
   getPayments() {
-    this.commonService.getAllPaymentsByStudentId(this.studentId).subscribe(r => {
-      this.payments = r.map(p => ({
-        ...p,
-        student: this.students.find(s => s.studentId === p.studentId)
-      }));
-      this.applyFilter();
+    this.isProcessing = true;
+    this.commonService.getAllPaymentsByStudentId(this.studentId).subscribe({
+      next: r => {
+        this.payments = r.map(p => ({
+          ...p,
+          student: this.students.find(s => s.studentId === p.studentId)
+        }));
+        this.isProcessing = false;
+        this.applyFilter();
+      },
+      error: (err: any) => {
+        this.isProcessing = false;
+        if (err.status === 404) {
+          this.payments = [];
+          this.applyFilter();
+        } else {
+          this.showFeedback('error', 'Fetch Error', 'Failed to load monthly payment history.');
+        }
+      }
     });
   }
 
   getOtherPayments() {
-    this.commonService.getAllOtherPaymentsByStudentId(this.studentId).subscribe(r => {
-      this.otherPayments = r.map(p => ({
-        ...p,
-        student: this.students.find(s => s.studentId === p.studentId)
-      }));
-      this.applyFilter();
+    this.isProcessing = true;
+    this.commonService.getAllOtherPaymentsByStudentId(this.studentId).subscribe({
+      next: r => {
+        this.otherPayments = r.map(p => ({
+          ...p,
+          student: this.students.find(s => s.studentId === p.studentId)
+        }));
+        this.isProcessing = false;
+        this.applyFilter();
+      },
+      error: (err: any) => {
+        this.isProcessing = false;
+        if (err.status === 404) {
+          this.otherPayments = [];
+          this.applyFilter();
+        } else {
+          this.showFeedback('error', 'Fetch Error', 'Failed to load miscellaneous payment history.');
+        }
+      }
     });
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 
   /* ---------- FILTER & PAGINATION ---------- */

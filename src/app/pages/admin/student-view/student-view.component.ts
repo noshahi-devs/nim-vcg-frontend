@@ -53,11 +53,54 @@ export class StudentViewComponent implements OnInit, AfterViewInit {
   loadAllData() {
     this.studentService.GetStudent(this.studentId).subscribe({
       next: (res) => {
-        this.studentData = res;
+        this.studentData = this.mapStudentToUi(res);
         this.loadSupplementalData();
       },
       error: (err) => console.error("Error loading student:", err)
     });
+  }
+
+  private mapStudentToUi(data: any): Student {
+    if (!data) return {} as Student;
+    
+    // Normalizing Case Sensitivity (Backend PascalCase -> Frontend camelCase)
+    return {
+      studentId: data.studentId ?? data.StudentId,
+      admissionNo: data.admissionNo ?? data.AdmissionNo,
+      enrollmentNo: data.enrollmentNo ?? data.EnrollmentNo,
+      uniqueStudentAttendanceNumber: data.uniqueStudentAttendanceNumber ?? data.UniqueStudentAttendanceNumber,
+      studentName: data.studentName ?? data.StudentName,
+      studentDOB: data.studentDOB ?? data.StudentDOB,
+      studentGender: data.studentGender ?? data.StudentGender,
+      studentReligion: data.studentReligion ?? data.StudentReligion,
+      studentBloodGroup: data.studentBloodGroup ?? data.StudentBloodGroup,
+      studentNationality: data.studentNationality ?? data.StudentNationality,
+      studentNIDNumber: data.studentNIDNumber ?? data.StudentNIDNumber,
+      studentContactNumber1: data.studentContactNumber1 ?? data.StudentContactNumber1,
+      studentContactNumber2: data.studentContactNumber2 ?? data.StudentContactNumber2,
+      studentEmail: data.studentEmail ?? data.StudentEmail,
+      studentPassword: data.studentPassword ?? data.StudentPassword,
+      parentEmail: data.parentEmail ?? data.ParentEmail,
+      parentPassword: data.parentPassword ?? data.ParentPassword,
+      permanentAddress: data.permanentAddress ?? data.PermanentAddress,
+      temporaryAddress: data.temporaryAddress ?? data.TemporaryAddress,
+      fatherName: data.fatherName ?? data.FatherName,
+      fatherNID: data.fatherNID ?? data.FatherNID,
+      fatherContactNumber: data.fatherContactNumber ?? data.FatherContactNumber,
+      motherName: data.motherName ?? data.MotherName,
+      motherNID: data.motherNID ?? data.MotherNID,
+      motherContactNumber: data.motherContactNumber ?? data.MotherContactNumber,
+      localGuardianName: data.localGuardianName ?? data.LocalGuardianName,
+      localGuardianContactNumber: data.localGuardianContactNumber ?? data.LocalGuardianContactNumber,
+      guardianPhone: data.guardianPhone ?? data.GuardianPhone,
+      admissionDate: data.admissionDate ?? data.AdmissionDate,
+      previousSchool: data.previousSchool ?? data.PreviousSchool,
+      status: data.status ?? data.Status,
+      section: data.section ?? data.Section,
+      standardId: data.standardId ?? data.StandardId,
+      imagePath: data.imagePath ?? data.ImagePath,
+      imageUpload: data.imageUpload ?? data.ImageUpload
+    } as Student;
   }
 
   loadSupplementalData() {

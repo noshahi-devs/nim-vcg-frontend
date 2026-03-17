@@ -122,50 +122,54 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
     }
   }
 
-  showPopup(id: string) {
-    const modalEl = document.getElementById(id);
-    if (modalEl) {
-      const modal = new bootstrap.Modal(modalEl);
-      modal.show();
+  // ── Premium Feedback & Processing ──
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+    if (autoClose) {
+      setTimeout(() => {
+        this.showFeedbackModal = false;
+        if (type === 'success') {
+          this.router.navigate(['/staff-list']);
+        }
+      }, 2200);
     }
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 
   async onSubmit(form: NgForm) {
     if (form.invalid) {
       Object.keys(form.controls).forEach(key => form.controls[key].markAsTouched());
-      Swal.fire({
-        icon: 'error',
-        title: 'Form Incomplete',
-        text: 'Please fill in all required fields marked with *',
-        confirmButtonText: 'OK'
-      });
+      this.showFeedback('warning', 'Form Incomplete', 'Please fill in all required fields marked with *');
       return;
     }
 
     // Email check before proceeding
     if (this.newStaff.email) {
-      Swal.fire({
-        title: 'Checking Email...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
+      this.isProcessing = true;
 
       this.staffService.getStaffByEmail(this.newStaff.email).subscribe({
         next: (exists) => {
-          Swal.close();
+          this.isProcessing = false;
           if (exists && exists.staffId) {
-            Swal.fire({
-              icon: 'warning',
-              title: 'Email Already Exists',
-              text: 'This email is already registered to a staff member. Please use a different email.'
-            });
+            this.showFeedback('warning', 'Email Already Exists', 'This email is already registered to a staff member. Please use a different email.');
             return;
           }
           this.proceedWithStaffCreation();
         },
         error: () => {
-          // If 404/error, assume it doesn't exist or just proceed
-          Swal.close();
+          this.isProcessing = false;
           this.proceedWithStaffCreation();
         }
       });
@@ -213,16 +217,7 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
 
     console.log('🚀 Sending staffData to API:', staffData);
 
-    Swal.fire({
-      title: 'Creating Staff...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    this.isProcessing = true;
 
     const loginPayload = {
       email: this.newStaff.email,
@@ -235,34 +230,20 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
       next: (authRes) => {
         this.staffService.addStaff(staffData).subscribe({
           next: () => {
-            Swal.close();
-            Swal.fire({
-              icon: 'success',
-              title: 'Staff Profile and Login Created Successfully!',
-              showConfirmButton: false,
-              timer: 1500
-            });
-            this.router.navigate(['/staff-list']);
+            this.isProcessing = false;
+            this.showFeedback('success', 'Onboarding Successful!', 'Staff profile and login account have been created securely.', true);
           },
           error: (err) => {
-            Swal.close();
+            this.isProcessing = false;
             console.error('❌ Full error:', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Failed to Add Staff Profile',
-              text: 'Error in creating staff profile.'
-            });
+            this.showFeedback('error', 'Profile Sync Failed', 'The account was created but the profile sync encountered an error.');
           }
         });
       },
       error: (authErr) => {
-        Swal.close();
+        this.isProcessing = false;
         console.error('Auth Registration error:', authErr);
-        Swal.fire({
-          icon: 'error',
-          title: 'Login Creation Failed',
-          text: 'Could not create account.'
-        });
+        this.showFeedback('error', 'Login Creation Failed', 'We could not create the security credentials for this staff member.');
       }
     });
   }

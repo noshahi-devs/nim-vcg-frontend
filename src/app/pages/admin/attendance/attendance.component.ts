@@ -1,7 +1,6 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import Swal from '../../../swal';
 
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AttendanceService } from '../../../services/attendance.service';
@@ -39,6 +38,16 @@ export class AttendanceComponent implements OnInit {
 
   /** PERMISSIONS */
   canMarkAttendance = false;
+
+  /** PREMIUM UI STATES */
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  
+  showConfirmModal = false;
+  pendingRecords: any[] = [];
 
   constructor(
     private standardService: StandardService,
@@ -107,7 +116,7 @@ export class AttendanceComponent implements OnInit {
         }
       },
       error: () => {
-        Swal.fire('Error', 'Could not load standards', 'error');
+        this.triggerError('Load Failed', 'Could not load standards');
         this.standards = [];
       }
     });
@@ -143,7 +152,7 @@ export class AttendanceComponent implements OnInit {
    * ========================== */
   loadStudents(): void {
     if (!this.selectedClass) {
-      Swal.fire('Missing Filter', 'Please select a Standard', 'warning');
+      this.triggerWarning('Missing Filter', 'Please select a Standard');
       return;
     }
 
@@ -194,22 +203,10 @@ export class AttendanceComponent implements OnInit {
   /** ==========================
    * SAVE ATTENDANCE
    * ========================== */
-  async saveAttendance(): Promise<void> {
+  saveAttendance(): void {
     const unmarked = this.students.filter(s => !s.status);
-    if (unmarked.length) {
-      const res = await Swal.fire({
-        icon: 'warning',
-        title: 'Incomplete Attendance',
-        text: `${unmarked.length} students not marked. Continue?`,
-        showCancelButton: true,
-        confirmButtonText: 'Save',
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33'
-      });
-      if (!res.isConfirmed) return;
-    }
-
-    const attendanceRecords = this.students.filter(s => s.status).map(s => {
+    
+    this.pendingRecords = this.students.filter(s => s.status).map(s => {
       return this.attendanceService.addAttendance({
         attendanceId: 0,
         date: new Date(this.selectedDate),
@@ -220,29 +217,33 @@ export class AttendanceComponent implements OnInit {
       });
     });
 
-    if (attendanceRecords.length === 0) {
-      Swal.fire('No Data', 'No students to mark attendance for.', 'info');
+    if (this.pendingRecords.length === 0) {
+      this.triggerWarning('No Data', 'No students to mark attendance for.');
       return;
     }
 
-    Swal.fire({
-      title: 'Saving...',
-      text: 'Please wait while we save the attendance.',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    if (unmarked.length) {
+      this.showConfirmModal = true;
+    } else {
+      this.confirmSave();
+    }
+  }
+
+  confirmSave(): void {
+    this.showConfirmModal = false;
+    this.isProcessing = true;
 
     import('rxjs').then(({ forkJoin }) => {
-      forkJoin(attendanceRecords).subscribe({
+      forkJoin(this.pendingRecords).subscribe({
         next: () => {
-          Swal.fire('Saved!', 'Attendance saved successfully', 'success');
+          this.isProcessing = false;
+          this.triggerSuccess('Saved!', 'Attendance saved successfully');
           this.resetForm();
         },
         error: (err) => {
           console.error('Error saving attendance:', err);
-          Swal.fire('Error', 'Failed to save attendance. Please try again.', 'error');
+          this.isProcessing = false;
+          this.triggerError('Error', 'Failed to save attendance. Please try again.');
         }
       });
     });
@@ -260,6 +261,32 @@ export class AttendanceComponent implements OnInit {
       present: this.students.filter(s => s.status === 'Present').length,
       absent: this.students.filter(s => s.status === 'Absent').length
     };
+  }
+
+  // Helper Methods for Modals
+  triggerSuccess(title: string, message: string) {
+    this.feedbackType = 'success';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  triggerError(title: string, message: string) {
+    this.feedbackType = 'error';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  triggerWarning(title: string, message: string) {
+    this.feedbackType = 'warning';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 }
 

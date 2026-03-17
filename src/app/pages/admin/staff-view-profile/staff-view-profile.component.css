@@ -106,6 +106,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -224,9 +225,20 @@
   font-size: 1.5rem;
 }
 
-.stat-icon-wrap.indigo { background: rgba(128, 0, 0, 0.1); color: #800000; }
-.stat-icon-wrap.green { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
-.stat-icon-wrap.orange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.stat-icon-wrap.indigo {
+  background: rgba(128, 0, 0, 0.1);
+  color: #800000;
+}
+
+.stat-icon-wrap.green {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+
+.stat-icon-wrap.orange {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
 
 .stat-info .label {
   font-size: 11px;
@@ -243,22 +255,65 @@
 }
 
 /* FOCUS COLORS for icons */
-.bg-primary-focus { background-color: rgba(128, 0, 0, 0.1); }
-.bg-info-focus { background-color: rgba(14, 165, 233, 0.1); }
-.bg-warning-focus { background-color: rgba(245, 158, 11, 0.1); }
-.bg-success-focus { background-color: rgba(34, 197, 94, 0.1); }
-.bg-danger-focus { background-color: rgba(239, 68, 68, 0.1); }
-.bg-indigo-focus { background-color: rgba(128, 0, 0, 0.1); }
-.bg-purple-focus { background-color: rgba(168, 85, 247, 0.1); }
-.bg-pink-focus { background-color: rgba(236, 72, 153, 0.1); }
-.bg-cyan-focus { background-color: rgba(6, 182, 212, 0.1); }
-.bg-teal-focus { background-color: rgba(20, 184, 166, 0.1); }
+.bg-primary-focus {
+  background-color: rgba(128, 0, 0, 0.1);
+}
 
-.text-indigo { color: #800000; }
-.text-purple { color: #a855f7; }
-.text-pink { color: #ec4899; }
-.text-cyan { color: #06b6d4; }
-.text-teal { color: #14b8a6; }
+.bg-info-focus {
+  background-color: rgba(14, 165, 233, 0.1);
+}
+
+.bg-warning-focus {
+  background-color: rgba(245, 158, 11, 0.1);
+}
+
+.bg-success-focus {
+  background-color: rgba(34, 197, 94, 0.1);
+}
+
+.bg-danger-focus {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.bg-indigo-focus {
+  background-color: rgba(128, 0, 0, 0.1);
+}
+
+.bg-purple-focus {
+  background-color: rgba(168, 85, 247, 0.1);
+}
+
+.bg-pink-focus {
+  background-color: rgba(236, 72, 153, 0.1);
+}
+
+.bg-cyan-focus {
+  background-color: rgba(6, 182, 212, 0.1);
+}
+
+.bg-teal-focus {
+  background-color: rgba(20, 184, 166, 0.1);
+}
+
+.text-indigo {
+  color: #800000;
+}
+
+.text-purple {
+  color: #a855f7;
+}
+
+.text-pink {
+  color: #ec4899;
+}
+
+.text-cyan {
+  color: #06b6d4;
+}
+
+.text-teal {
+  color: #14b8a6;
+}
 
 /* FEEDBACK STYLE */
 .feedback-quote {

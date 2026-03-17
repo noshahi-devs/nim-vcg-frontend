@@ -103,8 +103,8 @@
     font-size: 28px;
     font-weight: 800;
     color: #fff;
-    border: 4px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 8px 24px rgba(128, 0, 0, 0.5);
+    border: 4px solid #F4C430; /* Yellow border */
+    box-shadow: 0 0 25px rgba(244, 196, 48, 0.4);
     animation: avatarPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
 }
 
@@ -149,16 +149,16 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #c7d2fe;
+    background: #F4C430; /* Yellow background */
+    border: 1px solid rgba(128, 0, 0, 0.2);
+    color: #800000; /* Maroon text */
     padding: 4px 14px;
     border-radius: 100px;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 8px;
     letter-spacing: 0.3px;
+    box-shadow: 0 4px 12px rgba(244, 196, 48, 0.3);
 }
 
 .greeting-icon {
@@ -205,7 +205,7 @@
     letter-spacing: 2px;
     font-variant-numeric: tabular-nums;
     line-height: 1.1;
-    text-shadow: 0 0 30px rgba(165, 180, 252, 0.5);
+    text-shadow: 0 0 30px rgba(244, 196, 48, 0.4);
 }
 
 .clock-date {

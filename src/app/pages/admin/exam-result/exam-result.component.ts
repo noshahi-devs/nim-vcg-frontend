@@ -10,7 +10,6 @@ import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
 import { Student } from '../../../Models/student';
 import { finalize, forkJoin } from 'rxjs';
-import Swal from '../../../swal';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
@@ -33,6 +32,15 @@ export class ExamResultComponent implements OnInit {
   loading = false;
   noResultsFound = false;
   hasSearched = false;
+
+  // ── Premium Modal State ──
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'warning';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  triggerWarning(title: string, msg: string) { this.feedbackType = 'warning'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true; }
+  closeFeedback() { this.showFeedbackModal = false; }
 
   // Filters
   selectedExamId: number = 0;
@@ -287,11 +295,12 @@ export class ExamResultComponent implements OnInit {
 
   loadResults() {
     if (!this.selectedExamId || !this.selectedStudentId) {
-      Swal.fire({ icon: 'warning', title: 'Selection Required', text: 'Please select Exam and Student.' });
+      this.triggerWarning('Selection Required', 'Please select Exam and Student.');
       return;
     }
 
     this.loading = true;
+    this.isProcessing = true;
     this.hasSearched = true;
     this.noResultsFound = false;
     this.examResults = [];
@@ -299,7 +308,7 @@ export class ExamResultComponent implements OnInit {
 
     this.examService
       .getResultByStudent(this.selectedStudentId, this.selectedExamId)
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(finalize(() => { this.loading = false; this.isProcessing = false; }))
       .subscribe({
         next: (res) => {
           if (res && res.subjects && res.subjects.length > 0) {

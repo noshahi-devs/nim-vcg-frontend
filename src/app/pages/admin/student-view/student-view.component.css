@@ -4,11 +4,17 @@
 }
 
 .profile-header-premium {
-  min-height: 280px;
+  min-height: 220px;
   background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
   position: relative;
   overflow: hidden;
   border-radius: 12px 12px 0 0;
+}
+
+/* Student name heading size */
+.profile-basic-info h2 {
+  font-size: 1.5rem !important;
+  line-height: 1.25;
 }
 
 .profile-cover-bg {
@@ -150,6 +156,81 @@
 .btn-outline-white:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: #fff;
+}
+
+/* =====================
+   MOBILE RESPONSIVENESS
+   ===================== */
+@media (max-width: 767px) {
+  .profile-header-premium {
+    min-height: unset;
+  }
+
+  .profile-header-content {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    padding: 16px !important;
+  }
+
+  .profile-image-container {
+    margin-bottom: 0;
+  }
+
+  .student-profile-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 16px;
+  }
+
+  .profile-basic-info h2 {
+    font-size: 1.2rem !important;
+  }
+
+  .profile-actions {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 8px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .profile-actions .btn {
+    font-size: 12px;
+    padding: 6px 12px !important;
+  }
+
+  .profile-tabs-nav {
+    gap: 8px !important;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .profile-tabs-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-item {
+    padding: 12px 6px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .tab-item iconify-icon {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-basic-info h2 {
+    font-size: 1.1rem !important;
+  }
+
+  .student-profile-img {
+    width: 72px;
+    height: 72px;
+  }
 }
 
 /* TABLE STYLING */

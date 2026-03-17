@@ -7,7 +7,8 @@
   <div class="sidebar-logo-container">
     <a routerLink="/dashboard" class="sidebar-logo sidebar-branding" aria-label="Go to dashboard">
       <span class="sidebar-brand-icon" aria-hidden="true">
-        <img src="assets/images/Vision College emblem design.png" alt="Vision College" style="height: 40px; border-radius: 8px;">
+        <img src="assets/images/Vision College emblem design.png" alt="Vision College"
+          style="height: 40px; border-radius: 8px;">
       </span>
       <span class="sidebar-brand-text">
         <span class="sidebar-brand-title">Vision College</span>
@@ -318,14 +319,14 @@
         <ul class="sidebar-submenu">
           <li><a routerLink="/email" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Inbox</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/broadcast"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Broadcast</a>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/broadcast" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Broadcast</a>
           </li>
         </ul>
       </li>
 
       <!-- System Admin -->
-       <li class="dropdown" *ngIf="hasAnyRole(['Admin'])">
+      <li class="dropdown" *ngIf="hasAnyRole(['Admin'])">
         <a href="javascript:void(0)" data-desc="Settings, campuses, roles and system controls"
           title="Settings, campuses, roles and system controls">
           <iconify-icon icon="mdi:cog" class="menu-icon"></iconify-icon>
@@ -345,7 +346,7 @@
           <!-- <li><a routerLink="/language" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-info-main"></i> Language Settings</a></li> -->
         </ul>
-      </li> 
+      </li>
     </ul>
   </div>
 
@@ -679,7 +680,7 @@
           - All Rights Reserved.</p>
       </div>
       <div class="col-auto">
-        <p class="mb-0">Engineered by <span class="text-primary-600 fw-semibold">Vision Developers Inc.</span></p>
+        <p class="mb-0">Made by <span class="text-primary-600 fw-semibold">Noshahi Developers Inc.</span></p>
       </div>
     </div>
   </footer>

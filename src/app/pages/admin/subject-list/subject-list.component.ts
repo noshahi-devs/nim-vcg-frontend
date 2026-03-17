@@ -34,6 +34,17 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   selectedSubject: Subject = new Subject();
   allStandards: Standard[] = [];
   editLoading = false;
+  
+  // Premium Modal Visibility State
+  showViewModal = false;
+  showEditModal = false;
+  showDeleteModal = false;
+  
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
 
   get totalSubjects(): number { return this.subjectList.length; }
   get classesWithSubjectsCount(): number { return new Set(this.subjectList.map(s => s.standard?.standardId)).size; }
@@ -86,7 +97,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
             // HARDENED: If teacher but no staff record found, show empty list, not everything
             this.subjectList = [];
             this.classes = [];
-            Swal.fire('Warning', 'Teacher record not found. Please contact administrator.', 'warning');
+            this.showFeedback('warning', 'Teacher record not found', 'Please contact administrator for staff mapping.');
           }
         }
       });
@@ -101,7 +112,10 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
         this.subjectList = res;
         this.classes = [...new Set(res.map(s => s.standard?.standardName || ''))];
       },
-      error: () => Swal.fire('Error', 'Failed to load subjects', 'error')
+      error: (err) => {
+        console.error('Error loading subjects:', err);
+        this.showFeedback('error', 'Sync Failed', 'Unable to retrieve academic subject registry.');
+      }
     });
   }
 
@@ -130,7 +144,10 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
         this.subjectList = res.subjects.filter(s => this.assignedSubjectIds.includes(s.subjectId));
         this.classes = allAssignedClassNames;
       },
-      error: () => Swal.fire('Error', 'Failed to load filtered subjects', 'error')
+      error: (err) => {
+        console.error('Error loading filtered subjects:', err);
+        this.showFeedback('error', 'Filter Failed', 'Could not synchronize curriculum for your assigned classes.');
+      }
     });
   }
 
@@ -152,28 +169,36 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
 
   confirmDelete(subject: Subject): void {
     this.subjectToDelete = subject;
-    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    modal.show();
+    this.showDeleteModal = true;
   }
 
   deleteSubject(): void {
     if (!this.subjectToDelete) return;
 
-    this.subjectService.deleteSubject(this.subjectToDelete.subjectId).subscribe({
+    this.isProcessing = true;
+    this.subjectService.deleteSubject(this.subjectToDelete.subjectId).pipe(
+      finalize(() => this.isProcessing = false)
+    ).subscribe({
       next: () => {
         this.subjectList = this.subjectList.filter(s => s.subjectId !== this.subjectToDelete?.subjectId);
-        Swal.fire({
-          icon: 'success',
-          title: 'Deleted!',
-          text: 'Subject has been deleted.',
-          timer: 1500,
-          showConfirmButton: false
-        });
+        this.showFeedback('success', 'Subject Deleted', 'The academic record has been removed permanently.');
         this.subjectToDelete = null;
-        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
-        modal?.hide();
+        this.showDeleteModal = false;
       },
-      error: () => Swal.fire('Error', 'Failed to delete subject', 'error')
+      error: (err) => {
+        console.error('Error deleting subject:', err);
+        let errorMsg = 'Failed to delete record. It may have dependent records (Marks or Assignments).';
+        
+        if (err.error) {
+          if (typeof err.error === 'string' && err.error.length < 200) {
+            errorMsg = err.error;
+          } else if (err.error.message && err.error.message.length < 200) {
+            errorMsg = err.error.message;
+          }
+        }
+        
+        this.showFeedback('error', 'Cannot Delete', errorMsg);
+      }
     });
   }
 
@@ -183,40 +208,55 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
 
   openViewModal(subject: Subject): void {
     this.selectedSubject = { ...subject };
-    const modal = new bootstrap.Modal(document.getElementById('viewSubjectModal'));
-    modal.show();
+    this.showViewModal = true;
   }
 
   openEditModal(subject: Subject): void {
     this.selectedSubject = { ...subject };
-    const modal = new bootstrap.Modal(document.getElementById('editSubjectModal'));
-    modal.show();
+    this.showEditModal = true;
   }
 
   updateSubject(): void {
     if (!this.selectedSubject.subjectName || !this.selectedSubject.standardId) {
-      Swal.fire('Error', 'Please fill all required fields', 'error');
+      this.showFeedback('warning', 'Fields Required', 'Please ensure all mandatory academic details are provided.');
       return;
     }
 
-    this.editLoading = true;
+    this.isProcessing = true;
     this.subjectService.updateSubject(this.selectedSubject).pipe(
-      finalize(() => this.editLoading = false)
+      finalize(() => this.isProcessing = false)
     ).subscribe({
       next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Updated!',
-          text: 'Subject has been updated successfully.',
-          timer: 1500,
-          showConfirmButton: false
-        });
+        this.showFeedback('success', 'Subject Updated', 'The academic record has been successfully modified.');
         this.loadSubjects();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('editSubjectModal'));
-        modal?.hide();
+        this.showEditModal = false;
       },
-      error: () => Swal.fire('Error', 'Failed to update subject', 'error')
+      error: (err) => {
+        console.error('Error updating subject:', err);
+        let errorMsg = 'Failed to save academic changes.';
+        
+        if (err.error) {
+          if (typeof err.error === 'string' && err.error.length < 200) {
+            errorMsg = err.error;
+          } else if (err.error.message && err.error.message.length < 200) {
+            errorMsg = err.error.message;
+          }
+        }
+        
+        this.showFeedback('error', 'Update Failed', errorMsg);
+      }
     });
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 }
 

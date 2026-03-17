@@ -3,7 +3,7 @@ import Swal from 'sweetalert2/dist/sweetalert2.esm.all.js';
 const SweetAlert = Swal.mixin({
   buttonsStyling: false,
   backdrop: 'rgba(15, 23, 42, 0.48)',
-  confirmButtonColor: '#486cea',
+  confirmButtonColor: '#F4C430',
   cancelButtonColor: '#64748b',
   showClass: {
     popup: 'nim-swal-show'

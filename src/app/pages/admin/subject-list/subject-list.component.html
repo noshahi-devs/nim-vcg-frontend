@@ -106,51 +106,77 @@
 
 
   <!-- View Subject Modal -->
-  <div class="modal fade" id="viewSubjectModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content premium-modal">
-        <div class="modal-header border-0 pb-0">
-          <div class="premium-header">
-            <iconify-icon icon="solar:notebook-bold-duotone" class="header-icon"></iconify-icon>
-            <h5 class="modal-title ms-2">Subject Details</h5>
+  <div class="modal-overlay" *ngIf="showViewModal" (click)="showViewModal = false">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header-premium">
+        <div class="header-gradient"></div>
+        <div class="header-content">
+          <div class="modal-icon-premium">
+            <iconify-icon icon="solar:notebook-bold-duotone"></iconify-icon>
           </div>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div>
+            <h5 class="modal-title-premium">Subject Details</h5>
+            <p class="modal-subtitle-premium">Academic Record View</p>
+          </div>
+          <button class="modal-close-premium" (click)="showViewModal = false">
+            <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+          </button>
         </div>
-        <div class="modal-body pt-0">
-          <div class="view-receipt">
-            <div class="receipt-item">
-              <span class="label">Subject Name</span>
-              <span class="value">{{ selectedSubject.subjectName }}</span>
-            </div>
-            <div class="receipt-item">
-              <span class="label">Course Code</span>
-              <span class="value">{{ selectedSubject.subjectCode }}</span>
-            </div>
-            <div class="receipt-item">
-              <span class="label">Assigned Class</span>
-              <span class="value text-primary">{{ selectedSubject.standard?.standardName }}</span>
-            </div>
-            <div class="receipt-divider"></div>
-            <div class="receipt-footer">
-              <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
-              Academic Record Verified
-            </div>
+      </div>
+
+      <div class="modal-body-premium">
+        <div class="view-receipt">
+          <div class="receipt-item">
+            <span class="label">Subject Name</span>
+            <span class="value">{{ selectedSubject.subjectName }}</span>
+          </div>
+          <div class="receipt-item">
+            <span class="label">Course Code</span>
+            <span class="value">{{ selectedSubject.subjectCode }}</span>
+          </div>
+          <div class="receipt-item">
+            <span class="label">Assigned Class</span>
+            <span class="value text-yellow-premium">{{ selectedSubject.standard?.standardName }}</span>
+          </div>
+          <div class="receipt-divider"></div>
+          <div class="receipt-footer">
+            <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
+            Academic Record Verified
           </div>
         </div>
+      </div>
+      <div class="modal-footer-premium">
+        <button class="btn-ghost" (click)="showViewModal = false">Close View</button>
       </div>
     </div>
   </div>
 
   <!-- Edit Subject Modal -->
-  <div class="modal fade" id="editSubjectModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content premium-modal">
-        <div class="modal-header">
-          <h5 class="modal-title">Edit Subject</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal-overlay" *ngIf="showEditModal" (click)="showEditModal = false">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header-premium">
+        <div class="header-gradient"></div>
+        <div class="header-content">
+          <div class="modal-icon-premium edit-mode">
+            <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
+          </div>
+          <div>
+            <h5 class="modal-title-premium">Edit Subject</h5>
+            <p class="modal-subtitle-premium">Update academic information</p>
+          </div>
+          <button class="modal-close-premium" (click)="showEditModal = false">
+            <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+          </button>
         </div>
-        <div class="modal-body">
-          <form #editForm="ngForm">
+      </div>
+
+      <div class="modal-body-premium">
+        <form #editForm="ngForm">
+          <div class="form-card">
+            <div class="form-card-label">
+              <span class="card-dot yellow"></span>
+              General Information
+            </div>
             <div class="mb-16">
               <label class="form-label">Subject Name</label>
               <input type="text" class="form-control premium-input" [(ngModel)]="selectedSubject.subjectName"
@@ -161,6 +187,13 @@
               <input type="number" class="form-control premium-input" [(ngModel)]="selectedSubject.subjectCode"
                 name="subjectCode" />
             </div>
+          </div>
+
+          <div class="form-card">
+            <div class="form-card-label">
+              <span class="card-dot indigo"></span>
+              Academic Placement
+            </div>
             <div class="mb-16">
               <label class="form-label">Class</label>
               <select class="form-select premium-input" [(ngModel)]="selectedSubject.standardId" name="standardId"
@@ -169,39 +202,88 @@
                 <option *ngFor="let s of allStandards" [value]="s.standardId">{{ s.standardName }}</option>
               </select>
             </div>
-          </form>
-        </div>
-        <div class="modal-footer border-0">
-          <button type="button" class="btn btn-secondary px-24" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary px-24" (click)="updateSubject()" [disabled]="editLoading">
-            <span *ngIf="!editLoading">Save Changes</span>
-            <span *ngIf="editLoading">Updating...</span>
-          </button>
-        </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer-premium">
+        <button class="btn-ghost" (click)="showEditModal = false">Cancel</button>
+        <button class="btn-primary-gradient" (click)="updateSubject()" [disabled]="isProcessing"
+          style="background: linear-gradient(135deg, #F4C430, #d4a71c); color: #800000; box-shadow: 0 4px 14px rgba(244, 196, 48, 0.3);">
+          <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2 text-maroon-premium"></iconify-icon>
+          <span *ngIf="!isProcessing">Save Changes</span>
+          <span *ngIf="isProcessing">Saving...</span>
+        </button>
       </div>
     </div>
   </div>
 
   <!-- Delete Confirmation Modal -->
-  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content radius-12 shadow-lg">
-        <div class="modal-header border-0">
-          <h5 class="modal-title fw-semibold text-danger" id="deleteModalLabel">Confirm Delete</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center py-24">
-          <div class="delete-icon-wrap mb-16">
-            <iconify-icon icon="solar:trash-bin-minimalistic-bold-duotone" class="text-danger"
-              style="font-size: 64px;"></iconify-icon>
-          </div>
-          <p class="mb-0">Are you sure you want to delete <strong>{{ subjectToDelete?.subjectName }}</strong>?</p>
-          <small class="text-secondary">This action cannot be undone.</small>
-        </div>
-        <div class="modal-footer border-0 d-flex justify-content-center gap-3 pb-24">
-          <button type="button" class="btn btn-light px-32" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger px-32" (click)="deleteSubject()">Delete</button>
-        </div>
+  <div class="premium-overlay" *ngIf="showDeleteModal">
+    <div class="premium-modal feedback-modal">
+      <div class="pm-icon-ring danger-ring">
+        <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
+      </div>
+
+      <h3 class="pm-title">Confirm Deletion</h3>
+      <p class="pm-subtitle">
+        Are you sure you want to delete <strong>{{ subjectToDelete?.subjectName }}</strong>?<br>
+        This action cannot be undone and will remove all academic history for this record.
+      </p>
+
+      <div class="pm-actions">
+        <button class="pm-btn pm-cancel" (click)="showDeleteModal = false" [disabled]="isProcessing">Discard</button>
+        <button class="pm-btn pm-save" (click)="deleteSubject()" [disabled]="isProcessing"
+          style="background: #ef4444; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
+          <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+          {{ isProcessing ? 'Archiving...' : 'Delete Permanently' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+  <div class="premium-overlay" *ngIf="showFeedbackModal">
+    <div class="premium-modal feedback-modal">
+      <div class="pm-sparkles">
+        <div class="pm-sparkle sp1"></div>
+        <div class="pm-sparkle sp2) mb-24"></div>
+        <div class="pm-sparkle sp3"></div>
+      </div>
+
+      <div class="pm-icon-ring" [ngClass]="{
+             'success-ring': feedbackType === 'success',
+             'danger-ring': feedbackType === 'error',
+             'warning-ring': feedbackType === 'warning'
+           }">
+        <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                          feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+          style="font-size: 38px; color: #fff;"></iconify-icon>
+      </div>
+
+      <h3 class="pm-title">{{ feedbackTitle }}</h3>
+      <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
+
+      <div class="pm-actions">
+        <button class="pm-btn pm-acknowledge" [ngClass]="{
+                  'pm-success-btn': feedbackType === 'success',
+                  'pm-error-btn': feedbackType === 'error',
+                  'pm-warning-btn': feedbackType === 'warning'
+                }" (click)="closeFeedback()">
+          Acknowledge
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCESSING / LOADING OVERLAY -->
+  <div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+    <div class="processing-card">
+      <div class="loader-ring">
+        <div class="loader-inner"></div>
+      </div>
+      <div class="processing-content">
+        <h4 class="pc-title">Securely Processing</h4>
+        <p class="pc-subtitle">Synchronizing academic data...</p>
       </div>
     </div>
   </div>

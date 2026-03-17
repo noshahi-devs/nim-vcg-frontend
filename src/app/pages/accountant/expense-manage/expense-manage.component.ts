@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AccountsService, Expense } from '../../../services/accounts.service';
 import { AuthService } from '../../../SecurityModels/auth.service';
-import Swal from '../../../swal';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-expense-manage',
@@ -30,11 +30,38 @@ export class ExpenseManageComponent implements OnInit {
 
   expenseTypes = ['Salary', 'Bill', 'Purchase', 'Maintenance', 'Other'];
   paymentMethods = ['Cash', 'Bank', 'Cheque', 'Online'];
+  showViewModal = false;
+  selectedExpense: Expense | null = null;
+
+  // ── Pagination State ──
+  currentPage = 1;
+  rowsPerPage = 10;
+  pageSizeOptions = [5, 10, 25, 50, 100];
+
+  // ── Premium Modal State ──
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+
+  showDeleteDialog = false;
+  itemToDeleteId: number | null = null;
+  itemToDeleteDesc = '';
 
   constructor(
     private accountsService: AccountsService,
     private authService: AuthService
   ) { }
+
+  // ── Helpers ──
+  triggerSuccess(title: string, msg: string) {
+    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  triggerError(title: string, msg: string) {
+    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  closeFeedback() { this.showFeedbackModal = false; }
 
   ngOnInit(): void {
     this.loadExpenseList();
@@ -52,7 +79,7 @@ export class ExpenseManageComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading expenses:', err);
-        Swal.fire('Error', 'Failed to load expense list', 'error');
+        this.triggerError('Error', 'Failed to load expense list');
       }
     });
   }
@@ -65,6 +92,41 @@ export class ExpenseManageComponent implements OnInit {
       return matchType && matchDateFrom && matchDateTo;
     });
     this.totalExpenses = this.filteredList.reduce((sum, e) => sum + e.amount, 0);
+    this.currentPage = 1; // Reset to first page when filters change
+  }
+
+  // ── Pagination Getters ──
+  get pagedList(): Expense[] {
+    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
+    return this.filteredList.slice(startIndex, startIndex + this.rowsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredList.length / this.rowsPerPage) || 1;
+  }
+
+  get pageNumbers(): number[] {
+    const pages = [];
+    for (let i = 1; i <= this.totalPages; i++) pages.push(i);
+    return pages;
+  }
+
+  get paginationStart(): number {
+    return this.filteredList.length === 0 ? 0 : (this.currentPage - 1) * this.rowsPerPage + 1;
+  }
+
+  get paginationEnd(): number {
+    return Math.min(this.currentPage * this.rowsPerPage, this.filteredList.length);
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  onPageSizeChange(): void {
+    this.currentPage = 1;
   }
 
   openAddModal(): void {
@@ -88,98 +150,86 @@ export class ExpenseManageComponent implements OnInit {
     this.showModal = false;
     this.currentExpense = {};
   }
+  openViewModal(expense: Expense) {
+    this.selectedExpense = expense; this.showViewModal = true;
+  }
+  closeViewModal() { this.showViewModal = false; }
 
   saveExpense(): void {
     if (!this.validateForm()) return;
 
-    Swal.fire({
-      title: 'Saving Expense...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    this.isProcessing = true;
 
     if (this.isEditMode && this.currentExpense.id) {
-      this.accountsService.updateExpense(this.currentExpense.id, this.currentExpense).subscribe({
-        next: () => {
-          Swal.close();
-          Swal.fire('Success', 'Expense updated successfully', 'success');
-          this.loadExpenseList();
-          this.closeModal();
-        },
-        error: (err) => {
-          Swal.close();
-          console.error('Error updating expense:', err);
-          Swal.fire('Error', 'Failed to update expense', 'error');
-        }
-      });
+      this.accountsService.updateExpense(this.currentExpense.id, this.currentExpense)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Updated Successfully!', 'Expense record has been updated.');
+            this.loadExpenseList();
+            this.closeModal();
+          },
+          error: (err) => {
+            console.error('Error updating expense:', err);
+            this.triggerError('Error', 'Failed to update expense');
+          }
+        });
     } else {
-      this.accountsService.addExpense(this.currentExpense).subscribe({
-        next: () => {
-          Swal.close();
-          Swal.fire('Success', 'Expense added successfully', 'success');
-          this.loadExpenseList();
-          this.closeModal();
-        },
-        error: (err) => {
-          Swal.close();
-          console.error('Error adding expense:', err);
-          Swal.fire('Error', 'Failed to add expense', 'error');
-        }
-      });
+      this.accountsService.addExpense(this.currentExpense)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Added Successfully!', 'Expense record has been saved.');
+            this.loadExpenseList();
+            this.closeModal();
+          },
+          error: (err) => {
+            console.error('Error adding expense:', err);
+            this.triggerError('Error', 'Failed to add expense');
+          }
+        });
     }
   }
 
-  deleteExpense(expense: Expense): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete expense: ${expense.description}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Deleting...',
-          allowOutsideClick: false,
-          didOpen: () => Swal.showLoading()
-        });
-        this.accountsService.deleteExpense(expense.id).subscribe({
-          next: () => {
-            Swal.close();
-            Swal.fire('Deleted!', 'Expense has been deleted.', 'success');
-            this.loadExpenseList();
-          },
-          error: (err) => {
-            Swal.close();
-            console.error('Error deleting expense:', err);
-            Swal.fire('Error', 'Failed to delete expense', 'error');
-          }
-        });
-      }
-    });
+  confirmDelete(expense: Expense) {
+    this.itemToDeleteId = expense.id;
+    this.itemToDeleteDesc = expense.description || '';
+    this.showDeleteDialog = true;
+  }
+
+  executeDelete() {
+    if (this.itemToDeleteId === null) return;
+    this.showDeleteDialog = false;
+    this.isProcessing = true;
+    this.accountsService.deleteExpense(this.itemToDeleteId)
+      .pipe(finalize(() => this.isProcessing = false))
+      .subscribe({
+        next: () => {
+          this.triggerSuccess('Deleted!', 'Expense has been deleted.');
+          this.itemToDeleteId = null;
+          this.loadExpenseList();
+        },
+        error: (err) => {
+          console.error('Error deleting expense:', err);
+          this.triggerError('Error', 'Failed to delete expense');
+        }
+      });
   }
 
   validateForm(): boolean {
     if (!this.currentExpense.description || !this.currentExpense.amount) {
-      Swal.fire('Validation Error', 'Please fill all required fields', 'warning');
+      this.triggerError('Validation Error', 'Please fill all required fields');
       return false;
     }
     if (this.currentExpense.amount <= 0) {
-      Swal.fire('Validation Error', 'Amount must be greater than 0', 'warning');
+      this.triggerError('Validation Error', 'Amount must be greater than 0');
       return false;
     }
     return true;
   }
 
   exportData(): void {
-    Swal.fire('Export', 'Exporting expense data to PDF...', 'success');
+    this.triggerSuccess('Export', 'Exporting expense data to PDF...');
   }
 
   formatCurrency(amount: number): string {

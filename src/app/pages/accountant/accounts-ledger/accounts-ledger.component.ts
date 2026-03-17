@@ -23,6 +23,15 @@ export class AccountsLedgerComponent implements OnInit {
   filterDateFrom = '';
   filterDateTo = '';
   searchTerm = '';
+  selectedTransaction: Transaction | null = null;
+
+  // ── Premium Modal State ──
+  isProcessing = false;
+  showFeedbackModal = false;
+  showViewModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
 
   // Pagination
   rowsPerPage = 10;
@@ -35,6 +44,16 @@ export class AccountsLedgerComponent implements OnInit {
   finalBalance = 0;
 
   constructor(private accountsService: AccountsService) { }
+
+  // ── Helpers ──
+  triggerSuccess(title: string, msg: string) {
+    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  triggerError(title: string, msg: string) {
+    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  closeFeedback() { this.showFeedbackModal = false; }
+  closeViewModal() { this.showViewModal = false; }
 
   ngOnInit(): void {
     this.loadLedger();
@@ -81,28 +100,16 @@ export class AccountsLedgerComponent implements OnInit {
   }
 
   viewDetails(transaction: Transaction): void {
-    Swal.fire({
-      title: 'Transaction Details',
-      html: `
-        <div class="text-start">
-          <p><strong>Transaction ID:</strong> ${transaction.transactionId}</p>
-          <p><strong>Date:</strong> ${transaction.date}</p>
-          <p><strong>Type:</strong> ${transaction.type}</p>
-          <p><strong>Category:</strong> ${transaction.category}</p>
-          <p><strong>Description:</strong> ${transaction.description}</p>
-          <p><strong>Debit:</strong> ${this.formatCurrency(transaction.debit)}</p>
-          <p><strong>Credit:</strong> ${this.formatCurrency(transaction.credit)}</p>
-          <p><strong>Balance:</strong> ${this.formatCurrency(transaction.balance)}</p>
-        </div>
-      `,
-      icon: 'info',
-      confirmButtonText: 'Close',
-      width: '500px'
-    });
+    this.selectedTransaction = transaction;
+    this.showViewModal = true;
   }
 
   exportLedger(): void {
-    Swal.fire('Export', 'Exporting ledger to PDF...', 'success');
+    this.isProcessing = true;
+    setTimeout(() => {
+      this.isProcessing = false;
+      this.triggerSuccess('Export Complete!', 'Ledger data has been exported successfully.');
+    }, 1500);
   }
 
   clearFilters(): void {

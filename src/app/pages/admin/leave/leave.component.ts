@@ -5,7 +5,6 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { RouterModule } from '@angular/router';
 import { LeaveService } from '../../../services/leave.service';
 import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
-import Swal from '../../../swal';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -35,11 +34,34 @@ export class LeaveComponent implements OnInit {
   rowsPerPage = 10;
   currentPage = 1;
 
+  // ── Premium Modal State ──
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' | 'info' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+
+  // Detail Modal
+  showDetailModal = false;
+  selectedLeave: Leave | null = null;
+
   constructor(private leaveService: LeaveService) { }
 
   ngOnInit(): void {
     this.loadLeaveData();
   }
+
+  // ── Helpers ──
+  triggerSuccess(title: string, message: string) {
+    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = message; this.showFeedbackModal = true;
+  }
+  triggerError(title: string, message: string) {
+    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = message; this.showFeedbackModal = true;
+  }
+  triggerInfo(title: string, message: string) {
+    this.feedbackType = 'info'; this.feedbackTitle = title; this.feedbackMessage = message; this.showFeedbackModal = true;
+  }
+  closeFeedback() { this.showFeedbackModal = false; }
 
   loadLeaveData(): void {
     this.loading = true;
@@ -53,7 +75,7 @@ export class LeaveComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error loading leaves:', err);
-          Swal.fire('Error', 'Failed to load leave data', 'error');
+          this.triggerError('Error', 'Failed to load leave data');
         }
       });
   }
@@ -65,13 +87,8 @@ export class LeaveComponent implements OnInit {
     this.rejectedLeavesCount = this.recentApplications.filter(l => l.status === LeaveStatus.Rejected).length;
   }
 
-  getLeaveTypeName(type: number): string {
-    return LeaveType[type];
-  }
-
-  getLeaveStatusName(status: number): string {
-    return LeaveStatus[status];
-  }
+  getLeaveTypeName(type: number): string { return LeaveType[type]; }
+  getLeaveStatusName(status: number): string { return LeaveStatus[status]; }
 
   getStatusClass(status: number): string {
     switch (status) {
@@ -84,41 +101,18 @@ export class LeaveComponent implements OnInit {
 
   refreshData(): void {
     this.loadLeaveData();
-    Swal.fire({
-      icon: 'success',
-      title: 'Refreshed!',
-      text: 'Data refreshed successfully.',
-      timer: 1500,
-      showConfirmButton: false
-    });
+    this.triggerSuccess('Refreshed!', 'Data refreshed successfully.');
   }
 
   exportData(): void {
-    Swal.fire({
-      icon: 'info',
-      title: 'Export',
-      text: 'Export functionality will be implemented soon.',
-      confirmButtonColor: '#800020'
-    });
+    this.triggerInfo('Export', 'Export functionality will be implemented soon.');
   }
 
   viewDetails(leave: Leave): void {
-    Swal.fire({
-      title: 'Leave Details',
-      html: `
-        <div class="text-start">
-          <p><strong>Employee:</strong> ${leave.staff?.staffName || 'Unknown'}</p>
-          <p><strong>Leave Type:</strong> ${this.getLeaveTypeName(leave.leaveType)}</p>
-          <p><strong>From:</strong> ${new Date(leave.startDate).toLocaleDateString()}</p>
-          <p><strong>To:</strong> ${new Date(leave.endDate).toLocaleDateString()}</p>
-          <p><strong>Reason:</strong> ${leave.reason}</p>
-          <p><strong>Applied On:</strong> ${new Date(leave.appliedDate!).toLocaleDateString()}</p>
-          <p><strong>Status:</strong> ${this.getLeaveStatusName(leave.status)}</p>
-        </div>
-      `,
-      confirmButtonColor: '#800020'
-    });
+    this.selectedLeave = leave;
+    this.showDetailModal = true;
   }
+  closeDetailModal(): void { this.showDetailModal = false; this.selectedLeave = null; }
 
   get paginatedApplications(): Leave[] {
     const start = (this.currentPage - 1) * this.rowsPerPage;
@@ -133,5 +127,3 @@ export class LeaveComponent implements OnInit {
     if (page >= 1 && page <= this.totalPages) this.currentPage = page;
   }
 }
-
-

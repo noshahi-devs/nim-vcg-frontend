@@ -58,7 +58,7 @@
         </div>
         <span class="filter-title">Filters</span>
       </div>
-      <button class="btn-reset" (click)="resetFilters()">
+      <button class="btn-reset" (click)="resetFilters()" [disabled]="isProcessing">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M1 4v6h6" />
           <path d="M3.51 15a9 9 0 1 0 .49-4.77" />
@@ -123,8 +123,9 @@
             (input)="applyFilters()">
         </div>
       </div>
-      <button class="btn-add" (click)="openAddFee()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <button class="btn-add" (click)="openAddFee()" [disabled]="isProcessing">
+        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+        <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M12 5v14M5 12h14" />
         </svg>
         Add Fee
@@ -308,13 +309,90 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn-cancel" (click)="showFeeDialog=false">Cancel</button>
-      <button class="btn-save" (click)="saveFee()" [disabled]="feeForm.invalid">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <button class="btn-cancel" (click)="showFeeDialog=false" [disabled]="isProcessing">Cancel</button>
+      <button class="btn-save" (click)="saveFee()" [disabled]="feeForm.invalid || isProcessing">
+        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+        <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="20 6 9 17 4 12" />
         </svg>
-        {{ isEditMode ? 'Update' : 'Save' }}
+        {{ isEditMode ? (isProcessing ? 'Updating...' : 'Update') : (isProcessing ? 'Saving...' : 'Save') }}
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PREMIUM MODALS (Feedback, Confirmation, Processing)
+     ============================================================ -->
+
+<!-- Delete Confirmation Modal -->
+<div class="premium-overlay" *ngIf="showDeleteModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-icon-ring danger-ring">
+      <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">Confirm Deletion</h3>
+    <p class="pm-subtitle">
+      Are you sure you want to permanently delete this fee record for <strong>{{ feeToDelete?.standard?.standardName
+        }}</strong>?<br>
+      This action cannot be undone.
+    </p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-cancel" (click)="showDeleteModal = false" [disabled]="isProcessing">Discard</button>
+      <button class="pm-btn pm-save" (click)="deleteFee()" [disabled]="isProcessing"
+        style="background: #ef4444; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
+        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+        {{ isProcessing ? 'Archiving...' : 'Delete Permanently' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+<div class="premium-overlay" *ngIf="showFeedbackModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-sparkles">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring" [ngClass]="{
+           'success-ring': feedbackType === 'success',
+           'danger-ring': feedbackType === 'error',
+           'warning-ring': feedbackType === 'warning'
+         }">
+      <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+        style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">{{ feedbackTitle }}</h3>
+    <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-acknowledge" [ngClass]="{
+                'pm-success-btn': feedbackType === 'success',
+                'pm-error-btn': feedbackType === 'error',
+                'pm-warning-btn': feedbackType === 'warning'
+              }" (click)="closeFeedback()">
+        Acknowledge
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESSING / LOADING OVERLAY -->
+<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+  <div class="processing-card">
+    <div class="loader-ring">
+      <div class="loader-inner"></div>
+    </div>
+    <div class="processing-content">
+      <h4 class="pc-title">Securely Processing</h4>
+      <p class="pc-subtitle">Synchronizing financial data...</p>
     </div>
   </div>
 </div>

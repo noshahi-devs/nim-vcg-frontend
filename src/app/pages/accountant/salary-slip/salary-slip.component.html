@@ -113,10 +113,10 @@
 
         <div class="card-glass-footer">
           <div class="action-buttons">
-            <button class="action-btn-premium secondary" (click)="printDetailedReceipt(slip)">
+            <button class="action-btn-premium secondary" (click)="printDetailedReceipt(slip)" [disabled]="isProcessing">
               <iconify-icon icon="mdi:printer"></iconify-icon> Detailed Slip
             </button>
-            <button class="action-btn-premium primary" (click)="printThermalReceipt(slip)">
+            <button class="action-btn-premium primary" (click)="printThermalReceipt(slip)" [disabled]="isProcessing">
               <iconify-icon icon="mdi:receipt-text"></iconify-icon> Thermal Print
             </button>
           </div>
@@ -142,7 +142,7 @@
       Showing <span>{{ paginationStart }} - {{ paginationEnd }}</span> of <span>{{ filteredRecords.length }}</span> Slips
     </div>
     <div class="pagination-controls">
-      <button class="nav-btn" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+      <button class="nav-btn" [disabled]="currentPage === 1 || isProcessing" (click)="changePage(currentPage - 1)">
         <iconify-icon icon="mdi:chevron-left"></iconify-icon>
       </button>
       <div class="page-numbers">
@@ -151,7 +151,7 @@
           {{ page }}
         </button>
       </div>
-      <button class="nav-btn" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+      <button class="nav-btn" [disabled]="currentPage === totalPages || isProcessing" (click)="changePage(currentPage + 1)">
         <iconify-icon icon="mdi:chevron-right"></iconify-icon>
       </button>
     </div>
@@ -223,6 +223,81 @@
     <div style="text-align: center; margin-top: 15px; font-size: 10px;">
       <p>Status: {{ selectedSlip.status }}</p>
       <p>Thank You!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PREMIUM MODALS (Feedback, Confirmation, Processing)
+     ============================================================ -->
+
+<!-- Delete Confirmation Modal -->
+<div class="premium-overlay" *ngIf="showDeleteModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-icon-ring danger-ring">
+      <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">Confirm Deletion</h3>
+    <p class="pm-subtitle">
+      Are you sure you want to permanently delete this salary slip record?<br>
+      This action cannot be undone.
+    </p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-cancel" (click)="showDeleteModal = false" [disabled]="isProcessing">Cancel</button>
+      <button class="pm-btn pm-save" (click)="confirmDelete()" [disabled]="isProcessing"
+        style="background: #ef4444; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
+        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+        {{ isProcessing ? 'Deleting...' : 'Delete Permanently' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+<div class="premium-overlay" *ngIf="showFeedbackModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-sparkles" *ngIf="feedbackType === 'success'">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring" [ngClass]="{
+           'success-ring': feedbackType === 'success',
+           'danger-ring': feedbackType === 'error',
+           'warning-ring': feedbackType === 'warning'
+         }">
+      <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+        style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">{{ feedbackTitle }}</h3>
+    <p class="pm-subtitle">{{ feedbackMessage }}</p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-acknowledge" [ngClass]="{
+                'pm-success-btn': feedbackType === 'success',
+                'pm-error-btn': feedbackType === 'error',
+                'pm-warning-btn': feedbackType === 'warning'
+              }" (click)="closeFeedback()">
+        Acknowledge
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESSING / LOADING OVERLAY -->
+<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+  <div class="processing-card">
+    <div class="loader-ring">
+      <div class="loader-inner"></div>
+    </div>
+    <div class="processing-content">
+      <h4 class="pc-title">Securely Processing</h4>
+      <p class="pc-subtitle">Synchronizing financial records...</p>
     </div>
   </div>
 </div>

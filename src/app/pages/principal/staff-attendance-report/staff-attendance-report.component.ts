@@ -23,6 +23,13 @@ export class StaffAttendanceReportComponent implements OnInit {
   searchTerm: string = '';
   showDropdown: boolean = false;
 
+  /** PREMIUM UI STATES */
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+
   constructor(
     private attendanceService: AttendanceService,
     private staffService: StaffService,
@@ -38,9 +45,12 @@ export class StaffAttendanceReportComponent implements OnInit {
 
   ngOnInit() {
     this.staffService.getAllStaffs().subscribe({
-      next: (res) => this.staffList = res,
-      error: () => {
-        this.staffList = [{ staffId: 1, staffName: 'Teacher 1' }, { staffId: 2, staffName: 'Teacher 2' }];
+      next: (res) => {
+        this.staffList = res;
+      },
+      error: (err) => {
+        console.error('Error loading staff members:', err);
+        this.triggerError('Error', 'Unable to load staff members.');
       }
     });
   }
@@ -66,6 +76,7 @@ export class StaffAttendanceReportComponent implements OnInit {
   getReport() {
     if (!this.selectedStaffId || !this.startDate || !this.endDate) return;
     
+    this.isProcessing = true;
     // Using manual fetch and filter because the report endpoint seems to strip checkout times
     this.attendanceService.getAttendances().subscribe({
       next: (data: any[]) => {
@@ -81,14 +92,39 @@ export class StaffAttendanceReportComponent implements OnInit {
           return isStaff && isCorrectStaff && isInRange;
         }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         
-        console.log('Filtered Staff Data:', this.report);
+        this.isProcessing = false;
       },
       error: () => {
-        this.report = [
-          { date: '2024-01-01', status: 'Present', checkIn: '08:00 AM', checkOut: '02:00 PM' },
-          { date: '2024-01-02', status: 'Present', checkIn: '08:05 AM', checkOut: '02:10 PM' },
-        ];
+        this.isProcessing = false;
+        this.report = [];
+        this.triggerError('Error', 'Failed to fetch attendance records.');
       }
     });
+  }
+
+  // Helper Methods for Modals
+  triggerSuccess(title: string, message: string) {
+    this.feedbackType = 'success';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  triggerError(title: string, message: string) {
+    this.feedbackType = 'error';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  triggerWarning(title: string, message: string) {
+    this.feedbackType = 'warning';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 }

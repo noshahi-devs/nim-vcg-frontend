@@ -27,10 +27,6 @@
               <iconify-icon icon="solar:calendar-bold"></iconify-icon>
               Joined: {{ studentData?.admissionDate | date:'mediumDate' }}
             </span>
-            <span class="text-white text-opacity-70 text-xs d-flex align-items-center gap-4">
-              <iconify-icon icon="solar:ticket-bold"></iconify-icon>
-              Roll No: {{ studentData?.admissionNo }}
-            </span>
           </div>
         </div>
         <div class="profile-actions d-flex gap-8 mb-8">
@@ -64,6 +60,39 @@
       <!-- PERSONAL TAB -->
       <div *ngIf="activeTab === 'personal'" class="animate-fade-in">
         <div class="row gy-4">
+          <!-- 1. PERSONAL IDENTITY -->
+          <div class="col-lg-12">
+            <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8">
+              <iconify-icon icon="solar:user-id-bold-duotone" class="text-maroon" style="color: #800000;"></iconify-icon>
+              Personal Identity
+            </h6>
+            <div class="row row-cols-1 row-cols-sm-2 gy-3 mb-32">
+              <div class="col">
+                <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                  <div class="d-flex align-items-center gap-12">
+                    <div class="icon-circle bg-primary-focus">
+                      <iconify-icon icon="solar:users-group-rounded-bold" class="text-maroon" style="color: #800000;"></iconify-icon>
+                    </div>
+                    <span class="text-secondary-light fw-medium">Gender</span>
+                  </div>
+                  <span class="fw-bold text-neutral-800">{{ studentData?.studentGender || 'N/A' }}</span>
+                </div>
+              </div>
+              <div class="col">
+                <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                  <div class="d-flex align-items-center gap-12">
+                    <div class="icon-circle bg-success-focus">
+                      <iconify-icon icon="solar:calendar-bold" class="text-success"></iconify-icon>
+                    </div>
+                    <span class="text-secondary-light fw-medium">Date of Birth</span>
+                  </div>
+                  <span class="fw-bold text-neutral-800">{{ (studentData?.studentDOB && studentData?.studentDOB.toString() !== '0001-01-01T00:00:00') ? (studentData?.studentDOB | date:'mediumDate') : 'N/A' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. CONTACT DETAILS -->
           <div class="col-lg-6">
             <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8">
               <iconify-icon icon="solar:phone-calling-bold-duotone" class="text-maroon" style="color: #800000;"></iconify-icon>
@@ -81,15 +110,6 @@
               </div>
               <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
                 <div class="d-flex align-items-center gap-12">
-                  <div class="icon-circle bg-info-focus">
-                    <iconify-icon icon="solar:outgoing-call-bold" class="text-info"></iconify-icon>
-                  </div>
-                  <span class="text-secondary-light fw-medium">Secondary Phone</span>
-                </div>
-                <span class="fw-bold text-neutral-800">{{ studentData?.studentContactNumber2 || 'N/A' }}</span>
-              </div>
-              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
-                <div class="d-flex align-items-center gap-12">
                   <div class="icon-circle bg-warning-focus">
                     <iconify-icon icon="solar:letter-bold" class="text-warning"></iconify-icon>
                   </div>
@@ -99,26 +119,17 @@
               </div>
               <div class="info-item-row-new d-flex justify-content-between align-items-start py-12 border-bottom">
                 <div class="d-flex align-items-center gap-12">
-                  <div class="icon-circle bg-success-focus">
-                    <iconify-icon icon="solar:map-point-bold" class="text-success"></iconify-icon>
-                  </div>
-                  <span class="text-secondary-light fw-medium">Current Address</span>
-                </div>
-                <span class="fw-bold text-neutral-800 text-end ps-24 max-w-250">{{ studentData?.temporaryAddress ||
-                  'N/A' }}</span>
-              </div>
-              <div class="info-item-row-new d-flex justify-content-between align-items-start py-12 border-bottom">
-                <div class="d-flex align-items-center gap-12">
                   <div class="icon-circle bg-danger-focus">
                     <iconify-icon icon="solar:home-2-bold" class="text-danger"></iconify-icon>
                   </div>
                   <span class="text-secondary-light fw-medium">Permanent Address</span>
                 </div>
-                <span class="fw-bold text-neutral-800 text-end ps-24 max-w-250">{{ studentData?.permanentAddress ||
-                  'N/A' }}</span>
+                <span class="fw-bold text-neutral-800 text-end ps-24 max-w-250">{{ studentData?.permanentAddress || 'N/A' }}</span>
               </div>
             </div>
           </div>
+
+          <!-- 3. GUARDIAN INFO -->
           <div class="col-lg-6">
             <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8">
               <iconify-icon icon="solar:user-speak-bold-duotone" class="text-maroon" style="color: #800000;"></iconify-icon>
@@ -130,36 +141,9 @@
                   <div class="icon-circle bg-indigo-focus">
                     <iconify-icon icon="solar:users-group-two-rounded-bold" class="text-indigo"></iconify-icon>
                   </div>
-                  <span class="text-secondary-light fw-medium">Father's Name</span>
+                  <span class="text-secondary-light fw-medium">Guardian Name</span>
                 </div>
                 <span class="fw-bold text-neutral-800">{{ studentData?.fatherName || 'N/A' }}</span>
-              </div>
-              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
-                <div class="d-flex align-items-center gap-12">
-                  <div class="icon-circle bg-purple-focus">
-                    <iconify-icon icon="solar:card-id-bold" class="text-purple"></iconify-icon>
-                  </div>
-                  <span class="text-secondary-light fw-medium">Father's NID</span>
-                </div>
-                <span class="fw-bold text-neutral-800">{{ studentData?.fatherNID || 'N/A' }}</span>
-              </div>
-              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
-                <div class="d-flex align-items-center gap-12">
-                  <div class="icon-circle bg-pink-focus">
-                    <iconify-icon icon="solar:user-hands-bold" class="text-pink"></iconify-icon>
-                  </div>
-                  <span class="text-secondary-light fw-medium">Mother's Name</span>
-                </div>
-                <span class="fw-bold text-neutral-800">{{ studentData?.motherName || 'N/A' }}</span>
-              </div>
-              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
-                <div class="d-flex align-items-center gap-12">
-                  <div class="icon-circle bg-cyan-focus">
-                    <iconify-icon icon="solar:shield-user-bold" class="text-cyan"></iconify-icon>
-                  </div>
-                  <span class="text-secondary-light fw-medium">Local Guardian</span>
-                </div>
-                <span class="fw-bold text-neutral-800">{{ studentData?.localGuardianName || 'N/A' }}</span>
               </div>
               <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
                 <div class="d-flex align-items-center gap-12">
@@ -168,67 +152,35 @@
                   </div>
                   <span class="text-secondary-light fw-medium">Guardian Phone</span>
                 </div>
-                <span class="fw-bold text-neutral-800">{{ studentData?.localGuardianContactNumber || 'N/A' }}</span>
+                <span class="fw-bold text-neutral-800">{{ studentData?.guardianPhone || 'N/A' }}</span>
               </div>
             </div>
           </div>
-          <div class="col-12 mt-32">
-            <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8">
-              <iconify-icon icon="solar:notification-lines-remove-bold-duotone" class="text-maroon" style="color: #800000;"></iconify-icon>
-              Other Personal Info
+
+          <!-- 4. ACADEMIC BACKGROUND -->
+          <div class="col-lg-12">
+            <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8 mt-32">
+              <iconify-icon icon="solar:notebook-bold-duotone" class="text-maroon" style="color: #800000;"></iconify-icon>
+              Academic Background
             </h6>
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 gy-4">
-              <div class="col">
-                <div
-                  class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
-                  <div class="tile-icon bg-primary-focus radius-12 p-12">
-                    <iconify-icon icon="solar:users-group-rounded-bold" class="text-2xl text-maroon" style="color: #800000;"></iconify-icon>
+            <div class="info-list-premium">
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-primary-focus">
+                    <iconify-icon icon="solar:buildings-bold" class="text-maroon" style="color: #800000;"></iconify-icon>
                   </div>
-                  <div class="tile-content">
-                    <span class="text-xs text-secondary-light fw-bold uppercase ls-1">Gender</span>
-                    <h5 class="mb-0 text-lg fw-bold text-neutral-800 mt-4">{{ studentData?.studentGender }}</h5>
-                  </div>
+                  <span class="text-secondary-light fw-medium">Previous Institution</span>
                 </div>
+                <span class="fw-bold text-neutral-800">{{ studentData?.previousSchool || 'N/A' }}</span>
               </div>
-              <div class="col">
-                <div
-                  class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
-                  <div class="tile-icon bg-success-focus radius-12 p-12">
-                    <iconify-icon icon="solar:calendar-bold" class="text-2xl text-success"></iconify-icon>
+              <div class="info-item-row-new d-flex justify-content-between align-items-center py-12 border-bottom">
+                <div class="d-flex align-items-center gap-12">
+                  <div class="icon-circle bg-success-focus">
+                    <iconify-icon icon="solar:check-circle-bold" class="text-success"></iconify-icon>
                   </div>
-                  <div class="tile-content">
-                    <span class="text-xs text-secondary-light fw-bold uppercase ls-1">Date of Birth</span>
-                    <h5 class="mb-0 text-lg fw-bold text-neutral-800 mt-4">{{ (studentData?.studentDOB &&
-                      studentData?.studentDOB.toString() !== '0001-01-01T00:00:00') ? (studentData?.studentDOB |
-                      date:'mediumDate') : 'N/A' }}</h5>
-                  </div>
+                  <span class="text-secondary-light fw-medium">Enrollment Status</span>
                 </div>
-              </div>
-              <div class="col">
-                <div
-                  class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
-                  <div class="tile-icon bg-info-focus radius-12 p-12">
-                    <iconify-icon icon="solar:medal-star-bold" class="text-2xl text-info"></iconify-icon>
-                  </div>
-                  <div class="tile-content">
-                    <span class="text-xs text-secondary-light fw-bold uppercase ls-1">Religion</span>
-                    <h5 class="mb-0 text-lg fw-bold text-neutral-800 mt-4">{{ studentData?.studentReligion || 'N/A' }}
-                    </h5>
-                  </div>
-                </div>
-              </div>
-              <div class="col">
-                <div
-                  class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
-                  <div class="tile-icon bg-danger-focus radius-12 p-12">
-                    <iconify-icon icon="solar:bomb-minimalistic-bold" class="text-2xl text-danger"></iconify-icon>
-                  </div>
-                  <div class="tile-content">
-                    <span class="text-xs text-secondary-light fw-bold uppercase ls-1">Blood Group</span>
-                    <h5 class="mb-0 text-lg fw-bold text-neutral-800 mt-4">{{ studentData?.studentBloodGroup || 'N/A' }}
-                    </h5>
-                  </div>
-                </div>
+                <span class="fw-bold text-neutral-800" [ngClass]="studentData?.status === 'Active' ? 'text-success' : 'text-danger'">{{ studentData?.status || 'N/A' }}</span>
               </div>
             </div>
           </div>
@@ -239,13 +191,6 @@
       <div *ngIf="activeTab === 'attendance'" class="animate-fade-in">
         <div class="d-flex justify-content-between align-items-center mb-24">
           <h6 class="mb-0 text-neutral-800 fw-semibold">Recent Attendance (Last 30 Days)</h6>
-          <div class="attendance-summary d-flex gap-16">
-            <span
-              class="badge bg-success-focus text-success-600 border-success-main border px-12 py-6 radius-8">Present:
-              85%</span>
-            <span class="badge bg-danger-focus text-danger-600 border-danger-main border px-12 py-6 radius-8">Absent:
-              10%</span>
-          </div>
         </div>
         <div class="table-responsive">
           <table class="table basic-table mb-0">

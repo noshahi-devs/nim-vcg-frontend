@@ -8,7 +8,8 @@
     </div>
   </div>
 
-  <div class="card h-100 p-0 radius-12 overflow-hidden border-0 shadow-sm" *ngIf="!loading && staffData; else noProfile">
+  <div class="card h-100 p-0 radius-12 overflow-hidden border-0 shadow-sm"
+    *ngIf="!loading && staffData; else noProfile">
     <!-- PREMIUM HEADER -->
     <div class="profile-header-premium position-relative">
       <div class="profile-cover-bg"></div>
@@ -16,12 +17,14 @@
         <div class="profile-image-container">
           <img [src]="staffData.profile || defaultAvatar" class="staff-profile-img shadow-lg" [alt]="staffData.name"
             (error)="staffData.profile = defaultAvatar">
-          <span class="status-indicator" [ngClass]="getStatusClass(staffData.status) === 'active' ? 'bg-success' : 'bg-danger'"></span>
+          <span class="status-indicator"
+            [ngClass]="getStatusClass(staffData.status) === 'active' ? 'bg-success' : 'bg-danger'"></span>
         </div>
         <div class="profile-basic-info flex-grow-1">
           <div class="d-flex align-items-center gap-12 mb-4">
             <h2 class="text-white mb-0 fw-bold">{{ staffData.name }}</h2>
-            <span class="badge bg-white text-maroon border-0 py-6 px-12 radius-pill text-xs shadow-sm" style="color: #800000;">
+            <span class="badge bg-white text-maroon border-0 py-6 px-12 radius-pill text-xs shadow-sm"
+              style="color: #800000;">
               ID: {{ staffData.id }}
             </span>
           </div>
@@ -34,14 +37,16 @@
               <iconify-icon icon="solar:calendar-bold"></iconify-icon>
               Joined: {{ staffData.joiningDate || 'N/A' }}
             </span>
-            <span class="text-white text-opacity-70 text-xs d-flex align-items-center gap-4" *ngIf="staffData.experience">
+            <span class="text-white text-opacity-70 text-xs d-flex align-items-center gap-4"
+              *ngIf="staffData.experience">
               <iconify-icon icon="solar:medal-ribbons-bold-duotone"></iconify-icon>
               Exp: {{ staffData.experience }}
             </span>
           </div>
         </div>
         <div class="profile-actions d-flex gap-8 mb-8">
-          <button (click)="editStaff(staffData.id)" class="btn btn-white btn-sm px-16 radius-8 d-flex align-items-center gap-8">
+          <button (click)="editStaff(staffData.id)"
+            class="btn btn-white btn-sm px-16 radius-8 d-flex align-items-center gap-8">
             <iconify-icon icon="solar:pen-bold"></iconify-icon> Edit Profile
           </button>
           <button (click)="goBack()" class="btn btn-outline-white btn-sm px-16 radius-8">
@@ -70,7 +75,8 @@
         <div class="row gy-4">
           <div class="col-lg-6">
             <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8">
-              <iconify-icon icon="solar:phone-calling-bold-duotone" class="text-maroon" style="color: #800000;"></iconify-icon>
+              <iconify-icon icon="solar:phone-calling-bold-duotone" class="text-maroon"
+                style="color: #800000;"></iconify-icon>
               Contact Details
             </h6>
             <div class="info-list-premium">
@@ -115,7 +121,8 @@
 
           <div class="col-lg-6">
             <h6 class="mb-20 text-neutral-800 fw-bold d-flex align-items-center gap-8">
-              <iconify-icon icon="solar:medal-ribbons-bold-duotone" class="text-maroon" style="color: #800000;"></iconify-icon>
+              <iconify-icon icon="solar:medal-ribbons-bold-duotone" class="text-maroon"
+                style="color: #800000;"></iconify-icon>
               Professional Background
             </h6>
             <div class="info-list-premium">
@@ -141,7 +148,8 @@
 
             <div class="row row-cols-1 row-cols-sm-2 gy-4 mt-16">
               <div class="col">
-                <div class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
+                <div
+                  class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
                   <div class="tile-icon bg-cyan-focus radius-12 p-12">
                     <iconify-icon icon="solar:users-group-rounded-bold" class="text-2xl text-cyan"></iconify-icon>
                   </div>
@@ -152,7 +160,8 @@
                 </div>
               </div>
               <div class="col">
-                <div class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
+                <div
+                  class="personal-tile d-flex align-items-center gap-16 p-20 radius-16 bg-base border border-neutral-100 shadow-xs">
                   <div class="tile-icon bg-teal-focus radius-12 p-12">
                     <iconify-icon icon="solar:calendar-bold" class="text-2xl text-teal"></iconify-icon>
                   </div>
@@ -228,7 +237,8 @@
                     </div>
                   </td>
                   <td>
-                    <span class="badge px-12 py-4 radius-pill" [ngClass]="item.rate > 90 ? 'bg-success-focus text-success' : 'bg-warning-focus text-warning'">
+                    <span class="badge px-12 py-4 radius-pill"
+                      [ngClass]="item.rate > 90 ? 'bg-success-focus text-success' : 'bg-warning-focus text-warning'">
                       {{ item.rate > 90 ? 'Excellent' : 'Good' }}
                     </span>
                   </td>
@@ -245,7 +255,8 @@
           <div class="col-lg-6">
             <div class="card-premium">
               <h6 class="mb-24 text-neutral-800 fw-bold">Rating & Productivity</h6>
-              <div class="d-flex align-items-center gap-24 mb-32 pb-24 border-bottom" *ngIf="staffData.performance?.rating; else noRating">
+              <div class="d-flex align-items-center gap-24 mb-32 pb-24 border-bottom"
+                *ngIf="staffData.performance?.rating; else noRating">
                 <div class="stat-icon-wrap orange" style="width: 70px; height: 70px; font-size: 2rem;">
                   <iconify-icon icon="solar:star-bold-duotone"></iconify-icon>
                 </div>
@@ -267,12 +278,14 @@
                 </div>
                 <div>
                   <span class="text-xs text-secondary-light fw-bold uppercase">Task Completion</span>
-                  <div class="value fs-2 fw-bold mt-4">{{ staffData.performance?.tasksCompleted }} / {{ staffData.performance?.totalTasks }}</div>
+                  <div class="value fs-2 fw-bold mt-4">{{ staffData.performance?.tasksCompleted }} / {{
+                    staffData.performance?.totalTasks }}</div>
                 </div>
               </div>
               <ng-template #noTasks>
                 <div class="text-center py-32 bg-neutral-50 radius-12">
-                  <iconify-icon icon="solar:checklist-minimalistic-line-duotone" class="text-4xl text-neutral-200 mb-8"></iconify-icon>
+                  <iconify-icon icon="solar:checklist-minimalistic-line-duotone"
+                    class="text-4xl text-neutral-200 mb-8"></iconify-icon>
                   <p class="text-secondary-light small mb-0">No tasks assigned yet.</p>
                 </div>
               </ng-template>
@@ -311,8 +324,10 @@
   </div>
 
   <ng-template #noProfile>
-    <div *ngIf="!loading" class="d-flex flex-column align-items-center justify-content-center mt-40 card-premium p-40 text-center shadow-sm">
-      <iconify-icon icon="solar:user-block-bold-duotone" class="text-danger mb-16" style="font-size: 80px;"></iconify-icon>
+    <div *ngIf="!loading"
+      class="d-flex flex-column align-items-center justify-content-center mt-40 card-premium p-40 text-center shadow-sm">
+      <iconify-icon icon="solar:user-block-bold-duotone" class="text-danger mb-16"
+        style="font-size: 80px;"></iconify-icon>
       <h3 class="mb-8">Staff Profile Not Found</h3>
       <p class="text-secondary-light mb-24 max-w-400-px mx-auto">
         We could not find a linked staff record for your account (<strong>{{ currentUserEmail }}</strong>).

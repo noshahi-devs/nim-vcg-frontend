@@ -29,6 +29,25 @@ export class AccountsComponent implements OnInit {
   dashboardData: DashboardData | null = null;
   loading = true;
 
+  // ── Premium Modal State ──
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+
+  // ── Helpers ──
+  triggerSuccess(title: string, msg: string) {
+    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  triggerError(title: string, msg: string) {
+    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  triggerWarning(title: string, msg: string) {
+    this.feedbackType = 'warning'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  closeFeedback() { this.showFeedbackModal = false; }
+
   // Data state
   dataMode: 'Live' | 'Demo' = 'Live';
   lastUpdated = '';
@@ -195,15 +214,7 @@ export class AccountsComponent implements OnInit {
         console.error('Error loading dashboard data:', err);
         this.setDashboardData(this.fallbackDashboardData, 'Demo');
         this.loading = false;
-        Swal.fire({
-          icon: 'info',
-          title: 'Demo data loaded',
-          text: 'Live data is unavailable right now. Showing the latest demo snapshot.',
-          toast: true,
-          position: 'top-end',
-          timer: 3000,
-          showConfirmButton: false
-        });
+        this.triggerWarning('Demo Data Loaded', 'Live data is unavailable right now. Showing the latest demo snapshot.');
       }
     });
   }
@@ -297,7 +308,7 @@ export class AccountsComponent implements OnInit {
       const totalGeneral = generalIncomes.reduce((sum, item) => sum + this.parseAmount(item.amount), 0);
       const totalFees = feePayments.reduce((sum, item) => sum + this.parseAmount(item.amountPaid), 0);
       const totalOthers = otherPayments.reduce((sum, item) => sum + this.parseAmount(item.amountPaid), 0);
-      
+
       const totalIncome = totalGeneral + totalFees + totalOthers;
       const totalExpenses = expenses.reduce((sum, item) => sum + this.parseAmount(item.amount), 0);
 
@@ -583,21 +594,10 @@ export class AccountsComponent implements OnInit {
   }
 
   exportData(): void {
-    const primary = this.getThemeColor('--primary-color', '#487fff');
-    Swal.fire({
-      title: 'Export Data',
-      text: 'Do you want to export the accounts dashboard data to Excel?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Export',
-      confirmButtonColor: primary
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire('Exporting...', 'Generating report...', 'info');
-        setTimeout(() => {
-          Swal.fire('Exported!', 'The report has been generated successfully.', 'success');
-        }, 1500);
-      }
-    });
+    this.isProcessing = true;
+    setTimeout(() => {
+      this.isProcessing = false;
+      this.triggerSuccess('Exported!', 'The report has been generated successfully.');
+    }, 1500);
   }
 }

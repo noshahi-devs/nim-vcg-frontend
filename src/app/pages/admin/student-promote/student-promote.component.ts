@@ -51,6 +51,14 @@ export class StudentPromoteComponent implements OnInit {
 
   loading = false;
 
+  // Premium Modal Visibility State
+  showConfirmPromote = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isPromoting = false;
+
   constructor(
     private router: Router,
     private studentService: StudentService,
@@ -166,26 +174,30 @@ export class StudentPromoteComponent implements OnInit {
     return visibleIds.length > 0 && visibleIds.every(id => this.selectedStudents.includes(id));
   }
 
+  // ── Premium Feedback ──
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+    if (autoClose) {
+      setTimeout(() => {
+        this.showFeedbackModal = false;
+      }, 2200);
+    }
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
+  }
+
   onNextClassChange(): void {
     const selectedClass = this.classes.find(c => c.standardId === Number(this.nextClassId));
     if (selectedClass) {
       this.filteredNextSections = this.sections.filter(s => s.className === selectedClass.standardName);
 
       if (this.filteredNextSections.length === 0) {
-        Swal.fire({
-          title: 'Section Required',
-          text: `There are no sections created for ${selectedClass.standardName}. Please create a section for this class before promoting students.`,
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Create Section',
-          cancelButtonText: 'OK',
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            this.router.navigate(['/section-add'], { queryParams: { className: selectedClass.standardName } });
-          }
-        });
+        this.showFeedback('warning', 'Section Required', `There are no sections created for <strong>${selectedClass.standardName}</strong>. Please create a section before promoting.`);
         this.nextSectionId = 0;
       } else {
         // Auto-select first section if available
@@ -199,44 +211,48 @@ export class StudentPromoteComponent implements OnInit {
 
   promoteSelected(): void {
     if (this.selectedStudents.length === 0) {
-      Swal.fire('Warning', 'Please select at least one student.', 'warning');
+      this.showFeedback('warning', 'Selection Required', 'Please select at least one student to promote.');
       return;
     }
 
     if (!this.nextClassId || !this.nextSectionId || !this.nextAcademicYearId) {
-      Swal.fire('Warning', 'Please select destination Class, Section, and Academic Year.', 'warning');
+      this.showFeedback('warning', 'Destination Incomplete', 'Please select destination Class, Section, and Academic Year.');
       return;
     }
 
-    Swal.fire({
-      title: 'Confirm Promotion',
-      text: `Are you sure you want to promote ${this.selectedStudents.length} students to the selected destination?`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Promote',
-      cancelButtonText: 'Cancel'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.loading = true;
-        const request = {
-          studentIds: this.selectedStudents,
-          nextClassId: Number(this.nextClassId),
-          nextSectionId: Number(this.nextSectionId),
-          nextAcademicYearId: Number(this.nextAcademicYearId)
-        };
+    this.showConfirmPromote = true;
+  }
 
-        this.studentService.bulkPromote(request).subscribe({
-          next: (res) => {
-            Swal.fire('Success', res.message || 'Students promoted successfully.', 'success');
-            this.selectedStudents = [];
-            this.loadInitialData(); 
-          },
-          error: (err) => {
-            console.error('Promotion error', err);
-            Swal.fire('Error', err.error?.message || 'Failed to promote students.', 'error');
-            this.loading = false;
-          }
-        });
+  cancelPromote() {
+    this.showConfirmPromote = false;
+  }
+
+  confirmPromotion() {
+    this.isPromoting = true;
+    const request = {
+      studentIds: this.selectedStudents,
+      nextClassId: Number(this.nextClassId),
+      nextSectionId: Number(this.nextSectionId),
+      nextAcademicYearId: Number(this.nextAcademicYearId)
+    };
+
+    this.studentService.bulkPromote(request).pipe(
+      finalize(() => {
+        this.isPromoting = false;
+        this.showConfirmPromote = false;
+      })
+    ).subscribe({
+      next: (res) => {
+        this.showFeedback('success', 'Promotion Successful', res.message || 'Students have been promoted successfully.', true);
+        this.selectedStudents = [];
+        this.loadInitialData();
+      },
+      error: (err) => {
+        console.error('Promotion error', err);
+        const errorMsg = err.error && typeof err.error === 'string'
+          ? err.error
+          : (err.error?.message ? err.error.message : 'Failed to promote students.');
+        this.showFeedback('error', 'Promotion Failed', errorMsg);
       }
     });
   }

@@ -22,6 +22,12 @@
     <div class="fee-card-header">
       <div class="header-left">
         <div class="show-entries">
+          <span>Show</span>
+          <select class="entries-select" [(ngModel)]="rowsPerPage" (change)="onPageSizeChange()">
+            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">{{ size }}</option>
+          </select>
+        </div>
+        <div class="show-entries">
           <span>Type</span>
           <select class="entries-select" [(ngModel)]="filterType" (change)="applyFilters()">
             <option value="">All Types</option>
@@ -50,8 +56,15 @@
         </div>
       </div>
       <div class="d-flex gap-2">
-        <button type="button" (click)="exportData()" class="btn-add"
-          style="background: linear-gradient(135deg, #f43f5e, #e11d48);">
+        <button type="button" (click)="loadExpenseList()" class="btn-refresh-premium">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <polyline points="23 4 23 10 17 10" />
+            <polyline points="1 20 1 14 7 14" />
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+          </svg>
+          Refresh
+        </button>
+        <button type="button" (click)="exportData()" class="btn-export-premium">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="7 10 12 15 17 10" />
@@ -59,7 +72,8 @@
           </svg>
           Export PDF
         </button>
-        <button *ngIf="hasRole('Accountant')" type="button" (click)="openAddModal()" class="btn-add">
+        <button *ngIf="hasRole('Accountant')" type="button" (click)="openAddModal()" class="btn-add"
+          style="background: linear-gradient(135deg, #800000, #5a0000);">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M12 5v14M5 12h14" />
           </svg>
@@ -83,27 +97,28 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="table-row" *ngFor="let expense of filteredList">
+            <tr class="table-row" *ngFor="let expense of pagedList">
               <td><span class="date-val">{{ expense.date | date:'mediumDate' }}</span></td>
-              <td><span class="enrollment-badge"
-                  [ngClass]="expense.expenseType === 'Salary' ? '' : 'text-danger-main'">{{ expense.expenseType
-                  }}</span></td>
+              <td><span class="enrollment-badge yellow-badge">{{ expense.expenseType }}</span></td>
               <td><span class="student-name">{{ expense.description }}</span></td>
               <td class="text-end">
                 <span class="amount-val text-danger-main">{{ formatCurrency(expense.amount) }}</span>
               </td>
               <td>{{ expense.paymentMethod }}</td>
               <td>{{ expense.approvedBy }}</td>
-              <td>{{ expense.campus }}</td>
               <td class="text-center" *ngIf="hasRole('Accountant')">
                 <div class="action-group">
-                  <button type="button" class="icon-btn edit-btn" (click)="openEditModal(expense)" title="Edit">
+                  <button class="icon-btn view-btn flex-center" (click)="openViewModal(expense)" 
+                    data-tooltip="View Details" style="background: #fffbeb; color: #b45309;">
+                    <iconify-icon icon="solar:eye-bold-duotone" style="font-size: 1.1rem;"></iconify-icon>
+                  </button>
+                  <button type="button" class="icon-btn edit-btn flex-center" (click)="openEditModal(expense)" data-tooltip="Edit">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                     </svg>
                   </button>
-                  <button type="button" class="icon-btn delete-btn" (click)="deleteExpense(expense)" title="Delete">
+                  <button type="button" class="icon-btn delete-btn flex-center" (click)="confirmDelete(expense)" data-tooltip="Delete">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="3 6 5 6 21 6" />
                       <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
@@ -126,7 +141,146 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination Bar -->
+      <div class="pagination-bar" *ngIf="filteredList.length > 0">
+        <div class="pagination-info">
+          Showing {{ paginationStart }} to {{ paginationEnd }} of {{ filteredList.length }} entries
+        </div>
+        <div class="pagination-controls">
+          <button class="page-btn" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <button class="page-btn" *ngFor="let page of pageNumbers" [class.active]="page === currentPage"
+            (click)="changePage(page)">
+            {{ page }}
+          </button>
+          <button class="page-btn" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
+
+  </div>
+</div>
+
+<!-- ===================== PREMIUM VIEW MODAL ===================== -->
+<div *ngIf="showViewModal && selectedExpense" class="modal-overlay" (click)="closeViewModal()">
+  <div class="modal-box view-modal-premium" (click)="$event.stopPropagation()">
+    <!-- Gradient Header -->
+    <div class="modal-header-premium">
+      <div class="header-gradient" style="background: linear-gradient(135deg, #800000, #5a0000); opacity: 0.1;"></div>
+      <div class="header-content">
+        <div class="modal-icon-premium" style="background: linear-gradient(135deg, #800000, #fbbf24);">
+          <iconify-icon icon="solar:bill-list-bold-duotone" style="font-size: 1.4rem; color: #fff;"></iconify-icon>
+        </div>
+        <div>
+          <h4 class="modal-title-premium">Expense Details</h4>
+          <p class="modal-subtitle-premium">Complete record for #{{ selectedExpense.id }}</p>
+        </div>
+      </div>
+      <button class="modal-close-premium" (click)="closeViewModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body-premium">
+      <div class="view-grid-compact">
+        <div class="view-card-premium-row">
+          <div class="view-item">
+            <span class="v-label">Date</span>
+            <span class="v-value">{{ selectedExpense.date | date:'longDate' }}</span>
+          </div>
+          <div class="view-item">
+            <span class="v-label">Type</span>
+            <span class="v-value"><span class="enrollment-badge yellow-badge">{{ selectedExpense.expenseType }}</span></span>
+          </div>
+        </div>
+
+        <div class="view-card-premium amount-highlight danger-theme">
+          <span class="v-label">Total Expense Amount</span>
+          <span class="v-value large-amount">{{ formatCurrency(selectedExpense.amount) }}</span>
+          <div class="v-sub-row">
+            <span>{{ selectedExpense.paymentMethod }}</span>
+            <span class="dot-sep"></span>
+            <span>Approved By: {{ selectedExpense.approvedBy }}</span>
+          </div>
+        </div>
+
+        <div class="view-card-premium">
+          <span class="v-label">Description</span>
+          <p class="v-description">{{ selectedExpense.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer-premium">
+      <button class="btn-primary-gradient" style="background: linear-gradient(135deg, #800000, #5a0000); width: 100%; justify-content: center;" (click)="closeViewModal()">
+        <iconify-icon icon="solar:check-read-linear"></iconify-icon>
+        Done
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DELETE MODAL ===================== -->
+<div *ngIf="showDeleteDialog" class="modal-overlay" (click)="showDeleteDialog = false">
+  <div class="modal-box delete-box" (click)="$event.stopPropagation()">
+    <div class="delete-icon-wrapper">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        <line x1="12" y1="9" x2="12" y2="13" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
+    </div>
+    <h3 class="delete-title">Confirm Delete</h3>
+    <p class="delete-message">
+      Are you sure you want to delete the expense entry "<strong>{{ itemToDeleteDesc }}</strong>"? This action cannot be undone.
+    </p>
+    <div class="delete-actions">
+      <button class="btn-ghost" (click)="showDeleteDialog = false">Cancel</button>
+      <button class="btn-danger-gradient" (click)="executeDelete()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+          <path d="M10 11v6M14 11v6" />
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- == Premium Feedback Modal == -->
+<div class="premium-overlay" *ngIf="showFeedbackModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span class="pm-sparkle sp3"></span></div>
+    <div class="pm-icon-ring" [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
+      <iconify-icon [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'" style="font-size:2.4rem; color:#fff"></iconify-icon>
+    </div>
+    <p class="pm-title">{{ feedbackTitle }}</p>
+    <p class="pm-subtitle">{{ feedbackMessage }}</p>
+    <div class="pm-actions">
+      <button class="pm-btn pm-acknowledge" [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}" (click)="closeFeedback()">
+        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Acknowledge
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- == Processing Overlay == -->
+<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+  <div class="processing-card">
+    <div class="loader-ring"></div>
+    <div><p class="pc-title">Processing...</p><p class="pc-subtitle">Please wait a moment</p></div>
   </div>
 </div>
 

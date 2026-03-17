@@ -40,6 +40,13 @@ export class ApplyLeavesComponent implements OnInit {
   totalDays = 0;
   submitting = false;
 
+  // Premium Modal States
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+
   constructor(
     private leaveService: LeaveService,
     private authService: AuthService,
@@ -58,7 +65,7 @@ export class ApplyLeavesComponent implements OnInit {
         finalize(() => this.loadingProfile = false),
         catchError(err => {
           console.error("Error loading staff profile:", err);
-          Swal.fire('Error', 'Could not load your profile data. Please contact support.', 'error');
+          this.showFeedback('error', 'Profile Error', 'Could not load your profile data. Please contact support.');
           return of(null);
         })
       ).subscribe(staff => {
@@ -98,22 +105,22 @@ export class ApplyLeavesComponent implements OnInit {
 
   validateForm(): boolean {
     if (!this.leaveTypeStr) {
-      Swal.fire({ icon: 'warning', title: 'Missing Information', text: 'Please select a leave type.', confirmButtonColor: '#800020' });
+      this.showFeedback('warning', 'Missing Information', 'Please select a leave type.');
       return false;
     }
 
     if (!this.fromDate) {
-      Swal.fire({ icon: 'warning', title: 'Missing Information', text: 'Please select from date.', confirmButtonColor: '#800020' });
+      this.showFeedback('warning', 'Missing Information', 'Please select from date.');
       return false;
     }
 
     if (!this.toDate) {
-      Swal.fire({ icon: 'warning', title: 'Missing Information', text: 'Please select to date.', confirmButtonColor: '#800020' });
+      this.showFeedback('warning', 'Missing Information', 'Please select to date.');
       return false;
     }
 
     if (!this.reason.trim()) {
-      Swal.fire({ icon: 'warning', title: 'Missing Information', text: 'Please provide a reason for leave.', confirmButtonColor: '#800020' });
+      this.showFeedback('warning', 'Missing Information', 'Please provide a reason for leave.');
       return false;
     }
 
@@ -121,7 +128,7 @@ export class ApplyLeavesComponent implements OnInit {
     const to = new Date(this.toDate);
 
     if (to < from) {
-      Swal.fire({ icon: 'error', title: 'Invalid Dates', text: 'To date cannot be before from date.', confirmButtonColor: '#800020' });
+      this.showFeedback('error', 'Invalid Dates', 'To date cannot be before from date.');
       return false;
     }
 
@@ -132,17 +139,7 @@ export class ApplyLeavesComponent implements OnInit {
     if (!this.validateForm()) return;
 
     this.submitting = true;
-
-    Swal.fire({
-      title: 'Applying Leave...',
-      text: 'Please wait while we process your request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    this.isProcessing = true;
 
     const leaveData: Leave = {
       staffId: this.staffId!,
@@ -156,22 +153,16 @@ export class ApplyLeavesComponent implements OnInit {
     this.leaveService.createLeave(leaveData)
       .pipe(finalize(() => {
         this.submitting = false;
-        Swal.close();
+        this.isProcessing = false;
       }))
       .subscribe({
         next: (resp) => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Leave Applied Successfully!',
-            text: 'Your leave request has been submitted for approval.',
-            confirmButtonColor: '#800020',
-            timer: 3000
-          });
+          this.showFeedback('success', 'Leave Applied Successfully!', 'Your leave request has been submitted for approval.');
           this.resetForm();
         },
         error: (err) => {
           console.error('Error submitting leave:', err);
-          Swal.fire('Error', 'Failed to submit leave request', 'error');
+          this.showFeedback('error', 'Error', 'Failed to submit leave request');
         }
       });
   }
@@ -182,6 +173,17 @@ export class ApplyLeavesComponent implements OnInit {
     this.toDate = '';
     this.reason = '';
     this.totalDays = 0;
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 }
 

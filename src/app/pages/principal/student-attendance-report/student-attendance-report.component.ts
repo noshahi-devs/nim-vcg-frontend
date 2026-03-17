@@ -25,6 +25,13 @@ export class StudentAttendanceReportComponent implements OnInit {
   searchTerm: string = '';
   showDropdown: boolean = false;
 
+  /** PREMIUM UI STATES */
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+
   constructor(
     private attendanceService: AttendanceService,
     private studentService: StudentService,
@@ -53,8 +60,13 @@ export class StudentAttendanceReportComponent implements OnInit {
   loadStudents(): void {
     const yearId = this.sessionService.getCurrentYearId();
     this.studentService.GetStudents(yearId).subscribe({
-      next: (res) => this.students = res,
-      error: (err) => console.error('Error loading students:', err)
+      next: (res) => {
+        this.students = res;
+      },
+      error: (err) => {
+        console.error('Error loading students:', err);
+        this.triggerError('Error', 'Unable to load students.');
+      }
     });
   }
 
@@ -71,16 +83,43 @@ export class StudentAttendanceReportComponent implements OnInit {
 
   getReport() {
     if (!this.studentId || !this.startDate || !this.endDate) return;
+    this.isProcessing = true;
     this.attendanceService.getStudentAttendanceReport(this.studentId, this.startDate, this.endDate).subscribe({
-      next: (res) => this.report = res,
+      next: (res) => {
+        this.report = res;
+        this.isProcessing = false;
+      },
       error: () => {
-        // Dummy
-        this.report = [
-          { date: '2024-01-01', status: 'Present' },
-          { date: '2024-01-02', status: 'Present' },
-          { date: '2024-01-03', status: 'Absent', remarks: 'Sick' },
-        ];
+        this.isProcessing = false;
+        this.report = [];
+        this.triggerError('Error', 'Failed to fetch attendance records.');
       }
     });
+  }
+
+  // Helper Methods for Modals
+  triggerSuccess(title: string, message: string) {
+    this.feedbackType = 'success';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  triggerError(title: string, message: string) {
+    this.feedbackType = 'error';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  triggerWarning(title: string, message: string) {
+    this.feedbackType = 'warning';
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 }

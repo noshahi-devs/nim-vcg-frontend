@@ -203,77 +203,88 @@
   </section>
 </div>
 
-<!-- =================== VIEW DETAILS MODAL =================== -->
-<div
-  class="modal fade sml-modal"
-  [class.show]="showViewDialog"
-  [style.display]="showViewDialog ? 'block' : 'none'"
-  tabindex="-1"
-  role="dialog"
-  aria-modal="true"
->
-  <div class="modal-dialog modal-dialog-centered sml-modal-dialog">
-    <div class="modal-content sml-modal-card" *ngIf="viewLogin">
-      <div class="sml-modal-header">
-        <div class="sml-modal-title-wrap">
-          <span class="sml-modal-badge">Read Only</span>
-          <h1 class="sml-modal-title">Account Details</h1>
-          <p class="sml-modal-subtitle">Viewing login information for {{ viewLogin.name }}</p>
-        </div>
-        <button type="button" class="sml-close-btn" (click)="closeViewDialog()" aria-label="Close">
-          <iconify-icon icon="material-symbols:close-rounded"></iconify-icon>
-        </button>
-      </div>
+<!-- ✅ PREMIUM VIEW DETAILS MODAL -->
+<div class="premium-overlay" *ngIf="showViewDialog" (click)="closeViewDialog()">
+  <div class="premium-view-modal" (click)="$event.stopPropagation()" *ngIf="viewLogin">
 
-      <div class="sml-modal-body">
-        <div class="view-detail-grid">
-          <div class="view-detail-item">
-            <span class="view-detail-label">Full Name</span>
-            <span class="view-detail-value">{{ viewLogin.name }}</span>
+    <!-- Gradient Header -->
+    <div class="pvm-header">
+      <div class="pvm-avatar">{{ viewLogin.name?.charAt(0)?.toUpperCase() }}</div>
+      <div class="pvm-header-info">
+        <span class="pvm-badge">Login Account</span>
+        <h2 class="pvm-name">{{ viewLogin.name }}</h2>
+        <p class="pvm-email">{{ viewLogin.email }}</p>
+      </div>
+      <button class="pvm-close-btn" (click)="closeViewDialog()">
+        <iconify-icon icon="material-symbols:close-rounded"></iconify-icon>
+      </button>
+    </div>
+
+    <!-- Detail Grid -->
+    <div class="pvm-body">
+      <div class="pvm-grid">
+
+        <div class="pvm-detail-item">
+          <div class="pvm-detail-icon role-icon">
+            <iconify-icon icon="solar:user-id-bold-duotone"></iconify-icon>
           </div>
-          <div class="view-detail-item">
-            <span class="view-detail-label">Email Address</span>
-            <span class="view-detail-value">{{ viewLogin.email }}</span>
+          <div>
+            <p class="pvm-detail-label">Role</p>
+            <span class="role-pill">{{ viewLogin.role }}</span>
           </div>
-          <div class="view-detail-item">
-            <span class="view-detail-label">Role</span>
-            <span class="view-detail-value"><span class="role-pill">{{ viewLogin.role }}</span></span>
+        </div>
+
+        <div class="pvm-detail-item">
+          <div class="pvm-detail-icon phone-icon">
+            <iconify-icon icon="solar:phone-bold-duotone"></iconify-icon>
           </div>
-          <div class="view-detail-item">
-            <span class="view-detail-label">Phone Number</span>
-            <span class="view-detail-value">{{ viewLogin.phone }}</span>
+          <div>
+            <p class="pvm-detail-label">Phone Number</p>
+            <p class="pvm-detail-value">{{ viewLogin.phone }}</p>
           </div>
-          <div class="view-detail-item">
-            <span class="view-detail-label">Account Status</span>
-            <span class="view-detail-value">
-              <span class="status-pill" [class.active]="viewLogin.status?.toLowerCase() === 'active'" [class.inactive]="viewLogin.status?.toLowerCase() !== 'active'">
-                {{ viewLogin.status }}
-              </span>
+        </div>
+
+        <div class="pvm-detail-item">
+          <div class="pvm-detail-icon status-icon">
+            <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
+          </div>
+          <div>
+            <p class="pvm-detail-label">Account Status</p>
+            <span class="status-pill"
+              [class.active]="viewLogin.status?.toLowerCase() === 'active'"
+              [class.inactive]="viewLogin.status?.toLowerCase() !== 'active'">
+              {{ viewLogin.status }}
             </span>
           </div>
-          <div class="view-detail-item">
-            <span class="view-detail-label">Created On</span>
-            <span class="view-detail-value">{{ viewLogin.createdOn }}</span>
+        </div>
+
+        <div class="pvm-detail-item">
+          <div class="pvm-detail-icon date-icon">
+            <iconify-icon icon="solar:calendar-add-bold-duotone"></iconify-icon>
+          </div>
+          <div>
+            <p class="pvm-detail-label">Created On</p>
+            <p class="pvm-detail-value">{{ viewLogin.createdOn }}</p>
           </div>
         </div>
-      </div>
 
-      <div class="sml-modal-footer">
-        <div class="sml-modal-actions">
-          <button type="button" (click)="toggleStatus(viewLogin); closeViewDialog()" class="sml-btn"
-            [style.background]="viewLogin.status?.toLowerCase() === 'active' ? '#ef4444' : '#10b981'"
-            style="color: white; border: none;">
-            <iconify-icon [icon]="viewLogin.status?.toLowerCase() === 'active' ? 'solar:forbidden-circle-bold' : 'solar:shield-check-bold'"></iconify-icon>
-            {{ viewLogin.status?.toLowerCase() === 'active' ? 'Deactivate Account' : 'Activate Account' }}
-          </button>
-          <button type="button" (click)="closeViewDialog()" class="sml-btn sml-btn-ghost">Close</button>
-        </div>
       </div>
     </div>
+
+    <!-- Footer Actions -->
+    <div class="pvm-footer">
+      <button class="pm-btn"
+        [ngClass]="viewLogin.status?.toLowerCase() === 'active' ? 'pm-deactivate' : 'pm-activate'"
+        (click)="toggleStatus(viewLogin); closeViewDialog()">
+        <iconify-icon [icon]="viewLogin.status?.toLowerCase() === 'active' ? 'solar:forbidden-circle-bold' : 'solar:shield-check-bold'"></iconify-icon>
+        {{ viewLogin.status?.toLowerCase() === 'active' ? 'Deactivate Account' : 'Activate Account' }}
+      </button>
+      <button class="pm-btn pm-cancel" (click)="closeViewDialog()">Close</button>
+    </div>
+
   </div>
 </div>
 
-<div class="modal-backdrop fade sml-modal-backdrop" [class.show]="showViewDialog" *ngIf="showViewDialog" (click)="closeViewDialog()"></div>
 
 <!-- =================== CREATE LOGIN MODAL (ADD ONLY) =================== -->
 <div
@@ -354,3 +365,71 @@
 </div>
 
 <div class="modal-backdrop fade sml-modal-backdrop" [class.show]="showDialog" *ngIf="showDialog" (click)="closeDialog()"></div>
+
+<!-- ✅ PREMIUM DELETE CONFIRMATION MODAL -->
+<div class="premium-overlay" *ngIf="showDeleteModal" (click)="cancelDelete()">
+  <div class="premium-modal delete-variant" (click)="$event.stopPropagation()">
+    <div class="pm-icon-ring danger-ring">
+      <iconify-icon icon="solar:trash-bin-minimalistic-bold-duotone" style="font-size:2.2rem;color:#fff;"></iconify-icon>
+    </div>
+    <h3 class="pm-title">Delete Account</h3>
+    <p class="pm-subtitle">Are you sure you want to permanently delete the login account for <strong>{{ deleteTarget?.name }}</strong>? This cannot be undone.</p>
+    <div class="pm-actions">
+      <button class="pm-btn pm-cancel" (click)="cancelDelete()">Cancel</button>
+      <button class="pm-btn pm-danger" (click)="executeDelete()">
+        <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon> Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ PREMIUM STATUS TOGGLE CONFIRMATION MODAL -->
+<div class="premium-overlay" *ngIf="showStatusModal" (click)="cancelToggleStatus()">
+  <div class="premium-modal status-variant" (click)="$event.stopPropagation()">
+    <div class="pm-icon-ring" [ngClass]="pendingStatus === 'Active' ? 'activate-ring' : 'deactivate-ring'">
+      <iconify-icon [icon]="pendingStatus === 'Active' ? 'solar:shield-check-bold-duotone' : 'solar:forbidden-circle-bold-duotone'" style="font-size:2.2rem;color:#fff;"></iconify-icon>
+    </div>
+    <h3 class="pm-title">{{ pendingStatus === 'Active' ? 'Activate Account' : 'Deactivate Account' }}</h3>
+    <p class="pm-subtitle">
+      Are you sure you want to <strong>{{ pendingStatus === 'Active' ? 'activate' : 'deactivate' }}</strong> the account for <strong>{{ statusTarget?.name }}</strong>?
+    </p>
+    <div class="pm-actions">
+      <button class="pm-btn pm-cancel" (click)="cancelToggleStatus()">Cancel</button>
+      <button class="pm-btn" [ngClass]="pendingStatus === 'Active' ? 'pm-activate' : 'pm-deactivate'" (click)="confirmToggleStatus()">
+        <iconify-icon [icon]="pendingStatus === 'Active' ? 'solar:shield-check-bold-duotone' : 'solar:forbidden-circle-bold-duotone'"></iconify-icon>
+        {{ pendingStatus === 'Active' ? 'Activate' : 'Deactivate' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ PREMIUM FEEDBACK MODAL (Success / Error / Warning) -->
+<div class="premium-overlay" *ngIf="showFeedbackModal" (click)="closeFeedback()">
+  <div class="premium-modal feedback-variant" (click)="$event.stopPropagation()">
+
+    <!-- Sparkle decorations -->
+    <div class="pm-sparkles">
+      <span class="pm-sparkle sp1"></span>
+      <span class="pm-sparkle sp2"></span>
+      <span class="pm-sparkle sp3"></span>
+    </div>
+
+    <div class="pm-icon-ring"
+      [ngClass]="feedbackType === 'success' ? 'success-ring' : feedbackType === 'error' ? 'danger-ring' : 'warning-ring'">
+      <iconify-icon
+        [icon]="feedbackType === 'success' ? 'solar:check-circle-bold-duotone' : feedbackType === 'error' ? 'solar:danger-bold-duotone' : 'solar:shield-warning-bold-duotone'"
+        style="font-size:2.4rem;color:#fff;">
+      </iconify-icon>
+    </div>
+
+    <h3 class="pm-title">{{ feedbackTitle }}</h3>
+    <p class="pm-subtitle">{{ feedbackMessage }}</p>
+
+    <button class="pm-btn pm-acknowledge"
+      [ngClass]="feedbackType === 'success' ? 'pm-success-btn' : feedbackType === 'error' ? 'pm-error-btn' : 'pm-warning-btn'"
+      (click)="closeFeedback()">
+      <iconify-icon icon="solar:check-square-bold" style="font-size:1.1rem;"></iconify-icon>
+      Acknowledge
+    </button>
+  </div>
+</div>

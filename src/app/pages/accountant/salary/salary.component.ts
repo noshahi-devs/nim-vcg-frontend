@@ -36,6 +36,16 @@ export class SalaryComponent implements OnInit {
   itemsPerPage = 10;
   currentPage = 1;
 
+  /** MULTI-MODAL STATES */
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+
+  showDeleteModal = false;
+  salaryToDeleteId: number | null = null;
+
   constructor(
     private staffSalaryService: StaffSalaryService,
     private staffService: StaffService
@@ -122,64 +132,65 @@ export class SalaryComponent implements OnInit {
   saveSalary(): void {
 
     if (!this.salary.staffId || !this.salary.basicSalary) {
-      Swal.fire('Validation Error', 'Staff & Basic Salary required', 'warning');
+      this.showFeedback('warning', 'Validation Error', 'Staff & Basic Salary are required fields.');
       return;
     }
 
     this.salary.netSalary = this.calculatedNetSalary;
 
-    Swal.fire({
-      title: 'Saving Salary...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    this.isProcessing = true;
 
     this.staffSalaryService.addStaffSalary(this.salary).subscribe({
       next: () => {
-        Swal.close();
-        Swal.fire('Success', 'Salary saved successfully', 'success');
+        this.isProcessing = false;
+        this.showFeedback('success', 'Salary Saved!', 'The salary record has been saved successfully.');
         this.resetForm();
         this.loadSalaries();
       },
       error: () => {
-        Swal.close();
-        Swal.fire('Error', 'Failed to save salary', 'error');
+        this.isProcessing = false;
+        this.showFeedback('error', 'Processing Failed', 'An error occurred while saving the salary record.');
       }
     });
   }
 
   /* ================= DELETE ================= */
   deleteSalary(id: number): void {
-    Swal.fire({
-      title: 'Delete salary?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes'
-    }).then(res => {
-      if (res.isConfirmed) {
-        Swal.fire({
-          title: 'Deleting...',
-          allowOutsideClick: false,
-          didOpen: () => Swal.showLoading()
-        });
-        this.staffSalaryService.deleteStaffSalary(id).subscribe({
-          next: () => {
-            Swal.close();
-            Swal.fire('Deleted', '', 'success');
-            this.loadSalaries();
-          },
-          error: () => {
-            Swal.close();
-            Swal.fire('Error', 'Failed to delete salary', 'error');
-          }
-        });
+    this.salaryToDeleteId = id;
+    this.showDeleteModal = true;
+  }
+
+  confirmDelete(): void {
+    if (!this.salaryToDeleteId) return;
+
+    this.isProcessing = true;
+    this.staffSalaryService.deleteStaffSalary(this.salaryToDeleteId).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.showDeleteModal = false;
+        this.salaryToDeleteId = null;
+        this.showFeedback('success', 'Archived Successfully', 'The salary record has been permanently deleted.');
+        this.loadSalaries();
+      },
+      error: () => {
+        this.isProcessing = false;
+        this.showDeleteModal = false;
+        this.salaryToDeleteId = null;
+        this.showFeedback('error', 'Archive Failed', 'Could not delete the salary record. Please try again.');
       }
     });
+  }
+
+  /* ================= FEEDBACK HELPERS ================= */
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string): void {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback(): void {
+    this.showFeedbackModal = false;
   }
 
   /* ================= RESET ================= */

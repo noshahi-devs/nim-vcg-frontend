@@ -136,19 +136,19 @@
   padding: 0 16px;
   border-radius: 10px;
   text-decoration: none;
-  background: var(--brand);
-  color: #ffffff;
+  background: #F4C430;
+  color: #800000;
   font-size: 13px;
   font-weight: 700;
-  box-shadow: 0 8px 18px rgba(128, 0, 0, 0.34);
+  box-shadow: 0 8px 18px rgba(244, 196, 48, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .es-add-btn:hover {
   transform: translateY(-2px);
-  background: var(--brand-strong);
-  color: #ffffff;
-  box-shadow: 0 14px 24px rgba(128, 0, 0, 0.4);
+  background: #d4a71c;
+  color: #800000;
+  box-shadow: 0 14px 24px rgba(244, 196, 48, 0.4);
 }
 
 .es-grid {
@@ -324,13 +324,13 @@
 }
 
 .es-action-btn.view {
-  background: rgba(128, 0, 0, 0.12);
-  color: var(--brand);
+  background: rgba(244, 196, 48, 0.15);
+  color: #800000;
 }
 
 .es-action-btn.view:hover {
-  background: var(--brand);
-  color: #ffffff;
+  background: #F4C430;
+  color: #800000;
 }
 
 .es-action-btn.edit {
@@ -407,3 +407,101 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ============================================================
+   PREMIUM ACTION MODALS (Overlay, Cards, Icons, Buttons)
+   ============================================================ */
+.premium-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000; /* Higher than topbar/sidebar */
+  animation: fadeInModal 0.3s ease-out;
+}
+
+.premium-modal {
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 32px;
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: scaleUpModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.feedback-modal {
+  max-width: 440px;
+}
+
+.pm-sparkles { position: absolute; inset: 0; pointer-events: none; }
+.pm-sparkle { position: absolute; background: #800000; border-radius: 50%; opacity: 0.3; filter: blur(1px); }
+.sp1 { width: 6px; height: 6px; top: 15%; left: 10%; animation: float 3s infinite; }
+.sp2 { width: 4px; height: 4px; top: 25%; right: 15%; animation: float 4s infinite 1s; }
+.sp3 { width: 5px; height: 5px; bottom: 20%; left: 20%; animation: float 5s infinite 0.5s; }
+
+.pm-icon-ring {
+  width: 80px; height: 80px;
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  position: relative;
+}
+.success-ring { background: linear-gradient(135deg, #10b981, #059669); }
+.danger-ring { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.warning-ring { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+.pm-title { font-size: 24px; font-weight: 800; color: #1e293b; margin-bottom: 12px; }
+.pm-subtitle { font-size: 15px; color: #64748b; line-height: 1.6; margin-bottom: 32px; }
+
+.pm-actions { display: flex; gap: 12px; justify-content: center; }
+.pm-btn { padding: 14px 28px; border-radius: 16px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; display: flex; align-items: center; gap: 8px; }
+
+.pm-cancel { background: #f1f5f9; color: #64748b; }
+.pm-save { background: #800000; color: #ffffff; }
+
+.pm-acknowledge { width: 100%; justify-content: center; color: white; }
+.pm-success-btn { background: #10b981; }
+.pm-error-btn { background: #ef4444; }
+.pm-warning-btn { background: #f59e0b; }
+
+/* Processing Card */
+.processing-overlay {
+  z-index: 1080;
+}
+
+.processing-card {
+  background: white;
+  padding: 32px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  z-index: 1070;
+}
+
+.loader-ring {
+  width: 48px; height: 48px;
+  border: 4px solid #f1f5f9; border-top-color: #800000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.pc-title { margin: 0; font-weight: 700; color: #1e293b; font-size: 1.1rem; }
+.pc-subtitle { margin: 4px 0 0; color: #94a3b8; font-size: 0.9rem; }
+
+/* Animations */
+@keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleUpModal { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes float { 0% , 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+

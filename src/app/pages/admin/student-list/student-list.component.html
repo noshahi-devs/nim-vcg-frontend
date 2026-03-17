@@ -130,25 +130,71 @@
     </div>
   </div>
 
-  <div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content radius-12 border-0 shadow-lg">
-        <div class="modal-header border-0 pb-0">
-          <h5 class="modal-title fw-bold text-danger">Confirm Delete</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body text-center py-24">
-          <div class="mb-16 text-danger opacity-75">
-            <iconify-icon icon="solar:danger-bold-duotone" style="font-size: 64px;"></iconify-icon>
-          </div>
-          <p class="mb-0">Are you sure you want to delete <strong>{{ studentToDelete?.studentName }}</strong>?</p>
-          <span class="text-xs text-muted">This action cannot be undone.</span>
-        </div>
-        <div class="modal-footer border-0 pt-0 d-flex justify-content-center gap-2 pb-24">
-          <button type="button" class="btn btn-light px-24 radius-10" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger px-24 radius-10 shadow-sm" (click)="deleteStudent()">Yes, Delete</button>
-        </div>
-      </div>
+</div>
+
+<!-- ============================================================
+     PREMIUM MODALS
+     ============================================================ -->
+
+<!-- 1. DELETE CONFIRMATION MODAL -->
+<div class="premium-overlay" *ngIf="showConfirmDelete">
+  <div class="premium-modal">
+    <div class="pm-sparkles">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring danger-ring">
+      <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">Remove Student?</h3>
+    <p class="pm-subtitle">
+      Are you sure you want to delete <strong>{{ studentToDelete?.studentName }}</strong>?
+      <br><span class="text-xs">This action cannot be undone and may affect academic records.</span>
+    </p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-cancel" (click)="cancelDelete()">Go Back</button>
+      <button class="pm-btn pm-save pm-error-btn" (click)="deleteStudent()" [disabled]="isDeleting">
+        <iconify-icon *ngIf="isDeleting" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
+        {{ isDeleting ? 'Deleting...' : 'Yes, Delete' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+<div class="premium-overlay" *ngIf="showFeedbackModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-sparkles">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring" [ngClass]="{
+           'success-ring': feedbackType === 'success',
+           'danger-ring': feedbackType === 'error',
+           'warning-ring': feedbackType === 'warning'
+         }">
+      <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+        style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">{{ feedbackTitle }}</h3>
+    <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-acknowledge" [ngClass]="{
+                'pm-success-btn': feedbackType === 'success',
+                'pm-error-btn': feedbackType === 'error',
+                'pm-warning-btn': feedbackType === 'warning'
+              }" (click)="closeFeedback()">
+        Acknowledge
+      </button>
     </div>
   </div>
 </div>

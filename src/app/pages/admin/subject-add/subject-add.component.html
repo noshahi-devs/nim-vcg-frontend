@@ -83,16 +83,61 @@
             </div>
 
             <div class="d-flex align-items-center justify-content-end gap-3 mt-4">
-              <button type="submit" class="btn-primary-gradient px-4 py-2 radius-8 d-flex align-items-center gap-2">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                  style="width: 20px; height: 20px;">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                Save Subjects
+              <button type="button" (click)="onSubmit(subjectForm)" class="btn-primary-gradient px-32 py-2 radius-8 d-flex align-items-center gap-2" [disabled]="isProcessing">
+                <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
+                <iconify-icon *ngIf="!isProcessing" icon="solar:diskette-bold-duotone" class="text-xl"></iconify-icon>
+                <span>{{ isProcessing ? 'Processing...' : 'Save Subjects' }}</span>
               </button>
             </div>
           </form>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+  <div class="premium-overlay" *ngIf="showFeedbackModal">
+    <div class="premium-modal feedback-modal">
+      <div class="pm-sparkles">
+        <div class="pm-sparkle sp1"></div>
+        <div class="pm-sparkle sp2"></div>
+        <div class="pm-sparkle sp3"></div>
+      </div>
+
+      <div class="pm-icon-ring" [ngClass]="{
+             'success-ring': feedbackType === 'success',
+             'danger-ring': feedbackType === 'error',
+             'warning-ring': feedbackType === 'warning'
+           }">
+        <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                          feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+          style="font-size: 38px; color: #fff;"></iconify-icon>
+      </div>
+
+      <h3 class="pm-title">{{ feedbackTitle }}</h3>
+      <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
+
+      <div class="pm-actions">
+        <button class="pm-btn pm-acknowledge" [ngClass]="{
+                  'pm-success-btn': feedbackType === 'success',
+                  'pm-error-btn': feedbackType === 'error',
+                  'pm-warning-btn': feedbackType === 'warning'
+                }" (click)="closeFeedback()">
+          Acknowledge
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCESSING / LOADING OVERLAY -->
+  <div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+    <div class="processing-card">
+      <div class="loader-ring">
+        <div class="loader-inner"></div>
+      </div>
+      <div class="processing-content">
+        <h4 class="pc-title">Securely Processing</h4>
+        <p class="pc-subtitle">Creating academic subject registry...</p>
       </div>
     </div>
   </div>

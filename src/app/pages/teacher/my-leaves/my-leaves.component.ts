@@ -47,6 +47,12 @@ export class MyLeavesComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'desc';
   LeaveStatus = LeaveStatus; // For template access
 
+  // Premium Modal States
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+
   constructor(
     private leaveService: LeaveService,
     private authService: AuthService,
@@ -90,7 +96,7 @@ export class MyLeavesComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error loading my leaves:', err);
-          Swal.fire('Error', 'Failed to load your leave history', 'error');
+          this.showFeedback('error', 'Error', 'Failed to load your leave history');
         }
       });
   }
@@ -242,6 +248,17 @@ export class MyLeavesComponent implements OnInit {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
     }
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 }
 

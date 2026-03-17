@@ -77,8 +77,15 @@ export class SalarySlipComponent implements OnInit {
   // School Info for reports
   schoolInfo: any = {};
 
-  // Loading state
-  isLoading: boolean = false;
+  // Loading and Modal states
+  isProcessing: boolean = false;
+  showFeedbackModal: boolean = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle: string = '';
+  feedbackMessage: string = '';
+
+  showDeleteModal: boolean = false;
+  slipToDeleteId: number | null = null;
 
   constructor(
     private staffSalaryService: StaffSalaryService,
@@ -126,34 +133,24 @@ export class SalarySlipComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading staff:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to load staff list',
-          confirmButtonColor: '#800020'
-        });
+        this.showFeedback('error', 'Error', 'Failed to load staff list');
       }
     });
   }
 
   loadSalaryRecords(): void {
-    this.isLoading = true;
+    this.isProcessing = true;
     this.staffSalaryService.getStaffSalaries().subscribe({
       next: (salaries) => {
         this.allSalaryData = salaries;
         this.processSalaryRecords(salaries);
-        this.isLoading = false;
+        this.isProcessing = false;
       },
       error: (error) => {
         console.error('Error loading salaries:', error);
-        this.isLoading = false;
+        this.isProcessing = false;
         // Show error but don't block the UI
-        Swal.fire({
-          icon: 'warning',
-          title: 'Notice',
-          text: 'Could not load existing salary records. You can still create new ones.',
-          confirmButtonColor: '#800020'
-        });
+        this.showFeedback('warning', 'Notice', 'Could not load existing salary records. You can still create new ones.');
       }
     });
   }
@@ -214,25 +211,11 @@ export class SalarySlipComponent implements OnInit {
 
   saveSalary(): void {
     if (!this.staffId || !this.salaryMonth || !this.salaryDate) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Missing Information',
-        text: 'Please select a staff member and fill all required fields.',
-        confirmButtonColor: '#800020'
-      });
+      this.showFeedback('warning', 'Missing Information', 'Please select a staff member and fill all required fields.');
       return;
     }
 
-    Swal.fire({
-      title: 'Saving Salary...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    this.isProcessing = true;
 
     const newSalary: StaffSalary = {
       staffSalaryId: 0,
@@ -271,26 +254,15 @@ export class SalarySlipComponent implements OnInit {
 
         this.salaryRecords.unshift(newRecord);
 
-        Swal.close();
-        Swal.fire({
-          icon: 'success',
-          title: 'Salary Saved!',
-          text: `Salary for ${this.staffName} has been saved successfully.`,
-          timer: 2000,
-          showConfirmButton: false
-        });
+        this.isProcessing = false;
+        this.showFeedback('success', 'Salary Saved!', `Salary for ${this.staffName} has been saved successfully.`);
 
         this.resetForm();
       },
       error: (error) => {
-        Swal.close();
+        this.isProcessing = false;
         console.error('Error saving salary:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to save salary. Please try again.',
-          confirmButtonColor: '#800020'
-        });
+        this.showFeedback('error', 'Error', 'Failed to save salary. Please try again.');
       }
     });
   }
@@ -395,46 +367,41 @@ export class SalarySlipComponent implements OnInit {
   }
 
   deleteSalaryRecord(id: number): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to delete this salary record?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#800020',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Deleting...',
-          allowOutsideClick: false,
-          didOpen: () => Swal.showLoading()
-        });
-        this.staffSalaryService.deleteStaffSalary(id).subscribe({
-          next: () => {
-            Swal.close();
-            this.salaryRecords = this.salaryRecords.filter(r => r.id !== id);
-            Swal.fire({
-              icon: 'success',
-              title: 'Deleted!',
-              text: 'Salary record has been deleted.',
-              timer: 1500,
-              showConfirmButton: false
-            });
-          },
-          error: (error) => {
-            Swal.close();
-            console.error('Error deleting salary:', error);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'Failed to delete salary record.',
-              confirmButtonColor: '#800020'
-            });
-          }
-        });
+    this.slipToDeleteId = id;
+    this.showDeleteModal = true;
+  }
+
+  confirmDelete(): void {
+    if (!this.slipToDeleteId) return;
+
+    this.isProcessing = true;
+    this.staffSalaryService.deleteStaffSalary(this.slipToDeleteId).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.salaryRecords = this.salaryRecords.filter(r => r.id !== this.slipToDeleteId);
+        this.showDeleteModal = false;
+        this.slipToDeleteId = null;
+        this.showFeedback('success', 'Deleted!', 'Salary record has been deleted.');
+      },
+      error: (error) => {
+        this.isProcessing = false;
+        console.error('Error deleting salary:', error);
+        this.showDeleteModal = false;
+        this.slipToDeleteId = null;
+        this.showFeedback('error', 'Error', 'Failed to delete salary record.');
       }
     });
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string): void {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback(): void {
+    this.showFeedbackModal = false;
   }
 }
 

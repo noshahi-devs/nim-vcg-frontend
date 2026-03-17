@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: "https://visioncollegegojra.com",
+  apiBaseUrl: "https://localhost:7225",
 };

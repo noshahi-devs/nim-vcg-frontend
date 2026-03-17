@@ -59,6 +59,14 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   private sessionSubscription?: Subscription;
   private yearsSubscription?: Subscription;
 
+  // Premium Modal Visibility State
+  showConfirmDelete = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isDeleting = false;
+
   get totalStudents(): number { return this.studentList.length; }
   get activeStudents(): number { return this.studentList.filter(s => s.status?.toLowerCase() === 'active').length; }
   get inactiveStudents(): number { return this.studentList.filter(s => s.status?.toLowerCase() === 'inactive').length; }
@@ -264,6 +272,23 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     this.applyFilters();
   }
 
+  // ── Premium Feedback ──
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+    if (autoClose) {
+      setTimeout(() => {
+        this.showFeedbackModal = false;
+      }, 2200);
+    }
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
+  }
+
   // -------------------------------------------------------
   // Centralized Filtering
   // -------------------------------------------------------
@@ -305,8 +330,12 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   // -------------------------------------------------------
   confirmDelete(student: Student) {
     this.studentToDelete = student;
-    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    modal.show();
+    this.showConfirmDelete = true;
+  }
+
+  cancelDelete() {
+    this.showConfirmDelete = false;
+    this.studentToDelete = null;
   }
 
   // -------------------------------------------------------
@@ -315,21 +344,38 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   deleteStudent() {
     if (!this.studentToDelete) return;
 
-    this.studentService.DeleteStudent(this.studentToDelete.studentId).subscribe({
+    this.isDeleting = true;
+    this.studentService.DeleteStudent(this.studentToDelete.studentId).pipe(
+      finalize(() => {
+        this.isDeleting = false;
+        this.showConfirmDelete = false;
+      })
+    ).subscribe({
       next: () => {
+        const name = this.studentToDelete?.studentName;
         this.studentList = this.studentList.filter(
           s => s.studentId !== this.studentToDelete!.studentId
         );
         this.applyFilters();
-
-        const modalEl = document.getElementById('deleteModal');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        modal.hide();
-
         this.studentToDelete = null;
+        this.showFeedback('success', 'Student Deleted', `<strong>${name}</strong> has been removed from the records.`, true);
       },
       error: (err) => {
         console.error("Delete error:", err);
+        let errorMsg = 'Unable to delete student. They might have active academic, attendance, or financial records.';
+        
+        if (err.error && typeof err.error === 'string') {
+          errorMsg = err.error;
+        } else if (err.error?.message) {
+          errorMsg = err.error.message;
+        }
+
+        // Sanitize technical error messages (stack traces)
+        if (errorMsg.includes('Microsoft.EntityFrameworkCore') || errorMsg.includes('SqlException') || errorMsg.includes('Database error')) {
+          errorMsg = 'This student record is currently linked to other data (like Marks, Attendance, or Fees) and cannot be removed until those records are deleted first.';
+        }
+
+        this.showFeedback('error', 'Deletion Failed', errorMsg);
       }
     });
   }

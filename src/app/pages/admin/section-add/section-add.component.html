@@ -29,7 +29,8 @@
                       <option *ngFor="let c of classes" [value]="c.standardName">{{ c.standardName }}</option>
                     </select>
                   </div>
-                  <div *ngIf="sectionForm.get('className')?.invalid && sectionForm.get('className')?.touched" class="error-feedback">
+                  <div *ngIf="sectionForm.get('className')?.invalid && sectionForm.get('className')?.touched"
+                    class="error-feedback">
                     Required: selection is missing
                   </div>
                 </div>
@@ -46,7 +47,8 @@
                       [ngClass]="{ 'is-invalid': sectionForm.get('sectionCode')?.invalid && sectionForm.get('sectionCode')?.touched }"
                       placeholder="e.g., A, B, C" />
                   </div>
-                  <div *ngIf="sectionForm.get('sectionCode')?.invalid && sectionForm.get('sectionCode')?.touched" class="error-feedback">
+                  <div *ngIf="sectionForm.get('sectionCode')?.invalid && sectionForm.get('sectionCode')?.touched"
+                    class="error-feedback">
                     Required: enter a code
                   </div>
                 </div>
@@ -65,7 +67,8 @@
                       <option *ngFor="let t of teachers" [value]="t.staffId">{{ t.staffName }}</option>
                     </select>
                   </div>
-                  <div *ngIf="sectionForm.get('staffId')?.invalid && sectionForm.get('staffId')?.touched" class="error-feedback">
+                  <div *ngIf="sectionForm.get('staffId')?.invalid && sectionForm.get('staffId')?.touched"
+                    class="error-feedback">
                     Required: assign a teacher
                   </div>
                 </div>
@@ -82,7 +85,8 @@
                       [ngClass]="{ 'is-invalid': sectionForm.get('roomNo')?.invalid && sectionForm.get('roomNo')?.touched }"
                       placeholder="e.g., R-101" />
                   </div>
-                  <div *ngIf="sectionForm.get('roomNo')?.invalid && sectionForm.get('roomNo')?.touched" class="error-feedback">
+                  <div *ngIf="sectionForm.get('roomNo')?.invalid && sectionForm.get('roomNo')?.touched"
+                    class="error-feedback">
                     Required: specify room
                   </div>
                 </div>
@@ -99,7 +103,8 @@
                       [ngClass]="{ 'is-invalid': sectionForm.get('capacity')?.invalid && sectionForm.get('capacity')?.touched }"
                       placeholder="Max enrollment" />
                   </div>
-                  <div *ngIf="sectionForm.get('capacity')?.invalid && sectionForm.get('capacity')?.touched" class="error-feedback">
+                  <div *ngIf="sectionForm.get('capacity')?.invalid && sectionForm.get('capacity')?.touched"
+                    class="error-feedback">
                     Required: enter valid capacity
                   </div>
                 </div>
@@ -114,6 +119,43 @@
           </form>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ✅ PREMIUM SAVE CONFIRMATION MODAL -->
+  <div class="premium-overlay" *ngIf="showConfirmModal" (click)="cancelSave()">
+    <div class="premium-modal confirm-variant" (click)="$event.stopPropagation()">
+      <div class="pm-icon-ring success-ring">
+        <iconify-icon icon="solar:question-square-bold-duotone" style="font-size:2.2rem;color:#fff;"></iconify-icon>
+      </div>
+      <h3 class="pm-title">Confirm Save</h3>
+      <p class="pm-subtitle">Are you sure you want to save this new section configuration?</p>
+      <div class="pm-actions">
+        <button class="pm-btn pm-cancel" (click)="cancelSave()">Cancel</button>
+        <button class="pm-btn pm-save" (click)="confirmSave()">
+          <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon> Save Section
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ PREMIUM FEEDBACK MODAL (Success / Error / Warning) -->
+  <div class="premium-overlay" *ngIf="showFeedbackModal" (click)="closeFeedback()">
+    <div class="premium-modal feedback-variant" (click)="$event.stopPropagation()">
+      <div class="pm-sparkles">
+        <span class="pm-sparkle sp1"></span>
+        <span class="pm-sparkle sp2"></span>
+        <span class="pm-sparkle sp3"></span>
+      </div>
+      <div class="pm-icon-ring" [ngClass]="feedbackType === 'success' ? 'success-ring' : feedbackType === 'error' ? 'danger-ring' : 'warning-ring'">
+        <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold-duotone' : feedbackType === 'error' ? 'solar:danger-bold-duotone' : feedbackType === 'warning' ? 'solar:shield-warning-bold-duotone' : 'solar:danger-bold-duotone'" style="font-size:2.4rem;color:#fff;"></iconify-icon>
+      </div>
+      <h3 class="pm-title">{{ feedbackTitle }}</h3>
+      <p class="pm-subtitle">{{ feedbackMessage }}</p>
+      <button class="pm-btn pm-acknowledge" [ngClass]="feedbackType === 'success' ? 'pm-success-btn' : feedbackType === 'error' ? 'pm-error-btn' : 'pm-warning-btn'" (click)="closeFeedback()">
+        <iconify-icon icon="solar:check-square-bold" style="font-size:1.1rem;"></iconify-icon>
+        Acknowledge
+      </button>
     </div>
   </div>
 </div>

@@ -53,7 +53,7 @@
           <span class="input-group-text">
             <iconify-icon icon="solar:calendar-bold-duotone" class="text-primary"></iconify-icon>
           </span>
-          <input type="date" class="form-control" [(ngModel)]="selectedDate" (change)="loadStaff()">
+          <input type="date" class="form-control" [(ngModel)]="selectedDate" (change)="loadStaff()" [disabled]="isProcessing">
         </div>
       </div>
       <div class="col-md-4">
@@ -66,15 +66,15 @@
         </div>
       </div>
       <div class="col-md-5 d-flex justify-content-end align-items-end gap-2 flex-wrap">
-        <button class="btn-action-outline success" (click)="markAllPresent()" *ngIf="canMarkAttendance">
+        <button class="btn-action-outline success" (click)="markAllPresent()" *ngIf="canMarkAttendance" [disabled]="isProcessing">
           <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
           All Present
         </button>
-        <button class="btn-action-outline danger" (click)="markAllAbsent()" *ngIf="canMarkAttendance">
+        <button class="btn-action-outline danger" (click)="markAllAbsent()" *ngIf="canMarkAttendance" [disabled]="isProcessing">
           <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
           All Absent
         </button>
-        <button class="btn-refresh" (click)="loadStaff()">
+        <button class="btn-refresh" (click)="loadStaff()" [disabled]="isProcessing">
           <iconify-icon icon="solar:refresh-linear"></iconify-icon>
         </button>
       </div>
@@ -85,7 +85,7 @@
   <div class="table-glass-container">
     <div class="table-glass-header">
       <h5>Staff Attendance Sheet</h5>
-      <button class="btn-save-grad" (click)="saveAttendance()" *ngIf="canMarkAttendance">
+      <button class="btn-save-grad" (click)="saveAttendance()" *ngIf="canMarkAttendance" [disabled]="isProcessing">
         <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon>
         Push Attendance to Server
       </button>
@@ -137,19 +137,19 @@
             <td>
               <div class="status-toggle-group">
                 <button class="status-toggle-btn" [class.active-present]="staff.status === 'Present'"
-                  (click)="staff.status = 'Present'" [disabled]="!canMarkAttendance">Present</button>
+                  (click)="staff.status = 'Present'" [disabled]="!canMarkAttendance || isProcessing">Present</button>
                 <button class="status-toggle-btn" [class.active-absent]="staff.status === 'Absent'"
-                  (click)="staff.status = 'Absent'" [disabled]="!canMarkAttendance">Absent</button>
+                  (click)="staff.status = 'Absent'" [disabled]="!canMarkAttendance || isProcessing">Absent</button>
                 <button class="status-toggle-btn" [class.active-leave]="staff.status === 'Leave'"
-                  (click)="staff.status = 'Leave'" [disabled]="!canMarkAttendance">Leave</button>
+                  (click)="staff.status = 'Leave'" [disabled]="!canMarkAttendance || isProcessing">Leave</button>
                 <button class="status-toggle-btn" [class.active-late]="staff.status === 'Late'"
-                  (click)="staff.status = 'Late'" [disabled]="!canMarkAttendance">Late</button>
+                  (click)="staff.status = 'Late'" [disabled]="!canMarkAttendance || isProcessing">Late</button>
               </div>
             </td>
             <!-- Remarks -->
             <td class="pe-4">
               <input type="text" class="remarks-input" [(ngModel)]="staff.remarks" placeholder="Optional comments..."
-                [disabled]="!canMarkAttendance">
+                [disabled]="!canMarkAttendance || isProcessing">
             </td>
           </tr>
         </tbody>
@@ -181,6 +181,80 @@
           </li>
         </ul>
       </nav>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PREMIUM MODALS (Feedback, Confirmation, Processing)
+     ============================================================ -->
+
+<!-- Save/Incomplete Confirmation Modal -->
+<div class="premium-overlay" *ngIf="showConfirmModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-icon-ring warning-ring">
+      <iconify-icon icon="solar:question-square-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">Incomplete Attendance</h3>
+    <p class="pm-subtitle">
+      Some staff members are not marked. Do you want to continue and save the current attendance records anyway?
+    </p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-cancel" (click)="showConfirmModal = false" [disabled]="isProcessing">Review</button>
+      <button class="pm-btn pm-save" (click)="confirmSave()" [disabled]="isProcessing"
+        style="background: #eab308; color: #fff; box-shadow: 0 10px 20px rgba(234, 179, 8, 0.2);">
+        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+        {{ isProcessing ? 'Saving...' : 'Yes, Save' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+<div class="premium-overlay" *ngIf="showFeedbackModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-sparkles" *ngIf="feedbackType === 'success'">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring" [ngClass]="{
+           'success-ring': feedbackType === 'success',
+           'danger-ring': feedbackType === 'error',
+           'warning-ring': feedbackType === 'warning'
+         }">
+      <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+        style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">{{ feedbackTitle }}</h3>
+    <p class="pm-subtitle">{{ feedbackMessage }}</p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-acknowledge" [ngClass]="{
+                'pm-success-btn': feedbackType === 'success',
+                'pm-error-btn': feedbackType === 'error',
+                'pm-warning-btn': feedbackType === 'warning'
+              }" (click)="closeFeedback()">
+        Acknowledge
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESSING / LOADING OVERLAY -->
+<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+  <div class="processing-card">
+    <div class="loader-ring">
+      <div class="loader-inner"></div>
+    </div>
+    <div class="processing-content">
+      <h4 class="pc-title">Securely Processing</h4>
+      <p class="pc-subtitle">Saving staff attendance records...</p>
     </div>
   </div>
 </div>

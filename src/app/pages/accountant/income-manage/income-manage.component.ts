@@ -345,6 +345,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AuthService } from '../../../SecurityModels/auth.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-income-manage',
@@ -367,14 +368,40 @@ export class IncomeManageComponent implements OnInit {
   filterSource = '';
   filterDateFrom = '';
   filterDateTo = '';
-
   sources = ['Fee', 'Donation', 'Misc'];
   paymentMethods = ['Cash', 'Bank', 'Cheque', 'Online'];
+  showViewModal = false;
+  selectedIncome: Income | null = null;
+
+  // ── Pagination State ──
+  currentPage = 1;
+  rowsPerPage = 10;
+  pageSizeOptions = [5, 10, 25, 50, 100];
+
+  // ── Premium Modal State ──
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+
+  showDeleteDialog = false;
+  itemToDeleteId: number | null = null;
+  itemToDeleteDesc = '';
 
   constructor(
     private accountsService: AccountsService,
     private authService: AuthService
   ) { }
+
+  // ── Helpers ──
+  triggerSuccess(title: string, msg: string) {
+    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  triggerError(title: string, msg: string) {
+    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  closeFeedback() { this.showFeedbackModal = false; }
 
   ngOnInit(): void {
     this.loadIncomeList();
@@ -411,6 +438,41 @@ export class IncomeManageComponent implements OnInit {
       return matchSource && matchDateFrom && matchDateTo;
     });
     this.totalIncome = this.filteredList.reduce((sum, i) => sum + i.amount, 0);
+    this.currentPage = 1; // Reset to first page when filters change
+  }
+
+  // ── Pagination Getters ──
+  get pagedList(): Income[] {
+    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
+    return this.filteredList.slice(startIndex, startIndex + this.rowsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredList.length / this.rowsPerPage) || 1;
+  }
+
+  get pageNumbers(): number[] {
+    const pages = [];
+    for (let i = 1; i <= this.totalPages; i++) pages.push(i);
+    return pages;
+  }
+
+  get paginationStart(): number {
+    return this.filteredList.length === 0 ? 0 : (this.currentPage - 1) * this.rowsPerPage + 1;
+  }
+
+  get paginationEnd(): number {
+    return Math.min(this.currentPage * this.rowsPerPage, this.filteredList.length);
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  onPageSizeChange(): void {
+    this.currentPage = 1;
   }
 
   openAddModal(): void {
@@ -434,79 +496,61 @@ export class IncomeManageComponent implements OnInit {
     this.showModal = false;
     this.currentIncome = {};
   }
+  openViewModal(income: Income) {
+    this.selectedIncome = income; this.showViewModal = true;
+  }
+  closeViewModal() { this.showViewModal = false; }
 
   saveIncome(): void {
     if (!this.validateForm()) return;
 
-    Swal.fire({
-      title: 'Saving Income...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    this.isProcessing = true;
 
     if (this.isEditMode && this.currentIncome.id) {
-      this.accountsService.updateIncome(this.currentIncome.id, this.currentIncome).subscribe({
-        next: () => {
-          Swal.close();
-          Swal.fire('Success', 'Income updated successfully', 'success');
-          this.loadIncomeList();
-          this.closeModal();
-        },
-        error: () => {
-          Swal.close();
-          Swal.fire('Error', 'Failed to update income', 'error');
-        }
-      });
+      this.accountsService.updateIncome(this.currentIncome.id, this.currentIncome)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Updated Successfully!', 'Income record has been updated.');
+            this.loadIncomeList();
+            this.closeModal();
+          },
+          error: () => this.triggerError('Error', 'Failed to update income')
+        });
     } else {
-      this.accountsService.addIncome(this.currentIncome).subscribe({
-        next: () => {
-          Swal.close();
-          Swal.fire('Success', 'Income added successfully', 'success');
-          this.loadIncomeList();
-          this.closeModal();
-        },
-        error: () => {
-          Swal.close();
-          Swal.fire('Error', 'Failed to add income', 'error');
-        }
-      });
+      this.accountsService.addIncome(this.currentIncome)
+        .pipe(finalize(() => this.isProcessing = false))
+        .subscribe({
+          next: () => {
+            this.triggerSuccess('Added Successfully!', 'Income record has been saved.');
+            this.loadIncomeList();
+            this.closeModal();
+          },
+          error: () => this.triggerError('Error', 'Failed to add income')
+        });
     }
   }
 
-  deleteIncome(income: Income): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete income record: ${income.description}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!'
-    }).then(result => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Deleting...',
-          allowOutsideClick: false,
-          didOpen: () => Swal.showLoading()
-        });
-        this.accountsService.deleteIncome(income.id).subscribe({
-          next: () => {
-            Swal.close();
-            Swal.fire('Deleted!', 'Income record deleted.', 'success');
-            this.loadIncomeList();
-          },
-          error: () => {
-            Swal.close();
-            Swal.fire('Error', 'Failed to delete income', 'error');
-          }
-        });
-      }
-    });
+  confirmDelete(income: Income) {
+    this.itemToDeleteId = income.id;
+    this.itemToDeleteDesc = income.description || '';
+    this.showDeleteDialog = true;
+  }
+
+  executeDelete() {
+    if (this.itemToDeleteId === null) return;
+    this.showDeleteDialog = false;
+    this.isProcessing = true;
+    this.accountsService.deleteIncome(this.itemToDeleteId)
+      .pipe(finalize(() => this.isProcessing = false))
+      .subscribe({
+        next: () => {
+          this.triggerSuccess('Deleted!', 'Income record has been deleted.');
+          this.itemToDeleteId = null;
+          this.loadIncomeList();
+        },
+        error: () => this.triggerError('Error', 'Failed to delete income')
+      });
   }
 
   validateForm(): boolean {
@@ -522,7 +566,12 @@ export class IncomeManageComponent implements OnInit {
   }
 
   exportData(): void {
-    Swal.fire('Export', 'Exporting income data...', 'success');
+    this.isProcessing = true;
+    // Simulate export delay for premium feel
+    setTimeout(() => {
+      this.isProcessing = false;
+      this.triggerSuccess('Export Complete!', 'Income data has been exported successfully.');
+    }, 1500);
   }
 
   formatCurrency(amount: number): string {

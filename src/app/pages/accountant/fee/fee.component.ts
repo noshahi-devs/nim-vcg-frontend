@@ -34,8 +34,18 @@ export class FeeComponent implements OnInit {
   showAddEditDialog = false;
   showViewDialog = false;
   isEditMode = false;
-
   selectedFeeType!: FeeType;
+
+  // Premium Modal State
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+
+  // For Deletion Confirmation
+  showDeleteModal = false;
+  feeTypeToDelete: FeeType | null = null;
 
   constructor(private feeTypeService: FeeTypeService) { }
 
@@ -62,7 +72,7 @@ export class FeeComponent implements OnInit {
         this.feeTypes = [];
         this.filteredFeeTypes = [];
         this.paginatedFeeTypes = [];
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load fee types.', confirmButtonColor: '#800000' });
+        this.showFeedback('error', 'Error', 'Failed to load fee types.');
       }
     });
   }
@@ -114,76 +124,74 @@ export class FeeComponent implements OnInit {
     if (this.form.invalid) return;
     const payload = this.form.value;
 
-    Swal.fire({
-      title: 'Saving Fee Type...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    this.isProcessing = true;
 
     if (this.isEditMode) {
       this.feeTypeService.updateFeeType(payload).subscribe({
         next: () => {
-          Swal.close();
+          this.isProcessing = false;
           this.closeDialog();
           this.loadFeeTypes();
-          Swal.fire({ icon: 'success', title: 'Updated!', text: 'Fee type updated successfully.', showConfirmButton: false, timer: 1800 });
+          this.showFeedback('success', 'Updated!', 'Fee type updated successfully.');
         },
         error: () => {
-          Swal.close();
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee type.', confirmButtonColor: '#800000' });
+          this.isProcessing = false;
+          this.showFeedback('error', 'Error', 'Failed to update fee type.');
         }
       });
     } else {
       this.feeTypeService.createFeeType(payload).subscribe({
         next: () => {
-          Swal.close();
+          this.isProcessing = false;
           this.closeDialog();
           this.loadFeeTypes();
-          Swal.fire({ icon: 'success', title: 'Added!', text: 'Fee type added successfully.', showConfirmButton: false, timer: 1800 });
+          this.showFeedback('success', 'Added!', 'Fee type added successfully.');
         },
         error: () => {
-          Swal.close();
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to add fee type.', confirmButtonColor: '#800000' });
+          this.isProcessing = false;
+          this.showFeedback('error', 'Error', 'Failed to add fee type.');
         }
       });
     }
   }
 
-  async confirmDelete(ft: FeeType) {
-    const result = await Swal.fire({
-      title: 'Delete Fee Type?',
-      html: `Are you sure you want to delete <strong>${ft.typeName}</strong>?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Delete',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6b7280'
-    });
+  confirmDelete(ft: FeeType): void {
+    this.feeTypeToDelete = ft;
+    this.showDeleteModal = true;
+  }
 
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: 'Deleting...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-      this.feeTypeService.deleteFeeType(ft.feeTypeId).subscribe({
-        next: () => {
-          Swal.close();
-          this.loadFeeTypes();
-          Swal.fire({ icon: 'success', title: 'Deleted!', text: `"${ft.typeName}" has been deleted.`, showConfirmButton: false, timer: 1800 });
-        },
-        error: () => {
-          Swal.close();
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee type.', confirmButtonColor: '#800000' });
-        }
-      });
-    }
+  deleteFeeType(): void {
+    if (!this.feeTypeToDelete) return;
+    const id = this.feeTypeToDelete.feeTypeId;
+    const name = this.feeTypeToDelete.typeName;
+
+    this.isProcessing = true;
+    this.feeTypeService.deleteFeeType(id).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.showDeleteModal = false;
+        this.feeTypeToDelete = null;
+        this.loadFeeTypes();
+        this.showFeedback('success', 'Deleted!', `"${name}" has been deleted.`);
+      },
+      error: () => {
+        this.isProcessing = false;
+        this.showDeleteModal = false;
+        this.feeTypeToDelete = null;
+        this.showFeedback('error', 'Error', 'Failed to delete fee type.');
+      }
+    });
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 
   closeDialog() {

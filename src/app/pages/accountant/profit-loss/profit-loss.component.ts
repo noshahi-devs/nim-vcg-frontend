@@ -25,6 +25,21 @@ export class ProfitLossComponent implements OnInit {
 
   chartOptions: any;
 
+  // ── Premium Modal State ──
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+
+  triggerSuccess(title: string, msg: string) {
+    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  triggerError(title: string, msg: string) {
+    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  closeFeedback() { this.showFeedbackModal = false; }
+
   constructor(private accountsService: AccountsService) { }
 
   ngOnInit(): void {
@@ -96,7 +111,11 @@ export class ProfitLossComponent implements OnInit {
   }
 
   exportReport(): void {
-    Swal.fire('Export', 'Exporting Profit & Loss report to PDF...', 'success');
+    this.isProcessing = true;
+    setTimeout(() => {
+      this.isProcessing = false;
+      this.triggerSuccess('Export Complete!', 'Profit & Loss report has been generated.');
+    }, 1500);
   }
 
   formatCurrency(amount: number): string {

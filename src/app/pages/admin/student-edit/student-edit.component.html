@@ -92,6 +92,13 @@
                 placeholder="example@mail.com">
             </div>
 
+            <!-- Student Phone -->
+            <div class="col-md-4 form-group-premium">
+              <label class="field-label">Phone Number</label>
+              <input type="text" class="field-input" [(ngModel)]="studentData.studentContactNumber1"
+                placeholder="03xx-xxxxxxx">
+            </div>
+
             <!-- Gender -->
             <div class="col-md-4 form-group-premium">
               <label class="field-label">Gender</label>
@@ -105,12 +112,6 @@
             <div class="col-md-4 form-group-premium">
               <label class="field-label">Date of Birth</label>
               <input type="date" class="field-input" [(ngModel)]="studentDOBStr">
-            </div>
-
-            <!-- Religion -->
-            <div class="col-md-4 form-group-premium">
-              <label class="field-label">Religion</label>
-              <input type="text" class="field-input" [(ngModel)]="studentData.studentReligion" placeholder="e.g. Islam">
             </div>
 
             <!-- Address -->
@@ -132,37 +133,11 @@
           </div>
 
           <div class="row">
-            <!-- Father Name -->
+            <!-- Guardian Name -->
             <div class="col-md-6 form-group-premium">
-              <label class="field-label">Father's Name</label>
+              <label class="field-label">Guardian Name</label>
               <input type="text" class="field-input" [(ngModel)]="studentData.fatherName"
-                placeholder="Enter father's name">
-            </div>
-            <!-- Father Contact -->
-            <div class="col-md-6 form-group-premium">
-              <label class="field-label">Father's Contact</label>
-              <input type="text" class="field-input" [(ngModel)]="studentData.fatherContactNumber"
-                placeholder="03xx-xxxxxxx">
-            </div>
-
-            <!-- Mother Name -->
-            <div class="col-md-6 form-group-premium">
-              <label class="field-label">Mother's Name</label>
-              <input type="text" class="field-input" [(ngModel)]="studentData.motherName"
-                placeholder="Enter mother's name">
-            </div>
-            <!-- Mother Contact -->
-            <div class="col-md-6 form-group-premium">
-              <label class="field-label">Mother's Contact</label>
-              <input type="text" class="field-input" [(ngModel)]="studentData.motherContactNumber"
-                placeholder="03xx-xxxxxxx">
-            </div>
-
-            <!-- Local Guardian -->
-            <div class="col-md-6 form-group-premium">
-              <label class="field-label">Local Guardian Name</label>
-              <input type="text" class="field-input" [(ngModel)]="studentData.localGuardianName"
-                placeholder="e.g. Uncle, Aunt">
+                placeholder="Enter guardian name">
             </div>
             <!-- Guardian Phone -->
             <div class="col-md-6 form-group-premium">
@@ -182,18 +157,6 @@
           </div>
 
           <div class="row">
-            <!-- Admission No -->
-            <div class="col-md-4 form-group-premium">
-              <label class="field-label">Admission Number</label>
-              <input type="text" class="field-input" [(ngModel)]="studentData.admissionNo" placeholder="REG-xxxx">
-            </div>
-
-            <!-- Enrollment No -->
-            <div class="col-md-4 form-group-premium">
-              <label class="field-label">Enrollment Number</label>
-              <input type="text" class="field-input" [(ngModel)]="studentData.enrollmentNo" placeholder="ENR-xxxx">
-            </div>
-
             <div class="col-md-4 form-group-premium">
               <label class="field-label">Admission Date</label>
               <input type="date" class="field-input" [(ngModel)]="admissionDateStr">
@@ -220,19 +183,18 @@
             <div class="col-md-4 form-group-premium">
               <label class="field-label">Student Status</label>
               <select class="field-select" [(ngModel)]="studentData.status">
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
               </select>
             </div>
 
             <!-- Previous School -->
-            <div class="col-12 form-group-premium">
+            <div class="col-8 form-group-premium">
               <label class="field-label">Previous Institution</label>
               <input type="text" class="field-input" [(ngModel)]="studentData.previousSchool"
                 placeholder="Enter previous school name">
             </div>
           </div>
-        </div>
       </div>
 
     </div>
@@ -255,4 +217,70 @@
     <button (click)="cancel()" class="btn btn-primary mt-3">Go Back</button>
   </div>
 
-</div>
+  <!-- ============================================================
+       PREMIUM MODALS
+       ============================================================ -->
+
+  <!-- 1. UPDATE CONFIRMATION MODAL -->
+  <div class="premium-overlay" *ngIf="showConfirmModal">
+    <div class="premium-modal">
+      <div class="pm-sparkles">
+        <div class="pm-sparkle sp1"></div>
+        <div class="pm-sparkle sp2"></div>
+        <div class="pm-sparkle sp3"></div>
+      </div>
+
+      <div class="pm-icon-ring warning-ring">
+        <iconify-icon icon="solar:question-square-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
+      </div>
+
+      <h3 class="pm-title">Confirm Update</h3>
+      <p class="pm-subtitle">
+        Are you sure you want to save the changes to <strong>{{ studentData.studentName }}'s</strong> profile?
+      </p>
+
+      <div class="pm-actions">
+        <button class="pm-btn pm-cancel" (click)="cancelUpdate()">Discard</button>
+        <button class="pm-btn pm-save" (click)="confirmUpdate()" [disabled]="isSaving">
+          <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
+          {{ isSaving ? 'Updating...' : 'Yes, Update' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+  <div class="premium-overlay" *ngIf="showFeedbackModal">
+    <div class="premium-modal feedback-modal">
+      <div class="pm-sparkles">
+        <div class="pm-sparkle sp1"></div>
+        <div class="pm-sparkle sp2"></div>
+        <div class="pm-sparkle sp3"></div>
+      </div>
+
+      <div class="pm-icon-ring" [ngClass]="{
+             'success-ring': feedbackType === 'success',
+             'danger-ring': feedbackType === 'error',
+             'warning-ring': feedbackType === 'warning'
+           }">
+        <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                          feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+          style="font-size: 38px; color: #fff;"></iconify-icon>
+      </div>
+
+      <h3 class="pm-title">{{ feedbackTitle }}</h3>
+      <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
+
+      <div class="pm-actions">
+        <button class="pm-btn pm-acknowledge" [ngClass]="{
+                  'pm-success-btn': feedbackType === 'success',
+                  'pm-error-btn': feedbackType === 'error',
+                  'pm-warning-btn': feedbackType === 'warning'
+                }" (click)="closeFeedback()">
+          Acknowledge
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

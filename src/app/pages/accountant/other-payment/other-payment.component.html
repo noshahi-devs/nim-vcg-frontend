@@ -62,11 +62,12 @@
             <path d="M21 21l-4.35-4.35" />
           </svg>
           <input class="search-input" [(ngModel)]="searchTerm" (input)="searchPayments()"
-            placeholder="Search student or ID..." />
+            placeholder="Search student or ID..." [disabled]="isProcessing" />
         </div>
       </div>
-      <button class="btn-add" (click)="openAddDialog()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <button class="btn-add" (click)="openAddDialog()" [disabled]="isProcessing">
+        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+        <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M12 5v14M5 12h14" />
         </svg>
         Add Payment
@@ -348,16 +349,92 @@
 
     <!-- Footer -->
     <div class="modal-footer-premium">
-      <button class="btn-ghost" (click)="closeDialog()">Cancel</button>
-      <button class="btn-primary-gradient" (click)="savePayment()" [disabled]="form.invalid"
+      <button class="btn-ghost" (click)="closeDialog()" [disabled]="isProcessing">Cancel</button>
+      <button class="btn-primary-gradient" (click)="savePayment()" [disabled]="form.invalid || isProcessing"
         style="background: linear-gradient(135deg, #800000, #5a0000); box-shadow: 0 4px 14px rgba(128, 0, 0, 0.4);">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-        {{ isEditMode ? 'Update Payment' : 'Save Payment' }}
+        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+        {{ isEditMode ? (isProcessing ? 'Updating...' : 'Update Payment') : (isProcessing ? 'Saving...' : 'Save
+        Payment') }}
       </button>
     </div>
 
+  </div>
+</div>
+
+<!-- ============================================================
+     PREMIUM MODALS (Feedback, Confirmation, Processing)
+     ============================================================ -->
+
+<!-- Delete Confirmation Modal -->
+<div class="premium-overlay" *ngIf="showDeleteModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-icon-ring danger-ring">
+      <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">Confirm Deletion</h3>
+    <p class="pm-subtitle">
+      Are you sure you want to permanently delete the payment record for <strong>{{
+        paymentToDelete?.student?.studentName
+        }}</strong>?<br>
+      This action cannot be undone.
+    </p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-cancel" (click)="showDeleteModal = false" [disabled]="isProcessing">Discard</button>
+      <button class="pm-btn pm-save" (click)="deletePayment()" [disabled]="isProcessing"
+        style="background: #ef4444; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
+        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+        {{ isProcessing ? 'Archiving...' : 'Delete Permanently' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+<div class="premium-overlay" *ngIf="showFeedbackModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-sparkles">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring" [ngClass]="{
+           'success-ring': feedbackType === 'success',
+           'danger-ring': feedbackType === 'error',
+           'warning-ring': feedbackType === 'warning'
+         }">
+      <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+        style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">{{ feedbackTitle }}</h3>
+    <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-acknowledge" [ngClass]="{
+                'pm-success-btn': feedbackType === 'success',
+                'pm-error-btn': feedbackType === 'error',
+                'pm-warning-btn': feedbackType === 'warning'
+              }" (click)="closeFeedback()">
+        Acknowledge
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESSING / LOADING OVERLAY -->
+<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+  <div class="processing-card">
+    <div class="loader-ring">
+      <div class="loader-inner"></div>
+    </div>
+    <div class="processing-content">
+      <h4 class="pc-title">Securely Processing</h4>
+      <p class="pc-subtitle">Synchronizing financial records...</p>
+    </div>
   </div>
 </div>
 
@@ -397,7 +474,8 @@
         </div>
         <div class="detail-row">
           <span class="detail-label">Class / Standard</span>
-          <span class="detail-value">{{ selectedPayment?.student?.standard?.standardName }}</span>
+          <span class="detail-value">{{ selectedPayment?.student?.standard?.standardName ||
+            getStandardName(selectedPayment?.student?.standardId) }}</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Total Amount</span>
@@ -421,7 +499,8 @@
       </div>
     </div>
     <div class="modal-footer-premium">
-      <button class="btn-primary-gradient" style="background: linear-gradient(135deg,#800000,#5a0000); box-shadow: 0 4px 12px rgba(128, 0, 0, 0.25);"
+      <button class="btn-primary-gradient"
+        style="background: linear-gradient(135deg,#800000,#5a0000); box-shadow: 0 4px 12px rgba(128, 0, 0, 0.25);"
         (click)="closeDialog()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M18 6 6 18M6 6l12 12" />

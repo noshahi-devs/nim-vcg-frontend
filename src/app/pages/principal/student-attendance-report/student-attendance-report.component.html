@@ -12,7 +12,7 @@
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
           <input type="text" class="search-input w-100" [(ngModel)]="searchTerm" 
-                 (input)="onSearchChange()" (focus)="showDropdown = true"
+                 (input)="onSearchChange()" (focus)="showDropdown = true" [disabled]="isProcessing"
                  placeholder="Search student by name..." style="padding-left: 36px;">
           
           <!-- Custom Autocomplete Dropdown -->
@@ -41,7 +41,7 @@
             <line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
           <input type="date" class="search-input" [(ngModel)]="startDate" style="width: 140px; padding-left: 32px;"
-            title="Start Date">
+            title="Start Date" [disabled]="isProcessing">
         </div>
 
         <div class="search-wrapper">
@@ -52,10 +52,10 @@
             <line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
           <input type="date" class="search-input" [(ngModel)]="endDate" style="width: 140px; padding-left: 32px;"
-            title="End Date">
+            title="End Date" [disabled]="isProcessing">
         </div>
 
-        <button class="btn-primary-gradient" (click)="getReport()" style="padding: 10px 24px;">
+        <button class="btn-primary-gradient" (click)="getReport()" style="padding: 10px 24px;" [disabled]="isProcessing">
           <svg viewBox="0 0 24 24" fill="none" class="text-white" stroke="currentColor" stroke-width="2" width="20"
             height="20">
             <circle cx="11" cy="11" r="8" />
@@ -74,7 +74,7 @@
         <h5 class="fw-bold mb-0 text-secondary-dark">Record Details</h5>
         <span class="enrollment-badge text-primary-main">Found {{ report.length }} Records</span>
       </div>
-      <button class="btn-add" (click)="getReport()" *ngIf="studentId"
+      <button class="btn-add" (click)="getReport()" *ngIf="studentId" [disabled]="isProcessing"
         style="background: linear-gradient(135deg, #10b981, #059669);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -114,7 +114,7 @@
   </div>
 
   <!-- Empty State -->
-  <div *ngIf="!report.length && studentId" class="fee-card p-0 mt-32">
+  <div *ngIf="!report.length && studentId && !isProcessing" class="fee-card p-0 mt-32">
     <div class="fee-card-body py-60 text-center">
       <div class="w-80-px h-80-px mx-auto rounded-circle d-flex align-items-center justify-content-center mb-24"
         style="background: #f1f5f9; color: #64748b;">
@@ -129,6 +129,57 @@
       <h4 class="fw-bold text-secondary-dark">No Data for Selected Range</h4>
       <p class="text-secondary-light max-w-sm mx-auto mb-0">Please try adjusting your date range or selecting a
         different student ID to view attendance records.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PREMIUM MODALS (Feedback, Processing)
+     ============================================================ -->
+
+<!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+<div class="premium-overlay" *ngIf="showFeedbackModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-sparkles" *ngIf="feedbackType === 'success'">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring" [ngClass]="{
+           'success-ring': feedbackType === 'success',
+           'danger-ring': feedbackType === 'error',
+           'warning-ring': feedbackType === 'warning'
+         }">
+      <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+        style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">{{ feedbackTitle }}</h3>
+    <p class="pm-subtitle">{{ feedbackMessage }}</p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-acknowledge" [ngClass]="{
+                'pm-success-btn': feedbackType === 'success',
+                'pm-error-btn': feedbackType === 'error',
+                'pm-warning-btn': feedbackType === 'warning'
+              }" (click)="closeFeedback()">
+        Acknowledge
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESSING / LOADING OVERLAY -->
+<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+  <div class="processing-card">
+    <div class="loader-ring">
+      <div class="loader-inner"></div>
+    </div>
+    <div class="processing-content">
+      <h4 class="pc-title">Getting Records</h4>
+      <p class="pc-subtitle">Fetching the latest attendance report...</p>
     </div>
   </div>
 </div>

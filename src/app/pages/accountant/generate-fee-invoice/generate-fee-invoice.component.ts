@@ -45,6 +45,17 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   isEditMode = false;
   feeForm!: FormGroup;
 
+  // Premium Modal State
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+
+  // For Deletion Confirmation
+  showDeleteModal = false;
+  feeToDelete: Fee | null = null;
+
   constructor(
     private feeService: FeeService,
     private feeTypeService: FeeTypeService,
@@ -80,7 +91,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   loadFees() {
     this.feeService.getAllFees().subscribe({
       next: res => { this.fees = res; this.applyFilters(); },
-      error: () => Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load fee records.', confirmButtonColor: '#800000' })
+      error: () => this.showFeedback('error', 'Error', 'Failed to load fee records.')
     });
   }
 
@@ -141,13 +152,14 @@ export class GenerateFeeInvoiceComponent implements OnInit {
 
   openEditFee(fee: Fee) {
     this.isEditMode = true;
+    const dueDate = fee.dueDate ? new Date(fee.dueDate).toISOString().split('T')[0] : '';
     this.feeForm.patchValue({
       feeId: fee.feeId,
       standardId: fee.standardId,
       feeTypeId: fee.feeTypeId,
       paymentFrequency: fee.paymentFrequency,
       amount: fee.amount,
-      dueDate: fee.dueDate
+      dueDate: dueDate
     });
     this.showFeeDialog = true;
   }
@@ -156,77 +168,74 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     if (this.feeForm.invalid) return;
     const feeData = this.feeForm.value as Fee;
 
-    Swal.fire({
-      title: 'Saving Fee Invoice...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    this.isProcessing = true;
 
     if (this.isEditMode) {
       this.feeService.updateFee(feeData).subscribe({
         next: () => {
-          Swal.close();
+          this.isProcessing = false;
           this.showFeeDialog = false;
           this.loadFees();
-          Swal.fire({ icon: 'success', title: 'Updated!', text: 'Fee updated successfully.', showConfirmButton: false, timer: 1800 });
+          this.showFeedback('success', 'Updated!', 'Fee updated successfully.');
         },
         error: () => {
-          Swal.close();
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update fee.', confirmButtonColor: '#800000' });
+          this.isProcessing = false;
+          this.showFeedback('error', 'Error', 'Failed to update fee.');
         }
       });
     } else {
       this.feeService.createFee(feeData).subscribe({
         next: () => {
-          Swal.close();
+          this.isProcessing = false;
           this.showFeeDialog = false;
           this.loadFees();
-          Swal.fire({ icon: 'success', title: 'Created!', text: 'Fee created successfully.', showConfirmButton: false, timer: 1800 });
+          this.showFeedback('success', 'Created!', 'Fee created successfully.');
         },
         error: () => {
-          Swal.close();
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create fee.', confirmButtonColor: '#800000' });
+          this.isProcessing = false;
+          this.showFeedback('error', 'Error', 'Failed to create fee.');
         }
       });
     }
   }
 
   /* ---------- DELETE ---------- */
-  async confirmDelete(fee: Fee) {
-    const result = await Swal.fire({
-      title: 'Delete Fee Record?',
-      html: `Are you sure you want to delete the fee for <strong>${fee.standard?.standardName}</strong>?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Delete',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6b7280'
-    });
+  confirmDelete(fee: Fee): void {
+    this.feeToDelete = fee;
+    this.showDeleteModal = true;
+  }
 
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: 'Deleting...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-      this.feeService.deleteFee(fee.feeId).subscribe({
-        next: () => {
-          Swal.close();
-          this.loadFees();
-          Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Fee record has been deleted.', showConfirmButton: false, timer: 1800 });
-        },
-        error: () => {
-          Swal.close();
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete fee.', confirmButtonColor: '#800000' });
-        }
-      });
-    }
+  deleteFee(): void {
+    if (!this.feeToDelete) return;
+    const id = this.feeToDelete.feeId;
+
+    this.isProcessing = true;
+    this.feeService.deleteFee(id).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.showDeleteModal = false;
+        this.feeToDelete = null;
+        this.loadFees();
+        this.showFeedback('success', 'Deleted!', 'Fee record has been deleted.');
+      },
+      error: () => {
+        this.isProcessing = false;
+        this.showDeleteModal = false;
+        this.feeToDelete = null;
+        this.showFeedback('error', 'Error', 'Failed to delete fee.');
+      }
+    });
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 }
 

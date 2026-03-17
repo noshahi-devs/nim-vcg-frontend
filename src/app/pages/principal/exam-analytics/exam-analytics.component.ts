@@ -7,6 +7,7 @@ import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-exam-analytics',
@@ -29,6 +30,14 @@ export class ExamAnalyticsComponent implements OnInit {
 
   allSections: any[] = [];
   isLoading: boolean = false;
+
+  // Premium Modal State (for loading overlay)
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  closeFeedback() { this.showFeedbackModal = false; }
 
   constructor(
     private examService: ExamService,
@@ -98,25 +107,30 @@ export class ExamAnalyticsComponent implements OnInit {
   loadAnalytics(): void {
     if (!this.selectedExamId) return;
     this.isLoading = true;
+    this.isProcessing = true; // Added
 
     const classId = this.selectedClassId ? this.selectedClassId : undefined;
     const sectionId = this.selectedSectionId ? this.selectedSectionId : undefined;
 
-    this.examService.getExamAnalytics(this.selectedExamId, classId, sectionId).subscribe({
-      next: (data: any) => {
-        if (data.success === false) {
-          this.analytics = null;
+    this.examService.getExamAnalytics(this.selectedExamId, classId, sectionId)
+      .pipe(
+        finalize(() => {
           this.isLoading = false;
-          return;
+          this.isProcessing = false;
+        })
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.success === false) {
+            this.analytics = null;
+            return;
+          }
+          this.analytics = data;
+        },
+        error: (err) => {
+          console.error('Failed to load analytics', err);
+          this.analytics = null;
         }
-        this.analytics = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Failed to load analytics', err);
-        this.analytics = null;
-        this.isLoading = false;
-      }
-    });
+      });
   }
 }

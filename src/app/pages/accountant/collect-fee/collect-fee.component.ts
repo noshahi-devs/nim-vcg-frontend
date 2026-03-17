@@ -35,6 +35,20 @@ export class CollectFeeComponent implements OnInit {
 
   previousPayments: MonthlyPayment[] = [];
 
+  // Pagination State
+  paginatedPayments: MonthlyPayment[] = [];
+  currentPage = 1;
+  rowsPerPage = 10;
+  totalPages = 1;
+  toEntry = 0;
+
+  // Premium Modal States
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+
   paymentForm: FormGroup;
 
   constructor(
@@ -89,12 +103,25 @@ export class CollectFeeComponent implements OnInit {
     if (!this.selectedStudent) return;
 
     // Fetch existing payments
-    this.commonService.getAllPaymentsByStudentId(this.studentId).subscribe(payments => {
-      this.previousPayments = payments;
-      this.totalFee = 5000; // replace this.selectedStudent.totalFee
-      this.paidAmount = payments.reduce((sum, p) => sum + p.amountPaid, 0);
-      this.remainingAmount = this.totalFee - this.paidAmount;
-
+    this.commonService.getAllPaymentsByStudentId(this.studentId).subscribe({
+      next: payments => {
+        this.previousPayments = payments || [];
+        this.totalFee = 5000; // replace this.selectedStudent.totalFee
+        this.paidAmount = this.previousPayments.reduce((sum, p) => sum + p.amountPaid, 0);
+        this.remainingAmount = this.totalFee - this.paidAmount;
+        this.currentPage = 1;
+        this.updatePagination();
+      },
+      error: err => {
+        if (err.status === 404) {
+          this.previousPayments = [];
+          this.totalFee = 5000;
+          this.paidAmount = 0;
+          this.remainingAmount = this.totalFee;
+          this.currentPage = 1;
+          this.updatePagination();
+        }
+      }
     });
   }
 
@@ -102,20 +129,11 @@ export class CollectFeeComponent implements OnInit {
     if (!this.selectedStudent || !this.studentId || this.paymentForm.invalid) return;
 
     if (this.paymentForm.value.amountPaid > this.remainingAmount) {
-      Swal.fire({ icon: 'warning', title: 'Invalid Amount', text: 'Amount cannot exceed remaining balance!' });
+      this.showFeedback('warning', 'Invalid Amount', 'Amount cannot exceed remaining balance!');
       return;
     }
 
-    Swal.fire({
-      title: 'Processing Payment...',
-      text: 'Please wait while we process the fee collection.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+    this.isProcessing = true;
 
     const val = this.paymentForm.value;
 
@@ -135,15 +153,15 @@ export class CollectFeeComponent implements OnInit {
 
     this.commonService.createMonthlyPayment(newPayment as MonthlyPayment).subscribe({
       next: (savedPayment) => {
-        Swal.close();
-        Swal.fire({ icon: 'success', title: 'Success', text: 'Payment collected successfully!', timer: 1500, showConfirmButton: false });
+        this.isProcessing = false;
+        this.showFeedback('success', 'Success', 'Payment collected successfully!');
         this.paymentForm.reset({ paymentDate: new Date().toISOString().substring(0, 10), paymentType: 'Cash' });
         this.loadFeeInfo(); // Reload to get updated balance and list
       },
       error: (err) => {
-        Swal.close();
+        this.isProcessing = false;
         console.error('Error collecting fee', err);
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to collect fee.' });
+        this.showFeedback('error', 'Error', 'Failed to collect fee.');
       }
     });
   }
@@ -185,6 +203,30 @@ export class CollectFeeComponent implements OnInit {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  updatePagination() {
+    this.totalPages = Math.max(1, Math.ceil(this.previousPayments.length / this.rowsPerPage));
+    const start = (this.currentPage - 1) * this.rowsPerPage;
+    this.paginatedPayments = this.previousPayments.slice(start, start + this.rowsPerPage);
+    this.toEntry = Math.min(start + this.rowsPerPage, this.previousPayments.length);
+  }
+
+  changePage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updatePagination();
+  }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 
 }

@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import Swal from '../../../swal';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { SectionService } from '../../../services/section.service';
 import { StaffService } from '../../../services/staff.service';
@@ -10,11 +9,13 @@ import { StandardService } from '../../../services/standard.service';
 import { Staff } from '../../../Models/staff';
 import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-section-add',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, BreadcrumbComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './section-add.component.html',
   styleUrls: ['./section-add.component.css']
 })
@@ -24,6 +25,14 @@ export class SectionAddComponent implements OnInit {
   classes: Standard[] = [];
 
   sectionForm!: FormGroup;
+  isSaving = false;
+
+  // Premium Modal Visibility State
+  showConfirmModal = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
 
   constructor(
     private router: Router,
@@ -44,13 +53,12 @@ export class SectionAddComponent implements OnInit {
 
   ngOnInit(): void {
     this.staffService.getAllStaffs().subscribe(data => {
-      this.teachers = data || []; // Adjust filter as needed if you only want teachers
+      this.teachers = data || [];
     });
 
     this.standardService.getStandards().subscribe(data => {
       this.classes = data;
 
-      // Check for pre-filled class from query params
       this.route.queryParams.subscribe(params => {
         if (params['className']) {
           this.sectionForm.patchValue({ className: params['className'] });
@@ -59,76 +67,64 @@ export class SectionAddComponent implements OnInit {
     });
   }
 
-  async onSubmit(): Promise<void> {
-    if (this.sectionForm.invalid) {
-      this.sectionForm.markAllAsTouched();
-      Swal.fire({
-        icon: 'error',
-        title: 'Form Incomplete',
-        text: 'Please fill in all required fields before saving.',
-        confirmButtonColor: '#3085d6'
-      });
-      return;
-    }
-
-    const confirmResult = await Swal.fire({
-      title: 'Confirm Save',
-      text: 'Are you sure you want to save this section?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Save',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33'
-    });
-
-    if (confirmResult.isConfirmed) {
-      const formValue = this.sectionForm.value;
-      const newSection: Section = {
-        sectionId: 0,
-        sectionName: `Section ${formValue.sectionCode} - ${formValue.className}`,
-        className: formValue.className,
-        sectionCode: formValue.sectionCode,
-        staffId: formValue.staffId,
-        roomNo: formValue.roomNo,
-        capacity: formValue.capacity
-      };
-
-      Swal.fire({
-        title: 'Saving Section...',
-        text: 'Please wait while we process the request.',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        didOpen: () => {
-          Swal.showLoading();
-        }
-      });
-
-      this.sectionService.createSection(newSection).subscribe({
-        next: async () => {
-          Swal.close();
-          await Swal.fire({
-            icon: 'success',
-            title: 'Section Added Successfully!',
-            text: 'Redirecting to section list...',
-            showConfirmButton: false,
-            timer: 1800
-          });
+  // ── Premium Feedback ──
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+    if (autoClose) {
+      setTimeout(() => {
+        this.showFeedbackModal = false;
+        if (type === 'success') {
           this.router.navigate(['/section-list']);
-        },
-        error: (err) => {
-          Swal.close();
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to add section. Please try again.'
-          });
-          console.error(err);
         }
-      });
+      }, 2200);
     }
   }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
+  }
+
+  onSubmit(): void {
+    if (this.sectionForm.invalid) {
+      this.sectionForm.markAllAsTouched();
+      this.showFeedback('error', 'Form Incomplete', 'Please fill in all required fields before saving.');
+      return;
+    }
+    this.showConfirmModal = true;
+  }
+
+  cancelSave() {
+    this.showConfirmModal = false;
+  }
+
+  confirmSave(): void {
+    const formValue = this.sectionForm.value;
+    const newSection: Section = {
+      sectionId: 0,
+      sectionName: `Section ${formValue.sectionCode} - ${formValue.className}`,
+      className: formValue.className,
+      sectionCode: formValue.sectionCode,
+      staffId: formValue.staffId,
+      roomNo: formValue.roomNo,
+      capacity: formValue.capacity
+    };
+
+    this.isSaving = true;
+    this.showConfirmModal = false;
+
+    this.sectionService.createSection(newSection).pipe(
+      finalize(() => this.isSaving = false)
+    ).subscribe({
+      next: () => {
+        this.showFeedback('success', 'Section Added!', 'The new section has been created successfully. Redirecting...', true);
+      },
+      error: (err) => {
+        console.error(err);
+        this.showFeedback('error', 'Error', 'Failed to add section. Please try again.');
+      }
+    });
+  }
 }
-
-

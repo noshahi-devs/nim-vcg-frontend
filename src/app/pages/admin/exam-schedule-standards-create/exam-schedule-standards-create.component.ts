@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { GetExamScheduleOptionsResponse } from '../../../Models/get-exam-schedule-options-response';
 import { Standard } from '../../../Models/standard';
@@ -13,25 +13,31 @@ import { SubjectService } from '../../../services/subject.service';
 import { ExamScheduleStandardService } from '../../../services/exam-schedule-standard.service';
 import { BreadcrumbComponent } from "../../ui-elements/breadcrumb/breadcrumb.component";
 import { FormsModule } from '@angular/forms';
-import Swal from '../../../swal';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-exam-schedule-standards-create',
   standalone: true,
   templateUrl: './exam-schedule-standards-create.component.html',
   styleUrls: ['./exam-schedule-standards-create.component.css'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [BreadcrumbComponent, CommonModule, FormsModule]
 })
 export class ExamScheduleStandardsCreateComponent implements OnInit {
-
   title = "Create Exam Schedule Standard";
 
   examScheduleList: GetExamScheduleOptionsResponse[] = [];
   standardList: Standard[] = [];
   subjectList: Subject[] = [];
   examTypeList: Examtype[] = [];
-
   model: CreateExamScheduleStandardVM = new CreateExamScheduleStandardVM();
+
+  // ── Premium Modal State ──
+  isProcessing = false;
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
 
   constructor(
     private examScheduleService: ExamScheduleService,
@@ -47,23 +53,25 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
     this.loadStandards();
     this.loadSubjects();
     this.loadExamTypes();
-
-    // Add one initial subject row
     this.addExamSubject();
   }
+
+  // ── Helpers ──
+  triggerSuccess(title: string, msg: string) {
+    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  triggerError(title: string, msg: string) {
+    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
+  }
+  closeFeedback() { this.showFeedbackModal = false; }
 
   loadExamSchedules() {
     this.examScheduleService.GetExamScheduleOptions().subscribe({
       next: (data) => {
         this.examScheduleList = data || [];
-        if (this.examScheduleList.length === 0) {
-          this.loadMockExamSchedules();
-        }
+        if (this.examScheduleList.length === 0) this.loadMockExamSchedules();
       },
-      error: (err) => {
-        console.error('Error loading exam schedules', err);
-        this.loadMockExamSchedules();
-      }
+      error: (err) => { console.error('Error loading exam schedules', err); this.loadMockExamSchedules(); }
     });
   }
 
@@ -75,67 +83,34 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
     ] as GetExamScheduleOptionsResponse[];
   }
 
-  loadStandards() {
-    this.standardService.getStandards().subscribe(data => this.standardList = data);
-  }
-
-  loadSubjects() {
-    this.subjectService.getSubjects().subscribe(data => this.subjectList = data);
-  }
-
-  loadExamTypes() {
-    this.examTypeService.GetdbsExamType().subscribe(data => this.examTypeList = data);
-  }
+  loadStandards() { this.standardService.getStandards().subscribe(data => this.standardList = data); }
+  loadSubjects() { this.subjectService.getSubjects().subscribe(data => this.subjectList = data); }
+  loadExamTypes() { this.examTypeService.GetdbsExamType().subscribe(data => this.examTypeList = data); }
 
   addExamSubject() {
-    this.model.examSubjects.push({
-      subjectId: 0,
-      examTypeId: 0,
-      examDate: new Date(),
-      examStartTime: '',
-      examEndTime: ''
-    });
+    this.model.examSubjects.push({ subjectId: 0, examTypeId: 0, examDate: new Date(), examStartTime: '', examEndTime: '' });
   }
 
-  deleteExamSubject(index: number) {
-    this.model.examSubjects.splice(index, 1);
+  deleteExamSubject(index: number) { this.model.examSubjects.splice(index, 1); }
+  
+  getFilteredSubjects(): any[] {
+    if (!this.model.standardId) return this.subjectList;
+    return this.subjectList.filter(s => s.standardId == this.model.standardId);
   }
 
   onSubmit() {
-    console.log(this.model);
-
-    Swal.fire({
-      title: 'Saving Schedule...',
-      text: 'Please wait while we process the request.',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
-
-    this.examScheduleStandardsService.SaveExamScheduleStandards(this.model).subscribe({
-      next: () => {
-        Swal.close();
-        Swal.fire({
-          icon: 'success',
-          title: 'Schedule Saved!',
-          text: 'Exam schedule has been added successfully.',
-          showConfirmButton: false,
-          timer: 1500
-        });
-        this.router.navigate(['/exam-schedule-standards-list']);
-      },
-      error: err => {
-        Swal.close();
-        console.log(err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to save exam schedule. Please try again.'
-        });
-      }
-    });
+    this.isProcessing = true;
+    this.examScheduleStandardsService.SaveExamScheduleStandards(this.model)
+      .pipe(finalize(() => this.isProcessing = false))
+      .subscribe({
+        next: () => {
+          this.triggerSuccess('Schedule Saved!', 'Exam schedule has been added successfully.');
+          setTimeout(() => this.router.navigate(['/exam-schedule-standards-list']), 1800);
+        },
+        error: err => {
+          console.error(err);
+          this.triggerError('Error', 'Failed to save exam schedule. Please try again.');
+        }
+      });
   }
 }

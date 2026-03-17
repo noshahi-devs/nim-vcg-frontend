@@ -24,6 +24,19 @@ export class StaffListComponent implements OnInit, AfterViewInit {
   loading = false;
   defaultImage = 'assets/images/user-grid/user-grid-img2.png';
 
+  // Premium Modal State
+  showFeedbackModal = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
+  isProcessing = false;
+
+  // For Deletion Confirmation
+  showDeleteModal = false;
+  staffToDelete: any = null;
+  selectedStaff: any = null;
+  showViewModal = false;
+
   get totalStaff(): number { return this.staffList.length; }
   get teacherCount(): number {
     return this.staffList.filter(s => {
@@ -53,38 +66,62 @@ export class StaffListComponent implements OnInit, AfterViewInit {
         },
         error: (err) => {
           console.error('Error fetching staff:', err);
-          // Fallback message could be added here
         }
       });
   }
 
+  // Open premium confirmation delete modal
   confirmDelete(staff: any): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `Do you want to delete ${staff.staffName}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.deleteStaff(staff.staffId);
+    this.staffToDelete = staff;
+    this.showDeleteModal = true;
+  }
+
+  // Cancel delete modal
+  cancelDelete(): void {
+    this.staffToDelete = null;
+    this.showDeleteModal = false;
+  }
+
+  // Open view modal
+  openViewModal(staff: any): void {
+    this.selectedStaff = { ...staff };
+    this.showViewModal = true;
+  }
+
+  // Execute deletion
+  deleteStaff(): void {
+    if (!this.staffToDelete) return;
+    const id = this.staffToDelete.staffId;
+
+    this.isProcessing = true;
+    this.staffService.deleteStaff(id).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.staffList = this.staffList.filter(s => s.staffId !== id);
+        this.staffToDelete = null;
+        this.showDeleteModal = false;
+        this.showFeedback('success', 'Deleted!', 'Staff member has been deleted permanently.');
+      },
+      error: (err) => {
+        this.isProcessing = false;
+        console.error('Delete failed:', err);
+        this.showDeleteModal = false;
+        const errorMsg = err.error?.message || 'Failed to delete staff member. They may have linked records (Sections, Assignments, or Leaves).';
+        this.showFeedback('error', 'Cannot Delete Staff', errorMsg);
+        this.staffToDelete = null;
       }
     });
   }
 
-  deleteStaff(id: number): void {
-    this.staffService.deleteStaff(id).subscribe({
-      next: () => {
-        this.staffList = this.staffList.filter(s => s.staffId !== id);
-        Swal.fire('Deleted!', 'Staff member has been deleted.', 'success');
-      },
-      error: (err) => {
-        console.error('Delete failed:', err);
-        Swal.fire('Error', 'Failed to delete staff member.', 'error');
-      }
-    });
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
   }
 
   // ✅ Filter for search
@@ -101,16 +138,11 @@ export class StaffListComponent implements OnInit, AfterViewInit {
 
   getDesignationName(designation: any): string {
     if (designation === null || designation === undefined) return 'N/A';
-    // If it's a number (enum value), convert to string name
     if (typeof designation === 'number') {
       return Designation[designation] || 'N/A';
     }
     return designation;
   }
 
-  ngAfterViewInit() {
-    // Legacy jQuery removal if it causes issues, but keeping for now as it doesn't hurt
-  }
+  ngAfterViewInit() { }
 }
-
-

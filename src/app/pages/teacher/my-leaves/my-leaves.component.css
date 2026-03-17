@@ -40,8 +40,8 @@
 }
 
 .stat-icon-wrapper.blue {
-  background: #eff6ff;
-  color: #2563eb;
+  background: #fdf2f2;
+  color: #800000;
 }
 
 .stat-icon-wrapper.green {
@@ -50,8 +50,8 @@
 }
 
 .stat-icon-wrapper.orange {
-  background: #fff7ed;
-  color: #ea580c;
+  background: #fffbea;
+  color: #d4af37;
 }
 
 .stat-content {

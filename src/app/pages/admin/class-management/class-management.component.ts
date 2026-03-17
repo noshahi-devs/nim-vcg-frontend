@@ -10,8 +10,6 @@ import { Section } from '../../../Models/section';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { finalize, forkJoin } from 'rxjs';
-import Swal from '../../../swal';
-
 
 @Component({
   selector: 'app-class-management',
@@ -37,9 +35,17 @@ export class ClassManagementComponent implements OnInit {
   totalPages = 1;
   loading = false;
 
-  // View dialog
+  // Modals Visibility
   selectedClass: Standard | null = null;
   showViewDialog = false;
+  showDeleteModal = false;
+  showFeedbackModal = false;
+  isProcessing = false;
+
+  // Feedback State
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle = '';
+  feedbackMessage = '';
 
   Math = Math;
 
@@ -50,7 +56,6 @@ export class ClassManagementComponent implements OnInit {
     public authService: AuthService,
     private staffService: StaffService
   ) { }
-
 
   ngOnInit() {
     this.loadData();
@@ -91,7 +96,7 @@ export class ClassManagementComponent implements OnInit {
         }));
         this.applyFilter();
       },
-      error: () => Swal.fire('Error', 'Failed to load data', 'error')
+      error: () => this.showFeedback('error', 'Sync Failed', 'Unable to synchronize classroom data with the server.')
     });
   }
 
@@ -116,7 +121,7 @@ export class ClassManagementComponent implements OnInit {
 
         this.applyFilter();
       },
-      error: () => Swal.fire('Error', 'Failed to load filtered data', 'error')
+      error: () => this.showFeedback('error', 'Sync Failed', 'Unable to synchronize classroom data with the server.')
     });
   }
 
@@ -130,7 +135,6 @@ export class ClassManagementComponent implements OnInit {
     if (teachers.length === 0) return 'Unassigned';
     return [...new Set(teachers)].join(', ');
   }
-
 
   getSectionsForClass(std: Standard): Section[] {
     return this.sections.filter(s => s.className === std.standardName);
@@ -186,27 +190,28 @@ export class ClassManagementComponent implements OnInit {
     this.router.navigate(['/class-edit', cls.standardId]);
   }
 
-  deleteClass(cls: Standard) {
-    Swal.fire({
-      title: 'Delete Class?',
-      text: `Are you sure you want to delete "${cls.standardName}"?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Delete',
-      confirmButtonColor: '#d33',
-      cancelButtonText: 'Cancel'
-    }).then(result => {
-      if (result.isConfirmed) {
-        this.standardService.deleteStandard(cls.standardId).subscribe({
-          next: () => {
-            Swal.fire({ icon: 'success', title: 'Deleted!', timer: 1500, showConfirmButton: false });
-            this.loadData();
-          },
-          error: (err) => {
-            const msg = typeof err.error === 'string' ? err.error : 'Unable to delete class. It may have associated students or subjects.';
-            Swal.fire({ icon: 'error', title: 'Cannot Delete', text: msg });
-          }
-        });
+  openDeleteModal(cls: Standard) {
+    this.selectedClass = cls;
+    this.showDeleteModal = true;
+  }
+
+  deleteClass() {
+    if (!this.selectedClass) return;
+
+    this.isProcessing = true;
+    this.standardService.deleteStandard(this.selectedClass.standardId).pipe(
+      finalize(() => {
+        this.isProcessing = false;
+        this.showDeleteModal = false;
+      })
+    ).subscribe({
+      next: () => {
+        this.showFeedback('success', 'Class Deleted', 'The academic record has been permanently removed.');
+        this.loadData();
+      },
+      error: (err) => {
+        const msg = typeof err.error === 'string' ? err.error : 'Unable to delete class. It may have associated students or subjects.';
+        this.showFeedback('error', 'Cannot Delete Record', msg);
       }
     });
   }
@@ -226,6 +231,15 @@ export class ClassManagementComponent implements OnInit {
   getPageNumbers(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
+
+  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+    this.feedbackType = type;
+    this.feedbackTitle = title;
+    this.feedbackMessage = message;
+    this.showFeedbackModal = true;
+  }
+
+  closeFeedback() {
+    this.showFeedbackModal = false;
+  }
 }
-
-
