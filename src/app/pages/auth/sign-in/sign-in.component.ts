@@ -84,7 +84,7 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
   private ctx!: CanvasRenderingContext2D;
   private particles: Particle[] = [];
   private animationId!: number;
-  private particleCount = 120; // High density for Windsurf feel
+  private particleCount = typeof window !== 'undefined' && window.innerWidth < 768 ? 30 : 50; // Performance optimized density
 
   constructor(
     private fb: FormBuilder,
@@ -163,9 +163,10 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
         for (let j = i + 1; j < this.particles.length; j++) {
             const dx = this.particles[i].x - this.particles[j].x;
             const dy = this.particles[i].y - this.particles[j].y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            const distanceSq = dx * dx + dy * dy;
             
-            if (distance < 150) {
+            if (distanceSq < 22500) { // 150 * 150
+                const distance = Math.sqrt(distanceSq);
                 this.ctx.beginPath();
                 this.ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / 150})`;
                 this.ctx.lineWidth = 0.5;

@@ -256,3 +256,95 @@
         </div>
     </div>
 </div>
+
+<!-- PREMIUM ACTION MODALS -->
+
+<!-- 1. CONFIRMATION MODAL -->
+<div class="premium-overlay" *ngIf="showConfirmModal">
+  <div class="premium-modal">
+    <div class="pm-sparkles">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring warning-ring">
+      <iconify-icon icon="solar:question-square-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">Confirm Save</h3>
+    <p class="pm-subtitle">
+      Are you sure you want to update the <strong>General Institute Settings</strong>? This will affect the system globally.
+    </p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-cancel" (click)="cancelUpdate()">Discard</button>
+      <button class="pm-btn pm-save" (click)="confirmUpdateGeneral()" [disabled]="isSaving">
+        <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
+        {{ isSaving ? 'Saving...' : 'Yes, Update' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. DELETION CONFIRMATION MODAL -->
+<div class="premium-overlay" *ngIf="showDeleteConfirmModal">
+  <div class="premium-modal">
+    <div class="pm-sparkles">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring danger-ring">
+      <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">Confirm Deletion</h3>
+    <p class="pm-subtitle">
+      Are you sure you want to delete this <strong>Academic Session</strong>? This action cannot be undone.
+    </p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-cancel" (click)="cancelDelete()">Cancel</button>
+      <button class="pm-btn pm-error-btn" (click)="confirmDeleteSession()" [disabled]="isSaving">
+        <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
+        {{ isSaving ? 'Deleting...' : 'Yes, Delete' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 3. UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+<div class="premium-overlay" *ngIf="showFeedbackModal">
+  <div class="premium-modal feedback-modal">
+    <div class="pm-sparkles">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
+    </div>
+
+    <div class="pm-icon-ring" [ngClass]="{
+           'success-ring': feedbackType === 'success',
+           'danger-ring': feedbackType === 'error',
+           'warning-ring': feedbackType === 'warning'
+         }">
+      <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
+                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+        style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+
+    <h3 class="pm-title">{{ feedbackTitle }}</h3>
+    <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
+
+    <div class="pm-actions">
+      <button class="pm-btn pm-acknowledge" [ngClass]="{
+                'pm-success-btn': feedbackType === 'success',
+                'pm-error-btn': feedbackType === 'error',
+                'pm-warning-btn': feedbackType === 'warning'
+              }" (click)="closeFeedback()">
+        Acknowledge
+      </button>
+    </div>
+  </div>
+</div>

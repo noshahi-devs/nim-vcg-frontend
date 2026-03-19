@@ -4,13 +4,14 @@ import { RoleService } from '../../../services/role.service';
 import { Role } from '../../../Models/role';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import Swal from '../../../swal';
+
+import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 
 @Component({
     selector: 'app-role-access',
     standalone: true,
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    imports: [CommonModule, FormsModule, RouterLink],
+    imports: [CommonModule, FormsModule, RouterLink, BreadcrumbComponent],
     templateUrl: './role-access.component.html',
     styleUrl: './role-access.component.css'
 })
@@ -18,8 +19,24 @@ export class RoleAccessComponent implements OnInit {
     roles: Role[] = [];
     newRoleName: string = '';
     isLoading: boolean = false;
+    isSaving: boolean = false;
 
-    availablePermissions: string[] = [];
+    // Defined System Permissions
+    availablePermissions: string[] = [
+        'View Dashboard', 'Manage Students', 'Manage Teachers', 'Manage Settings',
+        'Manage Finance', 'Manage Attendance', 'Manage Exams', 'Manage Inventory'
+    ];
+    
+    // Track selected permissions for the new role
+    selectedPermissions: Set<string> = new Set();
+
+    // Premium UI State
+    showFeedbackModal = false;
+    showDeleteConfirmModal = false;
+    idToDelete: string | null = null;
+    feedbackType: 'success' | 'error' | 'warning' = 'success';
+    feedbackTitle = '';
+    feedbackMessage = '';
 
     constructor(private roleService: RoleService) { }
 
@@ -43,68 +60,82 @@ export class RoleAccessComponent implements OnInit {
     }
 
     addRole(): void {
-        if (!this.newRoleName.trim()) return;
+        if (!this.newRoleName.trim()) {
+            this.showFeedback('warning', 'Role Name Required', 'Please enter a name for the new role (e.g., Editor).');
+            return;
+        }
 
         const newRole: Role = {
             id: '', // Backend gen
             name: this.newRoleName,
             description: 'Custom Role',
-            permissions: []
+            permissions: Array.from(this.selectedPermissions)
         };
 
-        Swal.fire({
-            title: 'Creating Role...',
-            text: 'Please wait while we process the request.',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+        this.isSaving = true;
 
         this.roleService.createRole(newRole).subscribe({
             next: (res) => {
-                Swal.close();
-                Swal.fire({ icon: 'success', title: 'Success', text: 'Role created successfully', timer: 1500, showConfirmButton: false });
+                this.isSaving = false;
+                this.showFeedback('success', 'Role Created', `The role <b>${this.newRoleName}</b> was successfully created.`);
                 this.loadRoles();
                 this.newRoleName = '';
+                this.selectedPermissions.clear(); // Reset selection
             },
             error: () => {
-                Swal.close();
-                Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to create role' });
+                this.isSaving = false;
+                this.showFeedback('error', 'Creation Failed', 'Failed to create the new role.');
             }
         });
     }
 
     deleteRole(id: string): void {
-        Swal.fire({
-            title: 'Delete Role?',
-            text: 'Are you sure you want to delete this role?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, Delete',
-            confirmButtonColor: '#d33',
-            cancelButtonText: 'Cancel'
-        }).then(result => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Deleting...',
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading()
-                });
-                this.roleService.deleteRole(id).subscribe({
-                    next: () => {
-                        Swal.close();
-                        Swal.fire({ icon: 'success', title: 'Deleted!', timer: 1500, showConfirmButton: false });
-                        this.loadRoles();
-                    },
-                    error: () => {
-                        Swal.close();
-                        Swal.fire('Error', 'Failed to delete role', 'error');
-                    }
-                });
+        this.idToDelete = id;
+        this.showDeleteConfirmModal = true;
+    }
+
+    cancelDelete() {
+        this.showDeleteConfirmModal = false;
+        this.idToDelete = null;
+    }
+
+    togglePermission(permission: string) {
+        if (this.selectedPermissions.has(permission)) {
+            this.selectedPermissions.delete(permission);
+        } else {
+            this.selectedPermissions.add(permission);
+        }
+    }
+
+    confirmDeleteRole() {
+        if (!this.idToDelete) return;
+
+        this.isSaving = true;
+        this.showDeleteConfirmModal = false;
+
+        this.roleService.deleteRole(this.idToDelete).subscribe({
+            next: () => {
+                this.isSaving = false;
+                this.idToDelete = null;
+                this.showFeedback('success', 'Role Deleted', 'The role has been removed successfully.');
+                this.loadRoles();
+            },
+            error: () => {
+                this.isSaving = false;
+                this.idToDelete = null;
+                this.showFeedback('error', 'Deletion Failed', 'Failed to delete the role.');
             }
         });
+    }
+
+    showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+        this.feedbackType = type;
+        this.feedbackTitle = title;
+        this.feedbackMessage = message;
+        this.showFeedbackModal = true;
+    }
+
+    closeFeedback() {
+        this.showFeedbackModal = false;
     }
 }

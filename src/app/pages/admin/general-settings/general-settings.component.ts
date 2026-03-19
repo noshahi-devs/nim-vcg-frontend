@@ -36,6 +36,16 @@ export class GeneralSettingsComponent implements OnInit {
     paymentSettings: PaymentGatewaySetting[] = [];
     notificationLogs: NotificationLog[] = [];
 
+    // Premium UI State
+    showConfirmModal = false;
+    showDeleteConfirmModal = false;
+    idToDelete: number | null = null;
+    showFeedbackModal = false;
+    feedbackType: 'success' | 'error' | 'warning' = 'success';
+    feedbackTitle = '';
+    feedbackMessage = '';
+    isSaving = false;
+ 
     // Academic Session Management
     academicYears: AcademicYear[] = [];
     newSessionName: string = '';
@@ -83,7 +93,7 @@ export class GeneralSettingsComponent implements OnInit {
 
     addSession() {
         if (!this.newSessionName) {
-            Swal.fire('Error', 'Please enter a session name', 'error');
+            this.showFeedback('warning', 'Session Name Required', 'Please enter a name for the new academic session (e.g. 2024-25).');
             return;
         }
 
@@ -92,113 +102,118 @@ export class GeneralSettingsComponent implements OnInit {
             name: this.newSessionName
         };
 
+        this.isSaving = true;
         this.academicYearService.createAcademicYear(newSession).subscribe({
             next: () => {
-                Swal.fire('Success', 'Academic Session added', 'success');
+                this.isSaving = false;
+                this.showFeedback('success', 'Session Added', `Academic session <b>${this.newSessionName}</b> has been created.`);
                 this.newSessionName = '';
                 this.loadAcademicYears();
             },
-            error: () => Swal.fire('Error', 'Failed to add session', 'error')
+            error: () => {
+                this.isSaving = false;
+                this.showFeedback('error', 'Update Failed', 'Failed to add new academic session.');
+            }
         });
     }
 
     deleteSession(id: number) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "This session will be deleted!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                this.academicYearService.deleteAcademicYear(id).subscribe({
-                    next: () => {
-                        Swal.fire('Deleted!', 'Session has been deleted.', 'success');
-                        this.loadAcademicYears();
-                    },
-                    error: () => Swal.fire('Error', 'Failed to delete session', 'error')
-                });
+        this.idToDelete = id;
+        this.showDeleteConfirmModal = true;
+    }
+
+    cancelDelete() {
+        this.showDeleteConfirmModal = false;
+        this.idToDelete = null;
+    }
+
+    confirmDeleteSession() {
+        if (this.idToDelete === null) return;
+        
+        this.isSaving = true;
+        this.showDeleteConfirmModal = false;
+
+        this.academicYearService.deleteAcademicYear(this.idToDelete).subscribe({
+            next: () => {
+                this.isSaving = false;
+                this.idToDelete = null;
+                this.showFeedback('success', 'Session Deleted', 'The academic session has been removed.');
+                this.loadAcademicYears();
+            },
+            error: () => {
+                this.isSaving = false;
+                this.idToDelete = null;
+                this.showFeedback('error', 'Deletion Failed', 'Failed to delete the academic session.');
             }
         });
     }
 
     saveGeneralSettings() {
+        this.showConfirmModal = true;
+    }
+
+    cancelUpdate() {
+        this.showConfirmModal = false;
+    }
+
+    confirmUpdateGeneral() {
+        this.isSaving = true;
+        this.showConfirmModal = false;
+
         const settingsToSend: SystemSetting[] = Object.keys(this.generalSettings).map(key => ({
             settingKey: key,
-            settingValue: this.generalSettings[key],
+            settingValue: this.generalSettings[key] || '',
             category: 'General'
         }));
 
-        Swal.fire({
-            title: 'Saving Settings...',
-            text: 'Please wait while we process the request.',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
         this.settingsService.updateGeneralSettings(settingsToSend).subscribe({
             next: () => {
-                Swal.close();
-                Swal.fire('Success', 'General settings saved', 'success');
+                this.isSaving = false;
+                this.showFeedback('success', 'Settings Saved', 'General institute configurations have been updated successfully.');
                 this.sessionService.refreshSession(true);
             },
             error: () => {
-                Swal.close();
-                Swal.fire('Error', 'Failed to save settings', 'error');
+                this.isSaving = false;
+                this.showFeedback('error', 'Save Failed', 'An unexpected error occurred while saving general settings.');
             }
         });
     }
 
-    saveNotifications() {
-        Swal.fire({
-            title: 'Saving Notifications...',
-            text: 'Please wait while we process the request.',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+    showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
+        this.feedbackType = type;
+        this.feedbackTitle = title;
+        this.feedbackMessage = message;
+        this.showFeedbackModal = true;
+    }
 
+    closeFeedback() {
+        this.showFeedbackModal = false;
+    }
+
+    saveNotifications() {
+        this.isSaving = true;
         this.settingsService.updateNotificationSettings(this.notificationSettings).subscribe({
             next: () => {
-                Swal.close();
-                Swal.fire('Success', 'Notification preferences updated', 'success');
+                this.isSaving = false;
+                this.showFeedback('success', 'Notifications Updated', 'Your notification preferences have been saved.');
             },
             error: () => {
-                Swal.close();
-                Swal.fire('Error', 'Failed to update notifications', 'error');
+                this.isSaving = false;
+                this.showFeedback('error', 'Update Failed', 'Failed to update notification settings.');
             }
         });
     }
 
     savePaymentGateway(setting: PaymentGatewaySetting) {
-        Swal.fire({
-            title: 'Saving Gateway...',
-            text: 'Please wait while we process the request.',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
+        this.isSaving = true;
         this.settingsService.updatePaymentGatewaySetting(setting).subscribe({
             next: () => {
-                Swal.close();
-                Swal.fire('Success', `${setting.gatewayName} settings updated`, 'success');
+                this.isSaving = false;
+                this.showFeedback('success', 'Gateway Updated', `<b>${setting.gatewayName}</b> settings have been updated.`);
             },
             error: () => {
-                Swal.close();
-                Swal.fire('Error', `Failed to update ${setting.gatewayName}`, 'error');
+                this.isSaving = false;
+                this.showFeedback('error', 'Update Failed', `Failed to update <b>${setting.gatewayName}</b>.`);
             }
         });
     }
