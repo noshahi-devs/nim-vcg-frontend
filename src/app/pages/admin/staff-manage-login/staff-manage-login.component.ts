@@ -195,6 +195,22 @@ export class StaffManageLoginComponent implements OnInit {
         return;
       }
 
+      // ── VALIDATION: Only one active Principal allowed ──
+      if (this.loginForm.role === 'Principal') {
+        const existingPrincipal = this.logins.find(l =>
+          l.role?.toLowerCase().includes('principal') &&
+          l.status?.toLowerCase() === 'active'
+        );
+        if (existingPrincipal) {
+          this.showFeedback(
+            'warning',
+            'Principal Already Active!',
+            `"${existingPrincipal.name}" is already an active Principal. Please deactivate the current Principal before assigning a new one.`
+          );
+          return;
+        }
+      }
+
       const registerData = {
         Username: this.loginForm.name,
         Email: this.loginForm.email,

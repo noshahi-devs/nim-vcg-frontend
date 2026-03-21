@@ -136,7 +136,13 @@
     </div>
 
     <div class="table-responsive">
-      <table class="table glass-table mb-0">
+      <!-- Premium Skeleton Loading -->
+      <div *ngIf="loading && !isProcessing" class="sk-table-container animate-fade-in border-0 p-24 mb-0">
+        <div class="sk-table-header sk-shimmer mb-16"></div>
+        <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
+      </div>
+
+      <table class="table glass-table mb-0" *ngIf="!loading">
         <thead>
           <tr>
             <th style="width: 80px;">#</th>

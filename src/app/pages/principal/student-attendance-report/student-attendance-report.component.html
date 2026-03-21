@@ -24,7 +24,7 @@
               </div>
               <div class="student-sub-info">
                 <span class="info-tag class">Class: {{ s.standard?.standardName || 'N/A' }}</span>
-                <span class="info-tag section">Section: {{ s.section || 'N/A' }}</span>
+                <span class="info-tag section">Section: {{ (s.section?.split(' - ')[0]) || 'N/A' }}</span>
               </div>
             </div>
           </div>
@@ -71,18 +71,26 @@
   <div class="fee-card animate__animated animate__fadeIn" *ngIf="report.length">
     <div class="fee-card-header d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center gap-12">
-        <h5 class="fw-bold mb-0 text-secondary-dark">Record Details</h5>
+        <h5 class="mb-0" style="font-weight: 900; color: #0f172a; letter-spacing: -0.02em;">Record Details</h5>
         <span class="enrollment-badge text-primary-main">Found {{ report.length }} Records</span>
       </div>
-      <button class="btn-add" (click)="getReport()" *ngIf="studentId" [disabled]="isProcessing"
-        style="background: linear-gradient(135deg, #10b981, #059669);">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" y1="15" x2="12" y2="3" />
-        </svg>
-        Export PDF
-      </button>
+      <div class="d-flex align-items-center gap-2" *ngIf="studentId">
+        <button class="btn-add" (click)="exportExcel()" [disabled]="isProcessing"
+          style="background: linear-gradient(135deg, #10b981, #059669);">
+          <iconify-icon icon="mdi:file-excel" class="text-white text-xl me-1"></iconify-icon>
+          Excel
+        </button>
+        <button class="btn-add" (click)="exportPdf()" [disabled]="isProcessing"
+          style="background: linear-gradient(135deg, #f43f5e, #e11d48);">
+          <iconify-icon icon="mdi:file-pdf-box" class="text-white text-xl me-1"></iconify-icon>
+          PDF
+        </button>
+        <button class="btn-add" (click)="printReport()" [disabled]="isProcessing"
+          style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+          <iconify-icon icon="mdi:printer" class="text-white text-xl me-1"></iconify-icon>
+          Print
+        </button>
+      </div>
     </div>
 
     <div class="fee-card-body p-0">

@@ -6,6 +6,7 @@ import { LeaveService } from '../../../services/leave.service';
 import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { finalize } from 'rxjs';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-leave-manage',
@@ -104,7 +105,32 @@ export class LeaveManageComponent implements OnInit {
   }
 
   exportData(): void {
-    this.triggerSuccess('Export', 'Export functionality will be implemented soon.');
+    if (this.filteredLeaves.length === 0) {
+      this.triggerWarning('No Data', 'There is no data to export.');
+      return;
+    }
+
+    const exportData = this.filteredLeaves.map((l, index) => ({
+      'S.No': index + 1,
+      'Staff Name': l.staff?.staffName || 'N/A',
+      'Designation': l.staff?.designation || 'N/A',
+      'Leave Type': this.getLeaveTypeName(l.leaveType),
+      'Start Date': new Date(l.startDate).toLocaleDateString(),
+      'End Date': new Date(l.endDate).toLocaleDateString(),
+      'Days': this.getDurationDays(l.startDate, l.endDate),
+      'Reason': l.reason,
+      'Status': this.getLeaveStatusName(l.status),
+      'Applied Date': new Date(l.appliedDate).toLocaleDateString(),
+      'Admin Remarks': l.adminRemarks || ''
+    }));
+
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Leave Requests');
+
+    /* generate file and force a download */
+    XLSX.writeFile(wb, `Leave_Report_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`);
+    this.triggerSuccess('Exported!', 'Excel file has been downloaded successfully.');
   }
 
   openApproveModal(leave: Leave): void {

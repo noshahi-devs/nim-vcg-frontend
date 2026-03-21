@@ -29,6 +29,7 @@ export class ExamComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   searchTerm = "";
+  loading = false;
 
   showAddEditDialog = false;
   showViewDialog = false;
@@ -70,7 +71,8 @@ export class ExamComponent implements OnInit {
   }
 
   loadExamTypes() {
-    this.examTypeService.GetdbsExamType().subscribe({
+    this.loading = true;
+    this.examTypeService.GetdbsExamType().pipe(finalize(() => this.loading = false)).subscribe({
       next: (res) => { this.examTypes = res || []; this.filteredExamTypes = [...this.examTypes]; this.updatePagination(); },
       error: () => { this.examTypes = []; this.filteredExamTypes = []; this.paginatedExamTypes = []; }
     });

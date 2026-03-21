@@ -34,6 +34,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   selectedSubject: Subject = new Subject();
   allStandards: Standard[] = [];
   editLoading = false;
+  loading = false;
   
   // Premium Modal Visibility State
   showViewModal = false;
@@ -79,6 +80,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void { }
 
   loadSubjects(): void {
+    this.loading = true;
     const isTeacher = this.authService.hasAnyRole(['Teacher']);
     const currentUser = this.authService.userValue;
 
@@ -107,7 +109,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   }
 
   private fetchAllSubjectsRaw(): void {
-    this.subjectService.getSubjects().subscribe({
+    this.subjectService.getSubjects().pipe(finalize(() => this.loading = false)).subscribe({
       next: (res) => {
         this.subjectList = res;
         this.classes = [...new Set(res.map(s => s.standard?.standardName || ''))];
@@ -124,7 +126,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
       subjects: this.subjectService.getSubjects(),
       sections: this.sectionService.getSections(),
       assignments: this.subjectAssignmentService.getAssignmentsByTeacher(staffId)
-    }).subscribe({
+    }).pipe(finalize(() => this.loading = false)).subscribe({
       next: (res) => {
         // Find sections assigned to this teacher
         const assignedSectionClassNames = (res.sections || [])

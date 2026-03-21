@@ -90,11 +90,12 @@
     </div>
 
     <div class="fee-card-body">
-      <div *ngIf="loading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
+      <!-- Premium Skeleton Loading -->
+      <div *ngIf="loading" class="sk-table-container animate-fade-in mb-24">
+        <div class="sk-table-header sk-shimmer mb-16"></div>
+        <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
       </div>
+
 
       <div *ngIf="!loading" class="table-wrapper">
         <table class="fee-table">

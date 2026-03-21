@@ -1333,8 +1333,8 @@
 }
 
 .info-tag.class {
-  color: #487fff;
-  font-weight: 600;
+  color: #800000;
+  font-weight: 700;
 }
 
 .info-tag.section {
@@ -1471,4 +1471,12 @@
 .fee-card-header svg.search-icon {
   color: #f59e0b !important;
   stroke: #f59e0b !important;
+}
+
+/* Override table headers */
+.fee-table th {
+    font-weight: 800 !important;
+    text-align: left !important;
+    color: #1e293b !important;
+    font-size: 13.5px !important;
 }

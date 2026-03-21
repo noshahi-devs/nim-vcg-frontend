@@ -163,14 +163,20 @@
 <!-- ══ Premium Feedback Modal ══ -->
 <div class="premium-overlay" *ngIf="showFeedbackModal">
   <div class="premium-modal feedback-modal">
-    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span class="pm-sparkle sp3"></span></div>
-    <div class="pm-icon-ring" [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning' || feedbackType==='info'}">
-      <iconify-icon [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'" style="font-size:2.4rem; color:#fff"></iconify-icon>
+    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span
+        class="pm-sparkle sp3"></span></div>
+    <div class="pm-icon-ring"
+      [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning' || feedbackType==='info'}">
+      <iconify-icon
+        [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'"
+        style="font-size:2.4rem; color:#fff"></iconify-icon>
     </div>
     <p class="pm-title">{{ feedbackTitle }}</p>
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning' || feedbackType==='info'}" (click)="closeFeedback()">
+      <button class="pm-btn pm-acknowledge"
+        [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning' || feedbackType==='info'}"
+        (click)="closeFeedback()">
         <iconify-icon icon="solar:check-read-linear"></iconify-icon> Acknowledge
       </button>
     </div>
@@ -178,19 +184,119 @@
 </div>
 
 <!-- ══ Leave Detail Modal ══ -->
-<div class="premium-overlay" *ngIf="showDetailModal && selectedLeave">
-  <div class="premium-modal" style="max-width:500px; text-align:left;">
-    <p class="pm-title" style="text-align:center;">Leave Details</p>
-    <div style="display:grid; gap:10px; font-size:14px; color:#334155; margin-bottom:24px;">
-      <div><b>Employee:</b> {{ selectedLeave.staff?.staffName || 'Unknown' }}</div>
-      <div><b>Leave Type:</b> {{ getLeaveTypeName(selectedLeave.leaveType) }}</div>
-      <div><b>From:</b> {{ selectedLeave.startDate | date:'dd MMM yyyy' }}</div>
-      <div><b>To:</b> {{ selectedLeave.endDate | date:'dd MMM yyyy' }}</div>
-      <div><b>Reason:</b> {{ selectedLeave.reason }}</div>
-      <div><b>Status:</b> {{ getLeaveStatusName(selectedLeave.status) }}</div>
+<div class="premium-overlay" *ngIf="showDetailModal && selectedLeave" (click.self)="closeDetailModal()">
+  <div class="premium-modal" style="max-width:520px; text-align:left; padding:0; overflow:hidden;">
+
+    <!-- Modal Header -->
+    <div style="background: linear-gradient(135deg, #800000, #5a0000); padding: 24px 28px;">
+      <div class="d-flex align-items-center gap-16">
+        <div
+          style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center;">
+          <iconify-icon icon="solar:document-text-bold-duotone" style="font-size:24px; color:#fff;"></iconify-icon>
+        </div>
+        <div>
+          <h5 style="color:#fff; margin:0; font-weight:700; font-size:17px;">Leave Details</h5>
+          <span style="color:rgba(255,255,255,0.7); font-size:13px;">Full information about this request</span>
+        </div>
+        <button (click)="closeDetailModal()"
+          style="margin-left:auto; width:34px; height:34px; border-radius:50%; background:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; font-weight:700; color:#800000; line-height:1; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.25);">
+          &times;
+        </button>
+      </div>
     </div>
-    <div class="pm-actions">
-      <button class="pm-btn pm-cancel" (click)="closeDetailModal()">Close</button>
+
+    <!-- Status Banner -->
+    <div *ngIf="selectedLeave" style="padding:16px 28px; background:#f8fafc; border-bottom:1px solid #e2e8f0;"
+      class="d-flex align-items-center gap-12">
+      <span class="status-pill" [ngClass]="{
+          'pending': Number(selectedLeave.status) === 0,
+          'approved': Number(selectedLeave.status) === 1,
+          'rejected': Number(selectedLeave.status) === 2
+        }">
+        <iconify-icon
+          [icon]="Number(selectedLeave.status) === 0 ? 'solar:reorder-bold' : (Number(selectedLeave.status) === 1 ? 'solar:verified-check-bold' : 'solar:shield-cross-bold')"></iconify-icon>
+        {{ getLeaveStatusName(selectedLeave.status) }}
+      </span>
+      <span style="color:#64748b; font-size:13px;">Applied: {{ selectedLeave.appliedDate | date:'dd MMM yyyy' }}</span>
+    </div>
+
+    <!-- Info Rows -->
+    <div style="padding:20px 28px; display:grid; gap:14px;" *ngIf="selectedLeave">
+
+      <div class="d-flex align-items-center gap-14">
+        <div
+          style="width:36px; height:36px; border-radius:10px; background:#ede9fe; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <iconify-icon icon="solar:user-bold-duotone" style="color:#7c3aed; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">
+            Employee</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:700;">{{ selectedLeave.staff?.staffName || 'Unknown' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-14">
+        <div
+          style="width:36px; height:36px; border-radius:10px; background:#fef3c7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <iconify-icon icon="solar:tag-bold-duotone" style="color:#d97706; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">
+            Leave Type</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:700;">{{ getLeaveTypeName(selectedLeave.leaveType) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-14">
+        <div
+          style="width:36px; height:36px; border-radius:10px; background:#dcfce7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <iconify-icon icon="solar:calendar-bold-duotone" style="color:#16a34a; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">
+            Duration</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:700;">
+            {{ selectedLeave.startDate | date:'dd MMM yyyy' }} → {{ selectedLeave.endDate | date:'dd MMM yyyy' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-start gap-14">
+        <div
+          style="width:36px; height:36px; border-radius:10px; background:#fee2e2; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+          <iconify-icon icon="solar:chat-round-line-bold-duotone" style="color:#dc2626; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">
+            Reason</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:500; line-height:1.5;">{{ selectedLeave.reason }}</div>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-start gap-14" *ngIf="selectedLeave.adminRemarks">
+        <div
+          style="width:36px; height:36px; border-radius:10px; background:#e0f2fe; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+          <iconify-icon icon="solar:notes-bold-duotone" style="color:#0284c7; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">
+            Admin Remarks</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:500; line-height:1.5;">{{ selectedLeave.adminRemarks }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div
+      style="padding:16px 28px; background:#f8fafc; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end;">
+      <button (click)="closeDetailModal()"
+        style="background: linear-gradient(135deg, #800000, #5a0000); color:#fff; border:none; border-radius:10px; padding:10px 24px; font-weight:600; font-size:14px; cursor:pointer; transition: all 0.2s; display:flex; align-items:center; gap:8px;">
+        <iconify-icon icon="solar:close-circle-bold" style="font-size:18px;"></iconify-icon>
+        Close
+      </button>
     </div>
   </div>
-</div>
+</div>

@@ -64,30 +64,30 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
   ];
 
   adminQuickActions = [
-    { label: 'Add Student', icon: 'solar:user-plus-bold-duotone', route: '/student-add', color: '#800000', description: 'Register new student' },
-    { label: 'Add Staff', icon: 'solar:user-speak-bold-duotone', route: '/staff-add', color: '#F4C430', description: 'Register new team member' },
-    { label: 'Classes', icon: 'solar:buildings-bold-duotone', route: '/class-list', color: '#800000', description: 'Manage class structure' },
-    { label: 'Assignments', icon: 'solar:book-2-bold-duotone', route: '/subject-assignment', color: '#F4C430', description: 'Link subjects to staff' },
-    { label: 'User Roles', icon: 'solar:shield-keyhole-bold-duotone', route: '/role-access', color: '#800000', description: 'Manage permissions' },
-    { label: 'Settings', icon: 'solar:settings-bold-duotone', route: '/settings', color: '#F4C430', description: 'Global app configurations' },
+    { label: '1. General Settings', icon: 'solar:settings-bold-duotone', route: '/settings', color: '#800000', description: 'Configure institute basics first' },
+    { label: '2. Add Classes', icon: 'solar:buildings-bold-duotone', route: '/class-list', color: '#F4C430', description: 'Set up class structure' },
+    { label: '3. Add Sections', icon: 'solar:diploma-bold-duotone', route: '/section-add', color: '#800000', description: 'Create sections within classes' },
+    { label: '4. Add Subjects', icon: 'solar:book-2-bold-duotone', route: '/subject-add', color: '#F4C430', description: 'Define subjects to be taught' },
+    { label: '5. Add Staff', icon: 'solar:user-speak-bold-duotone', route: '/staff-add', color: '#800000', description: 'Register teachers & employees' },
+    { label: '6. Assign Subjects', icon: 'solar:link-bold-duotone', route: '/subject-assignment', color: '#F4C430', description: 'Map subjects to staff & sections' },
   ];
 
   principalQuickActions = [
-    { label: 'Class Reports', icon: 'solar:document-bold-duotone', route: '/class-wise-report', color: '#800000', description: 'View performance by class' },
-    { label: 'Exam Analytics', icon: 'solar:chart-bold-duotone', route: '/exam-analytics', color: '#F4C430', description: 'Deep dive into results' },
-    { label: 'Manage Leaves', icon: 'solar:calendar-date-bold-duotone', route: '/manage-leaves', color: '#800000', description: 'Review staff absences' },
-    { label: 'Staff Attendance', icon: 'solar:user-check-bold-duotone', route: '/staff-attendance', color: '#F4C430', description: 'Daily staff presence list' },
-    { label: 'Student List', icon: 'solar:users-group-rounded-bold-duotone', route: '/student-list', color: '#800000', description: 'Browse student records' },
-    { label: 'Staff List', icon: 'solar:user-speak-bold-duotone', route: '/staff-list', color: '#F4C430', description: 'Browse team directory' },
+    { label: '1. Student List', icon: 'solar:users-group-rounded-bold-duotone', route: '/student-list', color: '#800000', description: 'Browse all student records' },
+    { label: '2. Staff List', icon: 'solar:user-speak-bold-duotone', route: '/staff-list', color: '#F4C430', description: 'Browse team directory' },
+    { label: '3. Student Attendance', icon: 'solar:user-check-bold-duotone', route: '/attendance', color: '#800000', description: 'Check student presence' },
+    { label: '4. Staff Attendance', icon: 'solar:calendar-mark-bold-duotone', route: '/staff-attendance', color: '#F4C430', description: 'Daily staff presence list' },
+    { label: '5. Manage Leaves', icon: 'solar:calendar-date-bold-duotone', route: '/manage-leaves', color: '#800000', description: 'Review & approve absences' },
+    { label: '6. Exam Analytics', icon: 'solar:chart-bold-duotone', route: '/exam-analytics', color: '#F4C430', description: 'Deep dive into results' },
   ];
 
   accountantQuickActions = [
-    { label: 'Fee Collection', icon: 'solar:wallet-money-bold-duotone', route: '/collect-fee', color: '#800000', description: 'Record student payments' },
-    { label: 'Generate Invoice', icon: 'solar:bill-list-bold-duotone', route: '/generate-fee-invoice', color: '#F4C430', description: 'Create new billing records' },
-    { label: 'Expenses', icon: 'solar:card-send-bold-duotone', route: '/expense-manage', color: '#800000', description: 'Manage outflow records' },
-    { label: 'Salary Slip', icon: 'solar:plain-2-bold-duotone', route: '/salary-slip', color: '#F4C430', description: 'View staff payroll slips' },
-    { label: 'Accounts', icon: 'solar:document-text-bold-duotone', route: '/accounts-ledger', color: '#800000', description: 'View financial ledger' },
-    { label: 'Wallet', icon: 'solar:wallet-bold-duotone', route: '/wallet', color: '#F4C430', description: 'Manage digital transactions' },
+    { label: '1. Create Fee Type', icon: 'solar:bill-list-bold-duotone', route: '/fee', color: '#800000', description: 'Define fee categories first' },
+    { label: '2. Generate Fee Invoice', icon: 'solar:document-text-bold-duotone', route: '/generate-fee-invoice', color: '#F4C430', description: 'Issue invoices to students' },
+    { label: '3. Collect Fee', icon: 'solar:wallet-money-bold-duotone', route: '/collect-fee', color: '#800000', description: 'Record student payments' },
+    { label: '4. Pay Salary', icon: 'solar:plain-2-bold-duotone', route: '/salary', color: '#F4C430', description: 'Process staff salaries' },
+    { label: '5. Salary Slip', icon: 'solar:card-send-bold-duotone', route: '/salary-slip', color: '#800000', description: 'View staff payroll slips' },
+    { label: '6. Account Ledger', icon: 'solar:wallet-bold-duotone', route: '/accounts-ledger', color: '#F4C430', description: 'View full financial ledger' },
   ];
 
   overviewStats: any[] = [];

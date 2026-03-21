@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { LeaveService } from '../../../services/leave.service';
 import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
 import { finalize } from 'rxjs';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-leave',
@@ -18,6 +19,7 @@ import { finalize } from 'rxjs';
 export class LeaveComponent implements OnInit {
   title = 'Leave Dashboard';
   Math = Math;
+  Number = Number;
 
   // Stats
   totalLeavesCount = 0;
@@ -69,8 +71,16 @@ export class LeaveComponent implements OnInit {
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (data) => {
-          this.recentApplications = data;
-          this.filteredApplications = [...data];
+          this.recentApplications = data.map(leave => ({
+            ...leave,
+            status: typeof leave.status === 'string'
+              ? LeaveStatus[leave.status as keyof typeof LeaveStatus]
+              : leave.status,
+            leaveType: typeof leave.leaveType === 'string'
+              ? LeaveType[leave.leaveType as keyof typeof LeaveType]
+              : leave.leaveType
+          }));
+          this.filteredApplications = [...this.recentApplications];
           this.calculateStats();
         },
         error: (err) => {
@@ -82,13 +92,13 @@ export class LeaveComponent implements OnInit {
 
   calculateStats(): void {
     this.totalLeavesCount = this.recentApplications.length;
-    this.pendingLeavesCount = this.recentApplications.filter(l => l.status === LeaveStatus.Pending).length;
-    this.approvedLeavesCount = this.recentApplications.filter(l => l.status === LeaveStatus.Approved).length;
-    this.rejectedLeavesCount = this.recentApplications.filter(l => l.status === LeaveStatus.Rejected).length;
+    this.pendingLeavesCount = this.recentApplications.filter(l => Number(l.status) === LeaveStatus.Pending).length;
+    this.approvedLeavesCount = this.recentApplications.filter(l => Number(l.status) === LeaveStatus.Approved).length;
+    this.rejectedLeavesCount = this.recentApplications.filter(l => Number(l.status) === LeaveStatus.Rejected).length;
   }
 
-  getLeaveTypeName(type: number): string { return LeaveType[type]; }
-  getLeaveStatusName(status: number): string { return LeaveStatus[status]; }
+  getLeaveTypeName(type: any): string { return LeaveType[Number(type)] ?? 'Unknown'; }
+  getLeaveStatusName(status: any): string { return LeaveStatus[Number(status)] ?? 'Unknown'; }
 
   getStatusClass(status: number): string {
     switch (status) {
@@ -105,7 +115,26 @@ export class LeaveComponent implements OnInit {
   }
 
   exportData(): void {
-    this.triggerInfo('Export', 'Export functionality will be implemented soon.');
+    if (!this.recentApplications.length) {
+      this.triggerInfo('No Data', 'There is no leave data to export.');
+      return;
+    }
+    const rows = this.recentApplications.map((l, i) => ({
+      '#': i + 1,
+      'Employee': l.staff?.staffName || 'N/A',
+      'Designation': l.staff?.designation || 'N/A',
+      'Leave Type': this.getLeaveTypeName(l.leaveType),
+      'From': new Date(l.startDate).toLocaleDateString(),
+      'To': new Date(l.endDate).toLocaleDateString(),
+      'Reason': l.reason,
+      'Status': this.getLeaveStatusName(l.status),
+      'Applied Date': l.appliedDate ? new Date(l.appliedDate).toLocaleDateString() : 'N/A',
+      'Admin Remarks': l.adminRemarks || ''
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Leave Report');
+    XLSX.writeFile(wb, `Leave_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
   }
 
   viewDetails(leave: Leave): void {

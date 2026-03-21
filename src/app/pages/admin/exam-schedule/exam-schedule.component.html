@@ -1,28 +1,45 @@
+<!-- ═════════════════════════════════════
+     MAIN UI CONTAINERS
+═════════════════════════════════════ -->
+
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
   <!-- ══════════════ PAGE WRAPPER ══════════════ -->
   <div class="es-page">
 
-    <!-- ── Top Bar ── -->
-    <div class="es-topbar">
-      <div class="es-topbar-left">
-        <div class="es-search-wrap">
-          <iconify-icon icon="solar:magnifer-linear" class="es-search-icon"></iconify-icon>
-          <input class="es-search-input" type="text" [(ngModel)]="searchTerm" (input)="searchExamSchedules()"
+    <!-- ── Filter Bar ── -->
+    <div class="nim-filter-bar">
+      <div class="nim-filter-left">
+        <!-- Search -->
+        <div class="nim-search-group">
+          <iconify-icon icon="solar:magnifer-linear" class="nim-search-icon"></iconify-icon>
+          <input class="nim-search-input" type="text" [(ngModel)]="searchTerm" (input)="searchExamSchedules()"
             placeholder="Search exam schedules…" />
         </div>
-        <div class="es-show-wrap">
-          <span class="es-show-label">Show</span>
-          <select class="es-show-select" [(ngModel)]="rowsPerPage" (change)="currentPage = 1; updatePagination()">
+        
+        <!-- Year Filter -->
+        <div class="nim-select-group">
+          <span class="nim-select-label">Academic Year</span>
+          <select class="nim-select-input" [(ngModel)]="yearFilter" (change)="applyFilters()">
+            <option value="">All Years</option>
+            <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+          </select>
+        </div>
+
+        <!-- Show Rows -->
+        <div class="nim-select-group">
+          <span class="nim-select-label">Show</span>
+          <select class="nim-select-input" [(ngModel)]="rowsPerPage" (change)="currentPage = 1; updatePagination()">
             <option [ngValue]="10">10</option>
             <option [ngValue]="25">25</option>
             <option [ngValue]="50">50</option>
           </select>
         </div>
       </div>
-      <button class="es-add-btn" (click)="openAddDialog()" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
-        <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon>
+
+      <button class="nim-btn-primary" (click)="openAddDialog()" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
+        <iconify-icon icon="solar:add-circle-bold-duotone" style="font-size: 20px;"></iconify-icon>
         New Schedule
       </button>
     </div>
@@ -94,6 +111,14 @@
 
         <!-- Actions -->
         <div class="es-card-actions">
+          <button type="button" class="es-action-btn print" (click)="printSchedule(sch)" title="Print Datesheet">
+            <iconify-icon icon="solar:printer-minimalistic-bold-duotone" style="pointer-events: none;"></iconify-icon>
+            <span>Print</span>
+          </button>
+          <button type="button" class="es-action-btn pdf" (click)="downloadPDF(sch)" title="Download PDF">
+            <iconify-icon icon="solar:file-download-bold-duotone" style="pointer-events: none;"></iconify-icon>
+            <span>PDF</span>
+          </button>
           <button type="button" class="es-action-btn view" (click)="openViewDialog(sch)" title="View details">
             <iconify-icon icon="solar:eye-bold-duotone" style="pointer-events: none;"></iconify-icon>
             <span>View</span>
@@ -199,20 +224,6 @@
 ═══════════════════════════════════════════ -->
 <div *ngIf="showViewDialog && selectedSchedule" class="es-overlay" (click)="closeDialog()">
   <div class="es-modal es-modal-view" (click)="$event.stopPropagation()">
-    <div class="es-modal-header">
-      <div class="es-modal-title">
-        <div class="es-modal-icon view-icon">
-          <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon>
-        </div>
-        <div>
-          <h5>Schedule Details</h5>
-          <p>Full information about this exam schedule</p>
-        </div>
-      </div>
-      <button class="es-modal-close" (click)="closeDialog()">
-        <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
-      </button>
-    </div>
 
     <div class="es-modal-body">
       <div class="es-view-name-banner">
@@ -239,16 +250,33 @@
           </span>
         </div>
       </div>
+
+      <!-- Data Verification Table -->
+      <div class="es-view-standards" style="margin-top: 25px; border-top: 1px solid #eee; padding-top: 20px;">
+        <h6 style="font-weight: 800; margin-bottom: 15px; color: #800000;">Classes & Subjects</h6>
+        <div *ngFor="let std of selectedSchedule.examScheduleStandards" style="margin-bottom: 20px;">
+          <p style="font-weight: 700; margin-bottom: 8px;">Class: {{ std.standardName }}</p>
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered" style="font-size: 13px;">
+              <thead class="bg-light">
+                <tr><th>Date</th><th>Subject</th></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ex of std.examSubjects">
+                  <td>{{ ex.examDate | date:'dd-MM-yyyy' }}</td>
+                  <td>{{ ex.subjectName }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div *ngIf="!selectedSchedule.examScheduleStandards || selectedSchedule.examScheduleStandards.length === 0" 
+             style="text-align: center; color: #999; font-style: italic;">
+          (No class/subject data found in this schedule)
+        </div>
+      </div>
     </div>
 
-    <div class="es-modal-footer">
-      <button class="es-btn-secondary" (click)="closeDialog()">Close</button>
-      <button class="es-btn-primary" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])"
-        (click)="openEditDialog(selectedSchedule); closeDialog()">
-        <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
-        Edit Schedule
-      </button>
-    </div>
   </div>
 </div>
 

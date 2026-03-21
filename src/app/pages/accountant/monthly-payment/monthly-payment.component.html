@@ -75,7 +75,13 @@
     </div>
 
     <div class="fee-card-body">
-      <div class="table-wrapper">
+      <!-- Premium Skeleton Loading -->
+      <div *ngIf="loading && !isProcessing" class="sk-table-container animate-fade-in border-0 p-0 mb-0">
+        <div class="sk-table-header sk-shimmer mb-16"></div>
+        <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
+      </div>
+      
+      <div class="table-wrapper" *ngIf="!loading">
         <table class="fee-table">
           <thead>
             <tr>

@@ -492,6 +492,59 @@ select.field-input {
 .text-green { color: #10b981 !important; }
 .text-info { color: #3b82f6 !important; }
 
+/* ========================
+   PAGINATION
+======================== */
+.pagination-wrap {
+    padding: 16px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f1f5f9;
+}
+
+.pagination-info {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.pagination-btns {
+    display: flex;
+    gap: 6px;
+}
+
+.page-link-premium {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-link-premium:hover:not(.disabled) {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.page-link-premium.active {
+    background: #800000;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(128, 0, 0, 0.3);
+}
+
+.page-link-premium.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
     .fee-card-header {
@@ -602,4 +655,55 @@ select.field-input {
 @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
 @keyframes scaleUpModal { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes spin { to { transform: rotate(360deg); } }
-@keyframes float { 0% , 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes float { 0% , 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+/* ============================================================
+   SKELETON LOADING STYLES
+   ============================================================ */
+.sk-shimmer {
+    background: linear-gradient(90deg, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.6) 50%, 
+        rgba(255,255,255,0) 100%);
+    background-size: 200% 100%;
+    animation: sk-shimmer-ani 1.5s infinite;
+    background-color: #f0f2f5;
+}
+
+@keyframes sk-shimmer-ani {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.sk-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid var(--card-border);
+}
+
+.sk-title {
+    height: 30px;
+    width: 250px;
+    border-radius: 8px;
+}
+
+.sk-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; gap: 30px;
+}
+
+.sk-p-field {
+    height: 70px;
+    border-radius: 12px;
+}
+
+.sk-header {
+    height: 50px;
+    border-radius: 12px;
+}
+
+.sk-table-row {
+    height: 60px;
+    border-radius: 10px;
+}

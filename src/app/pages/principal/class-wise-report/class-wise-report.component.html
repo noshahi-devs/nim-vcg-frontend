@@ -1,8 +1,8 @@
 <div class="dashboard-main-body">
 
   <!-- ══════ Page Header ══════ -->
-  <div class="page-header-glass">
-    <h4>Class Attendance Report</h4>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <app-breadcrumb [title]="title" [icon]="'solar:document-text-bold-duotone'"></app-breadcrumb>
     <button class="btn-refresh-glass" (click)="loadReport()" *ngIf="selectedClassId">
       <iconify-icon icon="solar:refresh-linear"></iconify-icon> Refresh
     </button>
@@ -94,9 +94,34 @@
   <div class="table-glass-container" *ngIf="!isLoading && reportData.length">
     <div class="table-glass-header">
       <h5>Attendance Details</h5>
-      <span class="result-count">
-        Showing <b>{{ reportData.length }}</b> students
-      </span>
+      
+      <div class="d-flex align-items-center gap-2">
+        <!-- Export Actions -->
+        <button class="btn-add" (click)="exportExcel()" [disabled]="isLoading"
+          style="background: linear-gradient(135deg, #10b981, #059669);">
+          <iconify-icon icon="mdi:file-excel" class="text-white text-xl me-1"></iconify-icon>
+          Excel
+        </button>
+        <button class="btn-add" (click)="exportPdf()" [disabled]="isLoading"
+          style="background: linear-gradient(135deg, #f43f5e, #e11d48);">
+          <iconify-icon icon="mdi:file-pdf-box" class="text-white text-xl me-1"></iconify-icon>
+          PDF
+        </button>
+        <button class="btn-add" (click)="printReport()" [disabled]="isLoading"
+          style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+          <iconify-icon icon="mdi:printer" class="text-white text-xl me-1"></iconify-icon>
+          Print
+        </button>
+
+        <!-- Pagination Filter (Right Side) -->
+        <div class="table-filter-glass">
+          <span class="text-sm fw-600 text-slate-500">Show</span>
+          <select class="form-select entries-select" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+            <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+          </select>
+          <span class="text-sm fw-600 text-slate-500">records</span>
+        </div>
+      </div>
     </div>
     <div class="table-responsive">
       <table class="premium-table">
@@ -109,7 +134,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let row of reportData; let i = index" style="animation: fadeInUp 0.4s ease-out both"
+          <tr *ngFor="let row of paginatedData; let i = index" style="animation: fadeInUp 0.4s ease-out both"
             [style.animation-delay]="i * 0.04 + 's'">
             <td class="ps-4">
               <span class="roll-badge">{{ row.rollNo || '---' }}</span>
@@ -145,6 +170,26 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- ══════ Pagination Controls ══════ -->
+    <div class="es-pagination-glass" *ngIf="paginatedData.length > 0">
+      <div class="showing-text">
+        Showing <b>{{ (currentPage - 1) * pageSize + 1 }}</b> to 
+        <b>{{ Math.min(currentPage * pageSize, reportData.length) }}</b> of <b>{{ reportData.length }}</b> entries
+      </div>
+      <div class="page-controls">
+        <button class="btn-page-nav" [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">
+          <iconify-icon icon="solar:alt-arrow-left-line-duotone"></iconify-icon>
+        </button>
+        <button *ngFor="let p of getPageNumbers()" class="btn-page-num" [class.active]="p === currentPage"
+          [disabled]="p === '...'" (click)="p !== '...' ? currentPage = +p : null">
+          {{ p }}
+        </button>
+        <button class="btn-page-nav" [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">
+          <iconify-icon icon="solar:alt-arrow-right-line-duotone"></iconify-icon>
+        </button>
+      </div>
     </div>
   </div>
 

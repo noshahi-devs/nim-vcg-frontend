@@ -7,7 +7,7 @@ import { Staff } from '../../../Models/staff';
 import { Attendance, AttendanceType } from '../../../Models/attendance';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AuthService } from '../../../SecurityModels/auth.service';
-import { forkJoin } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-staff-attendance',
@@ -26,7 +26,7 @@ export class StaffAttendanceComponent implements OnInit {
 
   // Staff Data
   staffMembers: (Staff & { status?: string; remarks?: string })[] = [];
-  staffLoaded = false;
+  loading = false;
 
   // Permissions
   canMarkAttendance = false;
@@ -71,7 +71,8 @@ export class StaffAttendanceComponent implements OnInit {
   }
 
   loadStaff(): void {
-    this.attendanceService.getDailyStaffAttendance(this.selectedDate).subscribe({
+    this.loading = true;
+    this.attendanceService.getDailyStaffAttendance(this.selectedDate).pipe(finalize(() => this.loading = false)).subscribe({
       next: (data: any[]) => {
         // Map the backend report flat data back into staff array
         this.staffMembers = data.map(record => ({
@@ -82,7 +83,6 @@ export class StaffAttendanceComponent implements OnInit {
           remarks: record.remarks || ''
         })) as any[];
 
-        this.staffLoaded = true;
       },
       error: (err) => {
         this.triggerError('Error', 'Unable to load staff data');
@@ -150,7 +150,7 @@ export class StaffAttendanceComponent implements OnInit {
 
   resetForm(): void {
     this.staffMembers = [];
-    this.staffLoaded = false;
+    this.loading = false;
     this.setTodayDate();
     this.loadStaff();
   }

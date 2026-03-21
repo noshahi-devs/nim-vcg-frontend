@@ -130,10 +130,21 @@
         </div>
     </div>
 
-    <!-- Loading State -->
-    <div class="glass-card text-center p-5 animate-fade-in" *ngIf="loading">
-        <div class="spinner-border text-primary mb-3" role="status"></div>
-        <p class="text-muted">Loading configuration data...</p>
+    <!-- Premium Skeleton Loading -->
+    <div *ngIf="loading" class="skeleton-container animate-fade-in">
+        <div class="sk-card sk-form-skeleton mb-24">
+            <div class="sk-title sk-shimmer mb-20"></div>
+            <div class="sk-row">
+                <div class="sk-p-field sk-shimmer"></div>
+                <div class="sk-p-field sk-shimmer"></div>
+                <div class="sk-p-field sk-shimmer"></div>
+            </div>
+        </div>
+
+        <div class="sk-card sk-table-skeleton">
+            <div class="sk-header sk-shimmer mb-16"></div>
+            <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
+        </div>
     </div>
 
     <!-- ===================== LIST SECTION (SHOWING ASSIGNMENTS) ===================== -->
@@ -145,10 +156,18 @@
                     <p class="card-subtitle-premium">Currently assigned subjects across the institution</p>
                 </div>
             </div>
-            <div class="search-wrapper">
-                <i class="ri-search-line search-icon"></i>
-                <input type="text" class="search-input" placeholder="Search teacher or class..."
-                    [(ngModel)]="searchTerm">
+            <div class="d-flex align-items-center gap-3">
+                <select class="field-input py-1 px-2" style="width: auto; height: 38px; font-size: 13px; border-radius: 10px;" 
+                    [(ngModel)]="rowsPerPage" (change)="currentPage = 1; updatePagination()">
+                    <option [value]="10">10 Rows</option>
+                    <option [value]="25">25 Rows</option>
+                    <option [value]="50">50 Rows</option>
+                </select>
+                <div class="search-wrapper">
+                    <i class="ri-search-line search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search teacher or class..."
+                        [(ngModel)]="searchTerm" (input)="currentPage = 1; updatePagination()">
+                </div>
             </div>
         </div>
 
@@ -164,7 +183,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="table-row" *ngFor="let group of groupedAssignments">
+                        <tr class="table-row" *ngFor="let group of paginatedGroupedAssignments; let idx = index">
                             <td>
                                 <div class="user-info">
                                     <div class="avatar-placeholder avatar-sm">
@@ -197,6 +216,31 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Premium Pagination -->
+            <div class="pagination-wrap" *ngIf="groupedAssignments.length > 0">
+                <span class="pagination-info">
+                    Displaying {{ (currentPage - 1) * rowsPerPage + 1 }} -
+                    {{ Math.min(currentPage * rowsPerPage, groupedAssignments.length) }}
+                    of {{ groupedAssignments.length }}
+                </span>
+
+                <div class="pagination-btns">
+                    <div class="page-link-premium" [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+                        <iconify-icon icon="ep:arrow-left"></iconify-icon>
+                    </div>
+
+                    <div *ngFor="let page of getPageNumbers()" class="page-link-premium" [class.active]="currentPage === page"
+                        (click)="changePage(page)">
+                        {{ page }}
+                    </div>
+
+                    <div class="page-link-premium" [class.disabled]="currentPage === totalPages"
+                        (click)="changePage(currentPage + 1)">
+                        <iconify-icon icon="ep:arrow-right"></iconify-icon>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

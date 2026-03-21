@@ -31,7 +31,7 @@ export class RoleService {
       Role: roles,
       UserName: userName
     };
-    return this.http.post(`${this.apiUrl}/AssignRole`, payload);
+    return this.http.post(`${this.apiUrl}/api/users/AssignRole`, payload);
   }
 
     // Remove role is handled by AssignRole by passing updated list in this API

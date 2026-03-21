@@ -12,6 +12,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import Swal from '../../../swal';
+import { finalize, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-monthly-payment',
@@ -41,6 +42,7 @@ export class MonthlyPaymentComponent implements OnInit {
   rowsPerPage = 10;
   currentPage = 1;
   totalPages = 1;
+  loading = false;
 
   showAddEditDialog = false;
   showViewDialog = false;
@@ -79,9 +81,8 @@ export class MonthlyPaymentComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.initPaymentForm(); // Initialize the new payment form
-    this.loadAll();
-    this.loadPaymentHistory(); // Changed from loadPayments
+    this.initPaymentForm(); 
+    this.loadInitialData(); // New consolidated loader
     this.loadSchoolInfo();
   }
 
@@ -160,6 +161,28 @@ export class MonthlyPaymentComponent implements OnInit {
   }
 
   /* ---------- LOADERS ---------- */
+  loadInitialData() {
+    this.loading = true;
+    forkJoin({
+      students: this.commonService.getAllStudents(),
+      standards: this.commonService.getAllStandards(),
+      fees: this.commonService.getAllFees(),
+      months: this.commonService.getAllAcademicMonths(),
+      history: this.paymentService.getAllMonthlyPayments()
+    }).pipe(finalize(() => this.loading = false)).subscribe({
+      next: (res) => {
+        this.students = res.students || [];
+        this.standards = res.standards || [];
+        this.fees = res.fees || [];
+        this.availableFees = [...this.fees];
+        this.academicMonths = res.months || [];
+        this.payments = res.history || [];
+        this.applyFilters();
+      },
+      error: () => this.showFeedback('error', 'Sync Failed', 'Unable to synchronize payment records with the server.')
+    });
+  }
+
   loadAll() {
     this.commonService.getAllStudents().subscribe(r => this.students = r);
     this.commonService.getAllStandards().subscribe({
@@ -174,7 +197,8 @@ export class MonthlyPaymentComponent implements OnInit {
   }
 
   loadPaymentHistory() {
-    this.paymentService.getAllMonthlyPayments().subscribe({
+    this.loading = true;
+    this.paymentService.getAllMonthlyPayments().pipe(finalize(() => this.loading = false)).subscribe({
       next: res => { this.payments = res || []; this.applyFilters(); },
       error: () => this.showFeedback('error', 'Error', 'Failed to load payment history.')
     });

@@ -351,11 +351,17 @@
     transform: translateY(0);
 }
 
-/* ── Table ── */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .premium-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 13.5px;
+    min-width: 1000px;
 }
 
 .premium-table thead tr {
@@ -364,12 +370,13 @@
 }
 
 .premium-table th {
-    padding: 14px 22px;
-    font-size: 11px;
+    padding: 14px 20px;
+    font-size: 11.5px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #94a3b8;
+    white-space: nowrap;
 }
 
 .premium-table tbody tr {
@@ -386,9 +393,10 @@
 }
 
 .premium-table td {
-    padding: 14px 22px;
+    padding: 14px 20px;
     vertical-align: middle;
     color: #334155;
+    white-space: nowrap;
 }
 
 /* Staff info cell */
@@ -469,7 +477,7 @@
 .status-toggle-group {
     display: flex;
     gap: 6px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .status-toggle-btn {
@@ -637,15 +645,6 @@
         align-items: flex-start;
     }
 
-    .status-toggle-group {
-        flex-direction: column;
-    }
-
-    .status-toggle-btn {
-        width: 100%;
-        text-align: center;
-    }
-
     .pagination-bar {
         flex-direction: column;
         align-items: center;
@@ -659,12 +658,6 @@
 
     .stat-card-glass {
         padding: 16px;
-    }
-
-    .staff-info-cell {
-        flex-direction: column;
-        text-align: center;
-        gap: 6px;
     }
 }
 

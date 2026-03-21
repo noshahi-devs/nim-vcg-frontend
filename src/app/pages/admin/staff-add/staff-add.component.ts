@@ -228,22 +228,38 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
 
     this.authService.register(loginPayload).subscribe({
       next: (authRes) => {
-        this.staffService.addStaff(staffData).subscribe({
-          next: () => {
-            this.isProcessing = false;
-            this.showFeedback('success', 'Onboarding Successful!', 'Staff profile and login account have been created securely.', true);
-          },
-          error: (err) => {
-            this.isProcessing = false;
-            console.error('❌ Full error:', err);
-            this.showFeedback('error', 'Profile Sync Failed', 'The account was created but the profile sync encountered an error.');
-          }
-        });
+        this.createStaffProfile(staffData);
       },
       error: (authErr) => {
-        this.isProcessing = false;
+        // If user already exists (400) or registration fails, try to proceed if appropriate
         console.error('Auth Registration error:', authErr);
-        this.showFeedback('error', 'Login Creation Failed', 'We could not create the security credentials for this staff member.');
+
+        // Use a more descriptive check for existing users
+        const isDuplicateEmail = authErr.status === 400 &&
+          (JSON.stringify(authErr.error).includes('DuplicateEmail') ||
+            JSON.stringify(authErr.error).includes('already taken'));
+
+        if (isDuplicateEmail) {
+          console.warn('User already exists, attempting to link to this existing account');
+          this.createStaffProfile(staffData);
+        } else {
+          this.isProcessing = false;
+          this.showFeedback('error', 'Login Creation Failed', 'Security credentials could not be created or verified.');
+        }
+      }
+    });
+  }
+
+  private createStaffProfile(staffData: any) {
+    this.staffService.addStaff(staffData).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.showFeedback('success', 'Onboarding Successful!', 'Staff profile and login account have been processed securely.', true);
+      },
+      error: (err) => {
+        this.isProcessing = false;
+        console.error('❌ Profile creation error:', err);
+        this.showFeedback('error', 'Profile Sync Failed', 'The account is ready but the profile details could not be saved.');
       }
     });
   }

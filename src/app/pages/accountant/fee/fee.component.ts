@@ -6,6 +6,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { FeeTypeService } from '../../../services/feetype.service';
 import { FeeType } from '../../../Models/feetype';
 import Swal from '../../../swal';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-fee',
@@ -35,6 +36,7 @@ export class FeeComponent implements OnInit {
   showViewDialog = false;
   isEditMode = false;
   selectedFeeType!: FeeType;
+  loading = false;
 
   // Premium Modal State
   showFeedbackModal = false;
@@ -62,7 +64,10 @@ export class FeeComponent implements OnInit {
   }
 
   loadFeeTypes() {
-    this.feeTypeService.getFeeTypes().subscribe({
+    this.loading = true;
+    this.feeTypeService.getFeeTypes().pipe(
+      finalize(() => this.loading = false)
+    ).subscribe({
       next: (res) => {
         this.feeTypes = res || [];
         this.filteredFeeTypes = [...this.feeTypes];

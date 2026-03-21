@@ -39,7 +39,8 @@
       </div>
       <div class="stat-info">
         <div class="stat-label">Unmarked</div>
-        <div class="stat-value text-warning">{{ students.length - getStats().present - getStats().absent }}</div>
+        <div class="stat-value text-warning">{{ students.length - getStats().present - getStats().absent -
+          getStats().leave }}</div>
       </div>
     </div>
   </div>
@@ -48,7 +49,7 @@
   <div class="filter-glass">
     <div class="row align-items-end gy-3">
       <div class="col-md-4">
-        <label class="form-label">Select Standard</label>
+        <label class="form-label">Class</label>
         <div class="input-group">
           <span class="input-group-text">
             <iconify-icon icon="solar:folder-bold-duotone" class="text-primary"></iconify-icon>
@@ -73,7 +74,7 @@
       </div>
 
       <div class="col-md-4 d-flex justify-content-end align-items-end gap-2 flex-wrap"
-        *ngIf="studentsLoaded && students.length && canMarkAttendance">
+        *ngIf="(!loading && students.length > 0) && canMarkAttendance">
         <button class="btn-action-outline success" (click)="markAllPresent()" [disabled]="isProcessing">
           <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
           All Present
@@ -87,7 +88,7 @@
   </div>
 
   <!-- ══════ Table Section ══════ -->
-  <div class="table-glass-container" *ngIf="studentsLoaded && students.length">
+  <div class="table-glass-container" *ngIf="loading || students.length > 0">
     <div class="table-glass-header">
       <h5>Daily Attendance Sheet</h5>
       <div class="action-bar-glass" *ngIf="canMarkAttendance">
@@ -108,17 +109,25 @@
           <tr>
             <th class="ps-4">Roll No</th>
             <th>Student Name</th>
-            <th class="text-center">Verification</th>
             <th class="text-end pe-4">Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let student of students; let i = index" style="animation: fadeInUp 0.4s ease-out both"
-            [style.animation-delay]="i * 0.04 + 's'">
+          <!-- Premium Skeleton Loading -->
+          <tr *ngIf="loading">
+            <td colspan="3" class="p-0 border-0">
+              <div class="sk-table-container animate-fade-in border-0 p-24 mb-0">
+                <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngFor="let student of students; let i = index" [hidden]="loading"
+            style="animation: fadeInUp 0.4s ease-out both" [style.animation-delay]="i * 0.04 + 's'">
             <!-- Roll No -->
             <td class="ps-4">
               <span class="id-badge">
-                {{ student.enrollmentNo || 'N/A' }}
+                {{ student.enrollmentNo || student.admissionNo || 'N/A' }}
               </span>
             </td>
             <!-- Student name -->
@@ -133,19 +142,13 @@
                 </div>
               </div>
             </td>
-            <!-- Verification -->
-            <td class="text-center">
-              <iconify-icon *ngIf="student.status === 'Present'" icon="solar:verified-check-bold"
-                class="verify-icon present"></iconify-icon>
-              <iconify-icon *ngIf="student.status === 'Absent'" icon="solar:danger-bold"
-                class="verify-icon absent"></iconify-icon>
-              <span *ngIf="!student.status" class="verify-pending">Pending...</span>
-            </td>
             <!-- Status toggles -->
             <td class="text-end pe-4">
               <div class="status-toggle-group justify-content-end">
                 <button class="status-toggle-btn" [class.active-present]="student.status === 'Present'"
                   (click)="student.status = 'Present'" [disabled]="!canMarkAttendance || isProcessing">Present</button>
+                <button class="status-toggle-btn" [class.active-leave]="student.status === 'Leave'"
+                  (click)="student.status = 'Leave'" [disabled]="!canMarkAttendance || isProcessing">Leave</button>
                 <button class="status-toggle-btn" [class.active-absent]="student.status === 'Absent'"
                   (click)="student.status = 'Absent'" [disabled]="!canMarkAttendance || isProcessing">Absent</button>
               </div>
@@ -157,7 +160,7 @@
   </div>
 
   <!-- ══════ Empty State ══════ -->
-  <div *ngIf="studentsLoaded && !students.length" class="empty-state-glass">
+  <div *ngIf="!loading && !students.length && selectedClass" class="empty-state-glass">
     <div class="empty-icon-circle">
       <iconify-icon icon="solar:info-square-bold-duotone"></iconify-icon>
     </div>
@@ -183,7 +186,8 @@
 
     <h3 class="pm-title">Incomplete Attendance</h3>
     <p class="pm-subtitle">
-      Some students have not been marked Present or Absent. Are you sure you want to continue and save the current attendance records?
+      Some students have not been marked Present or Absent. Are you sure you want to continue and save the current
+      attendance records?
     </p>
 
     <div class="pm-actions">

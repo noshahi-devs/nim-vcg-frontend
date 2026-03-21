@@ -108,9 +108,10 @@
                   </div>
 
                   <div class="col-lg-5 col-md-12">
-                    <div class="position-relative">
+                    <div class="position-relative" [class.opacity-50]="isHalfDay">
                       <input type="date" class="form-control form-control-lg radius-8 bg-base border-neutral-200"
-                        [ngModel]="toDate" (ngModelChange)="toDate = $event; onDateChange()" name="toDate" required />
+                        [ngModel]="toDate" (ngModelChange)="toDate = $event; onDateChange()" name="toDate"
+                        [disabled]="isHalfDay" required />
                       <span class="position-absolute text-xs fw-semibold text-secondary-light bg-base px-1"
                         style="top: -8px; left: 12px;">End Date</span>
                     </div>
@@ -118,20 +119,53 @@
                 </div>
               </div>
 
+              <!-- Half Day Toggle -->
+              <div class="col-12">
+                <div class="d-flex align-items-center gap-16 px-16 py-12 radius-8 border border-neutral-200 bg-base"
+                  style="cursor: pointer;" (click)="isHalfDay = !isHalfDay; onHalfDayToggle()">
+                  <!-- Custom styled toggle -->
+                  <div class="position-relative" style="width: 44px; height: 24px; flex-shrink: 0;">
+                    <div [style.background]="isHalfDay ? '#800000' : '#e2e8f0'"
+                      style="width:44px; height:24px; border-radius:12px; transition:background 0.3s;"
+                      class="d-flex align-items-center px-1">
+                      <div [style.transform]="isHalfDay ? 'translateX(20px)' : 'translateX(0)'"
+                        style="width:18px; height:18px; background:white; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.2); transition:transform 0.3s;">
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="fw-semibold text-primary-light d-block" style="font-size:14px;">Half Day Leave</span>
+                    <span class="text-xs text-secondary-light">Only the start date will be used &mdash; duration counts as 0.5 day</span>
+                  </div>
+                  <div class="ms-auto">
+                    <span class="badge px-12 py-6 radius-8 fw-bold" [style.background]="isHalfDay ? '#800000' : '#f1f5f9'" [style.color]="isHalfDay ? '#fff' : '#64748b'" style="font-size:11px;">
+                      {{ isHalfDay ? 'ENABLED' : 'DISABLED' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               <!-- Calculated Total Days Banner -->
               <div class="col-12" *ngIf="totalDays > 0">
                 <div
-                  class="alert alert-success d-flex align-items-center gap-3 radius-8 border-success-200 bg-success-50"
+                  class="alert d-flex align-items-center gap-3 radius-8"
+                  [class.alert-success]="!isHalfDay"
+                  [class.alert-warning]="isHalfDay"
+                  [style.border-color]="isHalfDay ? '#fbbf24' : ''"
+                  [style.background]="isHalfDay ? '#fefce8' : ''"
                   role="alert">
                   <div
                     class="w-40-px h-40-px rounded-circle bg-white d-flex justify-content-center align-items-center shadow-sm">
-                    <iconify-icon icon="solar:check-circle-bold-duotone"
-                      class="text-success-600 text-xl"></iconify-icon>
+                    <iconify-icon [icon]="isHalfDay ? 'solar:sun-bold-duotone' : 'solar:check-circle-bold-duotone'"
+                      [class]="isHalfDay ? 'text-warning text-xl' : 'text-success-600 text-xl'"></iconify-icon>
                   </div>
                   <div>
-                    <h6 class="mb-0 text-success-600 fw-bold">{{ totalDays }} Day(s) Selected</h6>
-                    <span class="text-sm text-success-600 opacity-75">This is the total duration of your requested time
-                      off.</span>
+                    <h6 class="mb-0 fw-bold" [class.text-success-600]="!isHalfDay" [class.text-warning]="isHalfDay">
+                      {{ totalDays }} Day(s) Selected{{ isHalfDay ? ' (Half Day)' : '' }}
+                    </h6>
+                    <span class="text-sm opacity-75" [class.text-success-600]="!isHalfDay" [class.text-warning]="isHalfDay">
+                      {{ isHalfDay ? 'You are applying for half a day off on ' + fromDate + '.' : 'This is the total duration of your requested time off.' }}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -9,11 +9,12 @@ import { Fee } from '../../../Models/fee';
 import { FeeType } from '../../../Models/feetype';
 import { Standard } from '../../../Models/standard';
 import Swal from '../../../swal';
+import { finalize, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-generate-fee-invoice',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, BreadcrumbComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './generate-fee-invoice.component.html',
   styleUrls: ['./generate-fee-invoice.component.css']
@@ -39,6 +40,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   rowsPerPage = 10;
   currentPage = 1;
   totalPages = 1;
+  loading = false;
 
   // ===== MODAL =====
   showFeeDialog = false;
@@ -78,8 +80,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
       dueDate: new FormControl('', Validators.required)
     });
 
-    this.loadDropdowns();
-    this.loadFees();
+    this.loadData();
   }
 
   /* ---------- LOADERS ---------- */
@@ -87,9 +88,27 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     this.feeTypeService.getFeeTypes().subscribe(res => this.feeTypes = res);
     this.standardService.getStandards().subscribe(res => this.standards = res);
   }
+  
+  loadData() {
+    this.loading = true;
+    forkJoin({
+      fees: this.feeService.getAllFees(),
+      feeTypes: this.feeTypeService.getFeeTypes(),
+      standards: this.standardService.getStandards()
+    }).pipe(finalize(() => this.loading = false)).subscribe({
+      next: (res) => {
+        this.feeTypes = res.feeTypes || [];
+        this.standards = res.standards || [];
+        this.fees = res.fees || [];
+        this.applyFilters();
+      },
+      error: () => this.showFeedback('error', 'Error', 'Failed to load fee records.')
+    });
+  }
 
   loadFees() {
-    this.feeService.getAllFees().subscribe({
+    this.loading = true;
+    this.feeService.getAllFees().pipe(finalize(() => this.loading = false)).subscribe({
       next: res => { this.fees = res; this.applyFilters(); },
       error: () => this.showFeedback('error', 'Error', 'Failed to load fee records.')
     });

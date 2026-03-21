@@ -84,10 +84,10 @@
     </div>
 
     <div class="fee-card-body">
-      <!-- Loading State -->
-      <div *ngIf="loading && !isProcessing" class="text-center py-40">
-        <div class="spinner-border text-primary" role="status"></div>
-        <p class="text-secondary-light mt-12">Synchronizing data...</p>
+      <!-- Premium Skeleton Loading -->
+      <div *ngIf="loading && !isProcessing" class="sk-table-container animate-fade-in">
+        <div class="sk-table-header sk-shimmer"></div>
+        <div class="sk-table-row sk-shimmer" *ngFor="let i of [1,2,3,4,5]"></div>
       </div>
 
       <!-- No Data State -->
@@ -104,7 +104,6 @@
             <tr>
               <th style="width: 60px;">ID</th>
               <th>Class Identity</th>
-              <th>Assigned Teacher</th>
               <th class="text-center">Subjects</th>
               <th class="text-center">Sections</th>
               <th class="text-center">Students</th>
@@ -126,12 +125,6 @@
                     <span class="class-name">{{ cls.standardName }}</span>
                     <span class="class-code">{{ cls.standardCode || 'No Code' }}</span>
                   </div>
-                </div>
-              </td>
-              <td>
-                <div class="teacher-tag">
-                  <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
-                  <span>{{ cls.classTeacher || 'Unassigned' }}</span>
                 </div>
               </td>
               <td class="text-center">
@@ -246,17 +239,7 @@
         </div>
       </div>
 
-      <!-- Teacher Detail -->
-      <div class="detail-section">
-        <span class="detail-label">
-          <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
-          Supervising Teacher
-        </span>
-        <div class="d-flex align-items-center gap-3">
-          <div class="fw-bold text-dark fs-5">{{ selectedClass.classTeacher || 'No Teacher Assigned' }}</div>
-          <span class="badge-premium badge-green ms-auto">{{ selectedClass.status || 'Active' }}</span>
-        </div>
-      </div>
+      <!-- Subjects Tag Cloud -->
 
       <!-- Subjects Tag Cloud -->
       <div class="detail-section">

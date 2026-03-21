@@ -51,6 +51,24 @@
       </a>
     </div>
 
+    <!-- ── Premium Skeleton Loading ── -->
+    <div *ngIf="loading" class="skeleton-grid">
+      <div class="sk-card" *ngFor="let item of [1,2,3,4,5,6]">
+        <div class="sk-shimmer sk-badge"></div>
+        <div class="sk-shimmer sk-icon"></div>
+        <div class="sk-shimmer sk-title"></div>
+        <div class="sk-meta-grid">
+          <div class="sk-shimmer sk-meta-pill"></div>
+          <div class="sk-shimmer sk-meta-pill"></div>
+        </div>
+        <div class="sk-actions">
+          <div class="sk-shimmer sk-btn"></div>
+          <div class="sk-shimmer sk-btn"></div>
+          <div class="sk-shimmer sk-btn" style="flex: 0 0 38px;"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── Empty State ── -->
     <div class="es-empty" *ngIf="filteredClassList.length === 0 && !loading">
       <div class="es-empty-icon">

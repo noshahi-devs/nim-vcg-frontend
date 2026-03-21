@@ -32,8 +32,16 @@
       </button>
     </div>
 
+    <!-- Table Skeleton -->
+    <div class="fee-card-body pt-0" *ngIf="loading && !isProcessing">
+      <div class="sk-table-container border-0 px-0 animate-fade-in">
+        <div class="sk-table-header sk-shimmer mb-16"></div>
+        <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
+      </div>
+    </div>
+
     <!-- Table -->
-    <div class="fee-card-body">
+    <div class="fee-card-body" *ngIf="!loading">
       <div class="table-wrapper">
         <table class="fee-table">
           <thead>

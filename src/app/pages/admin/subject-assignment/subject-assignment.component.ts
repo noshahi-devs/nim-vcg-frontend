@@ -1,10 +1,14 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
 import { StaffService } from '../../../services/staff.service';
 import { StandardService } from '../../../services/standard.service';
 import { SectionService } from '../../../services/section.service';
 import { SubjectService } from '../../../services/subject.service';
+import { ThemeService } from '../../../services/theme.service';
+import { AuthService } from '../../../SecurityModels/auth.service';
+import { AppConfigService } from '../../../services/app-config.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -60,6 +64,13 @@ export class SubjectAssignmentComponent implements OnInit {
   errorMessage: string | null = null;
   searchTerm: string = '';
 
+  // Pagination State
+  paginatedGroupedAssignments: GroupedAssignment[] = [];
+  rowsPerPage = 10;
+  currentPage = 1;
+  totalPages = 1;
+  Math = Math;
+
   constructor(
   // ... existing constructor ...
     private assignmentService: SubjectAssignmentService,
@@ -80,58 +91,40 @@ export class SubjectAssignmentComponent implements OnInit {
 
     console.log("Loading Subject Assignment initial data...");
 
-    // Load existing assignments
-    this.assignmentService.getAllAssignments().subscribe({
-      next: (res) => {
-        console.log("Assignments loaded:", res);
-        this.assignments = res || [];
+    // Wait for all critical data
+    forkJoin({
+      assignments: this.assignmentService.getAllAssignments(),
+      teachers: this.staffService.getAllStaffs(),
+      classes: this.standardService.getStandards(),
+      subjects: this.subjectService.getSubjects()
+    }).pipe(
+      finalize(() => {
         this.loading = false;
-      },
-      error: (err) => {
-        console.error("Failed to load assignments", err);
-        this.errorMessage = "Failed to load existing assignments.";
-        this.loading = false;
-        Swal.fire('Error', 'Failed to load existing assignments. Please check connectivity.', 'error');
-      }
-    });
+      })
+    ).subscribe({
+      next: (res: any) => {
+        console.log("Subject Assignment Data loaded:", res);
+        
+        // Assignments
+        this.assignments = res.assignments || [];
+        this.updatePagination();
 
-    // Load Teachers
-    this.staffService.getAllStaffs().subscribe({
-      next: (res) => {
-        console.log("Staff loaded:", res);
-        this.teachers = (res || []).filter((s: any) => 
+        // Teachers (Filter by designation)
+        this.teachers = (res.teachers || []).filter((s: any) => 
           s.designation === 'Teacher' || 
           (typeof s.designation === 'string' && s.designation.toLowerCase() === 'teacher')
         );
-        console.log("Filtered Teachers:", this.teachers);
-      },
-      error: (err) => {
-        console.error("Failed to load teachers", err);
-        Swal.fire('Error', 'Failed to load teachers.', 'error');
-      }
-    });
 
-    // Load Classes
-    this.standardService.getStandards().subscribe({
-      next: (res) => {
-        console.log("Classes loaded:", res);
-        this.classes = res || [];
-      },
-      error: (err) => {
-        console.error("Failed to load classes", err);
-        Swal.fire('Error', 'Failed to load classes.', 'error');
-      }
-    });
+        // Classes
+        this.classes = res.classes || [];
 
-    // Load All Subjects for the dynamic rows
-    this.subjectService.getSubjects().subscribe({
-      next: (res) => {
-        console.log("Subjects loaded:", res);
-        this.subjectList = res || [];
+        // Subjects
+        this.subjectList = res.subjects || [];
       },
       error: (err) => {
-        console.error("Failed to load subjects", err);
-        Swal.fire('Error', 'Failed to load subjects.', 'error');
+        console.error("Failed to load initial data", err);
+        this.errorMessage = "Failed to synchronize with server.";
+        Swal.fire('Error', 'Failed to load initial data. Please check connectivity.', 'error');
       }
     });
   }
@@ -322,5 +315,30 @@ export class SubjectAssignmentComponent implements OnInit {
 
   closeFeedback() {
     this.showFeedbackModal = false;
+  }
+
+  // --- Pagination Methods ---
+  updatePagination() {
+    const grouped = this.groupedAssignments;
+    this.totalPages = Math.ceil(grouped.length / this.rowsPerPage) || 1;
+    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+    
+    const start = (this.currentPage - 1) * this.rowsPerPage;
+    this.paginatedGroupedAssignments = grouped.slice(start, start + this.rowsPerPage);
+  }
+
+  changePage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePagination();
+    }
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    for (let i = 1; i <= this.totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 }

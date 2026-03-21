@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +7,9 @@ import { ExamScheduleVm } from '../../../Models/exam-schedule-vm';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { finalize } from 'rxjs';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-exam-schedule',
@@ -14,7 +17,8 @@ import { finalize } from 'rxjs';
   templateUrl: './exam-schedule.component.html',
   styleUrls: ['./exam-schedule.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, BreadcrumbComponent]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, BreadcrumbComponent],
+  providers: [DatePipe]
 })
 export class ExamScheduleComponent implements OnInit {
   title = "Exam Schedule";
@@ -22,11 +26,13 @@ export class ExamScheduleComponent implements OnInit {
   examSchedules: ExamScheduleVm[] = [];
   filteredExamSchedules: ExamScheduleVm[] = [];
   paginatedExamSchedules: ExamScheduleVm[] = [];
+  years: string[] = [];
 
   rowsPerPage = 10;
   currentPage = 1;
   totalPages = 1;
   searchTerm = "";
+  yearFilter = "";
   loading = false;
 
   form!: FormGroup;
@@ -35,6 +41,8 @@ export class ExamScheduleComponent implements OnInit {
   isEditMode = false;
   selectedSchedule: ExamScheduleVm | null = null;
   public Math: any = Math;
+  today: Date = new Date();
+
 
   // ── Premium Modal State ──
   isProcessing = false;
@@ -47,7 +55,12 @@ export class ExamScheduleComponent implements OnInit {
   confirmMessage = '';
   scheduleToDelete: ExamScheduleVm | null = null;
 
-  constructor(private service: ExamScheduleService, public authService: AuthService) { }
+  constructor(
+    private service: ExamScheduleService,
+    public authService: AuthService,
+    private cdr: ChangeDetectorRef,
+    private datePipe: DatePipe
+  ) { }
 
   ngOnInit(): void { this.initForm(); this.loadExamSchedules(); }
 
@@ -75,14 +88,48 @@ export class ExamScheduleComponent implements OnInit {
     this.service.GetExamSchedules()
       .pipe(finalize(() => this.loading = false))
       .subscribe({
-        next: (res) => { this.examSchedules = res || []; this.filteredExamSchedules = [...this.examSchedules]; this.updatePagination(); },
+        next: (res) => { 
+          this.examSchedules = res || []; 
+          this.extractYears();
+          this.filteredExamSchedules = [...this.examSchedules]; 
+          this.updatePagination(); 
+        },
         error: (err) => { console.error(err); this.examSchedules = []; this.filteredExamSchedules = []; this.updatePagination(); }
       });
   }
 
+  extractYears() {
+    const yearSet = new Set<string>();
+    this.examSchedules.forEach(sch => {
+      if (sch.examYear) yearSet.add(sch.examYear.toString());
+    });
+    this.years = Array.from(yearSet).sort((a, b) => b.localeCompare(a));
+  }
+
   searchExamSchedules() {
-    this.filteredExamSchedules = this.examSchedules.filter(x => x.examScheduleName?.toLowerCase().includes(this.searchTerm.toLowerCase()));
-    this.currentPage = 1; this.updatePagination();
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    let filtered = [...this.examSchedules];
+
+    // Search filter
+    if (this.searchTerm && this.searchTerm.trim() !== '') {
+      const term = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(sch => 
+        sch.examScheduleName?.toLowerCase().includes(term) ||
+        sch.examYear?.toString().toLowerCase().includes(term)
+      );
+    }
+
+    // Year filter
+    if (this.yearFilter && this.yearFilter !== '') {
+      filtered = filtered.filter(sch => sch.examYear?.toString() === this.yearFilter);
+    }
+
+    this.filteredExamSchedules = filtered;
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
   updatePagination() {
@@ -157,5 +204,191 @@ export class ExamScheduleComponent implements OnInit {
     return Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
   }
 
+  printSchedule(schedule: ExamScheduleVm) {
+    this.isProcessing = true;
+    this.service.GetExamScheduleById(schedule.examScheduleId)
+      .pipe(finalize(() => this.isProcessing = false))
+      .subscribe({
+        next: (fullSchedule) => {
+          this.executeIframePrint(fullSchedule || schedule);
+        },
+        error: (err) => {
+          console.error(err);
+          this.executeIframePrint(schedule);
+        }
+      });
+  }
+
+  private executeIframePrint(sch: ExamScheduleVm) {
+    const printWindow = document.createElement('iframe');
+    printWindow.style.position = 'fixed';
+    printWindow.style.right = '0';
+    printWindow.style.bottom = '0';
+    printWindow.style.width = '0';
+    printWindow.style.height = '0';
+    printWindow.style.border = '0';
+    document.body.appendChild(printWindow);
+
+    const doc = printWindow.contentWindow?.document;
+    if (!doc) return;
+
+    const todayStr = this.datePipe.transform(new Date(), 'dd MMM yyyy hh:mm a') || '';
+    const startDateStr = this.datePipe.transform(sch.startDate, 'dd MMM') || 'N/A';
+    const endDateStr = this.datePipe.transform(sch.endDate, 'dd MMM yyyy') || 'N/A';
+
+    let standardsHtml = '';
+    (sch.examScheduleStandards || []).forEach(std => {
+      let subjectsHtml = '';
+      (std.examSubjects || []).forEach(ex => {
+        subjectsHtml += `
+          <tr>
+            <td>${this.datePipe.transform(ex.examDate, 'dd-MM-yyyy')}</td>
+            <td><strong>${this.datePipe.transform(ex.examDate, 'EEEE')}</strong></td>
+            <td><strong>${ex.subjectName}</strong><br><small>${ex.examTypeName}</small></td>
+            <td style="font-family: monospace;">${ex.examStartTime} - ${ex.examEndTime}</td>
+          </tr>
+        `;
+      });
+
+      standardsHtml += `
+        <div style="margin-bottom: 40px; break-inside: avoid;">
+          <h3 style="border-left: 5px solid #800000; padding-left: 10px; text-transform: uppercase;">Class: ${std.standardName}</h3>
+          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <thead>
+              <tr style="background: #f8fafc;">
+                <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Date</th>
+                <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Day</th>
+                <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Subject</th>
+                <th style="border: 1px solid #cbd5e1; padding: 10px; text-align: left;">Timing</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${subjectsHtml || '<tr><td colspan="4" style="text-align:center; padding: 20px;">No subjects scheduled.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      `;
+    });
+
+    doc.open();
+    doc.write(`
+      <html>
+        <head>
+          <title>Datesheet - ${sch.examScheduleName}</title>
+          <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #000; padding: 20px; }
+            h1 { color: #800000; margin: 0; font-size: 28px; }
+            .header { text-align: center; border-bottom: 3px double #000; padding-bottom: 20px; margin-bottom: 30px; }
+            .title-strap { background: #f1f5f9; padding: 15px; text-align: center; border-radius: 8px; margin-bottom: 40px; }
+            table td, table th { border: 1px solid #e2e8f0; padding: 10px; font-size: 13px; }
+            @page { size: A4 portrait; margin: 15mm; }
+            .footer { margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; font-size: 10px; color: #666; text-align: center; }
+            .signature-row { display: flex; justify-content: space-around; margin-top: 40px; margin-bottom: 60px; }
+            .sig-box { border-bottom: 1.5px solid #000; width: 150px; text-align: center; font-weight: bold; padding-top: 40px; font-size: 12px; }
+          </style>
+        </head>
+        <body onload="window.print()">
+          <div class="header">
+            <h1>VISION COLLEGE GOJRA</h1>
+            <p>Quality Education for a Brighter Future</p>
+            <p><strong>Academic Session: ${sch.examYear || 'N/A'}</strong></p>
+          </div>
+          <div class="title-strap">
+            <h2 style="margin:0; font-size: 18px;">EXAMINATION DATESHEET: ${sch.examScheduleName.toUpperCase()}</h2>
+            <p style="margin: 5px 0 0; font-size: 12px;">Duration: ${startDateStr} - ${endDateStr}</p>
+          </div>
+          <div class="content">
+            ${standardsHtml || '<p style="text-align:center;">No schedule details available.</p>'}
+          </div>
+          <div class="signature-row">
+            <div class="sig-box">Examination Controller</div>
+            <div class="sig-box">Principal Signature</div>
+          </div>
+          <div class="footer">
+            Generated on ${todayStr} | System: Vision College Gojra Enterprise
+          </div>
+        </body>
+      </html>
+    `);
+    doc.close();
+
+    // Cleanup after print dialog closes
+    setTimeout(() => {
+      document.body.removeChild(printWindow);
+    }, 2000);
+  }
+
+  downloadPDF(schedule: ExamScheduleVm) {
+    this.isProcessing = true;
+    this.service.GetExamScheduleById(schedule.examScheduleId)
+      .pipe(finalize(() => this.isProcessing = false))
+      .subscribe({
+        next: (fullSchedule) => {
+          this.executeManualPDF(fullSchedule || schedule);
+        },
+        error: (err) => {
+          console.error(err);
+          this.executeManualPDF(schedule);
+        }
+      });
+  }
+
+  private executeManualPDF(sch: ExamScheduleVm) {
+    try {
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const todayStr = this.datePipe.transform(new Date(), 'dd MMM yyyy hh:mm a') || '';
+      
+      doc.setFontSize(22);
+      doc.setTextColor(128, 0, 0); 
+      doc.text('VISION COLLEGE GOJRA', 105, 20, { align: 'center' });
+      
+      doc.setFontSize(14);
+      doc.setTextColor(0);
+      doc.text(`DATESHEET: ${sch.examScheduleName.toUpperCase()}`, 105, 40, { align: 'center' });
+
+      let currentY = 60;
+      (sch.examScheduleStandards || []).forEach(std => {
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`Class: ${std.standardName}`, 15, currentY);
+        currentY += 5;
+
+        const subjects = (std.examSubjects || []).map(ex => [
+          this.datePipe.transform(ex.examDate, 'dd-MM-yyyy') || '',
+          this.datePipe.transform(ex.examDate, 'EEEE') || '',
+          ex.subjectName,
+          `${ex.examStartTime}-${ex.examEndTime}`
+        ]);
+
+        autoTable(doc, {
+          startY: currentY,
+          head: [['Date', 'Day', 'Subject', 'Timing']],
+          body: subjects,
+          theme: 'grid',
+          headStyles: { fillColor: [128, 0, 0] }
+        });
+        currentY = (doc as any).lastAutoTable.finalY + 15;
+      });
+
+      // Manual Blob Download to fix UUID filename issue
+      const blob = doc.output('blob');
+      const fileName = `datesheet_${sch.examScheduleName.replace(/\s+/g, '_')}.pdf`;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      this.triggerSuccess('Exported!', 'PDF has been downloaded.');
+    } catch (err) {
+      console.error(err);
+      this.triggerError('Error', 'PDF generation failed.');
+    }
+  }
+
   closeDialog() { this.showAddEditDialog = false; this.showViewDialog = false; this.selectedSchedule = null; this.form.reset(); }
+
 }

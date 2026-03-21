@@ -70,7 +70,27 @@
       </a>
     </div>
 
-    <div class="es-empty" *ngIf="filteredList.length === 0">
+    <!-- ── Premium Skeleton Loading ── -->
+    <div *ngIf="loading" class="skeleton-grid">
+      <div class="sk-card" *ngFor="let item of [1,2,3,4,5,6]">
+        <div class="sk-id-chip sk-shimmer"></div>
+        <div class="sk-avatar sk-shimmer"></div>
+        <div class="sk-title centered sk-shimmer"></div>
+        <div class="sk-meta centered sk-shimmer"></div>
+        <div class="sk-meta short centered sk-shimmer"></div>
+        <div class="sk-meta-grid mt-20">
+          <div class="sk-meta-pill sk-shimmer"></div>
+          <div class="sk-meta-pill sk-shimmer"></div>
+        </div>
+        <div class="sk-actions">
+          <div class="sk-shimmer sk-btn"></div>
+          <div class="sk-shimmer sk-btn"></div>
+          <div class="sk-shimmer sk-btn" style="flex: 0 0 38px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="es-empty" *ngIf="filteredList.length === 0 && !loading">
       <div class="es-empty-icon">
         <iconify-icon icon="solar:user-search-bold-duotone"></iconify-icon>
       </div>

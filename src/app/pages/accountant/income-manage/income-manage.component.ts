@@ -384,6 +384,7 @@ export class IncomeManageComponent implements OnInit {
   feedbackType: 'success' | 'error' | 'warning' = 'success';
   feedbackTitle = '';
   feedbackMessage = '';
+  loading = false;
 
   showDeleteDialog = false;
   itemToDeleteId: number | null = null;
@@ -412,7 +413,8 @@ export class IncomeManageComponent implements OnInit {
   }
 
   loadIncomeList(): void {
-    this.accountsService.getIncomeList().subscribe({
+    this.loading = true;
+    this.accountsService.getIncomeList().pipe(finalize(() => this.loading = false)).subscribe({
       next: (data) => {
         this.incomeList = data;
         this.applyFilters();

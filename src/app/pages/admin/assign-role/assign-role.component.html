@@ -4,7 +4,15 @@
     <div class="col-md-8 mx-auto mt-4">
         <div class="fee-card">
             <div class="fee-card-header premium-header d-flex align-items-center justify-content-between">
-                <h5 class="fw-semibold mb-0" style="color: white;">Assign Role to Staff</h5>
+                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-2" style="color: white;">
+                    <span class="header-icon-ring">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                    </span>
+                    Assign Role to Staff
+                </h5>
             </div>
 
             <div class="fee-card-body p-24">
@@ -21,7 +29,7 @@
                             <select class="field-select" [(ngModel)]="selectedStaffId">
                                 <option value="" disabled selected>Select Staff</option>
                                 <option *ngFor="let staff of staffList" [value]="staff.userId">
-                                    {{ staff.staffName }} ({{ Designation[staff.designation!] }})
+                                    {{ staff.staffName }} ({{ staff.designation }})
                                 </option>
                             </select>
                             <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -48,18 +56,64 @@
                 </div>
 
                 <div class="d-flex justify-content-end mt-32">
-                    <button class="btn-primary-gradient px-4 py-2 radius-8 d-flex align-items-center gap-2"
-                        (click)="assign()" [disabled]="!selectedStaffId || !selectedRole">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                            style="width: 20px; height: 20px;">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
+                    <button class="btn-primary-gradient px-5 py-3 radius-8 d-flex align-items-center gap-2"
+                        (click)="openConfirmModal()" [disabled]="!selectedStaffId || !selectedRole">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                            style="width:19px;height:19px;flex-shrink:0;">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
                         </svg>
                         Assign Role
                     </button>
                 </div>
 
             </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════
+     CONFIRM MODAL
+═══════════════════════════════════════════ -->
+<div class="pm-overlay" *ngIf="showConfirmModal" (click)="closeConfirmModal()">
+    <div class="pm-dialog pm-confirm" (click)="$event.stopPropagation()">
+        <div class="pm-icon-ring pm-icon-ring--warning">
+            <iconify-icon icon="solar:shield-user-bold-duotone"></iconify-icon>
+        </div>
+        <h3 class="pm-title">Confirm Role Assignment</h3>
+        <p class="pm-body">
+            You are about to assign the <strong class="pm-highlight">{{ selectedRole }}</strong> role to
+            <strong class="pm-highlight">{{ getSelectedStaffName() }}</strong>.<br>
+            <span class="pm-sub">This action will update their system access level.</span>
+        </p>
+        <div class="pm-actions">
+            <button class="pm-btn pm-btn--cancel" (click)="closeConfirmModal()">Cancel</button>
+            <button class="pm-btn pm-btn--confirm" (click)="confirmAssign()" [disabled]="isSaving">
+                <iconify-icon *ngIf="!isSaving" icon="solar:check-circle-bold-duotone"></iconify-icon>
+                <iconify-icon *ngIf="isSaving" icon="solar:refresh-bold-duotone" class="spin-icon"></iconify-icon>
+                {{ isSaving ? 'Assigning...' : 'Yes, Assign' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FEEDBACK MODAL (success / error / warning)
+═══════════════════════════════════════════ -->
+<div class="pm-overlay" *ngIf="showFeedbackModal" (click)="closeFeedback()">
+    <div class="pm-dialog" [ngClass]="'pm-' + feedbackType" (click)="$event.stopPropagation()">
+        <div class="pm-icon-ring" [ngClass]="'pm-icon-ring--' + feedbackType">
+            <iconify-icon *ngIf="feedbackType === 'success'" icon="solar:check-circle-bold-duotone"></iconify-icon>
+            <iconify-icon *ngIf="feedbackType === 'error'"   icon="solar:close-circle-bold-duotone"></iconify-icon>
+            <iconify-icon *ngIf="feedbackType === 'warning'" icon="solar:danger-triangle-bold-duotone"></iconify-icon>
+        </div>
+        <h3 class="pm-title">{{ feedbackTitle }}</h3>
+        <p class="pm-body" [innerHTML]="feedbackMessage"></p>
+        <div class="pm-actions pm-actions--center">
+            <button class="pm-btn pm-btn--ok" [ngClass]="'pm-btn--ok-' + feedbackType" (click)="closeFeedback()">
+                Got it
+            </button>
         </div>
     </div>
 </div>

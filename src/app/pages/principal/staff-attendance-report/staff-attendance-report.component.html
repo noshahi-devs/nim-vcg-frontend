@@ -64,14 +64,26 @@
   <div class="fee-card animate__animated animate__fadeIn" *ngIf="report.length">
     <div class="fee-card-header d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center gap-12">
-        <h5 class="fw-bold mb-0 text-secondary-dark">Record Details</h5>
+        <h5 class="mb-0" style="font-weight: 900; color: #0f172a; letter-spacing: -0.02em;">Record Details</h5>
         <span class="enrollment-badge text-primary-main">Summary Collected</span>
       </div>
-      <button class="btn-add" (click)="getReport()" *ngIf="selectedStaffId" [disabled]="isProcessing"
-        style="background: linear-gradient(135deg, #10b981, #059669);">
-        <iconify-icon icon="mdi:printer" class="text-white text-xl me-2"></iconify-icon>
-        <span>Print Report</span>
-      </button>
+      <div class="d-flex align-items-center gap-2" *ngIf="selectedStaffId">
+        <button class="btn-add" (click)="exportExcel()" [disabled]="isProcessing"
+          style="background: linear-gradient(135deg, #10b981, #059669);">
+          <iconify-icon icon="mdi:file-excel" class="text-white text-xl me-1"></iconify-icon>
+          Excel
+        </button>
+        <button class="btn-add" (click)="exportPdf()" [disabled]="isProcessing"
+          style="background: linear-gradient(135deg, #f43f5e, #e11d48);">
+          <iconify-icon icon="mdi:file-pdf-box" class="text-white text-xl me-1"></iconify-icon>
+          PDF
+        </button>
+        <button class="btn-add" (click)="printReport()" [disabled]="isProcessing"
+          style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+          <iconify-icon icon="mdi:printer" class="text-white text-xl me-1"></iconify-icon>
+          Print
+        </button>
+      </div>
     </div>
 
     <div class="fee-card-body p-0">

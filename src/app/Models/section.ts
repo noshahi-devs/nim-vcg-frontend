@@ -7,6 +7,6 @@ export interface Section {
     sectionCode: string;
     staffId?: number;
     classTeacher?: Staff;
-    roomNo: string;
-    capacity: number;
+    roomNo?: string;
+    capacity?: number;
 }

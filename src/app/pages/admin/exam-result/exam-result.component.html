@@ -68,11 +68,12 @@
     </div>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="loading" class="text-center py-5">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-3 text-secondary-light fw-medium">Analyzing student performance...</p>
+  <!-- Premium Skeleton Loading -->
+  <div *ngIf="loading" class="sk-table-container animate-fade-in mb-24">
+    <div class="sk-table-header sk-shimmer mb-16"></div>
+    <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
   </div>
+
 
   <!-- Empty State: Initial (nothing searched yet) -->
   <div *ngIf="!loading && !hasSearched" class="fee-card mb-24">

@@ -10,6 +10,7 @@ import Swal from '../../../swal';
 import { finalize, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { RouterModule } from '@angular/router';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-my-leaves',
@@ -52,6 +53,10 @@ export class MyLeavesComponent implements OnInit {
   feedbackType: 'success' | 'error' | 'warning' = 'success';
   feedbackTitle = '';
   feedbackMessage = '';
+
+  // Detail Modal
+  showDetailModal = false;
+  selectedLeave: Leave | null = null;
 
   constructor(
     private leaveService: LeaveService,
@@ -99,6 +104,54 @@ export class MyLeavesComponent implements OnInit {
           this.showFeedback('error', 'Error', 'Failed to load your leave history');
         }
       });
+  }
+
+  refreshData(): void {
+    this.loadMyLeaves();
+    this.showFeedback('success', 'Refreshed!', 'Your leave history has been updated.');
+  }
+
+  exportData(): void {
+    if (!this.filteredLeaves || this.filteredLeaves.length === 0) {
+      this.showFeedback('warning', 'No Data', 'There is no data to export.');
+      return;
+    }
+
+    // Creating a clean copy of the data for export
+    const dataToExport = this.filteredLeaves.map((l, index) => {
+      // Ensure we have valid dates
+      const startDate = l.startDate ? new Date(l.startDate).toLocaleDateString() : 'N/A';
+      const endDate = l.endDate ? new Date(l.endDate).toLocaleDateString() : 'N/A';
+      const appliedDate = l.appliedDate ? new Date(l.appliedDate).toLocaleDateString() : 'N/A';
+      
+      return {
+        'S.No': index + 1,
+        'Leave Type': this.getLeaveTypeName(l.leaveType),
+        'Start Date': startDate,
+        'End Date': endDate,
+        'Days': this.getDurationDays(l.startDate, l.endDate),
+        'Reason': l.reason || '',
+        'Status': this.getLeaveStatusName(l.status),
+        'Applied Date': appliedDate,
+        'Admin Remarks': l.adminRemarks || ''
+      };
+    });
+
+    try {
+      const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'My Leaves History');
+
+      // Use a safer filename format
+      const timestamp = new Date().toISOString().split('T')[0];
+      const fileName = `My_Leaves_Report_${timestamp}.xlsx`;
+      
+      XLSX.writeFile(wb, fileName);
+      this.showFeedback('success', 'Exported!', 'Your leave history has been downloaded successfully.');
+    } catch (error) {
+      console.error('Export failed:', error);
+      this.showFeedback('error', 'Export Failed', 'An error occurred while generating the Excel file.');
+    }
   }
 
   applyFilters(): void {
@@ -259,6 +312,16 @@ export class MyLeavesComponent implements OnInit {
 
   closeFeedback() {
     this.showFeedbackModal = false;
+  }
+
+  viewDetails(leave: Leave): void {
+    this.selectedLeave = leave;
+    this.showDetailModal = true;
+  }
+
+  closeDetailModal(): void {
+    this.showDetailModal = false;
+    this.selectedLeave = null;
   }
 }
 

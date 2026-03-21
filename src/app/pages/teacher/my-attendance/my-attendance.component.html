@@ -2,108 +2,193 @@
     <app-breadcrumb [title]="title"></app-breadcrumb>
 
     <div class="row gy-4">
-        <!-- MARK ATTENDANCE LEFT -->
-        <div class="col-xxl-4">
-            <div class="card h-100 radius-24 border-0 shadow-sm overflow-hidden marking-card">
-                <div class="card-header bg-gradient-primary p-32 text-center text-white">
-                    <iconify-icon icon="solar:fingerprint-bold-duotone" class="text-6xl mb-16"></iconify-icon>
-                    <h4 class="mb-4 fw-bold">Daily Check-In</h4>
-                    <p class="opacity-75 mb-0">{{ today | date:'fullDate' }}</p>
+        <!-- DAILY CHECK-IN CARD -->
+        <div class="col-12">
+            <div class="fee-card animate-fade-in shadow-premium">
+                <div class="fee-card-header bg-maroon-gradient p-24 d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="modal-icon-premium bg-white-subtle">
+                            <iconify-icon icon="mdi:fingerprint" class="text-white text-3xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <h4 class="text-white fw-bold mb-0">Daily Attendance</h4>
+                            <p class="text-white opacity-75 mb-0 text-sm">{{ today | date:'EEEE, MMM d, y' }}</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="card-body p-32 text-center">
-                    <div *ngIf="alreadyMarked; else markBtnArea" class="animate__animated animate__zoomIn">
+                <div class="fee-card-body p-32 text-center">
+                    <div *ngIf="alreadyMarked; else markBtnArea" class="animate-zoom-in">
                         <ng-container *ngIf="checkedOut; else checkOutArea">
-                            <div class="check-success-icon mx-auto mb-24" style="background:#fff9e6; border-color:#fff; box-shadow:0 10px 20px rgba(255,191,0,0.15);">
-                                <iconify-icon icon="solar:check-circle-bold-duotone"
-                                    style="color:#b28900;"></iconify-icon>
+                            <div class="premium-status-ring mx-auto mb-24 success-ring-pulse">
+                                <iconify-icon icon="mdi:check-circle" class="text-success-600"></iconify-icon>
                             </div>
-                            <h5 class="fw-bold mb-8" style="color:#b28900;">Attendance Completed!</h5>
+                            <h5 class="fw-bold mb-8 text-success-700">Attendance Completed!</h5>
                             <p class="text-secondary-light">You have successfully checked out for today.</p>
-                            <div class="badge px-24 py-12 radius-12 text-md mt-16" style="background:#fff9e6; color:#b28900;">
+                            <div class="badge-premium success-badge mt-16 px-24 py-12 radius-12">
+                                <iconify-icon icon="mdi:history" class="me-8"></iconify-icon>
                                 Status: Present (Clocked Out)
                             </div>
                         </ng-container>
                         <ng-template #checkOutArea>
-                            <div class="check-success-icon mx-auto mb-24" style="background:#fffbea; border-color:#fff; box-shadow:0 10px 20px rgba(212,175,55,0.15);">
-                                <iconify-icon icon="solar:user-check-bold-duotone"
-                                    style="color:#d4af37;"></iconify-icon>
+                            <div class="premium-status-ring mx-auto mb-24 warning-ring-pulse">
+                                <iconify-icon icon="mdi:account-check" class="text-warning-600"></iconify-icon>
                             </div>
-                            <h5 class="fw-bold mb-8" style="color:#d4af37;">Checked In!</h5>
-                            <p class="text-secondary-light mb-24">You are currently checked in. Don't forget to check
-                                out when you leave.</p>
+                            <h5 class="fw-bold mb-8 text-warning-700">Checked In!</h5>
+                            <p class="text-secondary-light mb-24">You are currently at work. Don't forget to check out
+                                later.</p>
 
-                            <button (click)="markCheckOut()"
-                                class="btn px-32 py-12 radius-8 fw-semibold animate__animated animate__pulse animate__infinite premium-maroon-checkout-btn">
-                                <iconify-icon icon="solar:logout-3-bold-duotone" class="me-8"></iconify-icon>
-                                Confirm Check-Out
-                            </button>
+                            <div class="checkout-footer d-flex justify-content-center">
+                                <button (click)="markCheckOut()"
+                                    class="premium-btn btn-maroon-checkout animate-pulse-infinite px-48">
+                                    <iconify-icon icon="mdi:clock-check-outline" class="text-2xl"></iconify-icon>
+                                    Confirm Check-Out
+                                </button>
+                            </div>
                         </ng-template>
                     </div>
 
                     <ng-template #markBtnArea>
-                        <p class="text-secondary-light mb-32">
-                            Please click the button below to record your attendance for today.
+                        <p class="text-secondary-light mb-32 lh-lg">
+                            Ready to start your day?<br>
+                            Click the button below to record your presence for <b>today</b>.
                         </p>
-                        <button (click)="markAttendance()"
-                            class="btn-checkin animate__animated animate__pulse animate__infinite">
-                            <iconify-icon icon="solar:login-3-bold-duotone"></iconify-icon>
-                            Confirm Check-In
-                        </button>
-                        <p class="text-xs text-secondary-light mt-24 italic">
-                            * Your location and IP address may be recorded.
+                        <div class="d-flex justify-content-center">
+                            <button (click)="markAttendance()"
+                                class="premium-btn btn-yellow-gradient animate-pulse-infinite px-48">
+                                <iconify-icon icon="mdi:login" class="text-2xl"></iconify-icon>
+                                Confirm Check-In
+                            </button>
+                        </div>
+                        <p class="text-xs text-secondary-light mt-32 font-italic opacity-75">
+                            <iconify-icon icon="mdi:map-marker-radius" class="me-1"></iconify-icon>
+                            Your attendance is recorded with timestamp and IP address.
                         </p>
                     </ng-template>
                 </div>
             </div>
         </div>
 
-        <!-- ATTENDANCE HISTORY RIGHT -->
-        <div class="col-xxl-8">
-            <div class="card h-100 radius-24 border-0 shadow-sm history-card">
-                <div class="card-header border-bottom bg-white p-24 d-flex align-items-center justify-content-between">
-                    <h5 class="fw-bold mb-0">Recent Attendance History</h5>
-                    <div class="badge px-16 py-8 radius-8" style="background:#fff9e6; color:#b28900;">
-                        This Month
+        <!-- ATTENDANCE HISTORY LIST -->
+        <div class="col-12">
+            <div class="fee-card animate-fade-in shadow-premium">
+                <div class="fee-card-header d-flex align-items-center justify-content-between">
+                    <div class="header-left">
+                        <div class="modal-icon-premium" style="background: linear-gradient(135deg, #800000, #fbbf24);">
+                            <iconify-icon icon="solar:calendar-date-bold-duotone"
+                                style="font-size: 1.4rem; color: #fff;"></iconify-icon>
+                        </div>
+                        <div>
+                            <h4 class="card-title-premium">Attendance History</h4>
+                            <p class="card-subtitle-premium">Your detailed presence record for this month</p>
+                        </div>
+                    </div>
+
+                    <div class="show-entries d-none d-md-flex">
+                        <span>Show</span>
+                        <select class="entries-select" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+                            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">{{ size }}</option>
+                        </select>
+                        <span class="ms-1">Records</span>
                     </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table premium-table mb-0">
+
+                <div class="fee-card-body p-0">
+                    <div class="table-wrapper w-100 overflow-x-auto">
+                        <table class="fee-table w-100">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Day</th>
-                                    <th>Check-In Time</th>
-                                    <th>Check-Out Time</th>
-                                    <th>Hours</th>
-                                    <th>Status</th>
+                                    <th class="ps-32">Transaction Date</th>
+                                    <th>Weekday</th>
+                                    <th class="text-center">Check-In</th>
+                                    <th class="text-center">Check-Out</th>
+                                    <th class="text-center">Total Duration</th>
+                                    <th class="pe-32 text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let item of history; let i = index">
-                                    <td class="fw-bold">{{ item.date | date:'mediumDate' }}</td>
-                                    <td class="text-secondary-light">{{ item.date | date:'EEEE' }}</td>
-                                    <td>{{ (item.date | date:'shortTime') || '--:--' }}</td>
-                                    <td>{{ item.checkOutTime ? (item.checkOutTime | date:'shortTime') : '--:--' }}</td>
-                                    <td>{{ item.checkOutTime ? calculateHours(item.date, item.checkOutTime) : '--' }}
+                                <tr class="table-row" *ngFor="let item of paginatedHistory">
+                                    <td class="ps-32">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="date-chip">
+                                                <span class="day">{{ item.date | date:'dd' }}</span>
+                                                <span class="month">{{ item.date | date:'MMM' }}</span>
+                                            </div>
+                                            <span class="fw-bold text-secondary-700 d-none d-sm-inline">{{ item.date |
+                                                date:'yyyy' }}</span>
+                                        </div>
                                     </td>
                                     <td>
-                                        <span class="badge" [class.bg-success-100]="item.isPresent"
-                                            [class.text-success-600]="item.isPresent"
-                                            [class.bg-danger-100]="!item.isPresent"
-                                            [class.text-danger-600]="!item.isPresent">
-                                            {{ item.isPresent ? 'Present' : 'Absent' }}
+                                        <span class="text-secondary-light">{{ item.date | date:'EEEE' }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="time-readings text-success-600">
+                                            <iconify-icon icon="mdi:login-variant"
+                                                class="d-none d-sm-inline"></iconify-icon>
+                                            {{ (item.date | date:'hh:mm a') || '--' }}
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="time-readings" [class.text-danger-600]="item.checkOutTime">
+                                            <iconify-icon icon="mdi:logout-variant"
+                                                class="d-none d-sm-inline"></iconify-icon>
+                                            {{ (item.checkOutTime | date:'hh:mm a') || '--' }}
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-neutral-100 text-neutral-600 fw-bold radius-8 px-12">
+                                            {{ item.checkOutTime ? calculateHours(item.date, item.checkOutTime) : '--'
+                                            }}
                                         </span>
+                                    </td>
+                                    <td class="pe-32 text-center">
+                                        <div class="status-indicator" [class.present]="item.isPresent"
+                                            [class.absent]="!item.isPresent">
+                                            <iconify-icon
+                                                [icon]="item.isPresent ? 'mdi:check-circle' : 'mdi:close-circle'"></iconify-icon>
+                                            <span class="d-none d-sm-inline">{{ item.isPresent ? 'Present' : 'Absent'
+                                                }}</span>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr *ngIf="history.length === 0">
-                                    <td colspan="4" class="text-center py-40 text-secondary-light">
-                                        No records found for the current period.
+                                    <td colspan="6" class="text-center py-60">
+                                        <div class="empty-state">
+                                            <iconify-icon icon="mdi:clipboard-text-off-outline"
+                                                class="text-6xl text-neutral-300 mb-16"></iconify-icon>
+                                            <p class="text-neutral-400 fw-medium">No attendance records found for this
+                                                user.</p>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Premium Pagination -->
+                    <div class="pagination-wrap flex-column flex-sm-row gap-3">
+                        <span class="pagination-info text-center text-sm-start">
+                            Showing <b>{{ history.length > 0 ? (currentPage - 1) * pageSize + 1 : 0 }}</b> -
+                            <b>{{ Math.min(currentPage * pageSize, history.length) }}</b> of <b>{{ history.length }}</b>
+                            entries
+                        </span>
+
+                        <div class="pagination-btns justify-content-center">
+                            <button class="page-link-premium" [disabled]="currentPage === 1"
+                                (click)="changePage(currentPage - 1)">
+                                <iconify-icon icon="mdi:chevron-left"></iconify-icon>
+                            </button>
+
+                            <button *ngFor="let page of getPageNumbers()" class="page-link-premium"
+                                [class.active]="currentPage === page" (click)="changePage(page)">
+                                {{ page }}
+                            </button>
+
+                            <button class="page-link-premium" [disabled]="currentPage === totalPages"
+                                (click)="changePage(currentPage + 1)">
+                                <iconify-icon icon="mdi:chevron-right"></iconify-icon>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -111,22 +196,16 @@
     </div>
 </div>
 
-<!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+<!-- UNIFIED FEEDBACK MODAL -->
 <div class="premium-overlay" *ngIf="showFeedbackModal">
     <div class="premium-modal feedback-modal">
-        <div class="pm-sparkles">
-            <div class="pm-sparkle sp1"></div>
-            <div class="pm-sparkle sp2"></div>
-            <div class="pm-sparkle sp3"></div>
-        </div>
-
         <div class="pm-icon-ring" [ngClass]="{
              'success-ring': feedbackType === 'success',
              'danger-ring': feedbackType === 'error',
              'warning-ring': feedbackType === 'warning'
            }">
-            <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
-                          feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+            <iconify-icon [icon]="feedbackType === 'success' ? 'mdi:check-circle' : 
+                          feedbackType === 'error' ? 'mdi:alert-circle' : 'mdi:information'"
                 style="font-size: 38px; color: #fff;"></iconify-icon>
         </div>
 
@@ -139,7 +218,7 @@
                   'pm-error-btn': feedbackType === 'error',
                   'pm-warning-btn': feedbackType === 'warning'
                 }" (click)="closeFeedback()">
-                Acknowledge
+                Great, thanks!
             </button>
         </div>
     </div>
@@ -148,14 +227,8 @@
 <!-- CONFIRMATION MODAL -->
 <div class="premium-overlay" *ngIf="showConfirmModal">
     <div class="premium-modal feedback-modal">
-        <div class="pm-sparkles">
-            <div class="pm-sparkle sp1"></div>
-            <div class="pm-sparkle sp2"></div>
-            <div class="pm-sparkle sp3"></div>
-        </div>
-
         <div class="pm-icon-ring" [ngClass]="confirmActionType === 'checkIn' ? 'success-ring' : 'warning-ring'">
-            <iconify-icon [icon]="confirmActionType === 'checkIn' ? 'solar:login-3-bold-duotone' : 'solar:logout-3-bold-duotone'"
+            <iconify-icon [icon]="confirmActionType === 'checkIn' ? 'mdi:login' : 'mdi:logout'"
                 style="font-size: 38px; color: #fff;"></iconify-icon>
         </div>
 
@@ -163,22 +236,23 @@
         <p class="pm-subtitle" [innerHTML]="confirmMessage"></p>
 
         <div class="pm-actions">
-            <button class="pm-btn pm-cancel" (click)="closeConfirmModal()">Cancel</button>
-            <button class="pm-btn pm-save" (click)="confirmAction()" [ngClass]="confirmActionType === 'checkIn' ? 'pm-success-btn' : 'pm-warning-btn'" style="color: white; border: none; box-shadow: 0 4px 14px rgba(0,0,0,0.2);">
-                Confirm
+            <button class="pm-btn pm-cancel" (click)="closeConfirmModal()">Not now</button>
+            <button class="pm-btn pm-save" (click)="confirmAction()"
+                [ngClass]="confirmActionType === 'checkIn' ? 'pm-success-btn' : 'pm-warning-btn'">
+                Confirm action
             </button>
         </div>
     </div>
 </div>
 
-<!-- PROCESSING / LOADING OVERLAY -->
+<!-- PROCESSING OVERLAY -->
 <div class="premium-overlay processing-overlay" *ngIf="isProcessing">
-    <div class="processing-card">
-        <div class="loader-ring">
+    <div class="processing-card shadow-premium">
+        <div class="loader-ring maroon-loader">
             <div class="loader-inner"></div>
         </div>
         <div class="processing-content">
-            <h4 class="pc-title">Securely Processing</h4>
+            <h4 class="pc-title">Securing Data</h4>
             <p class="pc-subtitle">Recording your attendance...</p>
         </div>
     </div>

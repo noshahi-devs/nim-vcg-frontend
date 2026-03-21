@@ -6,7 +6,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { SectionService } from '../../../services/section.service';
 import { StaffService } from '../../../services/staff.service';
 import { StandardService } from '../../../services/standard.service';
-import { Staff } from '../../../Models/staff';
+import { Staff, Designation } from '../../../Models/staff';
 import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
 import { finalize } from 'rxjs';
@@ -45,15 +45,16 @@ export class SectionAddComponent implements OnInit {
     this.sectionForm = this.fb.group({
       className: ['', Validators.required],
       sectionCode: ['', Validators.required],
-      staffId: [null, Validators.required],
-      roomNo: ['', Validators.required],
-      capacity: [null, [Validators.required, Validators.min(1)]]
+      staffId: [null, Validators.required]
     });
   }
 
   ngOnInit(): void {
     this.staffService.getAllStaffs().subscribe(data => {
-      this.teachers = data || [];
+      this.teachers = (data || []).filter(s => 
+        s.designation === Designation.Teacher || 
+        s.designation?.toString().toLowerCase() === 'teacher'
+      );
     });
 
     this.standardService.getStandards().subscribe(data => {
@@ -107,9 +108,7 @@ export class SectionAddComponent implements OnInit {
       sectionName: `Section ${formValue.sectionCode} - ${formValue.className}`,
       className: formValue.className,
       sectionCode: formValue.sectionCode,
-      staffId: formValue.staffId,
-      roomNo: formValue.roomNo,
-      capacity: formValue.capacity
+      staffId: formValue.staffId
     };
 
     this.isSaving = true;

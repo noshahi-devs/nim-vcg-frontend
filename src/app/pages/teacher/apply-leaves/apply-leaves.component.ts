@@ -38,6 +38,7 @@ export class ApplyLeavesComponent implements OnInit {
 
   // Calculated field
   totalDays = 0;
+  isHalfDay = false;
   submitting = false;
 
   // Premium Modal States
@@ -88,6 +89,11 @@ export class ApplyLeavesComponent implements OnInit {
   }
 
   onDateChange(): void {
+    if (this.isHalfDay && this.fromDate) {
+      this.toDate = this.fromDate;
+      this.totalDays = 0.5;
+      return;
+    }
     if (this.fromDate && this.toDate) {
       const from = new Date(this.fromDate);
       const to = new Date(this.toDate);
@@ -100,6 +106,15 @@ export class ApplyLeavesComponent implements OnInit {
       }
     } else {
       this.totalDays = 0;
+    }
+  }
+
+  onHalfDayToggle(): void {
+    if (this.isHalfDay) {
+      this.toDate = this.fromDate;
+      this.totalDays = this.fromDate ? 0.5 : 0;
+    } else {
+      this.onDateChange();
     }
   }
 
@@ -146,7 +161,7 @@ export class ApplyLeavesComponent implements OnInit {
       leaveType: LeaveType[this.leaveTypeStr as keyof typeof LeaveType],
       startDate: this.fromDate,
       endDate: this.toDate,
-      reason: this.reason,
+      reason: this.isHalfDay ? `${this.reason} (Half Day)` : this.reason,
       status: LeaveStatus.Pending
     };
 
@@ -173,6 +188,7 @@ export class ApplyLeavesComponent implements OnInit {
     this.toDate = '';
     this.reason = '';
     this.totalDays = 0;
+    this.isHalfDay = false;
   }
 
   showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {

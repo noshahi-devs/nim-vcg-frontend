@@ -14,15 +14,6 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon green">
-          <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
-        </div>
-        <div class="stat-info">
-          <span class="stat-label">Total Capacity</span>
-          <span class="stat-value">{{ totalCapacity }}</span>
-        </div>
-      </div>
-      <div class="stat-card">
         <div class="stat-icon orange">
           <iconify-icon icon="solar:user-speak-bold-duotone"></iconify-icon>
         </div>
@@ -51,10 +42,19 @@
       </a>
     </div>
 
-    <!-- ── Loading State ── -->
-    <div *ngIf="loading" class="text-center py-40">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+    <!-- ── Premium Skeleton Loading ── -->
+    <div *ngIf="loading" class="skeleton-grid">
+      <div class="sk-card" *ngFor="let item of [1,2,3,4,5,6]">
+        <div class="sk-shimmer sk-badge"></div>
+        <div class="sk-shimmer sk-icon"></div>
+        <div class="sk-shimmer sk-title"></div>
+        <div class="sk-shimmer sk-meta"></div>
+        <div class="sk-shimmer sk-meta short"></div>
+        <div class="sk-actions">
+          <div class="sk-shimmer sk-btn"></div>
+          <div class="sk-shimmer sk-btn"></div>
+          <div class="sk-shimmer sk-btn" style="flex: 0 0 38px;"></div>
+        </div>
       </div>
     </div>
 
@@ -89,14 +89,6 @@
           <div class="es-meta-item">
             <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
             <span>Teacher: {{ sectionItem.classTeacher?.staffName || 'N/A' }}</span>
-          </div>
-          <div class="es-meta-item">
-            <iconify-icon icon="solar:point-on-map-bold-duotone"></iconify-icon>
-            <span>Room: {{ sectionItem.roomNo }}</span>
-          </div>
-          <div class="es-meta-item">
-            <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
-            <span>Capacity: {{ sectionItem.capacity }}</span>
           </div>
         </div>
 
@@ -147,14 +139,6 @@
           <div class="receipt-item">
             <span class="label">Class Teacher</span>
             <span class="value text-yellow-premium">{{ selectedSection.classTeacher?.staffName || 'Not Assigned' }}</span>
-          </div>
-          <div class="receipt-item">
-            <span class="label">Capacity</span>
-            <span class="value">{{ selectedSection.capacity }} Students</span>
-          </div>
-          <div class="receipt-item">
-            <span class="label">Room No</span>
-            <span class="value">{{ selectedSection.roomNo }}</span>
           </div>
           <div class="receipt-divider"></div>
           <div class="receipt-footer">
@@ -218,23 +202,13 @@
               Management Details
             </div>
             <div class="row">
-              <div class="col-md-6 mb-16">
+              <div class="col-md-12 mb-16">
                 <label class="form-label">Class Teacher</label>
                 <select class="form-select premium-input" [(ngModel)]="selectedSection.staffId" name="staffId">
                   <option [ngValue]="null">Not Assigned</option>
                   <option *ngFor="let s of allStaff" [value]="s.staffId">{{ s.staffName }}</option>
                 </select>
               </div>
-              <div class="col-md-6 mb-16">
-                <label class="form-label">Room No</label>
-                <input type="text" class="form-control premium-input" [(ngModel)]="selectedSection.roomNo"
-                  name="roomNo" />
-              </div>
-            </div>
-            <div class="mb-0">
-              <label class="form-label">Capacity</label>
-              <input type="number" class="form-control premium-input" [(ngModel)]="selectedSection.capacity"
-                name="capacity" />
             </div>
           </div>
         </form>

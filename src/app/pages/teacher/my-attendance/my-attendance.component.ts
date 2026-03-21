@@ -1,5 +1,6 @@
 import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { AttendanceService } from '../../../services/attendance.service';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
@@ -10,12 +11,13 @@ import Swal from '../../../swal';
     selector: 'app-my-attendance',
     standalone: true,
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    imports: [CommonModule, BreadcrumbComponent],
+    imports: [CommonModule, BreadcrumbComponent, FormsModule],
     templateUrl: './my-attendance.component.html',
     styleUrls: ['./my-attendance.component.css']
 })
 export class MyAttendanceComponent implements OnInit {
     title = 'My Attendance';
+    Math = Math;
     today = new Date();
     alreadyMarked = false;
     checkedOut = false;
@@ -31,6 +33,13 @@ export class MyAttendanceComponent implements OnInit {
     feedbackTitle = '';
     feedbackMessage = '';
     onAcknowledgeFeedback: (() => void) | null = null;
+    
+    // Pagination
+    currentPage = 1;
+    pageSize = 10;
+    pageSizeOptions = [5, 10, 15, 20, 50];
+    totalPages = 1;
+    paginatedHistory: any[] = [];
 
     // Confirmation Modal States
     showConfirmModal = false;
@@ -80,6 +89,9 @@ export class MyAttendanceComponent implements OnInit {
                     const isStaffType = a.type == 1 || a.type as any === 'Staff';
                     return isUserMatch && isStaffType;
                 }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+                
+                this.updatePagination();
+
                 // Safely check for local date, considering potential UTC drift from the server
                 this.alreadyMarked = false;
                 this.checkedOut = false;
@@ -110,7 +122,7 @@ export class MyAttendanceComponent implements OnInit {
         this.openConfirmModal(
             'checkIn',
             'Confirm Check-In',
-            `Record your presence for today, ${this.today.toLocaleDateString()}?`
+            `Record your presence for today, ${this.today.toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' })}?`
         );
     }
 
@@ -244,6 +256,32 @@ export class MyAttendanceComponent implements OnInit {
         } else {
             this.processCheckOut();
         }
+    }
+
+    updatePagination() {
+        this.totalPages = Math.ceil(this.history.length / this.pageSize) || 1;
+        const start = (this.currentPage - 1) * this.pageSize;
+        this.paginatedHistory = this.history.slice(start, start + this.pageSize);
+    }
+
+    changePage(page: number) {
+        if (page >= 1 && page <= this.totalPages) {
+            this.currentPage = page;
+            this.updatePagination();
+        }
+    }
+
+    onPageSizeChange() {
+        this.currentPage = 1;
+        this.updatePagination();
+    }
+
+    getPageNumbers(): number[] {
+        const pages = [];
+        for (let i = 1; i <= this.totalPages; i++) {
+            pages.push(i);
+        }
+        return pages;
     }
 }
 

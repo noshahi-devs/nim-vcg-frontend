@@ -44,6 +44,7 @@ export class ExpenseManageComponent implements OnInit {
   feedbackType: 'success' | 'error' | 'warning' = 'success';
   feedbackTitle = '';
   feedbackMessage = '';
+  loading = false;
 
   showDeleteDialog = false;
   itemToDeleteId: number | null = null;
@@ -72,7 +73,8 @@ export class ExpenseManageComponent implements OnInit {
   }
 
   loadExpenseList(): void {
-    this.accountsService.getExpenses().subscribe({
+    this.loading = true;
+    this.accountsService.getExpenses().pipe(finalize(() => this.loading = false)).subscribe({
       next: (data) => {
         this.expenseList = data;
         this.applyFilters();

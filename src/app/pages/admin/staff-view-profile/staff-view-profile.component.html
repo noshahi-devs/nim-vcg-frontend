@@ -1,10 +1,22 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title" [main-title]="'Management'"></app-breadcrumb>
 
-  <!-- Loading State -->
-  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
-    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-      <span class="visually-hidden">Loading...</span>
+  <!-- Premium Skeleton Loading -->
+  <div *ngIf="loading" class="animate-fade-in" style="min-height: 400px;">
+    <div class="glass-card mb-24 p-24">
+      <div class="d-flex align-items-center gap-24 mb-32">
+        <div class="sk-shimmer radius-pill" style="width: 120px; height: 120px;"></div>
+        <div class="flex-grow-1">
+          <div class="sk-shimmer mb-12" style="width: 40%; height: 32px; border-radius: 8px;"></div>
+          <div class="sk-shimmer mb-8" style="width: 25%; height: 20px; border-radius: 6px;"></div>
+          <div class="sk-shimmer" style="width: 30%; height: 16px; border-radius: 4px;"></div>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6" *ngFor="let i of [1,2,3,4]">
+          <div class="sk-shimmer mb-12" style="width: 100%; height: 50px; border-radius: 12px;"></div>
+        </div>
+      </div>
     </div>
   </div>
 

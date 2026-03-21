@@ -90,7 +90,6 @@ export class NewClassComponent implements OnInit {
     const payload: Standard = {
       ...this.newClass,
       standardId: 0,
-      standardCapacity: this.newClass.standardCapacity?.toString() || '0',
       students: [],
       subjects: [],
       status: this.newClass.status || 'Active'

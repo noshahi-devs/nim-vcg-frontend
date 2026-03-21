@@ -8,7 +8,6 @@ import { UserManagementService, User } from '../../../services/user-management.s
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { Staff, Designation } from '../../../Models/staff';
 import { Role } from '../../../Models/role';
-import Swal from '../../../swal';
 
 @Component({
     selector: 'app-assign-role',
@@ -22,11 +21,20 @@ import Swal from '../../../swal';
 export class AssignRoleComponent implements OnInit {
     title = 'Assign Role';
     staffList: (Staff & { userId?: string })[] = [];
+    allUsers: User[] = [];
     roles: Role[] = [];
 
     selectedStaffId: string = '';
     selectedRole: string = '';
     Designation = Designation;
+    isSaving = false;
+
+    // ── Premium Modal State ──
+    showConfirmModal = false;
+    showFeedbackModal = false;
+    feedbackType: 'success' | 'error' | 'warning' = 'success';
+    feedbackTitle = '';
+    feedbackMessage = '';
 
     constructor(
         private roleService: RoleService,
@@ -39,74 +47,109 @@ export class AssignRoleComponent implements OnInit {
     }
 
     loadData(): void {
-        // Load Roles
         this.roleService.getAllRoles().subscribe({
             next: (res) => this.roles = res,
             error: () => {
                 this.roles = [
                     { id: '1', name: 'Admin' },
                     { id: '2', name: 'Principal' },
-                    { id: '3', name: 'Teacher' }
+                    { id: '3', name: 'Teacher' },
+                    { id: '4', name: 'Accountant' }
                 ];
             }
         });
 
-        // Load Staff and Users to match them
-        
         forkJoin({
             staff: this.staffService.getAllStaffs(),
             users: this.userService.getAllUsers()
         }).subscribe({
             next: (data) => {
+                this.allUsers = data.users;
                 this.staffList = data.staff.map(s => {
                     const matchedUser = data.users.find(u => u.email?.toLowerCase() === s.email?.toLowerCase());
-                    return {
-                        ...s,
-                        userId: matchedUser?.id
-                    };
-                }).filter(s => !!s.userId); // Only show staff who have user accounts
+                    return { ...s, userId: matchedUser?.id };
+                }).filter(s => !!s.userId);
             },
             error: (err) => {
                 console.error('Error loading data:', err);
-                // Fallback dummy data if needed
-                this.staffList = [
-                    { staffId: 1, staffName: 'John Doe', designation: Designation.Teacher, email: 'john@test.com', userId: 'dummy-id-1' } as any
-                ];
+                this.staffList = [];
             }
         });
     }
 
-    assign(): void {
+    // ── Helpers ──
+    getSelectedStaffName(): string {
+        return this.staffList.find(s => s.userId === this.selectedStaffId)?.staffName || '';
+    }
+
+    // ── Modal Controls ──
+    openConfirmModal(): void {
         if (!this.selectedStaffId || !this.selectedRole) return;
 
-        Swal.fire({
-            title: 'Assigning Role...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
+        // Principal duplicate check — show warning modal instead of confirming
+        if (this.selectedRole === 'Principal') {
+            const existing = this.allUsers.find(u => {
+                const roles = Array.isArray(u.role) ? u.role : [u.role];
+                const isActive = (u.status || 'active').toLowerCase() === 'active';
+                return isActive && roles.some((r: string) => r?.toLowerCase() === 'principal');
+            });
+            if (existing) {
+                this.showFeedback(
+                    'warning',
+                    'Principal Already Active!',
+                    `<b>${existing.userName || existing.email}</b> is already an active <b>Principal</b>.<br>
+                     Please deactivate the current Principal before assigning a new one.`
+                );
+                return;
             }
-        });
+        }
+
+        this.showConfirmModal = true;
+    }
+
+    closeConfirmModal(): void {
+        this.showConfirmModal = false;
+    }
+
+    showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string): void {
+        this.feedbackType = type;
+        this.feedbackTitle = title;
+        this.feedbackMessage = message;
+        this.showFeedbackModal = true;
+    }
+
+    closeFeedback(): void {
+        this.showFeedbackModal = false;
+    }
+
+    // ── Actual Assignment ──
+    confirmAssign(): void {
+        this.isSaving = true;
 
         this.roleService.assignRole(this.selectedStaffId, [this.selectedRole]).subscribe({
-            next: (res) => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Role Assigned!',
-                    text: `Role ${this.selectedRole} assigned successfully.`,
-                    timer: 1500,
-                    showConfirmButton: false
-                });
+            next: () => {
+                this.isSaving = false;
+                this.showConfirmModal = false;
+                this.showFeedback(
+                    'success',
+                    'Role Assigned!',
+                    `<b>${this.getSelectedStaffName()}</b> has been successfully assigned the <b>${this.selectedRole}</b> role.`
+                );
+                // Reset form
+                this.selectedStaffId = '';
+                this.selectedRole = '';
+                this.loadData();
             },
             error: (err) => {
+                this.isSaving = false;
+                this.showConfirmModal = false;
                 console.error('Role assignment error:', err);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Failed to assign role. ' + (err.error?.message || 'Please try again.')
-                });
+                this.showFeedback(
+                    'error',
+                    'Assignment Failed',
+                    err.error?.message || 'Failed to assign the role. Please try again.'
+                );
             }
         });
     }
 }
-
-

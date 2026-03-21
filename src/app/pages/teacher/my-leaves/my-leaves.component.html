@@ -1,241 +1,188 @@
 <div class="dashboard-main-body">
   <app-breadcrumb [title]="title"></app-breadcrumb>
 
-  <!-- Quick Stats -->
-  <div class="stats-row mb-24">
-    <div class="stat-card">
-      <div class="stat-icon-wrapper blue">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14 2 14 8 20 8" />
-          <line x1="16" y1="13" x2="8" y2="13" />
-          <line x1="16" y1="17" x2="8" y2="17" />
-          <polyline points="10 9 9 9 8 9" />
-        </svg>
+  <!-- ══════ Stats ══════ -->
+  <div class="stats-row">
+    <div class="stat-card-glass">
+      <div class="stat-icon-circle primary">
+        <iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon>
       </div>
-      <div class="stat-content">
-        <span class="stat-label">Total Applications</span>
-        <h3 class="stat-value" style="color: #800000;">{{ totalLeaves }}</h3>
+      <div>
+        <div class="stat-label">Total Applications</div>
+        <div class="stat-value">{{ totalLeaves }}</div>
       </div>
     </div>
-
-    <div class="stat-card">
-      <div class="stat-icon-wrapper orange">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
+    <div class="stat-card-glass">
+      <div class="stat-icon-circle warning">
+        <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
       </div>
-      <div class="stat-content">
-        <span class="stat-label">Pending</span>
-        <h3 class="stat-value" style="color: #d4af37;">{{ getpendingLeaves() }}</h3>
+      <div>
+        <div class="stat-label">Pending Review</div>
+        <div class="stat-value text-warning" style="color:#d97706">{{ getpendingLeaves() }}</div>
       </div>
     </div>
-
-    <div class="stat-card">
-      <div class="stat-icon-wrapper green">
-        <svg viewBox="0 0 24 24" fill="none" class="text-white" stroke="currentColor" stroke-width="2" width="24"
-          height="24">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-          <polyline points="22 4 12 14.01 9 11.01" />
-        </svg>
+    <div class="stat-card-glass">
+      <div class="stat-icon-circle success">
+        <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
       </div>
-      <div class="stat-content">
-        <span class="stat-label">Approved</span>
-        <h3 class="stat-value text-success-main">{{ getapprovedLeaves() }}</h3>
+      <div>
+        <div class="stat-label">Approved</div>
+        <div class="stat-value text-success" style="color:#16a34a">{{ getapprovedLeaves() }}</div>
       </div>
     </div>
-
-    <div class="stat-card">
-      <div class="stat-icon-wrapper" style="background: #fee2e2; color: #e11d48;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-          <circle cx="12" cy="12" r="10" />
-          <line x1="15" y1="9" x2="9" y2="15" />
-          <line x1="9" y1="9" x2="15" y2="15" />
-        </svg>
+    <div class="stat-card-glass">
+      <div class="stat-icon-circle danger">
+        <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
       </div>
-      <div class="stat-content">
-        <span class="stat-label">Rejected</span>
-        <h3 class="stat-value text-danger-main">{{ getrejectedLeaves() }}</h3>
+      <div>
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value text-danger" style="color:#dc2626">{{ getrejectedLeaves() }}</div>
       </div>
     </div>
   </div>
 
-  <!-- Main Table Card -->
-  <div class="fee-card h-100 p-0 mb-24">
-    <div class="fee-card-header flex-wrap" style="border-bottom: none;">
-      <div class="d-flex align-items-center flex-wrap gap-16 w-100">
-
-        <div class="show-entries" style="flex: 1; min-width: 200px; margin-bottom: 0;">
-          <select class="entries-select w-100" [(ngModel)]="statusFilter" (change)="applyFilters()">
-            <option value="All">All Statuses</option>
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-            <option value="Rejected">Rejected</option>
-          </select>
+  <!-- ══════ Table ══════ -->
+  <div class="table-glass-container">
+    <div class="table-glass-header">
+      <div>
+        <h5>My Leave History</h5>
+        <p>Track and manage your leave requests</p>
+      </div>
+      <div class="header-actions">
+        <!-- Sync -->
+        <button type="button" (click)="refreshData()" class="btn-action-light" style="padding-right: 18px !important;">
+          <iconify-icon icon="solar:refresh-linear"></iconify-icon> Sync
+        </button>
+        <!-- Export -->
+        <button type="button" (click)="exportData()" class="btn-action-light" style="padding-right: 18px !important;">
+          <iconify-icon icon="solar:cloud-download-linear"></iconify-icon> Export
+        </button>
+        <!-- Search -->
+        <div class="search-wrapper" style="position: relative; display: flex; align-items: center;">
+          <iconify-icon icon="solar:magnifer-linear" class="search-icon"
+            style="position: absolute; left: 14px; color: #94a3b8; font-size: 18px; top: 50%; transform: translateY(-50%);"></iconify-icon>
+          <input type="text" class="search-input" [ngModel]="searchQuery"
+            (ngModelChange)="searchQuery = $event; applyFilters()" placeholder="Search..."
+            style="padding-left: 42px; height: 42px; width: 220px; border-radius: 12px; border: 1.5px solid #e2e8f0; font-size: 13px; outline: none; transition: border-color 0.2s;">
         </div>
-
-        <div class="search-wrapper" style="flex: 2;">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input type="text" class="search-input w-100" [ngModel]="searchQuery"
-            (ngModelChange)="searchQuery = $event; applyFilters()" placeholder="Search by leave type or reason..." />
-        </div>
-
-        <button class="btn-primary-gradient" style="padding: 10px 24px;" routerLink="/apply-leave">
-          <svg viewBox="0 0 24 24" fill="none" class="text-white" stroke="currentColor" stroke-width="2" width="20"
-            height="20">
-            <polyline points="21 8 21 21 3 21 3 8" />
-            <rect x="1" y="3" width="22" height="5" />
-            <line x1="10" y1="12" x2="14" y2="12" />
-          </svg>
-          <span class="text-white">New Request</span>
+        <!-- Status Filter -->
+        <select class="btn-action-light" [(ngModel)]="statusFilter" (change)="applyFilters()"
+          style="min-width: 150px;">
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+        <!-- Add Button -->
+        <button class="btn-primary-gradient" routerLink="/apply-leave">
+          <iconify-icon icon="solar:add-circle-bold" style="font-size: 18px;"></iconify-icon>
+          Apply Leave
         </button>
       </div>
     </div>
 
-    <!-- Table -->
-    <div class="fee-card-body p-0">
-      <div class="table-wrapper m-24">
-        <table class="fee-table">
-          <thead>
-            <tr>
-              <th scope="col" style="width: 50px;">SL</th>
-              <th scope="col" (click)="sortBy('leaveType')" style="cursor: pointer;">
-                Leave Type
-                <svg *ngIf="sortColumn === 'leaveType'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2" width="14" height="14" class="ms-4">
-                  <polyline [attr.points]="sortDirection === 'asc' ? '18 15 12 9 6 15' : '6 9 12 15 18 9'" />
-                </svg>
-              </th>
-              <th scope="col" (click)="sortBy('fromDate')" style="cursor: pointer;">
-                From Date
-                <svg *ngIf="sortColumn === 'fromDate'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2" width="14" height="14" class="ms-4">
-                  <polyline [attr.points]="sortDirection === 'asc' ? '18 15 12 9 6 15' : '6 9 12 15 18 9'" />
-                </svg>
-              </th>
-              <th scope="col">To Date</th>
-              <th scope="col" class="text-center">Total Days</th>
-              <th scope="col">Reason</th>
-              <th scope="col" class="text-center" (click)="sortBy('status')" style="cursor: pointer;">
-                Status
-                <svg *ngIf="sortColumn === 'status'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2" width="14" height="14" class="ms-4">
-                  <polyline [attr.points]="sortDirection === 'asc' ? '18 15 12 9 6 15' : '6 9 12 15 18 9'" />
-                </svg>
-              </th>
-              <th scope="col">Remarks</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="table-row" *ngFor="let leave of paginatedLeaves; let i = index">
-              <td><span class="text-secondary-light">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</span></td>
-              <td>
-                <span class="amount-chip" style="background: #fdf2f2; color: #800000;">
-                  {{ getLeaveTypeName(leave.leaveType) }}
+    <!-- ══════ Table ══════ -->
+    <div class="table-responsive">
+      <table class="premium-table">
+        <thead>
+          <tr>
+            <th class="ps-4">S.L</th>
+            <th>Leave Type</th>
+            <th>Period</th>
+            <th class="text-center">Total Days</th>
+            <th>Reason</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let leave of paginatedLeaves; let i = index" 
+              style="animation: fadeInUp 0.4s ease-out both"
+              [style.animation-delay]="i * 0.05 + 's'">
+            <td class="ps-4">
+              <span style="color:#94a3b8; font-weight:700">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</span>
+            </td>
+            <td>
+              <span class="category-badge">{{ getLeaveTypeName(leave.leaveType) }}</span>
+            </td>
+            <td>
+              <div class="d-flex align-items-center gap-2" style="font-size: 13px;">
+                <iconify-icon icon="solar:calendar-bold-duotone" style="color: #800000; font-size: 18px; opacity: 0.6;"></iconify-icon>
+                <span style="font-weight: 700; color: #1e293b;">
+                  {{ leave.startDate | date:'dd MMM' }}
                 </span>
-              </td>
-              <td><span class="date-val fw-bold text-secondary-dark">{{ leave.startDate | date:'mediumDate' }}</span>
-              </td>
-              <td><span class="date-val text-secondary-dark">{{ leave.endDate | date:'mediumDate' }}</span></td>
-              <td class="text-center">
-                <span class="fw-bold student-name text-sm">{{ getDurationDays(leave.startDate, leave.endDate) }}</span>
-              </td>
-              <td style="max-width: 250px;">
-                <span class="text-sm text-secondary-light d-inline-block text-truncate w-100" [title]="leave.reason">
-                  {{ leave.reason }}
+                <span style="color: #cbd5e1;">→</span>
+                <span style="font-weight: 700; color: #1e293b;">
+                  {{ leave.endDate | date:'dd MMM yyyy' }}
                 </span>
-              </td>
-              <td class="text-center">
-                <span class="amount-chip" [ngClass]="{
-                    'paid': checkStatus(leave.status, 'Approved'),
-                    'due': checkStatus(leave.status, 'Pending'),
-                    'rejected': checkStatus(leave.status, 'Rejected')
-                  }" [style.background]="checkStatus(leave.status, 'Rejected') ? '#fee2e2' : ''"
-                  [style.color]="checkStatus(leave.status, 'Rejected') ? '#e11d48' : ''">
-                  <svg *ngIf="checkStatus(leave.status, 'Pending')" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" width="14" height="14" class="me-4">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                  <svg *ngIf="checkStatus(leave.status, 'Approved')" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="3" width="14" height="14" class="me-4">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <svg *ngIf="checkStatus(leave.status, 'Rejected')" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="3" width="14" height="14" class="me-4">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                  {{ getLeaveStatusName(leave.status) }}
-                </span>
-              </td>
-              <td>
-                <span class="text-sm font-italic text-secondary-light">
-                  {{ leave.adminRemarks || 'No remarks provided' }}
-                </span>
-              </td>
-            </tr>
-            <tr *ngIf="paginatedLeaves.length === 0 && !loading">
-              <td colspan="8" class="text-center py-48">
-                <div
-                  class="w-64-px h-64-px mx-auto rounded-circle d-flex align-items-center justify-content-center mb-16"
-                  style="background: #f1f5f9; color: #64748b;">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                  </svg>
+              </div>
+            </td>
+            <td class="text-center">
+              <div style="font-weight: 900; color: #800000; font-size: 16px; line-height: 1;">{{ getDurationDays(leave.startDate, leave.endDate) }}</div>
+              <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 800; margin-top: 2px;">Days</div>
+            </td>
+            <td style="max-width: 180px; position: relative;" class="reason-cell">
+              <span class="d-inline-block text-truncate w-100" style="color: #64748b; font-size: 13px; font-weight: 500;">
+                {{ leave.reason }}
+              </span>
+              <div class="reason-tooltip">{{ leave.reason }}</div>
+            </td>
+            <td class="text-center">
+              <span class="status-pill" [ngClass]="{
+                  'pending': leave.status == 0,
+                  'approved': leave.status == 1,
+                  'rejected': leave.status == 2
+                }">
+                <iconify-icon [icon]="leave.status === 0 ? 'solar:clock-circle-bold-duotone' : (leave.status === 1 ? 'solar:check-circle-bold-duotone' : 'solar:close-circle-bold-duotone')"></iconify-icon>
+                {{ getLeaveStatusName(leave.status) }}
+              </span>
+            </td>
+            <td class="text-center">
+              <button (click)="viewDetails(leave)" class="btn-view-glass" title="View Details">
+                <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
+              </button>
+            </td>
+          </tr>
+          <!-- Empty State -->
+          <tr *ngIf="paginatedLeaves.length === 0 && !loading">
+            <td colspan="7" class="text-center" style="padding: 100px 20px;">
+              <div class="empty-state-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div class="empty-icon-wrapper" style="width: 100px; height: 100px; border-radius: 50%; background: #f8fafc; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+                  <iconify-icon icon="solar:folder-error-bold-duotone" style="font-size: 50px; color: #cbd5e1;"></iconify-icon>
                 </div>
-                <h6 class="fw-bold text-secondary-dark mb-4">No leave applications found</h6>
-                <p class="text-secondary-light mb-0">You don't have any leave requests matching the current filters.</p>
-              </td>
-            </tr>
-            <tr *ngIf="loading">
-              <td colspan="8" class="text-center py-48 text-primary-main fw-medium">
-                <div class="spinner-border spinner-border-sm me-8" role="status"></div>
-                Loading your leave history...
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                <h5 style="color: #94a3b8; font-weight: 800; font-size: 20px; margin-bottom: 8px;">No Leaves Found</h5>
+                <p style="color: #cbd5e1; font-weight: 500; max-width: 300px; margin: 0 auto; line-height: 1.5;">Your leave history is currently empty or matches no filters.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- Pagination -->
-      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 m-24 mt-0 pt-24 border-top"
-        *ngIf="filteredLeaves.length > 0" style="border-color: #f1f5f9;">
-        <span class="text-secondary-light">Showing <span class="fw-bold">{{ (currentPage - 1) * rowsPerPage + 1
-            }}</span> to <span class="fw-bold">{{ Math.min(currentPage * rowsPerPage, filteredLeaves.length) }}</span>
-          of <span class="fw-bold">{{ filteredLeaves.length }}</span> entries</span>
-        <ul class="pagination mb-0 d-flex flex-wrap align-items-center gap-8 justify-content-center">
+    <!-- ══════ Pagination ══════ -->
+    <div class="pagination-bar" *ngIf="filteredLeaves.length > 0">
+      <p class="pagination-info mb-0">
+        Showing <b>{{ (currentPage - 1) * rowsPerPage + 1 }}</b> to
+        <b>{{ Math.min(currentPage * rowsPerPage, filteredLeaves.length) }}</b> of <b>{{ filteredLeaves.length }}</b>
+      </p>
+      <nav>
+        <ul class="pagination-pills">
           <li class="page-item" [class.disabled]="currentPage === 1">
-            <a class="page-link" (click)="changePage(currentPage - 1)" href="javascript:void(0)"
-              style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid #e2e8f0; color: #64748b;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
+            <a class="page-link" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-left-bold-duotone"></iconify-icon>
             </a>
           </li>
-          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
-            <a class="page-link" (click)="changePage(i + 1)" href="javascript:void(0)"
-              style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid #e2e8f0; font-weight: 600;"
-              [ngStyle]="currentPage === i + 1 ? {'background': 'linear-gradient(135deg, #800000, #5a0000)', 'color': '#fff', 'border-color': 'transparent'} : {'background': '#fff', 'color': '#64748b'}">
-              {{ i + 1 }}
-            </a>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+            [class.active]="currentPage === i + 1">
+            <a class="page-link" (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
           </li>
           <li class="page-item" [class.disabled]="currentPage === totalPages">
-            <a class="page-link" (click)="changePage(currentPage + 1)" href="javascript:void(0)"
-              style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid #e2e8f0; color: #64748b;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
+            <a class="page-link" (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-right-bold-duotone"></iconify-icon>
             </a>
           </li>
         </ul>
-      </div>
-
+      </nav>
     </div>
   </div>
 </div>
@@ -269,6 +216,98 @@
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
         Acknowledge
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Leave Detail Modal ══ -->
+<div class="premium-overlay" *ngIf="showDetailModal && selectedLeave" (click.self)="closeDetailModal()">
+  <div class="premium-modal" style="max-width:500px; text-align:left; padding:0; overflow:hidden;">
+
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #800000, #5a0000); padding: 18px 20px;">
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:nowrap;">
+        <div style="width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <iconify-icon icon="solar:document-text-bold-duotone" style="font-size:20px; color:#fff;"></iconify-icon>
+        </div>
+        <div style="flex:1; min-width:0;">
+          <h5 style="color:#fff; margin:0; font-weight:700; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Leave Details</h5>
+          <span style="color:rgba(255,255,255,0.7); font-size:12px;">Full request info</span>
+        </div>
+        <button (click)="closeDetailModal()" style="flex-shrink:0; width:34px; height:34px; border-radius:50%; background:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; font-weight:700; color:#800000; line-height:1;">
+          &times;
+        </button>
+      </div>
+    </div>
+
+    <!-- Status Banner -->
+    <div style="padding:12px 20px; background:#f8fafc; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; gap:12px;">
+      <span class="status-pill" [ngClass]="{
+          'pending': checkStatus(selectedLeave.status, 'Pending'),
+          'approved': checkStatus(selectedLeave.status, 'Approved'),
+          'rejected': checkStatus(selectedLeave.status, 'Rejected')
+        }">
+        <iconify-icon [icon]="checkStatus(selectedLeave.status, 'Pending') ? 'solar:clock-circle-bold' : 
+                          (checkStatus(selectedLeave.status, 'Approved') ? 'solar:check-circle-bold' : 'solar:close-circle-bold')"
+          style="font-size: 16px;"></iconify-icon>
+        {{ getLeaveStatusName(selectedLeave.status) }}
+      </span>
+      <span style="color:#64748b; font-size:13px;">Applied: {{ selectedLeave.appliedDate | date:'dd MMM yyyy' }}</span>
+    </div>
+
+    <!-- Info Rows -->
+    <div style="padding:18px 20px; display:grid; gap:14px;">
+
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:#fef3c7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <iconify-icon icon="solar:tag-bold-duotone" style="color:#d97706; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Leave Type</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:700;">{{ getLeaveTypeName(selectedLeave.leaveType) }}</div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:#dcfce7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <iconify-icon icon="solar:calendar-bold-duotone" style="color:#16a34a; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Duration</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:700;">
+            {{ selectedLeave.startDate | date:'dd MMM yyyy' }} → {{ selectedLeave.endDate | date:'dd MMM yyyy' }}
+            <span style="font-size:12px; color:#64748b; font-weight:500;">({{ getDurationDays(selectedLeave.startDate, selectedLeave.endDate) }} day(s))</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:start; gap:12px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:#fee2e2; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+          <iconify-icon icon="solar:chat-round-line-bold-duotone" style="color:#dc2626; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Reason</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:500; line-height:1.5;">{{ selectedLeave.reason }}</div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:start; gap:12px;" *ngIf="selectedLeave.adminRemarks">
+        <div style="width:36px; height:36px; border-radius:10px; background:#e0f2fe; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+          <iconify-icon icon="solar:notes-bold-duotone" style="color:#0284c7; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Admin Remarks</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:500; line-height:1.5;">{{ selectedLeave.adminRemarks }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:14px 20px; background:#f8fafc; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end;">
+      <button (click)="closeDetailModal()" style="background: linear-gradient(135deg, #800000, #5a0000); color:#fff; border:none; border-radius:8px; padding:9px 20px; font-weight:600; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:6px;">
+        <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+        Close
       </button>
     </div>
   </div>

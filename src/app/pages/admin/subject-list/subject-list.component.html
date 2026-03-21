@@ -51,8 +51,24 @@
       </a>
     </div>
 
+    <!-- ── Premium Skeleton Loading ── -->
+    <div *ngIf="loading" class="skeleton-grid">
+      <div class="sk-card" *ngFor="let item of [1,2,3,4,5,6]">
+        <div class="sk-shimmer sk-badge"></div>
+        <div class="sk-shimmer sk-icon"></div>
+        <div class="sk-shimmer sk-title"></div>
+        <div class="sk-shimmer sk-meta"></div>
+        <div class="sk-shimmer sk-meta short"></div>
+        <div class="sk-actions">
+          <div class="sk-shimmer sk-btn"></div>
+          <div class="sk-shimmer sk-btn"></div>
+          <div class="sk-shimmer sk-btn" style="flex: 0 0 38px;"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── Empty State ── -->
-    <div class="es-empty" *ngIf="filteredSubjectList.length === 0">
+    <div class="es-empty" *ngIf="filteredSubjectList.length === 0 && !loading">
       <div class="es-empty-icon">
         <iconify-icon icon="solar:book-2-bold-duotone"></iconify-icon>
       </div>
@@ -82,10 +98,6 @@
           <div class="es-meta-item">
             <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
             <span>Class: {{ subject.standard?.standardName }}</span>
-          </div>
-          <div class="es-meta-item">
-            <iconify-icon icon="solar:code-bold-duotone"></iconify-icon>
-            <span>Code: {{ subject.subjectCode }}</span>
           </div>
         </div>
 
@@ -129,10 +141,6 @@
           <div class="receipt-item">
             <span class="label">Subject Name</span>
             <span class="value">{{ selectedSubject.subjectName }}</span>
-          </div>
-          <div class="receipt-item">
-            <span class="label">Course Code</span>
-            <span class="value">{{ selectedSubject.subjectCode }}</span>
           </div>
           <div class="receipt-item">
             <span class="label">Assigned Class</span>
@@ -182,11 +190,6 @@
               <input type="text" class="form-control premium-input" [(ngModel)]="selectedSubject.subjectName"
                 name="subjectName" required />
             </div>
-            <div class="mb-16">
-              <label class="form-label">Subject Code</label>
-              <input type="number" class="form-control premium-input" [(ngModel)]="selectedSubject.subjectCode"
-                name="subjectCode" />
-            </div>
           </div>
 
           <div class="form-card">
@@ -210,7 +213,7 @@
         <button class="btn-primary-gradient" (click)="updateSubject()" [disabled]="isProcessing"
           style="background: linear-gradient(135deg, #F4C430, #d4a71c); color: #800000; box-shadow: 0 4px 14px rgba(244, 196, 48, 0.3);">
           <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2 text-maroon-premium"></iconify-icon>
-          <span *ngIf="!isProcessing">Save Changes</span>
+          <span *ngIf="!isProcessing">Save Subject</span>
           <span *ngIf="isProcessing">Saving...</span>
         </button>
       </div>

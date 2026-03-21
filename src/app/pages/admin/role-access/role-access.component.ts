@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RoleService } from '../../../services/role.service';
 import { Role } from '../../../Models/role';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 
@@ -11,7 +10,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
     selector: 'app-role-access',
     standalone: true,
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    imports: [CommonModule, FormsModule, RouterLink, BreadcrumbComponent],
+    imports: [CommonModule, FormsModule, BreadcrumbComponent],
     templateUrl: './role-access.component.html',
     styleUrl: './role-access.component.css'
 })

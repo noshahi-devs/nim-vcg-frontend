@@ -145,6 +145,30 @@
 }
 
 /* Hero Text */
+.dashboard-name-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    padding: 5px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    animation: heroSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+
+.dashboard-name-badge iconify-icon {
+    font-size: 15px;
+    color: #F4C430;
+}
+
 .greeting-chip {
     display: inline-flex;
     align-items: center;
@@ -163,7 +187,7 @@
 
 .greeting-icon {
     font-size: 16px;
-    color: #fbbf24;
+    color: #800000;
 }
 
 .hero-name {

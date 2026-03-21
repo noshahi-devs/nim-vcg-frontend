@@ -1,50 +1,163 @@
-/* PRINT STYLES - NIM PRODUCTION */
+/* ============================================================
+   PRINT STYLES - NIM PRODUCTION
+   Applied globally for Student, Staff, and Class-Wise reports
+   ============================================================ */
+
 @media print {
-  /* HIDE UI ELEMENTS */
+
+  /* ── 1. Hide all chrome / navigation / actions ── */
   app-side-nav,
+  app-header,
   .dashboard-sidebar,
   .navbar-header,
+  .side-nav,
   .breadcrumb-nav,
-  .action-buttons,
-  .stats-overview-row,
-  .premium-filter-section,
-  .premium-pagination-wrapper,
-  .modal-footer-premium,
-  .modal-close-premium,
+  .filter-glass,
+  .fee-card:first-child, /* filter card */
+  .stats-row,
+  .action-bar-glass,
+  .table-glass-header .btn-add,
+  .table-glass-header .d-flex,
+  .es-pagination-glass,
+  .table-filter-glass,
+  .fee-card-header .d-flex.align-items-center.gap-2,
+  .fee-card-header .d-flex.align-items-center.gap-12 .enrollment-badge,
+  .empty-state-glass,
+  .loading-glass,
+  .premium-overlay,
+  .btn-refresh-glass,
+  .btn-generate,
   button,
   .icon-btn,
   .no-print {
     display: none !important;
   }
 
-  /* SHOW ONLY CONTENT */
-  .dashboard-main-body {
-    padding: 0 !important;
+  /* ── 2. Reset layout so page renders flat ── */
+  html, body {
+    background: white !important;
+    font-size: 11pt !important;
+    color: #000 !important;
     margin: 0 !important;
-    background: white !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
-  body {
-    background: white !important;
-    font-size: 12pt;
-    color: black !important;
-  }
-
-  /* TARGETED TEMPLATES */
-  #detailed-receipt,
-  #thermal-receipt,
-  .printable-area {
+  /* ── 3. Remove sidebar/flex effects from main layout ── */
+  .layout-container,
+  .dashboard-layout,
+  .main-layout,
+  .content-wrapper,
+  app-layout {
     display: block !important;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+    width: 100% !important;
   }
 
-  .glass-card, 
-  .premium-slip-card {
+  .dashboard-main-body {
+    padding: 12px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    overflow: visible !important;
+  }
+
+  /* ── 4. Make fee-card / glass containers print-safe ── */
+  .fee-card,
+  .table-glass-container,
+  .glass-card {
     box-shadow: none !important;
-    border: 1px solid #eee !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0 !important;
+    background: white !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     break-inside: avoid;
+    page-break-inside: avoid;
+    width: 100% !important;
+  }
+
+  /* ── 5. Reset card header (keep title, hide buttons) ── */
+  .fee-card-header,
+  .table-glass-header {
+    background: #f8fafc !important;
+    border-bottom: 2px solid #800000 !important;
+    padding: 10px 16px !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+  }
+
+  /* ── 6. Table core styles for print ── */
+  .fee-table,
+  .premium-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 10pt !important;
+    min-width: unset !important;
+  }
+
+  .fee-table th,
+  .premium-table th {
+    background: #800000 !important;
+    color: white !important;
+    padding: 8px 10px !important;
+    font-weight: bold !important;
+    text-align: left !important;
+    border: 1px solid #6b0000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .fee-table td,
+  .premium-table td {
+    padding: 7px 10px !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #000 !important;
+    white-space: normal !important;
+  }
+
+  .fee-table tbody tr:nth-child(even),
+  .premium-table tbody tr:nth-child(even) {
+    background-color: #f8fafc !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* ── 7. Status pills and badges ── */
+  .amount-chip,
+  .status-pill {
+    border: 1px solid #ccc !important;
+    padding: 2px 8px !important;
+    border-radius: 4px !important;
+    font-size: 9pt !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    color: #000 !important;
+  }
+
+  .amount-chip.paid {
+    background: #dcfce7 !important;
+    border-color: #4ade80 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .amount-chip.due {
+    background: #fee2e2 !important;
+    border-color: #f87171 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* ── 8. Table overflow - enable for print ── */
+  .table-responsive,
+  .table-wrapper {
+    overflow: visible !important;
+  }
+
+  /* ── 9. Page setup ── */
+  @page {
+    margin: 15mm;
+    size: A4 landscape;
   }
 }

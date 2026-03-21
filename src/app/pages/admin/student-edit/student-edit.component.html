@@ -2,11 +2,20 @@
   <app-breadcrumb [title]="'Student Edit'" [main-title]="'Management'"></app-breadcrumb>
 
   <!-- LOADING STATE -->
-  <div *ngIf="loading" class="text-center py-5">
-    <div class="spinner-border text-maroon" role="status" style="color: #800000;">
-      <span class="visually-hidden">Loading...</span>
+  <!-- Premium Skeleton Loading -->
+  <div *ngIf="loading" class="sk-form-container animate-fade-in mb-24">
+    <div class="sk-form-row d-flex align-items-center mb-32">
+      <div class="sk-shimmer radius-pill" style="width: 100px; height: 100px;"></div>
+      <div class="flex-grow-1 ms-24">
+        <div class="sk-shimmer mb-12" style="width: 30%; height: 24px; border-radius: 8px;"></div>
+        <div class="sk-shimmer" style="width: 15%; height: 16px; border-radius: 6px;"></div>
+      </div>
     </div>
-    <p class="mt-2 text-secondary">Fetching student records...</p>
+    <div class="row g-4">
+      <div class="col-md-6" *ngFor="let i of [1,2,3,4,5,6]">
+        <div class="sk-form-field sk-shimmer mb-16"></div>
+      </div>
+    </div>
   </div>
 
   <div *ngIf="!loading && studentData" class="premium-card fade-in-up">

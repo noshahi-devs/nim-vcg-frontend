@@ -93,8 +93,13 @@
           <tr *ngIf="invoices.length === 0 && !loading">
             <td colspan="7" class="text-center py-4">No invoices found.</td>
           </tr>
+          <!-- Premium Skeleton Loading -->
           <tr *ngIf="loading">
-            <td colspan="7" class="text-center py-4">Loading invoices...</td>
+            <td colspan="7" class="p-0 border-0">
+              <div class="sk-table-container animate-fade-in border-0 p-24 mb-0">
+                <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
+              </div>
+            </td>
           </tr>
 
 

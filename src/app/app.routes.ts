@@ -24,7 +24,7 @@ export const routes: Routes = [
       // Class Management
       { path: 'class-list', loadComponent: () => import('./pages/admin/class-list/class-list.component').then(m => m.ClassListComponent), data: { roles: ['Admin', 'Principal'] } },
       { path: 'newclass', loadComponent: () => import('./pages/admin/newclass/newclass.component').then(m => m.NewClassComponent), data: { roles: ['Admin', 'Principal'] } },
-      { path: 'class-management', loadComponent: () => import('./pages/admin/class-management/class-management.component').then(m => m.ClassManagementComponent), data: { roles: ['Admin', 'Principal'] } },
+      { path: 'class-management', loadComponent: () => import('./pages/admin/class-management/class-management.component').then(m => m.ClassManagementComponent), data: { roles: ['Admin', 'Principal', 'Teacher'] } },
 
       // Section Management
       { path: 'section-list', loadComponent: () => import('./pages/admin/section-list/section-list.component').then(m => m.SectionListComponent), data: { roles: ['Admin', 'Principal'] } },

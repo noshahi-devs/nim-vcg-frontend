@@ -45,7 +45,7 @@
                   <div class="input-wrapper-premium">
                     <input type="text" class="form-control-premium" formControlName="sectionCode"
                       [ngClass]="{ 'is-invalid': sectionForm.get('sectionCode')?.invalid && sectionForm.get('sectionCode')?.touched }"
-                      placeholder="e.g., A, B, C" />
+                      placeholder="A" />
                   </div>
                   <div *ngIf="sectionForm.get('sectionCode')?.invalid && sectionForm.get('sectionCode')?.touched"
                     class="error-feedback">
@@ -73,47 +73,11 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Room Number -->
-              <div class="col-md-6">
-                <div class="form-group-premium">
-                  <label class="form-label-premium">
-                    <i class="ri-door-open-line me-2 text-primary-500"></i>Room Allocation
-                  </label>
-                  <div class="input-wrapper-premium">
-                    <input type="text" class="form-control-premium" formControlName="roomNo"
-                      [ngClass]="{ 'is-invalid': sectionForm.get('roomNo')?.invalid && sectionForm.get('roomNo')?.touched }"
-                      placeholder="e.g., R-101" />
-                  </div>
-                  <div *ngIf="sectionForm.get('roomNo')?.invalid && sectionForm.get('roomNo')?.touched"
-                    class="error-feedback">
-                    Required: specify room
-                  </div>
-                </div>
-              </div>
-
-              <!-- Capacity -->
-              <div class="col-md-6">
-                <div class="form-group-premium">
-                  <label class="form-label-premium">
-                    <i class="ri-team-line me-2 text-primary-500"></i>Student Capacity
-                  </label>
-                  <div class="input-wrapper-premium">
-                    <input type="number" class="form-control-premium" formControlName="capacity"
-                      [ngClass]="{ 'is-invalid': sectionForm.get('capacity')?.invalid && sectionForm.get('capacity')?.touched }"
-                      placeholder="Max enrollment" />
-                  </div>
-                  <div *ngIf="sectionForm.get('capacity')?.invalid && sectionForm.get('capacity')?.touched"
-                    class="error-feedback">
-                    Required: enter valid capacity
-                  </div>
-                </div>
-              </div>
             </div>
 
             <div class="form-actions-premium mt-40">
               <button type="submit" class="btn btn-premium-primary">
-                <i class="ri-save-3-line me-2"></i>Persist Configuration
+                <i class="ri-save-3-line me-2"></i>Save
               </button>
             </div>
           </form>
@@ -133,7 +97,7 @@
       <div class="pm-actions">
         <button class="pm-btn pm-cancel" (click)="cancelSave()">Cancel</button>
         <button class="pm-btn pm-save" (click)="confirmSave()">
-          <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon> Save Section
+          <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon> Save
         </button>
       </div>
     </div>

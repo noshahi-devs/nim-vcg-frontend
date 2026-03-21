@@ -205,12 +205,22 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
     $(".sidebar-menu .dropdown")
       .off(`click${ns}`)
-      .on(`click${ns}`, function () {
+      .on(`click${ns}`, function (event) {
+        event.preventDefault();
         const item = $(this);
-        item.siblings(".dropdown").children(".sidebar-submenu").slideUp();
-        item.siblings(".dropdown").removeClass("dropdown-open");
-        item.children(".sidebar-submenu").slideToggle();
-        item.toggleClass("dropdown-open");
+
+        // Close ALL other dropdowns except the clicked one
+        $(".sidebar-menu .dropdown").not(item).each(function () {
+          const otherItem = $(this);
+          if (otherItem.hasClass("dropdown-open") || otherItem.hasClass("open")) {
+            otherItem.children(".sidebar-submenu").slideUp(280);
+            otherItem.removeClass("dropdown-open open");
+          }
+        });
+
+        // Toggle the clicked one
+        item.children(".sidebar-submenu").slideToggle(280);
+        item.toggleClass("dropdown-open open");
       });
 
     // Shared hover timer prevents flicker when toggle button moves during expansion

@@ -19,8 +19,12 @@
             <div class="avatar-status-dot"></div>
           </div>
           <div class="hero-text">
+            <div class="dashboard-name-badge">
+              <iconify-icon icon="solar:widget-bold-duotone"></iconify-icon>
+              Teacher Dashboard
+            </div>
             <div class="greeting-chip">
-              <iconify-icon icon="solar:sun-bold-duotone" class="greeting-icon"></iconify-icon>
+              <iconify-icon icon="solar:sun-bold-duotone" class="greeting-icon" style="color:#800000;"></iconify-icon>
               {{ greeting }}
             </div>
             <h2 class="hero-name">{{ currentStaff?.staffName || 'Teacher' }}</h2>
@@ -219,8 +223,20 @@
             <div class="avatar-status-dot"></div>
           </div>
           <div class="hero-text">
+            <div class="dashboard-name-badge" *ngIf="authService.hasRole('Admin')">
+              <iconify-icon icon="solar:widget-bold-duotone"></iconify-icon>
+              Admin Dashboard
+            </div>
+            <div class="dashboard-name-badge" *ngIf="authService.hasRole('Principal') && !authService.hasRole('Admin')">
+              <iconify-icon icon="solar:widget-bold-duotone"></iconify-icon>
+              Principal Dashboard
+            </div>
+            <div class="dashboard-name-badge" *ngIf="authService.hasRole('Accountant') && !authService.hasAnyRole(['Admin','Principal'])">
+              <iconify-icon icon="solar:widget-bold-duotone"></iconify-icon>
+              Accountant Dashboard
+            </div>
             <div class="greeting-chip">
-              <iconify-icon icon="solar:crown-bold-duotone" class="greeting-icon" style="color:#f59e0b;"></iconify-icon>
+              <iconify-icon icon="solar:crown-bold-duotone" class="greeting-icon" style="color:#800000;"></iconify-icon>
               {{ greeting }}
             </div>
             <h2 class="hero-name">{{ adminFullName }}</h2>

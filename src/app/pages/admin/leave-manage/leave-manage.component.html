@@ -198,8 +198,9 @@
         </h4>
         <p>Final Review</p>
       </div>
-      <button type="button" class="modal-close" (click)="closeModal()">
-        <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+      <button type="button" (click)="closeModal()"
+        style="width:34px; height:34px; border-radius:50%; background:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; font-weight:700; color:#800000; line-height:1; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.25); margin-left:auto;">
+        &times;
       </button>
     </div>
     <div class="modal-body-glass" *ngIf="selectedLeave">
@@ -230,7 +231,9 @@
       <div class="d-flex gap-3">
         <button type="button" (click)="closeModal()" class="btn-modal-cancel">Cancel</button>
         <button type="button" (click)="confirmAction()" class="btn-modal-action"
-          [class.approve]="modalAction === 'approve'" [class.reject]="modalAction === 'reject'">
+          [class.approve]="modalAction === 'approve'" [class.reject]="modalAction === 'reject'"
+          style="display:flex; align-items:center; justify-content:center; gap:8px;">
+          <iconify-icon [icon]="modalAction === 'approve' ? 'solar:check-circle-bold' : 'solar:close-circle-bold'" style="font-size:18px;"></iconify-icon>
           {{ modalAction === 'approve' ? 'APPROVE REQUEST' : 'REJECT REQUEST' }}
         </button>
       </div>

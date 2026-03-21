@@ -1427,3 +1427,344 @@ html body .modal-box select {
     opacity: 1;
   }
 }
+
+/* ── Global Premium Skeleton Loading ── */
+.skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.sk-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    min-height: 240px;
+}
+
+.sk-shimmer {
+    background: linear-gradient(
+        90deg,
+        #f0f2f5 25%,
+        #f7f9fa 37%,
+        #f0f2f5 63%
+    );
+    background-size: 400% 100%;
+    animation: sk-shimmer 1.4s ease infinite;
+}
+
+@keyframes sk-shimmer {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+.sk-icon { width: 48px; height: 48px; border-radius: 14px; margin-bottom: 20px; }
+.sk-avatar { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 16px; }
+.sk-badge { width: 50px; height: 20px; border-radius: 100px; position: absolute; top: 24px; right: 24px; }
+.sk-id-chip { width: 80px; height: 20px; border-radius: 100px; margin-bottom: 20px; }
+.sk-title { width: 70%; height: 24px; border-radius: 4px; margin-bottom: 20px; }
+.sk-title.centered { margin-left: auto; margin-right: auto; }
+.sk-meta { width: 90%; height: 16px; border-radius: 4px; margin-bottom: 12px; }
+.sk-meta.short { width: 50%; }
+.sk-meta.centered { margin-left: auto; margin-right: auto; }
+.sk-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.sk-meta-pill { height: 32px; border-radius: 100px; }
+.sk-actions { border-top: 1px solid #f1f5f9; padding-top: 20px; display: flex; gap: 8px; margin-top: 10px; }
+.sk-btn { height: 38px; border-radius: 10px; flex: 1; }
+
+/* ── Global Table Skeleton ── */
+.sk-table-container {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 24px;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.sk-table-header {
+    height: 48px;
+    border-radius: 12px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.sk-table-row {
+    height: 56px;
+    border-radius: 10px;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+/* ── Global Form Skeleton ── */
+.sk-form-container {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.sk-form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.sk-form-field {
+    height: 64px;
+    border-radius: 12px;
+}
+/* -------------------------------------------------------
+   NIM GLOBAL UTILITIES � PREMIUM FILTERS & BUTTONS
+------------------------------------------------------- */
+
+.nim-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  margin-bottom: 24px;
+}
+
+.nim-filter-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nim-search-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nim-search-icon {
+  position: absolute;
+  left: 14px;
+  font-size: 18px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.nim-search-input {
+  height: 42px;
+  padding: 0 16px 0 44px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #1e293b;
+  width: 240px;
+  background: #f8fafc;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.nim-search-input:focus {
+  border-color: #800000;
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
+  width: 300px;
+  background: #fff;
+}
+
+.nim-select-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nim-select-label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.nim-select-input {
+  height: 42px;
+  padding: 0 36px 0 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #1e293b;
+  background: #f8fafc;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23800000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 12px) center;
+}
+
+.nim-select-input:focus {
+  border-color: #800000;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
+}
+
+.nim-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #800000, #5a0000);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 0 20px;
+  height: 42px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(128, 0, 0, 0.3);
+}
+
+.nim-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(128, 0, 0, 0.45);
+}
+
+.nim-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  color: #800000;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 18px;
+  height: 42px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nim-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #800000;
+  transform: translateY(-1px);
+}
+
+/* -- Global Interactive Enhancements -- */
+.nim-select-input:hover, .nim-search-input:hover {
+  border-color: #800000;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(128, 0, 0, 0.08);
+}
+
+/* -- Global Calendar (Date Picker) Theme -- */
+input[type="date"] {
+  accent-color: #800000;
+}
+
+::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(13%) sepia(90%) dot(40%) hue-rotate(345deg) brightness(95%) contrast(110%);
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* -- Global Dropdown Hover Effect (Targeting potential custom dropdowns or select-like items) -- */
+.nim-dropdown-item:hover {
+  background-color: rgba(128, 0, 0, 0.08) !important;
+  color: #800000 !important;
+}
+
+/* -- Global Select/Dropdown Enhancements -- */
+select:hover, select:focus {
+  border-color: #800000 !important;
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1) !important;
+}
+
+/* -- Premium Calendar Selection Color -- */
+::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: sepia(100%) hue-rotate(-20deg) saturate(500%) brightness(50%); /* Dark Maroon Tint */
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::-webkit-calendar-picker-indicator:hover {
+  transform: scale(1.1);
+}
+
+/* -- Global Scrollbar (Match Scheme) -- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
+
+/* -- Custom Select Options Style (Works in some browsers) -- */
+select option:hover, select option:focus, select option:active {
+  background-color: #800000 !important;
+  color: #fff !important;
+}
+
+/* -------------------------------------------------------
+   GLOBAL PREMIUM THEME OVERRIDES (MAROON)
+------------------------------------------------------- */
+
+/* Text Selection */
+::selection {
+  background-color: rgba(128, 0, 0, 0.25);
+  color: #800000;
+}
+
+/* Global Form Focus & Interactive States */
+input:focus, select:focus, textarea:focus, button:focus {
+  outline: none !important;
+  border-color: #800000 !important;
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.15) !important;
+}
+
+/* Interactive Elements Hover Glow */
+input:hover, select:hover, textarea:hover {
+  border-color: #800000 !important;
+  box-shadow: 0 4px 12px rgba(128, 0, 0, 0.08);
+}
+
+/* Modern Browser Accents (Checkboxes, Radios, etc.) */
+input[type="checkbox"], 
+input[type="radio"], 
+input[type="range"], 
+progress {
+  accent-color: #800000 !important;
+}
+
+/* Global Transition for smoother feel */
+input, select, textarea, button, a {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Navigation & Sidebar Active States (Global Targeting) */
+.active, .is-active, [routerLinkActive] {
+  /* color: #800000 !important; */ /* Be careful with this, depends on layout */
+}

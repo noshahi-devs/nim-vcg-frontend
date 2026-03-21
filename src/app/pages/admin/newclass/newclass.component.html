@@ -32,35 +32,6 @@
                 </small>
               </div>
 
-              <!-- CLASS CAPACITY -->
-              <div class="col-md-6 mb-4">
-                <label class="form-label fw-bold text-dark mb-2">
-                  Capacity <span class="text-danger">*</span>
-                </label>
-                <div class="form-floating-custom">
-                  <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
-                  <input type="number" class="form-control" name="standardCapacity"
-                    [(ngModel)]="newClass.standardCapacity" required #standardCapacity="ngModel"
-                    [ngClass]="{ 'is-invalid': standardCapacity.invalid && standardCapacity.touched }"
-                    placeholder="Enter Capacity" />
-                </div>
-                <small *ngIf="standardCapacity.invalid && standardCapacity.touched"
-                  class="text-danger animate__animated animate__fadeIn">
-                  Capacity is required
-                </small>
-              </div>
-
-              <!-- TEACHER DROPDOWN -->
-              <div class="col-md-6 mb-4">
-                <label class="form-label fw-bold text-dark mb-2">Class Teacher</label>
-                <div class="form-floating-custom">
-                  <iconify-icon icon="solar:user-broken-bold-duotone"></iconify-icon>
-                  <select class="form-select" name="teacher" [(ngModel)]="newClass.classTeacher">
-                    <option value="" selected disabled>Select Teacher</option>
-                    <option *ngFor="let t of teachers" [value]="t.staffName">{{ t.staffName }}</option>
-                  </select>
-                </div>
-              </div>
             </div>
 
             <div class="d-flex align-items-center justify-content-center gap-3 mt-40">
@@ -68,7 +39,7 @@
                 [disabled]="isProcessing" (click)="onSubmit(classForm)">
                 <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
                 <iconify-icon *ngIf="!isProcessing" icon="solar:check-read-bold-duotone" class="text-xl"></iconify-icon>
-                <span>{{ isProcessing ? 'Processing...' : 'Save Class' }}</span>
+                <span>{{ isProcessing ? 'Processing...' : 'Save' }}</span>
               </button>
             </div>
 

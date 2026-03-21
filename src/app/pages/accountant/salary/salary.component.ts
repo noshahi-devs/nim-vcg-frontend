@@ -2,6 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from '../../../swal';
+import { finalize, forkJoin } from 'rxjs';
 
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { StaffSalaryService } from '../../../services/staff-salary.service';
@@ -35,6 +36,7 @@ export class SalaryComponent implements OnInit {
   searchQuery = '';
   itemsPerPage = 10;
   currentPage = 1;
+  loading = false;
 
   /** MULTI-MODAL STATES */
   isProcessing = false;
@@ -52,8 +54,7 @@ export class SalaryComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadSalaries();
-    this.loadStaff();
+    this.loadData();
   }
 
   /* ================= GETTERS FOR STATS ================= */
@@ -75,11 +76,24 @@ export class SalaryComponent implements OnInit {
     return names.map(n => n[0]).join('').toUpperCase().substring(0, 2);
   }
 
-  /* ================= LOAD STAFF ================= */
+  /* ================= LOAD DATA ================= */
+  loadData(): void {
+    this.loading = true;
+    forkJoin({
+      staff: this.staffService.getAllStaffs(),
+      salaries: this.staffSalaryService.getStaffSalaries()
+    }).pipe(finalize(() => this.loading = false)).subscribe({
+      next: (res) => {
+        this.staffList = res.staff || [];
+        this.salaries = res.salaries || [];
+      },
+      error: () => this.showFeedback('error', 'Sync Failed', 'Unable to synchronize salary records.')
+    });
+  }
+
   loadStaff(): void {
     this.staffService.getAllStaffs().subscribe({
       next: (res) => {
-        console.log('STAFF API RESPONSE:', res);
         this.staffList = res;
       },
       error: (err) => {
@@ -92,7 +106,8 @@ export class SalaryComponent implements OnInit {
 
   /* ================= LOAD SALARIES ================= */
   loadSalaries(): void {
-    this.staffSalaryService.getStaffSalaries().subscribe({
+    this.loading = true;
+    this.staffSalaryService.getStaffSalaries().pipe(finalize(() => this.loading = false)).subscribe({
       next: (res) => this.salaries = res,
       error: () => Swal.fire('Error', 'Failed to load salaries', 'error')
     });

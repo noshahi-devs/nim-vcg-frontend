@@ -34,7 +34,7 @@ export class AttendanceComponent implements OnInit {
   /** STANDARDS & STUDENTS */
   standards: Standard[] = [];
   students: any[] = [];
-  studentsLoaded = false;
+  loading = false;
 
   /** PERMISSIONS */
   canMarkAttendance = false;
@@ -107,12 +107,17 @@ export class AttendanceComponent implements OnInit {
                 this.filterStandardsForTeacher(data, staff.staffId);
               } else {
                 this.standards = data || [];
+                this.setDefaultClass();
               }
             },
-            error: () => this.standards = data || []
+            error: () => {
+              this.standards = data || [];
+              this.setDefaultClass();
+            }
           });
         } else {
           this.standards = data || [];
+          this.setDefaultClass();
         }
       },
       error: () => {
@@ -141,11 +146,19 @@ export class AttendanceComponent implements OnInit {
         ];
 
         this.standards = (allStandards || []).filter(c => assignedClassNames.includes(c.standardName));
+        this.setDefaultClass();
       },
       error: () => this.standards = allStandards || []
     });
   }
 
+
+  setDefaultClass(): void {
+    if (this.standards && this.standards.length > 0 && !this.selectedClass) {
+      this.selectedClass = this.standards[0].standardName;
+      this.loadStudents();
+    }
+  }
 
   /** ==========================
    * LOAD STUDENTS BASED ON SELECTED STANDARD
@@ -159,16 +172,20 @@ export class AttendanceComponent implements OnInit {
     const std = this.standards.find(s => s.standardName === this.selectedClass);
     if (!std) return;
 
+    this.loading = true;
     // Fetch existing attendance for this class and date
-    this.attendanceService.getClassWiseAttendance(std.standardId, this.selectedDate).subscribe({
+    this.attendanceService.getClassWiseAttendance(std.standardId, this.selectedDate).pipe(finalize(() => this.loading = false)).subscribe({
       next: (data) => {
         if (data && data.length > 0) {
-          // Map existing statuses
-          this.students = data.map((record: any) => ({
-            studentId: record.studentId,
-            studentName: record.studentName,
-            status: record.status // "Present", "Absent", or "Unmarked"
-          })) as any[];
+          // Map existing statuses, merging with original student data to retain Roll No
+          this.students = data.map((record: any) => {
+            const originalStudent = std.students?.find(s => s.studentId === record.studentId) || {};
+            return {
+              ...originalStudent,
+              ...record,
+              status: record.description === 'Leave' ? 'Leave' : record.status // Explicitly keep status for clarity
+            };
+          }) as any[];
         } else if (std.students) {
           // If no records, load from standard's student list
           this.students = std.students.map((s: any) => ({
@@ -176,7 +193,6 @@ export class AttendanceComponent implements OnInit {
             status: '' // Unmarked
           })) as any[];
         }
-        this.studentsLoaded = true;
       },
       error: (err) => {
         console.error('Error fetching existing attendance', err);
@@ -184,7 +200,6 @@ export class AttendanceComponent implements OnInit {
         if (std.students) {
           this.students = std.students;
         }
-        this.studentsLoaded = true;
       }
     });
   }
@@ -212,7 +227,7 @@ export class AttendanceComponent implements OnInit {
         date: new Date(this.selectedDate),
         type: 0, // 0 for Student
         attendanceIdentificationNumber: s.studentId,
-        description: '',
+        description: s.status === 'Leave' ? 'Leave' : '',
         isPresent: s.status === 'Present'
       });
     });
@@ -251,7 +266,7 @@ export class AttendanceComponent implements OnInit {
 
   resetForm(): void {
     this.students = [];
-    this.studentsLoaded = false;
+    this.loading = false;
     this.selectedClass = '';
     this.setTodayDate();
   }
@@ -259,7 +274,8 @@ export class AttendanceComponent implements OnInit {
   getStats() {
     return {
       present: this.students.filter(s => s.status === 'Present').length,
-      absent: this.students.filter(s => s.status === 'Absent').length
+      absent: this.students.filter(s => s.status === 'Absent').length,
+      leave: this.students.filter(s => s.status === 'Leave').length
     };
   }
 
