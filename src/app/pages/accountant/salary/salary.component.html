@@ -48,7 +48,8 @@
         <!-- STAFF DROPDOWN -->
         <div class="col-md-6">
           <label class="form-label-premium">Staff Name *</label>
-          <select class="form-select-premium" [(ngModel)]="$any(salary).staffId" (change)="onStaffSelect()" [disabled]="isProcessing">
+          <select class="form-select-premium" [(ngModel)]="$any(salary).staffId" (change)="onStaffSelect()"
+            [disabled]="isProcessing">
             <option [value]="undefined" disabled selected>Select Staff</option>
             <option *ngFor="let staff of staffList" [value]="staff.staffId">
               {{ staff.staffName }}
@@ -58,43 +59,50 @@
 
         <div class="col-md-3">
           <label class="form-label-premium">Basic Salary *</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.basicSalary" placeholder="0" [disabled]="isProcessing">
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.basicSalary" placeholder="0"
+            [disabled]="isProcessing">
         </div>
 
         <div class="col-md-3">
           <label class="form-label-premium">Festival Bonus</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.festivalBonus" placeholder="0" [disabled]="isProcessing">
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.festivalBonus" placeholder="0"
+            [disabled]="isProcessing">
         </div>
 
         <div class="col-md-3">
           <label class="form-label-premium">Allowance</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.allowance" placeholder="0" [disabled]="isProcessing">
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.allowance" placeholder="0"
+            [disabled]="isProcessing">
         </div>
 
         <div class="col-md-3">
           <label class="form-label-premium">Medical</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.medicalAllowance" placeholder="0" [disabled]="isProcessing">
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.medicalAllowance" placeholder="0"
+            [disabled]="isProcessing">
         </div>
 
         <div class="col-md-3">
           <label class="form-label-premium">Housing</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.housingAllowance" placeholder="0" [disabled]="isProcessing">
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.housingAllowance" placeholder="0"
+            [disabled]="isProcessing">
         </div>
 
         <div class="col-md-3">
           <label class="form-label-premium">Transport</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.transportationAllowance"
-            placeholder="0" [disabled]="isProcessing">
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.transportationAllowance" placeholder="0"
+            [disabled]="isProcessing">
         </div>
 
         <div class="col-md-3">
           <label class="form-label-premium">Saving Fund</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.savingFund" placeholder="0" [disabled]="isProcessing">
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.savingFund" placeholder="0"
+            [disabled]="isProcessing">
         </div>
 
         <div class="col-md-3">
           <label class="form-label-premium">Taxes</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.taxes" placeholder="0" [disabled]="isProcessing">
+          <input type="number" class="form-control-premium" [(ngModel)]="salary.taxes" placeholder="0"
+            [disabled]="isProcessing">
         </div>
 
         <div class="col-md-6">
@@ -263,12 +271,12 @@
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>
@@ -285,4 +293,4 @@
       <p class="pc-subtitle">Synchronizing financial records...</p>
     </div>
   </div>
-</div>
+</div>

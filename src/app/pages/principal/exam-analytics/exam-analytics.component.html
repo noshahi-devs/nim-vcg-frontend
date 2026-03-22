@@ -33,7 +33,8 @@
 
     <div class="ea-control-item">
       <label class="ea-label">Select Section</label>
-      <select class="ea-select" [(ngModel)]="selectedSectionId" (change)="loadAnalytics()" name="section" [disabled]="!selectedClassId">
+      <select class="ea-select" [(ngModel)]="selectedSectionId" (change)="loadAnalytics()" name="section"
+        [disabled]="!selectedClassId">
         <option [ngValue]="null">All Sections</option>
         <option *ngFor="let sec of sections" [ngValue]="sec.sectionId">{{ sec.sectionName }}</option>
       </select>
@@ -112,7 +113,8 @@
               <td>
                 <div class="ea-progress-row">
                   <div class="ea-progress-track">
-                    <div class="ea-progress-fill" [style.width.%]="sub.passPercentage" [class.good]="sub.passPercentage >= 50"></div>
+                    <div class="ea-progress-fill" [style.width.%]="sub.passPercentage"
+                      [class.good]="sub.passPercentage >= 50"></div>
                   </div>
                   <span>{{ sub.passPercentage }}%</span>
                 </div>
@@ -135,15 +137,21 @@
 <!-- == Premium Feedback Modal == -->
 <div class="premium-overlay" *ngIf="showFeedbackModal">
   <div class="premium-modal feedback-modal">
-    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span class="pm-sparkle sp3"></span></div>
-    <div class="pm-icon-ring" [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
-      <iconify-icon [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'" style="font-size:2.4rem; color:#fff"></iconify-icon>
+    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span
+        class="pm-sparkle sp3"></span></div>
+    <div class="pm-icon-ring"
+      [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
+      <iconify-icon
+        [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'"
+        style="font-size:2.4rem; color:#fff"></iconify-icon>
     </div>
     <p class="pm-title">{{ feedbackTitle }}</p>
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}" (click)="closeFeedback()">
-        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Acknowledge
+      <button class="pm-btn pm-Ok"
+        [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
+        (click)="closeFeedback()">
+        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
       </button>
     </div>
   </div>
@@ -153,6 +161,9 @@
 <div class="premium-overlay processing-overlay" *ngIf="isProcessing">
   <div class="processing-card">
     <div class="loader-ring"></div>
-    <div><p class="pc-title">Processing...</p><p class="pc-subtitle">Please wait a moment</p></div>
+    <div>
+      <p class="pc-title">Processing...</p>
+      <p class="pc-subtitle">Please wait a moment</p>
+    </div>
   </div>
 </div>

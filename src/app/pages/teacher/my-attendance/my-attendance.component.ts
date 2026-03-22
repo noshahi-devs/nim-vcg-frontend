@@ -32,8 +32,8 @@ export class MyAttendanceComponent implements OnInit {
     feedbackType: 'success' | 'error' | 'warning' = 'success';
     feedbackTitle = '';
     feedbackMessage = '';
-    onAcknowledgeFeedback: (() => void) | null = null;
-    
+    onOkFeedback: (() => void) | null = null;
+
     // Pagination
     currentPage = 1;
     pageSize = 10;
@@ -89,7 +89,7 @@ export class MyAttendanceComponent implements OnInit {
                     const isStaffType = a.type == 1 || a.type as any === 'Staff';
                     return isUserMatch && isStaffType;
                 }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-                
+
                 this.updatePagination();
 
                 // Safely check for local date, considering potential UTC drift from the server
@@ -227,14 +227,14 @@ export class MyAttendanceComponent implements OnInit {
         this.feedbackTitle = title;
         this.feedbackMessage = message;
         this.showFeedbackModal = true;
-        this.onAcknowledgeFeedback = cb || null;
+        this.onOkFeedback = cb || null;
     }
 
     closeFeedback() {
         this.showFeedbackModal = false;
-        if (this.onAcknowledgeFeedback) {
-            this.onAcknowledgeFeedback();
-            this.onAcknowledgeFeedback = null;
+        if (this.onOkFeedback) {
+            this.onOkFeedback();
+            this.onOkFeedback = null;
         }
     }
 

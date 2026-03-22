@@ -90,10 +90,11 @@
         <div class="sk-table-row sk-shimmer" *ngFor="let i of [1,2,3,4,5]"></div>
       </div>
 
-      <!-- No Data State -->
+      <!-- No Data State (Premium & Centered) -->
       <div *ngIf="!loading && paginatedClasses.length === 0" class="empty-state">
         <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
-        <p>No class records discovered matching your criteria.</p>
+        <h5>No Classes Found</h5>
+        <p>No class records discovered matching your search.</p>
         <a routerLink="/newclass" class="btn-add mt-16" *ngIf="authService.hasRole('Admin')">Initialize First Class</a>
       </div>
 
@@ -167,8 +168,8 @@
                     *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
                     <iconify-icon icon="solar:layers-bold-duotone"></iconify-icon>
                   </a>
-                  <button type="button" (click)="openDeleteModal(cls)" class="icon-btn btn-delete" title="Archive Record"
-                    *ngIf="authService.hasRole('Admin')">
+                  <button type="button" (click)="openDeleteModal(cls)" class="icon-btn btn-delete"
+                    title="Archive Record" *ngIf="authService.hasRole('Admin')">
                     <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
                   </button>
                 </div>
@@ -215,7 +216,7 @@
       </div>
       <div class="modal-header-text">
         <h3>{{ selectedClass?.standardName }}</h3>
-        <p>Class Identification: {{ selectedClass?.standardCode || 'N/A' }}</p>
+        <p>Class ID: {{ selectedClass?.standardCode || 'No code set' }}</p>
       </div>
       <button class="btn-close-premium" (click)="closeDialog()">
         <iconify-icon icon="material-symbols:close-rounded"></iconify-icon>
@@ -273,7 +274,7 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn-modal-close" (click)="closeDialog()">Acknowledge</button>
+      <button class="btn-modal-close" (click)="closeDialog()">Ok</button>
     </div>
   </div>
 </div>
@@ -305,12 +306,12 @@
     <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>
@@ -323,10 +324,10 @@
       <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
     </div>
 
-    <h3 class="pm-title">Delete Class?</h3>
+    <h3 class="pm-title">Permanently Delete?</h3>
     <p class="pm-subtitle">
       Are you sure you want to delete <strong>{{ selectedClass?.standardName }}</strong>?<br>
-      This will permanently remove the academic record.
+      This will remove all its details forever.
     </p>
 
     <div class="pm-actions">

@@ -40,10 +40,6 @@
           <iconify-icon icon="solar:magnifer-linear" class="es-search-icon"></iconify-icon>
           <input class="es-search-input" type="text" [(ngModel)]="searchTerm" placeholder="Search classes..." />
         </div>
-        <select class="es-show-select" [(ngModel)]="filterSection">
-          <option value="">All Sections</option>
-          <option *ngFor="let s of sections" [value]="s">{{ s }}</option>
-        </select>
       </div>
       <a routerLink="/newclass" class="es-add-btn" *ngIf="isAdminOrPrincipal()">
         <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon>
@@ -70,10 +66,8 @@
     </div>
 
     <!-- ── Empty State ── -->
-    <div class="es-empty" *ngIf="filteredClassList.length === 0 && !loading">
-      <div class="es-empty-icon">
-        <iconify-icon icon="solar:school-bold-duotone"></iconify-icon>
-      </div>
+    <div class="empty-state" *ngIf="filteredClassList.length === 0 && !loading">
+      <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
       <h5>No Classes Found</h5>
       <p>Create your academic structure by adding your first class.</p>
       <a routerLink="/newclass" class="es-add-btn" *ngIf="isAdminOrPrincipal()">
@@ -84,7 +78,7 @@
 
     <!-- ── Class Grid ── -->
     <div class="es-grid" *ngIf="filteredClassList.length > 0 && !loading">
-      <div class="es-card" *ngFor="let classItem of filteredClassList; let i = index">
+      <div class="es-card" *ngFor="let classItem of paginatedClassList; let i = index">
         <div class="es-card-accent" [ngClass]="'accent-' + (i % 5)"></div>
 
         <div class="es-card-head">
@@ -122,7 +116,34 @@
         </div>
       </div>
     </div>
-  </div>
+
+    <!-- ── Pagination ── -->
+    <div class="pagination-bar" *ngIf="filteredClassList.length > 0 && !loading">
+      <p class="pagination-info mb-0">
+        Showing <b>{{ (currentPage - 1) * rowsPerPage + 1 }}</b> to
+        <b>{{ Math.min(currentPage * rowsPerPage, filteredClassList.length) }}</b> of <b>{{ filteredClassList.length }}</b> classes
+      </p>
+      <nav>
+        <ul class="pagination-pills">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-left-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+            [class.active]="currentPage === i + 1">
+            <a class="page-link" (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-right-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+  </div><!-- end .es-page -->
 
   <!-- VIEW MODAL -->
   <div class="modal-overlay" *ngIf="showViewModal" (click)="showViewModal = false">
@@ -265,12 +286,12 @@
       <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
       <div class="pm-actions">
-        <button class="pm-btn pm-acknowledge" [ngClass]="{
+        <button class="pm-btn pm-Ok" [ngClass]="{
                   'pm-success-btn': feedbackType === 'success',
                   'pm-error-btn': feedbackType === 'error',
                   'pm-warning-btn': feedbackType === 'warning'
                 }" (click)="showFeedbackModal = false">
-          Acknowledge
+          Ok
         </button>
       </div>
     </div>

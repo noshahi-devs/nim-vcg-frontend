@@ -76,10 +76,13 @@
             </div>
 
             <div class="d-flex align-items-center justify-content-end gap-3 mt-48">
-              <button type="button" (click)="onSubmit(subjectForm)" class="btn-primary-gradient px-40 py-3 radius-12 d-flex align-items-center gap-3 shadow-lg" [disabled]="isProcessing"
-                style="min-height: 54px; transition: all 0.3s ease;">
-                <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" style="font-size: 24px;"></iconify-icon>
-                <iconify-icon *ngIf="!isProcessing" icon="solar:diskette-bold-duotone" style="font-size: 24px;"></iconify-icon>
+              <button type="button" (click)="onSubmit(subjectForm)"
+                class="btn-primary-gradient px-40 py-3 radius-12 d-flex align-items-center gap-3 shadow-lg"
+                [disabled]="isProcessing" style="min-height: 54px; transition: all 0.3s ease;">
+                <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop"
+                  style="font-size: 24px;"></iconify-icon>
+                <iconify-icon *ngIf="!isProcessing" icon="solar:diskette-bold-duotone"
+                  style="font-size: 24px;"></iconify-icon>
                 <span class="fw-bold fs-5">{{ isProcessing ? 'Processing...' : 'Save Subject' }}</span>
               </button>
             </div>
@@ -112,12 +115,12 @@
       <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
       <div class="pm-actions">
-        <button class="pm-btn pm-acknowledge" [ngClass]="{
+        <button class="pm-btn pm-Ok" [ngClass]="{
                   'pm-success-btn': feedbackType === 'success',
                   'pm-error-btn': feedbackType === 'error',
                   'pm-warning-btn': feedbackType === 'warning'
                 }" (click)="closeFeedback()">
-          Acknowledge
+          Ok
         </button>
       </div>
     </div>

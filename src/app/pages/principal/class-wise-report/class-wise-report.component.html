@@ -94,7 +94,7 @@
   <div class="table-glass-container" *ngIf="!isLoading && reportData.length">
     <div class="table-glass-header">
       <h5>Attendance Details</h5>
-      
+
       <div class="d-flex align-items-center gap-2">
         <!-- Export Actions -->
         <button class="btn-add" (click)="exportExcel()" [disabled]="isLoading"
@@ -175,7 +175,7 @@
     <!-- ══════ Pagination Controls ══════ -->
     <div class="es-pagination-glass" *ngIf="paginatedData.length > 0">
       <div class="showing-text">
-        Showing <b>{{ (currentPage - 1) * pageSize + 1 }}</b> to 
+        Showing <b>{{ (currentPage - 1) * pageSize + 1 }}</b> to
         <b>{{ Math.min(currentPage * pageSize, reportData.length) }}</b> of <b>{{ reportData.length }}</b> entries
       </div>
       <div class="page-controls">
@@ -230,12 +230,12 @@
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>

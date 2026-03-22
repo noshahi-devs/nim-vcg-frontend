@@ -53,6 +53,11 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   assignedSections: Section[] = [];
   assignedClassNames: string[] = [];
   loading = false;
+  Math = Math;
+
+  // Pagination
+  currentPage = 1;
+  rowsPerPage = 12;
   
   academicYears: AcademicYear[] = [];
   selectedYearId: number | null = null;
@@ -323,6 +328,22 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     }
 
     this.filteredList = list;
+    this.currentPage = 1;
+  }
+
+  get paginatedStudentList(): Student[] {
+    const start = (this.currentPage - 1) * this.rowsPerPage;
+    return this.filteredList.slice(start, start + this.rowsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredList.length / this.rowsPerPage);
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
   }
 
   // -------------------------------------------------------

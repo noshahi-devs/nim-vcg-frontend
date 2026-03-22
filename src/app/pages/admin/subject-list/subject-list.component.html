@@ -40,10 +40,6 @@
           <iconify-icon icon="solar:magnifer-linear" class="es-search-icon"></iconify-icon>
           <input class="es-search-input" type="text" [(ngModel)]="searchTerm" placeholder="Search subjects..." />
         </div>
-        <select class="es-show-select" [(ngModel)]="filterClass">
-          <option value="">All Classes</option>
-          <option *ngFor="let s of classes" [value]="s">{{ s }}</option>
-        </select>
       </div>
       <a routerLink="/subject-add" class="es-add-btn" *ngIf="isAdminOrPrincipal()">
         <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon>
@@ -68,12 +64,10 @@
     </div>
 
     <!-- ── Empty State ── -->
-    <div class="es-empty" *ngIf="filteredSubjectList.length === 0 && !loading">
-      <div class="es-empty-icon">
-        <iconify-icon icon="solar:book-2-bold-duotone"></iconify-icon>
-      </div>
+    <div class="empty-state" *ngIf="filteredSubjectList.length === 0 && !loading">
+      <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
       <h5>No Subjects Found</h5>
-      <p>Register academic subjects to start managing your curriculum.</p>
+      <p>No subjects found for this selection.</p>
       <a routerLink="/subject-add" class="es-add-btn" *ngIf="isAdminOrPrincipal()">
         <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon>
         Add First Subject
@@ -82,7 +76,7 @@
 
     <!-- ── Subject Grid ── -->
     <div class="es-grid" *ngIf="filteredSubjectList.length > 0">
-      <div class="es-card" *ngFor="let subject of filteredSubjectList; let i = index">
+      <div class="es-card" *ngFor="let subject of paginatedSubjectList; let i = index">
         <div class="es-card-accent" [ngClass]="'accent-' + (i % 5)"></div>
 
         <div class="es-card-head">
@@ -113,6 +107,32 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- ── Pagination ── -->
+    <div class="pagination-bar" *ngIf="filteredSubjectList.length > 0 && !loading">
+      <p class="pagination-info mb-0">
+        Showing <b>{{ (currentPage - 1) * rowsPerPage + 1 }}</b> to
+        <b>{{ Math.min(currentPage * rowsPerPage, filteredSubjectList.length) }}</b> of <b>{{ filteredSubjectList.length }}</b> subjects
+      </p>
+      <nav>
+        <ul class="pagination-pills">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-left-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+            [class.active]="currentPage === i + 1">
+            <a class="page-link" (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-right-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 
@@ -212,7 +232,8 @@
         <button class="btn-ghost" (click)="showEditModal = false">Cancel</button>
         <button class="btn-primary-gradient" (click)="updateSubject()" [disabled]="isProcessing"
           style="background: linear-gradient(135deg, #F4C430, #d4a71c); color: #800000; box-shadow: 0 4px 14px rgba(244, 196, 48, 0.3);">
-          <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2 text-maroon-premium"></iconify-icon>
+          <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop"
+            class="me-2 text-maroon-premium"></iconify-icon>
           <span *ngIf="!isProcessing">Save Subject</span>
           <span *ngIf="isProcessing">Saving...</span>
         </button>
@@ -267,12 +288,12 @@
       <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
       <div class="pm-actions">
-        <button class="pm-btn pm-acknowledge" [ngClass]="{
+        <button class="pm-btn pm-Ok" [ngClass]="{
                   'pm-success-btn': feedbackType === 'success',
                   'pm-error-btn': feedbackType === 'error',
                   'pm-warning-btn': feedbackType === 'warning'
                 }" (click)="closeFeedback()">
-          Acknowledge
+          Ok
         </button>
       </div>
     </div>

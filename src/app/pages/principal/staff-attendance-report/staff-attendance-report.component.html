@@ -8,10 +8,10 @@
 
         <div class="search-wrapper staff-autocomplete-container" style="flex: 1; min-width: 350px;">
           <iconify-icon icon="mdi:magnify" class="search-icon-field"></iconify-icon>
-          <input type="text" class="search-input w-100" [(ngModel)]="searchTerm" 
-                 (input)="onSearchChange()" (focus)="showDropdown = true" [disabled]="isProcessing"
-                 placeholder="Search staff by name..." style="padding-left: 38px;">
-          
+          <input type="text" class="search-input w-100" [(ngModel)]="searchTerm" (input)="onSearchChange()"
+            (focus)="showDropdown = true" [disabled]="isProcessing" placeholder="Search staff by name..."
+            style="padding-left: 38px;">
+
           <!-- Custom Autocomplete Dropdown -->
           <div class="staff-autocomplete-dropdown glass-card" *ngIf="showDropdown && filteredStaff.length > 0">
             <div class="staff-autocomplete-item" *ngFor="let s of filteredStaff" (click)="selectStaff(s)">
@@ -25,7 +25,8 @@
               </div>
             </div>
           </div>
-          <div class="staff-autocomplete-dropdown glass-card no-results" *ngIf="showDropdown && searchTerm && filteredStaff.length === 0">
+          <div class="staff-autocomplete-dropdown glass-card no-results"
+            *ngIf="showDropdown && searchTerm && filteredStaff.length === 0">
             No matching staff found
           </div>
         </div>
@@ -52,7 +53,8 @@
             title="End Date" [disabled]="isProcessing">
         </div>
 
-        <button class="btn-primary-gradient" (click)="getReport()" style="padding: 10px 24px;" [disabled]="isProcessing">
+        <button class="btn-primary-gradient" (click)="getReport()" style="padding: 10px 24px;"
+          [disabled]="isProcessing">
           <iconify-icon icon="mdi:file-document-outline" class="text-white text-xl me-2"></iconify-icon>
           <span class="text-white">Generate Staff Summary</span>
         </button>
@@ -170,12 +172,12 @@
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>

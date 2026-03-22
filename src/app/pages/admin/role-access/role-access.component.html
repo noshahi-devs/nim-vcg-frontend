@@ -1,80 +1,81 @@
 <app-breadcrumb [title]="'Role & Access Management'" [icon]="'solar:shield-user-bold-duotone'"></app-breadcrumb>
 
-  <div class="row gy-4">
-    <div class="col-md-4">
-      <div class="role-card add-role-card">
-        <div class="role-card-head">
-          <h6>Add New Role</h6>
+<div class="row gy-4">
+  <div class="col-md-4">
+    <div class="role-card add-role-card">
+      <div class="role-card-head">
+        <h6>Add New Role</h6>
+      </div>
+      <div class="role-card-body">
+        <div class="mb-4">
+          <label class="field-label">Role Name</label>
+          <input type="text" class="field-input" [(ngModel)]="newRoleName" placeholder="e.g. Librarian">
         </div>
-        <div class="role-card-body">
-          <div class="mb-4">
-            <label class="field-label">Role Name</label>
-            <input type="text" class="field-input" [(ngModel)]="newRoleName" placeholder="e.g. Librarian">
-          </div>
 
-          <div class="permissions-section mb-4">
-            <label class="field-label mb-3">Select Permissions</label>
-            <div class="permissions-grid">
-              <label *ngFor="let perm of availablePermissions" class="perm-checkbox-item">
-                <input type="checkbox" [checked]="selectedPermissions.has(perm)" (change)="togglePermission(perm)">
-                <span class="custom-checkbox"></span>
-                <span class="perm-label">{{ perm }}</span>
-              </label>
-            </div>
+        <div class="permissions-section mb-4">
+          <label class="field-label mb-3">Select Permissions</label>
+          <div class="permissions-grid">
+            <label *ngFor="let perm of availablePermissions" class="perm-checkbox-item">
+              <input type="checkbox" [checked]="selectedPermissions.has(perm)" (change)="togglePermission(perm)">
+              <span class="custom-checkbox"></span>
+              <span class="perm-label">{{ perm }}</span>
+            </label>
           </div>
-
-          <button class="btn-primary-gradient w-100 d-flex align-items-center justify-content-center gap-2" (click)="addRole()" [disabled]="isSaving">
-            <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop"></iconify-icon>
-            <iconify-icon *ngIf="!isSaving" icon="solar:add-circle-bold"></iconify-icon>
-            {{ isSaving ? 'Saving...' : 'Create Role' }}
-          </button>
         </div>
+
+        <button class="btn-primary-gradient w-100 d-flex align-items-center justify-content-center gap-2"
+          (click)="addRole()" [disabled]="isSaving">
+          <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop"></iconify-icon>
+          <iconify-icon *ngIf="!isSaving" icon="solar:add-circle-bold"></iconify-icon>
+          {{ isSaving ? 'Saving...' : 'Create Role' }}
+        </button>
       </div>
     </div>
+  </div>
 
-    <div class="col-md-8">
-      <div class="role-card">
-        <div class="role-card-head">
-          <h6>Existing Roles</h6>
-        </div>
-        <div class="role-card-body p-0">
-          <div class="role-table-wrap">
-            <table class="role-table">
-              <thead>
-                <tr>
-                  <th>Role Name</th>
-                  <th>Permissions</th>
-                  <th class="text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let role of roles">
-                  <td><span class="role-name">{{ role.name }}</span></td>
-                  <td>
-                    <div class="perm-wrap">
-                      <span *ngFor="let perm of role.permissions" class="perm-chip">{{ perm }}</span>
-                      <span *ngIf="!role.permissions?.length" class="text-muted">No permissions</span>
-                    </div>
-                  </td>
-                  <td class="text-center">
-                    <button class="icon-btn delete-btn" (click)="deleteRole(role.id)" title="Delete Role">
-                      <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
-                    </button>
-                  </td>
-                </tr>
-                <tr *ngIf="roles?.length === 0">
-                  <td colspan="3" class="role-empty">
-                    <iconify-icon icon="solar:user-block-bold-duotone"></iconify-icon>
-                    <p>No roles found.</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+  <div class="col-md-8">
+    <div class="role-card">
+      <div class="role-card-head">
+        <h6>Existing Roles</h6>
+      </div>
+      <div class="role-card-body p-0">
+        <div class="role-table-wrap">
+          <table class="role-table">
+            <thead>
+              <tr>
+                <th>Role Name</th>
+                <th>Permissions</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let role of roles">
+                <td><span class="role-name">{{ role.name }}</span></td>
+                <td>
+                  <div class="perm-wrap">
+                    <span *ngFor="let perm of role.permissions" class="perm-chip">{{ perm }}</span>
+                    <span *ngIf="!role.permissions?.length" class="text-muted">No permissions</span>
+                  </div>
+                </td>
+                <td class="text-center">
+                  <button class="icon-btn delete-btn" (click)="deleteRole(role.id)" title="Delete Role">
+                    <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="roles?.length === 0">
+                <td colspan="3" class="role-empty">
+                  <iconify-icon icon="solar:user-block-bold-duotone"></iconify-icon>
+                  <p>No roles found.</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
+</div>
 
 <!-- PREMIUM ACTION MODALS -->
 
@@ -129,12 +130,12 @@
     <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>

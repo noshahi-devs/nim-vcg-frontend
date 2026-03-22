@@ -370,10 +370,10 @@
     <p class="pm-title">{{ feedbackTitle }}</p>
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge"
+      <button class="pm-btn pm-Ok"
         [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
         (click)="closeFeedback()">
-        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Acknowledge
+        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
       </button>
     </div>
   </div>

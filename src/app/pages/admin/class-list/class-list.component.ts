@@ -9,7 +9,6 @@ import { SubjectAssignmentService } from '../../../core/services/subject-assignm
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { SectionService } from '../../../services/section.service';
-import { Section } from '../../../Models/section';
 import { forkJoin, finalize } from 'rxjs';
 
 @Component({
@@ -24,10 +23,10 @@ export class ClassListComponent implements OnInit, AfterViewInit {
 
   title = 'Class List';
   searchTerm = '';
-  filterSection = '';
   classToDelete: Standard | null = null;
   selectedClassForView: Standard | null = null;
   selectedClassForEdit: any = {}; // Using any for local edit state
+  Math = Math;
 
   // Premium Modal Visibility State
   showViewModal = false;
@@ -41,8 +40,9 @@ export class ClassListComponent implements OnInit, AfterViewInit {
   feedbackTitle = '';
   feedbackMessage = '';
 
-  sections: string[] = [];
-  assignedSections: Section[] = [];
+  // Pagination
+  currentPage = 1;
+  rowsPerPage = 12;
 
   classList: Standard[] = [];
 
@@ -64,6 +64,31 @@ export class ClassListComponent implements OnInit, AfterViewInit {
     private sectionService: SectionService,
     private assignmentService: SubjectAssignmentService
   ) { }
+
+  // Pagination helpers
+  get filteredClassList(): Standard[] {
+    let list = this.classList;
+    if (this.searchTerm) {
+      const search = this.searchTerm.toLowerCase();
+      list = list.filter(c => c.standardName?.toLowerCase().includes(search));
+    }
+    return list;
+  }
+
+  get paginatedClassList(): Standard[] {
+    const start = (this.currentPage - 1) * this.rowsPerPage;
+    return this.filteredClassList.slice(start, start + this.rowsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredClassList.length / this.rowsPerPage);
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
 
   ngOnInit(): void {
     this.checkTeacherContext();
@@ -112,17 +137,6 @@ export class ClassListComponent implements OnInit, AfterViewInit {
         this.assignedSubjectIds = (res.assignments || []).map(a => a.subjectId);
         const assignedClassNames = res.assignments.map(a => a.subject?.standard?.standardName || (a.section as any)?.className);
         this.assignedClassNames = [...new Set(assignedClassNames.filter(c => !!c))];
-
-        const classTeacherSections = res.sections.filter(s => s.staffId === this.staffId);
-        const assignmentSectionIds = res.assignments.map(a => a.sectionId);
-        const subjectSections = res.sections.filter(s => assignmentSectionIds.includes(s.sectionId));
-
-        const uniqueSections = new Map<number, Section>();
-        classTeacherSections.forEach(s => uniqueSections.set(s.sectionId, s));
-        subjectSections.forEach(s => uniqueSections.set(s.sectionId, s));
-        this.assignedSections = Array.from(uniqueSections.values());
-
-        this.sections = [...new Set(this.assignedSections.map(s => s.sectionName))];
         this.loadClasses();
       },
       error: () => this.loadClasses()
@@ -133,6 +147,7 @@ export class ClassListComponent implements OnInit, AfterViewInit {
     this.standardService.getStandards().pipe(finalize(() => this.loading = false)).subscribe({
       next: (data) => {
         this.classList = data;
+        this.currentPage = 1;
         if (this.isTeacher) {
           this.classList = this.classList.filter(c => this.assignedClassNames.includes(c.standardName));
           this.classList.forEach(classItem => {
@@ -140,33 +155,12 @@ export class ClassListComponent implements OnInit, AfterViewInit {
               classItem.subjects = classItem.subjects.filter(sub => this.assignedSubjectIds.includes(sub.subjectId));
             }
           });
-        } else {
-          this.sectionService.getSections().subscribe(secs => {
-            this.sections = [...new Set(secs.map(s => s.sectionName))];
-          });
         }
       },
       error: (err) => {
         console.error("API Load Error:", err);
       }
     });
-  }
-
-  get filteredClassList() {
-    let list = this.classList;
-    if (this.filterSection) {
-      list = list.filter(c => {
-        if (this.isTeacher) {
-          return this.assignedSections.some(s => s.className === c.standardName && s.sectionName === this.filterSection);
-        }
-        return true; 
-      });
-    }
-    if (this.searchTerm) {
-      const search = this.searchTerm.toLowerCase();
-      list = list.filter(c => c.standardName?.toLowerCase().includes(search));
-    }
-    return list;
   }
 
   confirmDelete(classItem: Standard) {

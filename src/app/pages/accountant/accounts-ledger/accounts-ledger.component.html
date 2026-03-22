@@ -279,12 +279,14 @@
         </div>
 
         <!-- Highlight Amount Card -->
-        <div class="amount-card-premium" [ngClass]="selectedTransaction.type === 'Income' ? 'success-gradient' : 'danger-gradient'">
+        <div class="amount-card-premium"
+          [ngClass]="selectedTransaction.type === 'Income' ? 'success-gradient' : 'danger-gradient'">
           <div class="amount-card-bg"></div>
           <span class="v-label-light">Transaction Amount</span>
           <div class="amount-display-premium">
             <span class="currency-symbol">Rs</span>
-            <span class="amount-value">{{ formatCurrency(selectedTransaction.type === 'Income' ? selectedTransaction.credit : selectedTransaction.debit).replace('Rs', '').trim() }}</span>
+            <span class="amount-value">{{ formatCurrency(selectedTransaction.type === 'Income' ?
+              selectedTransaction.credit : selectedTransaction.debit).replace('Rs', '').trim() }}</span>
           </div>
           <div class="balance-footer-premium">
             <span>Resulting Balance:</span>
@@ -313,15 +315,22 @@
 <!-- == Premium Feedback Modal == -->
 <div class="premium-overlay" *ngIf="showFeedbackModal">
   <div class="premium-modal feedback-modal">
-    <div class="pm-sparkles"><span class="pm-sparkle sp1" style="background: #fbbf24;"></span><span class="pm-sparkle sp2" style="background: #fbbf24;"></span><span class="pm-sparkle sp3" style="background: #fbbf24;"></span></div>
-    <div class="pm-icon-ring" [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
-      <iconify-icon [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'" style="font-size:2.4rem; color:#fff"></iconify-icon>
+    <div class="pm-sparkles"><span class="pm-sparkle sp1" style="background: #fbbf24;"></span><span
+        class="pm-sparkle sp2" style="background: #fbbf24;"></span><span class="pm-sparkle sp3"
+        style="background: #fbbf24;"></span></div>
+    <div class="pm-icon-ring"
+      [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
+      <iconify-icon
+        [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'"
+        style="font-size:2.4rem; color:#fff"></iconify-icon>
     </div>
     <p class="pm-title">{{ feedbackTitle }}</p>
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}" (click)="closeFeedback()" style="background: linear-gradient(135deg, #800000, #5a0000);">
-        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Acknowledge
+      <button class="pm-btn pm-Ok"
+        [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
+        (click)="closeFeedback()" style="background: linear-gradient(135deg, #800000, #5a0000);">
+        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
       </button>
     </div>
   </div>
@@ -331,6 +340,9 @@
 <div class="premium-overlay processing-overlay" *ngIf="isProcessing">
   <div class="processing-card">
     <div class="loader-ring" style="border-top-color: #fbbf24;"></div>
-    <div><p class="pc-title">Processing...</p><p class="pc-subtitle">Please wait a moment</p></div>
+    <div>
+      <p class="pc-title">Processing...</p>
+      <p class="pc-subtitle">Please wait a moment</p>
+    </div>
   </div>
 </div>

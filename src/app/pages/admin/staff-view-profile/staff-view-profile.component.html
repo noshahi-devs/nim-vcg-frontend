@@ -56,7 +56,8 @@
             </span>
           </div>
         </div>
-        <div class="profile-actions d-flex gap-8 mb-8">
+        <div class="profile-actions d-flex gap-8 mb-8"
+          *ngIf="authService.hasAnyRole(['Admin', 'Principal', 'Vice Principal'])">
           <button (click)="editStaff(staffData.id)"
             class="btn btn-white btn-sm px-16 radius-8 d-flex align-items-center gap-8">
             <iconify-icon icon="solar:pen-bold"></iconify-icon> Edit Profile

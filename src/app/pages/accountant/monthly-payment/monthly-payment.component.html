@@ -80,7 +80,7 @@
         <div class="sk-table-header sk-shimmer mb-16"></div>
         <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
       </div>
-      
+
       <div class="table-wrapper" *ngIf="!loading">
         <table class="fee-table">
           <thead>
@@ -438,12 +438,12 @@
     <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>

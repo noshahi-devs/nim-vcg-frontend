@@ -119,6 +119,11 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     this.studentDOBStr = (this.newStudent.studentDOB as any).toISOString().split('T')[0];
     this.admissionDateStr = (this.newStudent.admissionDate as any).toISOString().split('T')[0];
 
+    // Auto-generate Enrollment Number for display (must be numeric as per model)
+    const year = new Date().getFullYear().toString().slice(-2);
+    const randomStr = Math.floor(1000 + Math.random() * 9000).toString();
+    this.newStudent.enrollmentNo = parseInt(year + randomStr, 10);
+
     // Explicitly clear email/password to prevent some browser autofills on load
     this.newStudent.studentEmail = '';
     this.newStudent.studentPassword = '';
@@ -201,6 +206,11 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
       this.showFeedback('warning', 'Dates Required', 'Please provide both Date of Birth and Admission Date.');
       return;
     }
+
+    // Auto-generate hidden email and hardcode password based on requirements
+    const enrollmentStr = this.newStudent.enrollmentNo?.toString() || 'student';
+    this.newStudent.studentEmail = `${enrollmentStr}@visioncollegegojra.com`;
+    this.newStudent.studentPassword = 'Noshahi.000';
 
     this.isProcessing = true;
 

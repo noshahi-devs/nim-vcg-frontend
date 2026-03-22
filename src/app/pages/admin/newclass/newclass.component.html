@@ -35,9 +35,10 @@
             </div>
 
             <div class="d-flex align-items-center justify-content-center gap-3 mt-40">
-              <button type="button" class="outstanding-btn d-flex align-items-center gap-2" 
-                [disabled]="isProcessing" (click)="onSubmit(classForm)">
-                <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
+              <button type="button" class="outstanding-btn d-flex align-items-center gap-2" [disabled]="isProcessing"
+                (click)="onSubmit(classForm)">
+                <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop"
+                  style="font-size: 20px;"></iconify-icon>
                 <iconify-icon *ngIf="!isProcessing" icon="solar:check-read-bold-duotone" class="text-xl"></iconify-icon>
                 <span>{{ isProcessing ? 'Processing...' : 'Save' }}</span>
               </button>
@@ -77,12 +78,12 @@
     <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>

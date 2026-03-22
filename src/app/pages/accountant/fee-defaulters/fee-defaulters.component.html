@@ -78,7 +78,8 @@
         <div class="filter-group">
           <label class="filter-label">Class</label>
           <div class="select-wrapper-premium">
-            <select class="field-select-premium" [(ngModel)]="selectedClass" (change)="onFilterChange()" [disabled]="isProcessing">
+            <select class="field-select-premium" [(ngModel)]="selectedClass" (change)="onFilterChange()"
+              [disabled]="isProcessing">
               <option value="all">All Classes</option>
               <option *ngFor="let cls of uniqueClasses" [value]="cls">{{ cls }}</option>
             </select>
@@ -92,7 +93,8 @@
         <div class="filter-group">
           <label class="filter-label">Status</label>
           <div class="select-wrapper-premium">
-            <select class="field-select-premium" [(ngModel)]="selectedStatus" (change)="onFilterChange()" [disabled]="isProcessing">
+            <select class="field-select-premium" [(ngModel)]="selectedStatus" (change)="onFilterChange()"
+              [disabled]="isProcessing">
               <option value="all">All Status</option>
               <option value="Critical">Critical</option>
               <option value="Warning">Warning</option>
@@ -123,8 +125,8 @@
           </svg>
           Refresh
         </button>
-        <button class="btn-success-premium" (click)="sendBulkReminders()" [disabled]="filteredDefaulters.length === 0 || isProcessing"
-          title="Send Bulk Reminders">
+        <button class="btn-success-premium" (click)="sendBulkReminders()"
+          [disabled]="filteredDefaulters.length === 0 || isProcessing" title="Send Bulk Reminders">
           <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
           <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
@@ -132,8 +134,8 @@
           Bulk Reminders
         </button>
         <div class="action-divider"></div>
-        <button class="btn-secondary-premium" (click)="exportCSV()" [disabled]="filteredDefaulters.length === 0 || isProcessing"
-          title="Export CSV">
+        <button class="btn-secondary-premium" (click)="exportCSV()"
+          [disabled]="filteredDefaulters.length === 0 || isProcessing" title="Export CSV">
           <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
           <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -301,12 +303,12 @@
     <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>

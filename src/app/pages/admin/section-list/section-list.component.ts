@@ -23,11 +23,15 @@ import { forkJoin, finalize } from 'rxjs';
 export class SectionListComponent implements OnInit {
   title = 'Section List';
   searchTerm = '';
-  filterClass = '';
   loading = false;
   selectedSection: Section | null = null;
   editLoading = false;
   allStaff: any[] = [];
+  Math = Math;
+
+  // Pagination
+  currentPage = 1;
+  rowsPerPage = 12;
 
   // Premium Modal Visibility State
   showViewModal = false;
@@ -55,6 +59,34 @@ export class SectionListComponent implements OnInit {
     private staffService: StaffService,
     private assignmentService: SubjectAssignmentService
   ) { }
+
+  get filteredSectionList() {
+    let list = this.sectionList;
+    if (this.searchTerm) {
+      const search = this.searchTerm.toLowerCase();
+      list = list.filter(s =>
+        s.sectionName?.toLowerCase().includes(search) ||
+        s.classTeacher?.staffName?.toLowerCase().includes(search) ||
+        s.roomNo?.toLowerCase().includes(search)
+      );
+    }
+    return list;
+  }
+
+  get paginatedSectionList() {
+    const start = (this.currentPage - 1) * this.rowsPerPage;
+    return this.filteredSectionList.slice(start, start + this.rowsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredSectionList.length / this.rowsPerPage);
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
 
   ngOnInit(): void {
     this.loadSections();
@@ -100,7 +132,7 @@ export class SectionListComponent implements OnInit {
 
   private fetchAllSectionsRaw(): void {
     this.sectionService.getSections().subscribe({
-      next: (data) => { this.sectionList = data || []; this.loading = false; },
+      next: (data) => { this.sectionList = data || []; this.loading = false; this.currentPage = 1; },
       error: (err) => { console.error('Error loading sections:', err); this.loading = false; }
     });
   }
@@ -130,19 +162,7 @@ export class SectionListComponent implements OnInit {
     });
   }
 
-  get filteredSectionList() {
-    let list = this.sectionList;
-    if (this.filterClass) list = list.filter(s => s.className === this.filterClass);
-    if (this.searchTerm) {
-      const search = this.searchTerm.toLowerCase();
-      list = list.filter(s =>
-        s.sectionName?.toLowerCase().includes(search) ||
-        s.classTeacher?.staffName?.toLowerCase().includes(search) ||
-        s.roomNo?.toLowerCase().includes(search)
-      );
-    }
-    return list;
-  }
+
 
   // ── Delete ──
   confirmDelete(sectionItem: Section) {

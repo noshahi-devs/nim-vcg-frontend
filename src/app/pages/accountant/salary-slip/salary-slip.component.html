@@ -25,7 +25,8 @@
       <div class="stat-content">
         <span class="stat-label">Total Slips Issued</span>
         <h2 class="stat-value">{{ totalPaidSlips }}</h2>
-        <span class="stat-trend"><iconify-icon icon="mdi:file-check-outline"></iconify-icon> Verified Transactions</span>
+        <span class="stat-trend"><iconify-icon icon="mdi:file-check-outline"></iconify-icon> Verified
+          Transactions</span>
       </div>
       <div class="stat-icon"><iconify-icon icon="mdi:receipt-text-check-outline"></iconify-icon></div>
     </div>
@@ -35,8 +36,8 @@
   <div class="premium-filter-section mb-4">
     <div class="search-container-premium">
       <iconify-icon icon="mdi:magnify" class="search-lead-icon"></iconify-icon>
-      <input type="text" class="search-input-premium" [(ngModel)]="searchQuery" 
-             placeholder="Search by staff name, ID, or designation...">
+      <input type="text" class="search-input-premium" [(ngModel)]="searchQuery"
+        placeholder="Search by staff name, ID, or designation...">
       <div class="search-actions">
         <span class="search-count" *ngIf="filteredRecords.length > 0">
           {{ filteredRecords.length }} Results Found
@@ -71,7 +72,8 @@
 
           <div class="salary-grid">
             <div class="grid-column">
-              <span class="column-title earnings"><iconify-icon icon="mdi:plus-circle-outline"></iconify-icon> Earnings</span>
+              <span class="column-title earnings"><iconify-icon icon="mdi:plus-circle-outline"></iconify-icon>
+                Earnings</span>
               <div class="grid-item">
                 <span class="item-label">Basic Salary</span>
                 <span class="item-val">PKR {{ slip.basicSalary | number }}</span>
@@ -82,15 +84,18 @@
               </div>
               <div class="grid-item" *ngIf="slip.allowance > 0">
                 <span class="item-label">Allowances</span>
-                <span class="item-val text-success">+{{ (slip.allowance + slip.medicalAllowance + slip.housingAllowance + slip.transportationAllowance) | number }}</span>
+                <span class="item-val text-success">+{{ (slip.allowance + slip.medicalAllowance + slip.housingAllowance
+                  + slip.transportationAllowance) | number }}</span>
               </div>
             </div>
 
             <div class="grid-column divider">
-              <span class="column-title deductions"><iconify-icon icon="mdi:minus-circle-outline"></iconify-icon> Deductions</span>
+              <span class="column-title deductions"><iconify-icon icon="mdi:minus-circle-outline"></iconify-icon>
+                Deductions</span>
               <div class="grid-item">
                 <span class="item-label">Saving Fund</span>
-                <span class="item-val text-danger">{{ slip.savingFund > 0 ? '-' + (slip.savingFund | number) : '0' }}</span>
+                <span class="item-val text-danger">{{ slip.savingFund > 0 ? '-' + (slip.savingFund | number) : '0'
+                  }}</span>
               </div>
               <div class="grid-item">
                 <span class="item-label">Prof. Tax</span>
@@ -131,7 +136,8 @@
           <iconify-icon icon="mdi:file-search-outline"></iconify-icon>
         </div>
         <h3>No Salary Records Found</h3>
-        <p>Type the staff member's name in the search bar above to see their monthly salary slips and print receipts.</p>
+        <p>Type the staff member's name in the search bar above to see their monthly salary slips and print receipts.
+        </p>
       </div>
     </div>
   </div>
@@ -139,19 +145,21 @@
   <!-- PAGINATION -->
   <div class="premium-pagination-wrapper mt-5" *ngIf="filteredRecords.length > 0">
     <div class="pagination-info">
-      Showing <span>{{ paginationStart }} - {{ paginationEnd }}</span> of <span>{{ filteredRecords.length }}</span> Slips
+      Showing <span>{{ paginationStart }} - {{ paginationEnd }}</span> of <span>{{ filteredRecords.length }}</span>
+      Slips
     </div>
     <div class="pagination-controls">
       <button class="nav-btn" [disabled]="currentPage === 1 || isProcessing" (click)="changePage(currentPage - 1)">
         <iconify-icon icon="mdi:chevron-left"></iconify-icon>
       </button>
       <div class="page-numbers">
-        <button class="page-num" *ngFor="let page of totalPagesArray" 
-                [class.active]="currentPage === page" (click)="changePage(page)">
+        <button class="page-num" *ngFor="let page of totalPagesArray" [class.active]="currentPage === page"
+          (click)="changePage(page)">
           {{ page }}
         </button>
       </div>
-      <button class="nav-btn" [disabled]="currentPage === totalPages || isProcessing" (click)="changePage(currentPage + 1)">
+      <button class="nav-btn" [disabled]="currentPage === totalPages || isProcessing"
+        (click)="changePage(currentPage + 1)">
         <iconify-icon icon="mdi:chevron-right"></iconify-icon>
       </button>
     </div>
@@ -165,7 +173,8 @@
       <h1 style="color: #800000; margin: 0 0 10px 0;">{{ schoolInfo.instituteName || 'Vision College Gojra' }}</h1>
       <p style="margin: 0; color: #666;">{{ schoolInfo.instituteAddress }}</p>
       <p style="margin: 0; color: #666;">Contact: {{ schoolInfo.institutePhone }} | {{ schoolInfo.instituteEmail }}</p>
-      <p style="margin: 10px 0 0 0; font-weight: bold; color: #800020; text-transform: uppercase;">Salary Payment Receipt</p>
+      <p style="margin: 10px 0 0 0; font-weight: bold; color: #800020; text-transform: uppercase;">Salary Payment
+        Receipt</p>
     </div>
     <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
       <h3 style="margin: 0 0 15px 0;">Staff: {{ selectedSlip.staffName }}</h3>
@@ -278,12 +287,12 @@
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>

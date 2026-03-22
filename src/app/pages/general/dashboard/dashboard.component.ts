@@ -182,9 +182,12 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
       this.overviewStats = [
         { label: 'Total Students', value: data.totalStudents, icon: 'solar:users-group-rounded-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)' },
         { label: 'Total Teachers', value: data.totalTeachers, icon: 'solar:user-speak-bold-duotone', color: '#F4C430', bg: 'rgba(244,196,48,0.12)' },
+        { label: 'Total Staff', value: data.totalStaff, icon: 'solar:user-id-bold-duotone', color: '#0ea5e9', bg: 'rgba(14,165,233,0.12)' },
         { label: 'Income (Month)', value: data.incomeThisMonth, icon: 'solar:wallet-money-bold-duotone', color: '#10b981', bg: 'rgba(16,185,129,0.12)', isCurrency: true },
         { label: 'Expenses (Month)', value: data.expenseThisMonth, icon: 'solar:card-send-bold-duotone', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)', isCurrency: true },
-        { label: 'Total Classes', value: data.totalClasses, icon: 'solar:buildings-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)' }
+        { label: 'Total Classes', value: data.totalClasses, icon: 'solar:buildings-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)' },
+        { label: 'Total Sections', value: data.totalSections, icon: 'solar:diploma-bold-duotone', color: '#F4C430', bg: 'rgba(244,196,48,0.12)' },
+        { label: 'Total Subjects', value: data.totalSubjects, icon: 'solar:book-2-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)' }
       ];
     });
     this.dashboardService.getChartData().subscribe(data => { this.updateHistoricalCharts(data); });

@@ -96,7 +96,7 @@ export class ClassManagementComponent implements OnInit {
         }));
         this.applyFilter();
       },
-      error: () => this.showFeedback('error', 'Sync Failed', 'Unable to synchronize classroom data with the server.')
+      error: () => this.showFeedback('error', 'Load Error', "We couldn't get the records from the server. Please try again.")
     });
   }
 
@@ -121,7 +121,7 @@ export class ClassManagementComponent implements OnInit {
 
         this.applyFilter();
       },
-      error: () => this.showFeedback('error', 'Sync Failed', 'Unable to synchronize classroom data with the server.')
+      error: () => this.showFeedback('error', 'Load Error', "We couldn't get the records from the server. Please try again.")
     });
   }
 
@@ -206,12 +206,12 @@ export class ClassManagementComponent implements OnInit {
       })
     ).subscribe({
       next: () => {
-        this.showFeedback('success', 'Class Deleted', 'The academic record has been permanently removed.');
+        this.showFeedback('success', 'Deleted!', 'The class has been deleted successfully.');
         this.loadData();
       },
       error: (err) => {
-        const msg = typeof err.error === 'string' ? err.error : 'Unable to delete class. It may have associated students or subjects.';
-        this.showFeedback('error', 'Cannot Delete Record', msg);
+        const msg = typeof err.error === 'string' ? err.error : 'This class cannot be deleted because it still has students or subjects.';
+        this.showFeedback('error', 'Deletion Failed', msg);
       }
     });
   }

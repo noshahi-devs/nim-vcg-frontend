@@ -135,10 +135,13 @@
                   </div>
                   <div>
                     <span class="fw-semibold text-primary-light d-block" style="font-size:14px;">Half Day Leave</span>
-                    <span class="text-xs text-secondary-light">Only the start date will be used &mdash; duration counts as 0.5 day</span>
+                    <span class="text-xs text-secondary-light">Only the start date will be used &mdash; duration counts
+                      as 0.5 day</span>
                   </div>
                   <div class="ms-auto">
-                    <span class="badge px-12 py-6 radius-8 fw-bold" [style.background]="isHalfDay ? '#800000' : '#f1f5f9'" [style.color]="isHalfDay ? '#fff' : '#64748b'" style="font-size:11px;">
+                    <span class="badge px-12 py-6 radius-8 fw-bold"
+                      [style.background]="isHalfDay ? '#800000' : '#f1f5f9'"
+                      [style.color]="isHalfDay ? '#fff' : '#64748b'" style="font-size:11px;">
                       {{ isHalfDay ? 'ENABLED' : 'DISABLED' }}
                     </span>
                   </div>
@@ -147,13 +150,9 @@
 
               <!-- Calculated Total Days Banner -->
               <div class="col-12" *ngIf="totalDays > 0">
-                <div
-                  class="alert d-flex align-items-center gap-3 radius-8"
-                  [class.alert-success]="!isHalfDay"
-                  [class.alert-warning]="isHalfDay"
-                  [style.border-color]="isHalfDay ? '#fbbf24' : ''"
-                  [style.background]="isHalfDay ? '#fefce8' : ''"
-                  role="alert">
+                <div class="alert d-flex align-items-center gap-3 radius-8" [class.alert-success]="!isHalfDay"
+                  [class.alert-warning]="isHalfDay" [style.border-color]="isHalfDay ? '#fbbf24' : ''"
+                  [style.background]="isHalfDay ? '#fefce8' : ''" role="alert">
                   <div
                     class="w-40-px h-40-px rounded-circle bg-white d-flex justify-content-center align-items-center shadow-sm">
                     <iconify-icon [icon]="isHalfDay ? 'solar:sun-bold-duotone' : 'solar:check-circle-bold-duotone'"
@@ -163,8 +162,10 @@
                     <h6 class="mb-0 fw-bold" [class.text-success-600]="!isHalfDay" [class.text-warning]="isHalfDay">
                       {{ totalDays }} Day(s) Selected{{ isHalfDay ? ' (Half Day)' : '' }}
                     </h6>
-                    <span class="text-sm opacity-75" [class.text-success-600]="!isHalfDay" [class.text-warning]="isHalfDay">
-                      {{ isHalfDay ? 'You are applying for half a day off on ' + fromDate + '.' : 'This is the total duration of your requested time off.' }}
+                    <span class="text-sm opacity-75" [class.text-success-600]="!isHalfDay"
+                      [class.text-warning]="isHalfDay">
+                      {{ isHalfDay ? 'You are applying for half a day off on ' + fromDate + '.' : 'This is the total
+                      duration of your requested time off.' }}
                     </span>
                   </div>
                 </div>
@@ -202,7 +203,8 @@
                 </button>
                 <button type="submit"
                   class="btn d-flex align-items-center gap-2 radius-8 px-32 py-10 fw-semibold text-white premium-maroon-btn"
-                  [disabled]="submitting || !staffId" style="border-radius: 8px !important; background: linear-gradient(135deg, #800000, #5a0000); border: none; box-shadow: 0 4px 14px rgba(128,0,0,0.35); transition: all 0.25s;">
+                  [disabled]="submitting || !staffId"
+                  style="border-radius: 8px !important; background: linear-gradient(135deg, #800000, #5a0000); border: none; box-shadow: 0 4px 14px rgba(128,0,0,0.35); transition: all 0.25s;">
                   <span *ngIf="submitting" class="spinner-border spinner-border-sm" role="status"></span>
                   <iconify-icon *ngIf="!submitting" icon="solar:check-circle-bold" class="text-lg"></iconify-icon>
                   <span>{{ staffId ? 'Confirm Submit' : 'Wait for Profile...' }}</span>
@@ -241,12 +243,12 @@
     <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>

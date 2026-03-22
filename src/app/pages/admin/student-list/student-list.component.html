@@ -1,5 +1,6 @@
 <div class="dashboard-main-body">
-  <app-breadcrumb [title]="'Student List'" [main-title]="'Management'" [icon]="'solar:users-group-rounded-bold-duotone'"></app-breadcrumb>
+  <app-breadcrumb [title]="'Student List'" [main-title]="'Management'"
+    [icon]="'solar:users-group-rounded-bold-duotone'"></app-breadcrumb>
 
   <div class="es-page">
     <div class="stats-row" *ngIf="!isTeacher">
@@ -36,13 +37,8 @@
       <div class="es-topbar-left">
         <div class="es-search-wrap">
           <iconify-icon icon="solar:magnifer-linear" class="es-search-icon"></iconify-icon>
-          <input
-            class="es-search-input"
-            type="text"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="applyFilters()"
-            placeholder="Search students..."
-          />
+          <input class="es-search-input" type="text" [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()"
+            placeholder="Search students..." />
         </div>
         <div class="es-filter-group">
           <select class="es-show-select" [(ngModel)]="filterClass" (ngModelChange)="onClassChange()">
@@ -58,7 +54,8 @@
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
-          <select class="es-show-select academic-year-switcher" [(ngModel)]="selectedYearId" (ngModelChange)="onYearChange()">
+          <select class="es-show-select academic-year-switcher" [(ngModel)]="selectedYearId"
+            (ngModelChange)="onYearChange()">
             <option [ngValue]="null">Search by Year</option>
             <option *ngFor="let year of academicYears" [ngValue]="year.academicYearId">{{ year.name }}</option>
           </select>
@@ -90,25 +87,25 @@
       </div>
     </div>
 
-    <div class="es-empty" *ngIf="filteredList.length === 0 && !loading">
-      <div class="es-empty-icon">
-        <iconify-icon icon="solar:user-search-bold-duotone"></iconify-icon>
-      </div>
+    <div class="empty-state" *ngIf="filteredList.length === 0 && !loading">
+      <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
       <h5>No Students Found</h5>
-      <p>Adjust your filters or register a new student to see them here.</p>
+      <p>No students found matching your search or filters.</p>
       <a routerLink="/student-add" class="es-add-btn" *ngIf="authService.hasRole('Admin')">
         <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon>
-        Add Student
+        Add First Student
       </a>
     </div>
 
     <div class="es-grid" *ngIf="filteredList.length > 0">
-      <div class="es-card" *ngFor="let student of filteredList">
-        <div class="es-card-accent" [ngClass]="student.status?.toLowerCase() === 'active' ? 'accent-active' : 'accent-inactive'"></div>
+      <div class="es-card" *ngFor="let student of paginatedStudentList">
+        <div class="es-card-accent"
+          [ngClass]="student.status?.toLowerCase() === 'active' ? 'accent-active' : 'accent-inactive'"></div>
 
         <div class="es-card-top">
           <span class="es-id-chip">Adm #{{ student.admissionNo || student.enrollmentNo }}</span>
-          <span class="es-status-chip" [ngClass]="student.status?.toLowerCase() === 'active' ? 'chip-active' : 'chip-inactive'">
+          <span class="es-status-chip"
+            [ngClass]="student.status?.toLowerCase() === 'active' ? 'chip-active' : 'chip-inactive'">
             {{ student.status?.toLowerCase() === 'active' ? 'Active' : 'Inactive' }}
           </span>
         </div>
@@ -116,7 +113,8 @@
         <div class="es-card-head">
           <div class="es-avatar-wrap">
             <img [src]="getStudentImage(student)" class="es-avatar" />
-            <div class="es-status-indicator" [ngClass]="student.status?.toLowerCase() === 'active' ? 'status-active' : 'status-inactive'"></div>
+            <div class="es-status-indicator"
+              [ngClass]="student.status?.toLowerCase() === 'active' ? 'status-active' : 'status-inactive'"></div>
           </div>
           <h6 class="es-card-title">{{ student.studentName }}</h6>
           <span class="es-card-subtitle">{{ getStudentDisplay(student) }}</span>
@@ -139,7 +137,8 @@
           <a [routerLink]="['/student-view', student.studentId]" class="es-action-btn view">
             <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> View
           </a>
-          <a [routerLink]="['/student-edit', student.studentId]" class="es-action-btn edit" *ngIf="authService.hasRole('Admin')">
+          <a [routerLink]="['/student-edit', student.studentId]" class="es-action-btn edit"
+            *ngIf="authService.hasRole('Admin')">
             <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon> Edit
           </a>
           <button class="es-action-btn delete" (click)="confirmDelete(student)" *ngIf="authService.hasRole('Admin')">
@@ -147,6 +146,32 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- ── Pagination ── -->
+    <div class="pagination-bar" *ngIf="filteredList.length > 0 && !loading">
+      <p class="pagination-info mb-0">
+        Showing <b>{{ (currentPage - 1) * rowsPerPage + 1 }}</b> to
+        <b>{{ Math.min(currentPage * rowsPerPage, filteredList.length) }}</b> of <b>{{ filteredList.length }}</b> students
+      </p>
+      <nav>
+        <ul class="pagination-pills">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-left-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+            [class.active]="currentPage === i + 1">
+            <a class="page-link" (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-right-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 
@@ -208,12 +233,12 @@
     <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>

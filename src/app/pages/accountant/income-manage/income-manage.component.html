@@ -85,12 +85,12 @@
     <div class="fee-card-body">
       <div class="table-wrapper">
         <!-- Premium Skeleton Loading -->
-      <div *ngIf="loading && !isProcessing" class="sk-table-container animate-fade-in border-0 p-24 mb-0">
-        <div class="sk-table-header sk-shimmer mb-16"></div>
-        <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
-      </div>
-      
-      <table class="fee-table" *ngIf="!loading">
+        <div *ngIf="loading && !isProcessing" class="sk-table-container animate-fade-in border-0 p-24 mb-0">
+          <div class="sk-table-header sk-shimmer mb-16"></div>
+          <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
+        </div>
+
+        <table class="fee-table" *ngIf="!loading">
           <thead>
             <tr>
               <th>#</th>
@@ -114,7 +114,7 @@
               <td>{{ income.receivedBy }}</td>
               <td class="text-center" *ngIf="hasRole('Accountant')">
                 <div class="action-group">
-                  <button class="icon-btn view-btn flex-center" (click)="openViewModal(income)" 
+                  <button class="icon-btn view-btn flex-center" (click)="openViewModal(income)"
                     data-tooltip="View Details" style="background: #fffbeb; color: #b45309;">
                     <iconify-icon icon="solar:eye-bold-duotone" style="font-size: 1.1rem;"></iconify-icon>
                   </button>
@@ -222,20 +222,22 @@
         </div>
 
         <div class="view-card-premium">
-           <div class="view-item-static no-bg no-border">
-              <span class="v-label">Description</span>
-              <p class="v-description">{{ selectedIncome.description }}</p>
-           </div>
-           <div class="view-item-static no-bg no-border pt-12 border-top mt-4">
-              <span class="v-label">Created At</span>
-              <span class="v-value text-xs text-secondary-light">{{ selectedIncome.createdAt | date:'medium' }}</span>
-           </div>
+          <div class="view-item-static no-bg no-border">
+            <span class="v-label">Description</span>
+            <p class="v-description">{{ selectedIncome.description }}</p>
+          </div>
+          <div class="view-item-static no-bg no-border pt-12 border-top mt-4">
+            <span class="v-label">Created At</span>
+            <span class="v-value text-xs text-secondary-light">{{ selectedIncome.createdAt | date:'medium' }}</span>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="modal-footer-premium">
-      <button class="btn-primary-gradient" style="background: linear-gradient(135deg, #800000, #5a0000); width: 100%; justify-content: center;" (click)="closeViewModal()">
+      <button class="btn-primary-gradient"
+        style="background: linear-gradient(135deg, #800000, #5a0000); width: 100%; justify-content: center;"
+        (click)="closeViewModal()">
         <iconify-icon icon="solar:check-read-linear"></iconify-icon>
         Done
       </button>
@@ -255,7 +257,8 @@
     </div>
     <h3 class="delete-title">Confirm Delete</h3>
     <p class="delete-message">
-      Are you sure you want to delete the income record for "<strong>{{ itemToDeleteDesc }}</strong>"? This action cannot be undone.
+      Are you sure you want to delete the income record for "<strong>{{ itemToDeleteDesc }}</strong>"? This action
+      cannot be undone.
     </p>
     <div class="delete-actions">
       <button class="btn-ghost" (click)="showDeleteDialog = false">Cancel</button>
@@ -274,15 +277,21 @@
 <!-- == Premium Feedback Modal == -->
 <div class="premium-overlay" *ngIf="showFeedbackModal">
   <div class="premium-modal feedback-modal">
-    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span class="pm-sparkle sp3"></span></div>
-    <div class="pm-icon-ring" [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
-      <iconify-icon [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'" style="font-size:2.4rem; color:#fff"></iconify-icon>
+    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span
+        class="pm-sparkle sp3"></span></div>
+    <div class="pm-icon-ring"
+      [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
+      <iconify-icon
+        [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'"
+        style="font-size:2.4rem; color:#fff"></iconify-icon>
     </div>
     <p class="pm-title">{{ feedbackTitle }}</p>
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}" (click)="closeFeedback()">
-        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Acknowledge
+      <button class="pm-btn pm-Ok"
+        [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
+        (click)="closeFeedback()">
+        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
       </button>
     </div>
   </div>
@@ -292,7 +301,10 @@
 <div class="premium-overlay processing-overlay" *ngIf="isProcessing">
   <div class="processing-card">
     <div class="loader-ring"></div>
-    <div><p class="pc-title">Processing...</p><p class="pc-subtitle">Please wait a moment</p></div>
+    <div>
+      <p class="pc-title">Processing...</p>
+      <p class="pc-subtitle">Please wait a moment</p>
+    </div>
   </div>
 </div>
 

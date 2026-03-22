@@ -60,11 +60,11 @@
       </li>
 
       <!-- 1. System Admin -->
-      <li class="dropdown" *ngIf="hasAnyRole(['Admin'])">
+      <!-- <li class="dropdown" *ngIf="hasAnyRole(['Admin'])">
         <a href="javascript:void(0)" data-desc="Settings, roles and system controls"
           title="Settings, roles and system controls">
           <iconify-icon icon="mdi:cog" class="menu-icon"></iconify-icon>
-          <span>1. System Admin</span>
+          <span>System Admin</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/settings" routerLinkActive="active-page"><i
@@ -74,14 +74,14 @@
           <li><a routerLink="/assign-role" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-danger-main"></i> Assign Role</a></li>
         </ul>
-      </li>
+      </li> -->
 
       <!-- 2. Manage Classes -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
         <a href="javascript:void(0)" data-desc="Class setup and class management"
           title="Class setup and class management">
           <iconify-icon icon="mdi:google-classroom" class="menu-icon"></iconify-icon>
-          <span>2. Manage Classes</span>
+          <span>Manage Classes</span>
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/class-list" routerLinkActive="active-page"><i
@@ -97,7 +97,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
         <a href="javascript:void(0)" data-desc="Section list and section setup" title="Section list and section setup">
           <iconify-icon icon="mdi:view-list" class="menu-icon"></iconify-icon>
-          <span>3. Manage Sections</span>
+          <span>Manage Sections</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/section-list" routerLinkActive="active-page"><i
@@ -112,7 +112,7 @@
         <a href="javascript:void(0)" data-desc="Subjects creation and teacher assignment"
           title="Subjects creation and teacher assignment">
           <iconify-icon icon="mdi:book-open-variant" class="menu-icon"></iconify-icon>
-          <span>4. Manage Subjects</span>
+          <span>Manage Subjects</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/subject-list" routerLinkActive="active-page"><i
@@ -131,7 +131,7 @@
         <a href="javascript:void(0)" data-desc="Staff records, profiles and login control"
           title="Staff records, profiles and login control">
           <iconify-icon icon="mdi:account-tie" class="menu-icon"></iconify-icon>
-          <span>5. Employees</span>
+          <span>Employees</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/staff-list" routerLinkActive="active-page"><i
@@ -150,7 +150,7 @@
         <a href="javascript:void(0)" data-desc="Student records, admissions and promotions"
           title="Student records, admissions and promotions">
           <iconify-icon icon="mdi:account-school" class="menu-icon"></iconify-icon>
-          <span>6. Manage Students</span>
+          <span>Manage Students</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/student-list" routerLinkActive="active-page"><i
@@ -169,7 +169,7 @@
         <a href="javascript:void(0)" data-desc="Fees, invoices, payments and defaulters"
           title="Fees, invoices, payments and defaulters">
           <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
-          <span>7. Finance System</span>
+          <span>Finance System</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/fee" routerLinkActive="active-page"><i
@@ -194,7 +194,7 @@
         <a href="javascript:void(0)" data-desc="Salary processing and salary slips"
           title="Salary processing and salary slips">
           <iconify-icon icon="mdi:cash-multiple" class="menu-icon"></iconify-icon>
-          <span>8. Payroll System</span>
+          <span>Payroll System</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/salary" routerLinkActive="active-page"><i
@@ -209,7 +209,7 @@
         <a href="javascript:void(0)" data-desc="Student and staff attendance with reports"
           title="Student and staff attendance with reports">
           <iconify-icon icon="mdi:calendar-check" class="menu-icon"></iconify-icon>
-          <span>9. Attendance Track</span>
+          <span>Attendance Track</span>
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/attendance"
@@ -238,7 +238,7 @@
         <a href="javascript:void(0)" data-desc="Apply, review and manage leave requests"
           title="Apply, review and manage leave requests">
           <iconify-icon icon="mdi:calendar-outline" class="menu-icon"></iconify-icon>
-          <span>10. Manage Leave</span>
+          <span>Manage Leave</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/leave" routerLinkActive="active-page"><i
@@ -263,7 +263,7 @@
         <a href="javascript:void(0)" data-desc="Exams, schedules, marks and results"
           title="Exams, schedules, marks and results">
           <iconify-icon icon="mdi:school-outline" class="menu-icon"></iconify-icon>
-          <span>11. Manage Exams</span>
+          <span>Manage Exams</span>
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam" routerLinkActive="active-page"><i
@@ -294,7 +294,7 @@
         <a href="javascript:void(0)" data-desc="Income, expenses, ledger and bank cash"
           title="Income, expenses, ledger and bank cash">
           <iconify-icon icon="mdi:finance" class="menu-icon"></iconify-icon>
-          <span>12. Account Ledger</span>
+          <span>Account Ledger</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/accounts" routerLinkActive="active-page"><i
@@ -317,7 +317,7 @@
         <a href="javascript:void(0)" data-desc="Analytics insights and report center"
           title="Analytics insights and report center">
           <iconify-icon icon="mdi:file-chart" class="menu-icon"></iconify-icon>
-          <span>13. Reports System</span>
+          <span>Reports System</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/report" routerLinkActive="active-page"><i
@@ -329,7 +329,7 @@
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
         <a href="javascript:void(0)" routerLinkActive="active-page">
           <iconify-icon icon="mdi:message-outline" class="menu-icon"></iconify-icon>
-          <span>14. Notifications</span>
+          <span>Notifications</span>
           <span *ngIf="unreadMessageCount > 0" class="badge bg-danger ms-auto">{{ unreadMessageCount }}</span>
         </a>
         <ul class="sidebar-submenu">
@@ -620,7 +620,8 @@
           <div class="dropdown">
             <button class="d-flex justify-content-center align-items-center rounded-circle" type="button"
               data-bs-toggle="dropdown">
-              <img src="assets/images/user.png" alt="image" class="w-40-px h-40-px object-fit-cover rounded-circle">
+              <img [src]="profileImageUrl" alt="image" class="w-40-px h-40-px object-fit-cover rounded-circle"
+                (error)="profileImageUrl = 'assets/images/user.png'">
             </button>
             <div class="dropdown-menu to-top dropdown-menu-sm">
               <div
@@ -645,11 +646,7 @@
                     class="dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
                     <iconify-icon icon="tabler:message-check" class="icon text-xl"></iconify-icon> Inbox</a>
                 </li>
-                <li>
-                  <a routerLink="/company"
-                    class="dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                    <iconify-icon icon="icon-park-outline:setting-two" class="icon text-xl"></iconify-icon> Setting</a>
-                </li>
+
                 <li>
                   <a href="javascript:void(0)" (click)="logout()"
                     class="dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3">

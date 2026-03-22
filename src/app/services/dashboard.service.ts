@@ -7,6 +7,9 @@ export interface DashboardStats {
     totalStudents: number;
     totalTeachers: number;
     totalClasses: number;
+    totalStaff: number;
+    totalSections: number;
+    totalSubjects: number;
     incomeThisMonth: number;
     expenseThisMonth: number;
 }

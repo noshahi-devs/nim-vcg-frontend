@@ -31,10 +31,6 @@
           <iconify-icon icon="solar:magnifer-linear" class="es-search-icon"></iconify-icon>
           <input class="es-search-input" type="text" [(ngModel)]="searchTerm" placeholder="Search sections..." />
         </div>
-        <select class="es-show-select" [(ngModel)]="filterClass">
-          <option value="">All Classes</option>
-          <option *ngFor="let c of classes" [value]="c.standardName">{{ c.standardName }}</option>
-        </select>
       </div>
       <a routerLink="/section-add" class="es-add-btn">
         <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon>
@@ -59,12 +55,10 @@
     </div>
 
     <!-- ── Empty State ── -->
-    <div class="es-empty" *ngIf="!loading && filteredSectionList.length === 0">
-      <div class="es-empty-icon">
-        <iconify-icon icon="solar:door-open-bold-duotone"></iconify-icon>
-      </div>
+    <div class="empty-state" *ngIf="!loading && filteredSectionList.length === 0">
+      <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
       <h5>No Sections Found</h5>
-      <p>Break down your classes into manageable sections for better organization.</p>
+      <p>No sections found for this selection.</p>
       <a routerLink="/section-add" class="es-add-btn">
         <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon>
         Add First Section
@@ -73,7 +67,7 @@
 
     <!-- ── Section Grid ── -->
     <div class="es-grid" *ngIf="!loading && filteredSectionList.length > 0">
-      <div class="es-card" *ngFor="let sectionItem of filteredSectionList; let i = index">
+      <div class="es-card" *ngFor="let sectionItem of paginatedSectionList; let i = index">
         <div class="es-card-accent" [ngClass]="'accent-' + (i % 5)"></div>
 
         <div class="es-card-head">
@@ -104,6 +98,32 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- ── Pagination ── -->
+    <div class="pagination-bar" *ngIf="filteredSectionList.length > 0 && !loading">
+      <p class="pagination-info mb-0">
+        Showing <b>{{ (currentPage - 1) * rowsPerPage + 1 }}</b> to
+        <b>{{ Math.min(currentPage * rowsPerPage, filteredSectionList.length) }}</b> of <b>{{ filteredSectionList.length }}</b> sections
+      </p>
+      <nav>
+        <ul class="pagination-pills">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-left-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+            [class.active]="currentPage === i + 1">
+            <a class="page-link" (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-right-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 
@@ -138,7 +158,8 @@
           </div>
           <div class="receipt-item">
             <span class="label">Class Teacher</span>
-            <span class="value text-yellow-premium">{{ selectedSection.classTeacher?.staffName || 'Not Assigned' }}</span>
+            <span class="value text-yellow-premium">{{ selectedSection.classTeacher?.staffName || 'Not Assigned'
+              }}</span>
           </div>
           <div class="receipt-divider"></div>
           <div class="receipt-footer">
@@ -228,10 +249,12 @@
   <div class="premium-overlay" *ngIf="showDeleteModal" (click)="cancelDelete()">
     <div class="premium-modal delete-variant" (click)="$event.stopPropagation()">
       <div class="pm-icon-ring danger-ring">
-        <iconify-icon icon="solar:trash-bin-minimalistic-bold-duotone" style="font-size:2.2rem;color:#fff;"></iconify-icon>
+        <iconify-icon icon="solar:trash-bin-minimalistic-bold-duotone"
+          style="font-size:2.2rem;color:#fff;"></iconify-icon>
       </div>
       <h3 class="pm-title">Delete Section</h3>
-      <p class="pm-subtitle">Are you sure you want to permanently delete section <strong>{{ deleteTarget?.sectionName }}</strong>? This action cannot be undone.</p>
+      <p class="pm-subtitle">Are you sure you want to permanently delete section <strong>{{ deleteTarget?.sectionName
+          }}</strong>? This action cannot be undone.</p>
       <div class="pm-actions">
         <button class="pm-btn pm-cancel" (click)="cancelDelete()">Cancel</button>
         <button class="pm-btn pm-danger" (click)="executeDelete()">
@@ -249,14 +272,19 @@
         <span class="pm-sparkle sp2"></span>
         <span class="pm-sparkle sp3"></span>
       </div>
-      <div class="pm-icon-ring" [ngClass]="feedbackType === 'success' ? 'success-ring' : feedbackType === 'error' ? 'danger-ring' : 'warning-ring'">
-        <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold-duotone' : feedbackType === 'error' ? 'solar:danger-bold-duotone' : feedbackType === 'warning' ? 'solar:shield-warning-bold-duotone' : 'solar:danger-bold-duotone'" style="font-size:2.4rem;color:#fff;"></iconify-icon>
+      <div class="pm-icon-ring"
+        [ngClass]="feedbackType === 'success' ? 'success-ring' : feedbackType === 'error' ? 'danger-ring' : 'warning-ring'">
+        <iconify-icon
+          [icon]="feedbackType === 'success' ? 'solar:check-circle-bold-duotone' : feedbackType === 'error' ? 'solar:danger-bold-duotone' : feedbackType === 'warning' ? 'solar:shield-warning-bold-duotone' : 'solar:danger-bold-duotone'"
+          style="font-size:2.4rem;color:#fff;"></iconify-icon>
       </div>
       <h3 class="pm-title">{{ feedbackTitle }}</h3>
       <p class="pm-subtitle">{{ feedbackMessage }}</p>
-      <button class="pm-btn pm-acknowledge" [ngClass]="feedbackType === 'success' ? 'pm-success-btn' : feedbackType === 'error' ? 'pm-error-btn' : 'pm-warning-btn'" (click)="closeFeedback()">
+      <button class="pm-btn pm-Ok"
+        [ngClass]="feedbackType === 'success' ? 'pm-success-btn' : feedbackType === 'error' ? 'pm-error-btn' : 'pm-warning-btn'"
+        (click)="closeFeedback()">
         <iconify-icon icon="solar:check-square-bold" style="font-size:1.1rem;"></iconify-icon>
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>

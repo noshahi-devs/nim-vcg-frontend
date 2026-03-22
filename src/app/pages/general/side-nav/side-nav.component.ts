@@ -51,6 +51,7 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   displayName: string = '';
+  profileImageUrl: string = 'assets/images/user.png';
 
   private routerSubscription!: Subscription;
   private readonly eventNamespace = ".sideNav";
@@ -98,6 +99,18 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
         next: (staff) => {
           if (staff && staff.staffName) {
             this.displayName = staff.staffName;
+          }
+          if (staff && staff.imagePath) {
+            this.profileImageUrl = staff.imagePath;
+          }
+        },
+        error: () => { }
+      });
+    } else if (this.currentUser?.email) {
+      this.staffService.getStaffByEmail(this.currentUser.email).subscribe({
+        next: (staff) => {
+          if (staff && staff.imagePath) {
+            this.profileImageUrl = staff.imagePath;
           }
         },
         error: () => { }

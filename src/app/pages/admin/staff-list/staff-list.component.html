@@ -45,15 +45,13 @@
       </a>
     </div>
 
-    <div class="es-empty" *ngIf="!loading && filteredStaffList.length === 0">
-      <div class="es-empty-icon">
-        <iconify-icon icon="solar:user-heart-bold-duotone"></iconify-icon>
-      </div>
+    <div class="empty-state" *ngIf="!loading && filteredStaffList.length === 0">
+      <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
       <h5>No Staff Found</h5>
-      <p>Register new team members to start managing your institute.</p>
+      <p>No staff records found matching your search.</p>
       <a routerLink="/staff-add" class="es-add-btn" *ngIf="authService.hasRole('Admin')">
         <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon>
-        Add Staff
+        Add First Member
       </a>
     </div>
 
@@ -78,7 +76,7 @@
     </div>
 
     <div class="es-grid" *ngIf="!loading && filteredStaffList.length > 0">
-      <div class="es-card" *ngFor="let staff of filteredStaffList">
+      <div class="es-card" *ngFor="let staff of paginatedStaffList">
         <div class="es-card-accent"></div>
 
         <div class="es-card-top">
@@ -111,7 +109,8 @@
           <a [routerLink]="['/staff-view-profile', staff.staffId]" class="es-action-btn view">
             <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> Profile
           </a>
-          <a [routerLink]="['/staff-edit-profile', staff.staffId]" class="es-action-btn edit" *ngIf="authService.hasRole('Admin')">
+          <a [routerLink]="['/staff-edit-profile', staff.staffId]" class="es-action-btn edit"
+            *ngIf="authService.hasRole('Admin')">
             <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon> Edit
           </a>
           <button class="es-action-btn delete" (click)="confirmDelete(staff)" *ngIf="authService.hasRole('Admin')">
@@ -119,7 +118,34 @@
           </button>
         </div>
       </div>
-    </div>  </div>
+    </div>
+
+    <!-- ── Pagination ── -->
+    <div class="pagination-bar" *ngIf="filteredStaffList.length > 0 && !loading">
+      <p class="pagination-info mb-0">
+        Showing <b>{{ (currentPage - 1) * rowsPerPage + 1 }}</b> to
+        <b>{{ Math.min(currentPage * rowsPerPage, filteredStaffList.length) }}</b> of <b>{{ filteredStaffList.length }}</b> staff
+      </p>
+      <nav>
+        <ul class="pagination-pills">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-left-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+            [class.active]="currentPage === i + 1">
+            <a class="page-link" (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-right-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
 
   <!-- ============================================================
        PREMIUM MODALS (Feedback, Confirmation, Processing)
@@ -172,12 +198,12 @@
       <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
       <div class="pm-actions">
-        <button class="pm-btn pm-acknowledge" [ngClass]="{
+        <button class="pm-btn pm-Ok" [ngClass]="{
                   'pm-success-btn': feedbackType === 'success',
                   'pm-error-btn': feedbackType === 'error',
                   'pm-warning-btn': feedbackType === 'warning'
                 }" (click)="closeFeedback()">
-          Acknowledge
+          Ok
         </button>
       </div>
     </div>

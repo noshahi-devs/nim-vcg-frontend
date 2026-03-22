@@ -215,38 +215,15 @@
               </div>
             </div>
 
-            <!-- Student Email -->
+            <!-- Enrollment Number (Auto Generated) -->
             <div class="col-md-4">
               <div class="form-group-premium">
                 <label class="form-label-premium">
-                  <i class="ri-mail-line me-2 text-primary-500"></i>Student Email
+                  <i class="ri-hashtag me-2 text-primary-500"></i>Enrollment Number
                 </label>
                 <div class="input-wrapper-premium">
-                  <input type="email" class="form-control-premium" name="studentEmail" placeholder="student@example.com"
-                    [(ngModel)]="newStudent.studentEmail" autocomplete="off"
-                    #studentEmail="ngModel" required email
-                    [ngClass]="{ 'is-invalid': studentEmail.invalid && studentEmail.touched }" />
-                </div>
-                <div *ngIf="studentEmail.touched && studentEmail.invalid" class="error-feedback">
-                  {{ studentEmail.errors?.['required'] ? 'Student email is required for account creation' : 'Invalid
-                  email format' }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Student Password -->
-            <div class="col-md-4">
-              <div class="form-group-premium">
-                <label class="form-label-premium">
-                  <i class="ri-lock-password-line me-2 text-primary-500"></i>Student Password
-                </label>
-                <div class="input-wrapper-premium">
-                  <input type="password" class="form-control-premium" name="studentPassword"
-                    placeholder="Enter password" [(ngModel)]="newStudent.studentPassword" #studentPassword="ngModel"
-                    required autocomplete="new-password" [ngClass]="{ 'is-invalid': studentPassword.invalid && studentPassword.touched }" />
-                </div>
-                <div *ngIf="studentPassword.touched && studentPassword.invalid" class="error-feedback">
-                  Password is required for student account
+                  <input type="text" class="form-control-premium bg-light" name="enrollmentNo"
+                    [(ngModel)]="newStudent.enrollmentNo" disabled readonly title="Auto-generated" />
                 </div>
               </div>
             </div>
@@ -305,7 +282,8 @@
             <i class="ri-close-line me-2"></i>Dismiss
           </button>
           <button type="submit" class="btn-premium-primary" [disabled]="isProcessing">
-            <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" style="font-size: 20px;" class="me-2"></iconify-icon>
+            <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" style="font-size: 20px;"
+              class="me-2"></iconify-icon>
             <i *ngIf="!isProcessing" class="ri-save-3-line me-2"></i>
             {{ isProcessing ? 'Processing...' : 'Save' }}
           </button>
@@ -342,12 +320,12 @@
     <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>
@@ -364,4 +342,4 @@
       <p class="pc-subtitle">Creating student profile...</p>
     </div>
   </div>
-</div>
+</div>

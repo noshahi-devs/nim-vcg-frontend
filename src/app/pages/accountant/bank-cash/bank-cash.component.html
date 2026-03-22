@@ -549,7 +549,8 @@
 <!-- == Premium Delete Confirmation Modal == -->
 <div class="premium-overlay" *ngIf="showDeleteDialog">
   <div class="premium-modal delete-modal">
-    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span class="pm-sparkle sp3"></span></div>
+    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span
+        class="pm-sparkle sp3"></span></div>
     <div class="pm-icon-ring danger-ring">
       <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size:2.4rem; color:#fff"></iconify-icon>
     </div>
@@ -557,7 +558,8 @@
     <p class="pm-subtitle">Are you sure you want to remove <b>{{ itemToDeleteDesc }}</b>? This action is permanent.</p>
     <div class="pm-actions">
       <button class="pm-btn pm-cancel" (click)="showDeleteDialog = false">Cancel</button>
-      <button class="pm-btn pm-save" (click)="executeDelete()"><iconify-icon icon="solar:trash-bin-2-linear"></iconify-icon> Delete</button>
+      <button class="pm-btn pm-save" (click)="executeDelete()"><iconify-icon
+          icon="solar:trash-bin-2-linear"></iconify-icon> Delete</button>
     </div>
   </div>
 </div>
@@ -565,15 +567,19 @@
 <!-- == Premium Feedback Modal == -->
 <div class="premium-overlay" *ngIf="showFeedbackModal">
   <div class="premium-modal feedback-modal">
-    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span class="pm-sparkle sp3"></span></div>
-    <div class="pm-icon-ring" [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error'}">
-      <iconify-icon [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : 'solar:close-circle-bold'" style="font-size:2.4rem; color:#fff"></iconify-icon>
+    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span
+        class="pm-sparkle sp3"></span></div>
+    <div class="pm-icon-ring"
+      [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error'}">
+      <iconify-icon [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : 'solar:close-circle-bold'"
+        style="font-size:2.4rem; color:#fff"></iconify-icon>
     </div>
     <p class="pm-title">{{ feedbackTitle }}</p>
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="feedbackType==='success' ? 'pm-success-btn' : 'pm-error-btn'" (click)="closeFeedback()">
-        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Acknowledge
+      <button class="pm-btn pm-Ok" [ngClass]="feedbackType==='success' ? 'pm-success-btn' : 'pm-error-btn'"
+        (click)="closeFeedback()">
+        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
       </button>
     </div>
   </div>
@@ -583,6 +589,9 @@
 <div class="premium-overlay processing-overlay" *ngIf="isProcessing">
   <div class="processing-card">
     <div class="loader-ring"></div>
-    <div><p class="pc-title">Processing...</p><p class="pc-subtitle">Please wait a moment</p></div>
+    <div>
+      <p class="pc-title">Processing...</p>
+      <p class="pc-subtitle">Please wait a moment</p>
+    </div>
   </div>
 </div>

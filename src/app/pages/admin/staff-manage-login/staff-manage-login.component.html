@@ -62,13 +62,8 @@
 
     <div class="search-wrapper">
       <iconify-icon icon="ion:search-outline" class="search-icon"></iconify-icon>
-      <input
-        type="text"
-        class="search-input"
-        [(ngModel)]="searchTerm"
-        (input)="searchLogins()"
-        placeholder="Search by name, email or role"
-      />
+      <input type="text" class="search-input" [(ngModel)]="searchTerm" (input)="searchLogins()"
+        placeholder="Search by name, email or role" />
     </div>
   </section>
 
@@ -114,15 +109,12 @@
                   <iconify-icon icon="solar:eye-bold"></iconify-icon>
                 </button>
                 <!-- Activate / Deactivate Toggle (Admin Only) -->
-                <button
-                  type="button"
-                  (click)="toggleStatus(login)"
-                  class="icon-btn"
+                <button type="button" (click)="toggleStatus(login)" class="icon-btn"
                   [class.active-btn]="login.status?.toLowerCase() !== 'active'"
                   [class.deactivate-btn]="login.status?.toLowerCase() === 'active'"
-                  [title]="login.status?.toLowerCase() === 'active' ? 'Deactivate' : 'Activate'"
-                >
-                  <iconify-icon [icon]="login.status?.toLowerCase() === 'active' ? 'solar:forbidden-circle-bold' : 'solar:shield-check-bold'"></iconify-icon>
+                  [title]="login.status?.toLowerCase() === 'active' ? 'Deactivate' : 'Activate'">
+                  <iconify-icon
+                    [icon]="login.status?.toLowerCase() === 'active' ? 'solar:forbidden-circle-bold' : 'solar:shield-check-bold'"></iconify-icon>
                 </button>
                 <!-- Delete -->
                 <button type="button" (click)="confirmDelete(login)" class="icon-btn delete-btn" title="Delete">
@@ -161,40 +153,26 @@
 
       <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0">
         <li class="page-item">
-          <a
-            class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-            [class.disabled]="currentPage === 1"
-            (click)="changePage(currentPage - 1)"
-            href="javascript:void(0)"
-            style="cursor: pointer;"
-          >
+          <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+            [class.disabled]="currentPage === 1" (click)="changePage(currentPage - 1)" href="javascript:void(0)"
+            style="cursor: pointer;">
             <iconify-icon icon="ep:d-arrow-left"></iconify-icon>
           </a>
         </li>
 
         <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
-          <a
-            class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-            [class.bg-primary-600]="currentPage === i + 1"
-            [class.text-white]="currentPage === i + 1"
-            [class.bg-neutral-200]="currentPage !== i + 1"
-            [class.text-secondary-light]="currentPage !== i + 1"
-            (click)="changePage(i + 1)"
-            href="javascript:void(0)"
-            style="cursor: pointer;"
-          >
+          <a class="page-link fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+            [class.bg-primary-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
+            [class.bg-neutral-200]="currentPage !== i + 1" [class.text-secondary-light]="currentPage !== i + 1"
+            (click)="changePage(i + 1)" href="javascript:void(0)" style="cursor: pointer;">
             {{ i + 1 }}
           </a>
         </li>
 
         <li class="page-item">
-          <a
-            class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
-            [class.disabled]="currentPage === totalPages"
-            (click)="changePage(currentPage + 1)"
-            href="javascript:void(0)"
-            style="cursor: pointer;"
-          >
+          <a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md"
+            [class.disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
+            href="javascript:void(0)" style="cursor: pointer;">
             <iconify-icon icon="ep:d-arrow-right"></iconify-icon>
           </a>
         </li>
@@ -250,8 +228,7 @@
           </div>
           <div>
             <p class="pvm-detail-label">Account Status</p>
-            <span class="status-pill"
-              [class.active]="viewLogin.status?.toLowerCase() === 'active'"
+            <span class="status-pill" [class.active]="viewLogin.status?.toLowerCase() === 'active'"
               [class.inactive]="viewLogin.status?.toLowerCase() !== 'active'">
               {{ viewLogin.status }}
             </span>
@@ -273,10 +250,10 @@
 
     <!-- Footer Actions -->
     <div class="pvm-footer">
-      <button class="pm-btn"
-        [ngClass]="viewLogin.status?.toLowerCase() === 'active' ? 'pm-deactivate' : 'pm-activate'"
+      <button class="pm-btn" [ngClass]="viewLogin.status?.toLowerCase() === 'active' ? 'pm-deactivate' : 'pm-activate'"
         (click)="toggleStatus(viewLogin); closeViewDialog()">
-        <iconify-icon [icon]="viewLogin.status?.toLowerCase() === 'active' ? 'solar:forbidden-circle-bold' : 'solar:shield-check-bold'"></iconify-icon>
+        <iconify-icon
+          [icon]="viewLogin.status?.toLowerCase() === 'active' ? 'solar:forbidden-circle-bold' : 'solar:shield-check-bold'"></iconify-icon>
         {{ viewLogin.status?.toLowerCase() === 'active' ? 'Deactivate Account' : 'Activate Account' }}
       </button>
       <button class="pm-btn pm-cancel" (click)="closeViewDialog()">Close</button>
@@ -287,14 +264,8 @@
 
 
 <!-- =================== CREATE LOGIN MODAL (ADD ONLY) =================== -->
-<div
-  class="modal fade sml-modal"
-  [class.show]="showDialog"
-  [style.display]="showDialog ? 'block' : 'none'"
-  tabindex="-1"
-  role="dialog"
-  aria-modal="true"
->
+<div class="modal fade sml-modal" [class.show]="showDialog" [style.display]="showDialog ? 'block' : 'none'"
+  tabindex="-1" role="dialog" aria-modal="true">
   <div class="modal-dialog modal-dialog-centered sml-modal-dialog">
     <div class="modal-content sml-modal-card">
       <div class="sml-modal-header">
@@ -313,22 +284,26 @@
           <div class="sml-form-grid">
             <div class="sml-field">
               <label class="field-label">Full Name <span class="text-danger-600">*</span></label>
-              <input type="text" class="field-input" [(ngModel)]="loginForm.name" name="name" placeholder="Enter full name" required />
+              <input type="text" class="field-input" [(ngModel)]="loginForm.name" name="name"
+                placeholder="Enter full name" required />
             </div>
 
             <div class="sml-field">
               <label class="field-label">Username / Email <span class="text-danger-600">*</span></label>
-              <input type="email" class="field-input" [(ngModel)]="loginForm.email" name="email" placeholder="Enter email address" required />
+              <input type="email" class="field-input" [(ngModel)]="loginForm.email" name="email"
+                placeholder="Enter email address" required />
             </div>
 
             <div class="sml-field">
               <label class="field-label">Password <span class="text-danger-600">*</span></label>
-              <input type="password" class="field-input" [(ngModel)]="loginForm.password" name="password" placeholder="Enter password" />
+              <input type="password" class="field-input" [(ngModel)]="loginForm.password" name="password"
+                placeholder="Enter password" />
             </div>
 
             <div class="sml-field">
               <label class="field-label">Confirm Password <span class="text-danger-600">*</span></label>
-              <input type="password" class="field-input" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm password" />
+              <input type="password" class="field-input" [(ngModel)]="confirmPassword" name="confirmPassword"
+                placeholder="Confirm password" />
             </div>
 
             <div class="sml-field">
@@ -344,7 +319,8 @@
 
             <div class="sml-field">
               <label class="field-label">Phone <span class="text-danger-600">*</span></label>
-              <input type="text" class="field-input" [(ngModel)]="loginForm.phone" name="phone" placeholder="Enter phone number" required />
+              <input type="text" class="field-input" [(ngModel)]="loginForm.phone" name="phone"
+                placeholder="Enter phone number" required />
             </div>
           </div>
 
@@ -364,16 +340,19 @@
   </div>
 </div>
 
-<div class="modal-backdrop fade sml-modal-backdrop" [class.show]="showDialog" *ngIf="showDialog" (click)="closeDialog()"></div>
+<div class="modal-backdrop fade sml-modal-backdrop" [class.show]="showDialog" *ngIf="showDialog"
+  (click)="closeDialog()"></div>
 
 <!-- ✅ PREMIUM DELETE CONFIRMATION MODAL -->
 <div class="premium-overlay" *ngIf="showDeleteModal" (click)="cancelDelete()">
   <div class="premium-modal delete-variant" (click)="$event.stopPropagation()">
     <div class="pm-icon-ring danger-ring">
-      <iconify-icon icon="solar:trash-bin-minimalistic-bold-duotone" style="font-size:2.2rem;color:#fff;"></iconify-icon>
+      <iconify-icon icon="solar:trash-bin-minimalistic-bold-duotone"
+        style="font-size:2.2rem;color:#fff;"></iconify-icon>
     </div>
     <h3 class="pm-title">Delete Account</h3>
-    <p class="pm-subtitle">Are you sure you want to permanently delete the login account for <strong>{{ deleteTarget?.name }}</strong>? This cannot be undone.</p>
+    <p class="pm-subtitle">Are you sure you want to permanently delete the login account for <strong>{{
+        deleteTarget?.name }}</strong>? This cannot be undone.</p>
     <div class="pm-actions">
       <button class="pm-btn pm-cancel" (click)="cancelDelete()">Cancel</button>
       <button class="pm-btn pm-danger" (click)="executeDelete()">
@@ -387,16 +366,21 @@
 <div class="premium-overlay" *ngIf="showStatusModal" (click)="cancelToggleStatus()">
   <div class="premium-modal status-variant" (click)="$event.stopPropagation()">
     <div class="pm-icon-ring" [ngClass]="pendingStatus === 'Active' ? 'activate-ring' : 'deactivate-ring'">
-      <iconify-icon [icon]="pendingStatus === 'Active' ? 'solar:shield-check-bold-duotone' : 'solar:forbidden-circle-bold-duotone'" style="font-size:2.2rem;color:#fff;"></iconify-icon>
+      <iconify-icon
+        [icon]="pendingStatus === 'Active' ? 'solar:shield-check-bold-duotone' : 'solar:forbidden-circle-bold-duotone'"
+        style="font-size:2.2rem;color:#fff;"></iconify-icon>
     </div>
     <h3 class="pm-title">{{ pendingStatus === 'Active' ? 'Activate Account' : 'Deactivate Account' }}</h3>
     <p class="pm-subtitle">
-      Are you sure you want to <strong>{{ pendingStatus === 'Active' ? 'activate' : 'deactivate' }}</strong> the account for <strong>{{ statusTarget?.name }}</strong>?
+      Are you sure you want to <strong>{{ pendingStatus === 'Active' ? 'activate' : 'deactivate' }}</strong> the account
+      for <strong>{{ statusTarget?.name }}</strong>?
     </p>
     <div class="pm-actions">
       <button class="pm-btn pm-cancel" (click)="cancelToggleStatus()">Cancel</button>
-      <button class="pm-btn" [ngClass]="pendingStatus === 'Active' ? 'pm-activate' : 'pm-deactivate'" (click)="confirmToggleStatus()">
-        <iconify-icon [icon]="pendingStatus === 'Active' ? 'solar:shield-check-bold-duotone' : 'solar:forbidden-circle-bold-duotone'"></iconify-icon>
+      <button class="pm-btn" [ngClass]="pendingStatus === 'Active' ? 'pm-activate' : 'pm-deactivate'"
+        (click)="confirmToggleStatus()">
+        <iconify-icon
+          [icon]="pendingStatus === 'Active' ? 'solar:shield-check-bold-duotone' : 'solar:forbidden-circle-bold-duotone'"></iconify-icon>
         {{ pendingStatus === 'Active' ? 'Activate' : 'Deactivate' }}
       </button>
     </div>
@@ -425,11 +409,11 @@
     <h3 class="pm-title">{{ feedbackTitle }}</h3>
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
 
-    <button class="pm-btn pm-acknowledge"
+    <button class="pm-btn pm-Ok"
       [ngClass]="feedbackType === 'success' ? 'pm-success-btn' : feedbackType === 'error' ? 'pm-error-btn' : 'pm-warning-btn'"
       (click)="closeFeedback()">
       <iconify-icon icon="solar:check-square-bold" style="font-size:1.1rem;"></iconify-icon>
-      Acknowledge
+      Ok
     </button>
   </div>
 </div>

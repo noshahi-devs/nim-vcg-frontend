@@ -29,12 +29,16 @@ declare var bootstrap: any;
 export class SubjectListComponent implements OnInit, AfterViewInit {
   title = 'Subject List';
   searchTerm = '';
-  filterClass = '';
   subjectToDelete: Subject | null = null;
   selectedSubject: Subject = new Subject();
   allStandards: Standard[] = [];
   editLoading = false;
   loading = false;
+  Math = Math;
+
+  // Pagination
+  currentPage = 1;
+  rowsPerPage = 12;
   
   // Premium Modal Visibility State
   showViewModal = false;
@@ -113,6 +117,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
       next: (res) => {
         this.subjectList = res;
         this.classes = [...new Set(res.map(s => s.standard?.standardName || ''))];
+        this.currentPage = 1;
       },
       error: (err) => {
         console.error('Error loading subjects:', err);
@@ -156,9 +161,6 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
 
   get filteredSubjectList() {
     let list = this.subjectList;
-    if (this.filterClass) {
-      list = list.filter(s => s.standard?.standardName === this.filterClass);
-    }
     if (this.searchTerm) {
       const search = this.searchTerm.toLowerCase();
       list = list.filter(s =>
@@ -167,6 +169,21 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
       );
     }
     return list;
+  }
+
+  get paginatedSubjectList() {
+    const start = (this.currentPage - 1) * this.rowsPerPage;
+    return this.filteredSubjectList.slice(start, start + this.rowsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredSubjectList.length / this.rowsPerPage);
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
   }
 
   confirmDelete(subject: Subject): void {

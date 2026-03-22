@@ -23,6 +23,11 @@ export class StaffListComponent implements OnInit, AfterViewInit {
   staffList: any[] = [];
   loading = false;
   defaultImage = 'assets/images/user-grid/user-grid-img2.png';
+  Math = Math;
+
+  // Pagination
+  currentPage = 1;
+  rowsPerPage = 12;
 
   // Premium Modal State
   showFeedbackModal = false;
@@ -63,6 +68,7 @@ export class StaffListComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: (res) => {
           this.staffList = res || [];
+          this.currentPage = 1;
         },
         error: (err) => {
           console.error('Error fetching staff:', err);
@@ -134,6 +140,21 @@ export class StaffListComponent implements OnInit, AfterViewInit {
       staff.department?.departmentName?.toLowerCase().includes(search) ||
       staff.contactNumber1?.includes(search)
     );
+  }
+
+  get paginatedStaffList() {
+    const start = (this.currentPage - 1) * this.rowsPerPage;
+    return this.filteredStaffList.slice(start, start + this.rowsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredStaffList.length / this.rowsPerPage);
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
   }
 
   getDesignationName(designation: any): string {

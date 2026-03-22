@@ -17,7 +17,7 @@
           <input class="nim-search-input" type="text" [(ngModel)]="searchTerm" (input)="searchExamSchedules()"
             placeholder="Search exam schedules…" />
         </div>
-        
+
         <!-- Year Filter -->
         <div class="nim-select-group">
           <span class="nim-select-label">Academic Year</span>
@@ -54,10 +54,8 @@
     </div>
 
     <!-- ── Empty State ── -->
-    <div class="es-empty" *ngIf="!loading && paginatedExamSchedules.length === 0">
-      <div class="es-empty-icon">
-        <iconify-icon icon="solar:calendar-add-bold-duotone"></iconify-icon>
-      </div>
+    <div class="empty-state" *ngIf="!loading && paginatedExamSchedules.length === 0">
+      <iconify-icon icon="solar:calendar-add-bold-duotone"></iconify-icon>
       <h5>No Schedules Found</h5>
       <p>Create your first exam schedule to get started.</p>
       <button class="es-add-btn" (click)="openAddDialog()" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
@@ -115,7 +113,7 @@
             <iconify-icon icon="solar:printer-minimalistic-bold-duotone" style="pointer-events: none;"></iconify-icon>
             <span>Print</span>
           </button>
-          <button type="button" class="es-action-btn pdf" (click)="downloadPDF(sch)" title="Download PDF">
+          <button type="button" class="es-action-btn pdf" *ngIf="!authService.hasAnyRole(['Admin', 'Principal'])" (click)="downloadPDF(sch)" title="Download PDF">
             <iconify-icon icon="solar:file-download-bold-duotone" style="pointer-events: none;"></iconify-icon>
             <span>PDF</span>
           </button>
@@ -259,7 +257,10 @@
           <div class="table-responsive">
             <table class="table table-sm table-bordered" style="font-size: 13px;">
               <thead class="bg-light">
-                <tr><th>Date</th><th>Subject</th></tr>
+                <tr>
+                  <th>Date</th>
+                  <th>Subject</th>
+                </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let ex of std.examSubjects">
@@ -270,8 +271,8 @@
             </table>
           </div>
         </div>
-        <div *ngIf="!selectedSchedule.examScheduleStandards || selectedSchedule.examScheduleStandards.length === 0" 
-             style="text-align: center; color: #999; font-style: italic;">
+        <div *ngIf="!selectedSchedule.examScheduleStandards || selectedSchedule.examScheduleStandards.length === 0"
+          style="text-align: center; color: #999; font-style: italic;">
           (No class/subject data found in this schedule)
         </div>
       </div>
@@ -283,15 +284,21 @@
 <!-- == Premium Feedback Modal == -->
 <div class="premium-overlay" *ngIf="showFeedbackModal">
   <div class="premium-modal feedback-modal">
-    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span class="pm-sparkle sp3"></span></div>
-    <div class="pm-icon-ring" [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
-      <iconify-icon [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'" style="font-size:2.4rem; color:#fff"></iconify-icon>
+    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span
+        class="pm-sparkle sp3"></span></div>
+    <div class="pm-icon-ring"
+      [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
+      <iconify-icon
+        [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'"
+        style="font-size:2.4rem; color:#fff"></iconify-icon>
     </div>
     <p class="pm-title">{{ feedbackTitle }}</p>
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}" (click)="closeFeedback()">
-        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Acknowledge
+      <button class="pm-btn pm-Ok"
+        [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
+        (click)="closeFeedback()">
+        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
       </button>
     </div>
   </div>
@@ -301,14 +308,18 @@
 <div class="premium-overlay processing-overlay" *ngIf="isProcessing">
   <div class="processing-card">
     <div class="loader-ring"></div>
-    <div><p class="pc-title">Processing...</p><p class="pc-subtitle">Please wait a moment</p></div>
+    <div>
+      <p class="pc-title">Processing...</p>
+      <p class="pc-subtitle">Please wait a moment</p>
+    </div>
   </div>
 </div>
 
 <!-- == Delete Confirmation Modal == -->
 <div class="premium-overlay" *ngIf="showConfirmModal">
   <div class="premium-modal">
-    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span class="pm-sparkle sp3"></span></div>
+    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span
+        class="pm-sparkle sp3"></span></div>
     <div class="pm-icon-ring danger-ring">
       <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size:2.4rem; color:#fff"></iconify-icon>
     </div>

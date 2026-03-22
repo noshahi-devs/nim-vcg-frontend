@@ -53,7 +53,8 @@
           <span class="input-group-text">
             <iconify-icon icon="solar:calendar-bold-duotone" class="text-primary"></iconify-icon>
           </span>
-          <input type="date" class="form-control" [(ngModel)]="selectedDate" (change)="loadStaff()" [disabled]="isProcessing">
+          <input type="date" class="form-control" [(ngModel)]="selectedDate" (change)="loadStaff()"
+            [disabled]="isProcessing">
         </div>
       </div>
       <div class="col-md-4">
@@ -66,11 +67,13 @@
         </div>
       </div>
       <div class="col-md-5 d-flex justify-content-end align-items-end gap-2 flex-wrap">
-        <button class="btn-action-outline success" (click)="markAllPresent()" *ngIf="canMarkAttendance" [disabled]="isProcessing">
+        <button class="btn-action-outline success" (click)="markAllPresent()" *ngIf="canMarkAttendance"
+          [disabled]="isProcessing">
           <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
           All Present
         </button>
-        <button class="btn-action-outline danger" (click)="markAllAbsent()" *ngIf="canMarkAttendance" [disabled]="isProcessing">
+        <button class="btn-action-outline danger" (click)="markAllAbsent()" *ngIf="canMarkAttendance"
+          [disabled]="isProcessing">
           <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
           All Absent
         </button>
@@ -111,8 +114,8 @@
             </td>
           </tr>
 
-          <tr *ngFor="let staff of paginatedStaff; let i = index" [hidden]="loading" style="animation: fadeInUp 0.4s ease-out both"
-            [style.animation-delay]="i * 0.04 + 's'">
+          <tr *ngFor="let staff of paginatedStaff; let i = index" [hidden]="loading"
+            style="animation: fadeInUp 0.4s ease-out both" [style.animation-delay]="i * 0.04 + 's'">
             <!-- Staff info -->
             <td class="ps-4">
               <div class="staff-info-cell">
@@ -231,12 +234,12 @@
     <p class="pm-subtitle">{{ feedbackMessage }}</p>
 
     <div class="pm-actions">
-      <button class="pm-btn pm-acknowledge" [ngClass]="{
+      <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
               }" (click)="closeFeedback()">
-        Acknowledge
+        Ok
       </button>
     </div>
   </div>
