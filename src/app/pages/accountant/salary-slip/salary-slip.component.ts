@@ -8,6 +8,7 @@ import { StaffService } from '../../../services/staff.service';
 import { SettingsService } from '../../../services/settings.service';
 import { StaffSalary } from '../../../Models/staff-salary';
 import { Staff } from '../../../Models/staff';
+import { environment } from '../../../../environments/environment';
 
 interface SalaryRecord {
   id: number;
@@ -26,6 +27,7 @@ interface SalaryRecord {
   taxes: number;
   netSalary: number;
   status: string;
+  imagePath?: string;
 }
 
 @Component({
@@ -76,6 +78,10 @@ export class SalarySlipComponent implements OnInit {
 
   // School Info for reports
   schoolInfo: any = {};
+  printType: 'detailed' | 'thermal' | null = null;
+
+  // API base URL for images
+  private apiBaseUrl = environment.apiBaseUrl;
 
   // Loading and Modal states
   isProcessing: boolean = false;
@@ -130,6 +136,9 @@ export class SalarySlipComponent implements OnInit {
     this.staffService.getAllStaffs().subscribe({
       next: (staffs) => {
         this.staffList = staffs;
+        if (this.allSalaryData.length > 0) {
+          this.processSalaryRecords(this.allSalaryData);
+        }
       },
       error: (error) => {
         console.error('Error loading staff:', error);
@@ -157,24 +166,53 @@ export class SalarySlipComponent implements OnInit {
 
   processSalaryRecords(salaries: StaffSalary[]): void {
     const today = new Date();
-    this.salaryRecords = salaries.map((salary, index) => ({
-      id: salary.staffSalaryId,
-      staffId: `EMP-${String(salary.staffSalaryId).padStart(4, '0')}`,
-      staffName: salary.staffName || 'Unknown Staff',
-      role: 'Staff', // You might want to get this from Staff model
-      month: today.toISOString().substring(0, 7),
-      date: today.toISOString().split('T')[0],
-      basicSalary: salary.basicSalary || 0,
-      festivalBonus: salary.festivalBonus || 0,
-      allowance: salary.allowance || 0,
-      medicalAllowance: salary.medicalAllowance || 0,
-      housingAllowance: salary.housingAllowance || 0,
-      transportationAllowance: salary.transportationAllowance || 0,
-      savingFund: salary.savingFund || 0,
-      taxes: salary.taxes || 0,
-      netSalary: salary.netSalary || 0,
-      status: 'Paid'
-    }));
+    this.salaryRecords = salaries.map((salary) => {
+      // Find staff to get image
+      const staffMatch = this.staffList.find(s =>
+        s.staffId === Number(salary.staffId) ||
+        s.staffName === salary.staffName
+      );
+
+      // Use stored date if available, otherwise fallback to today
+      const rawDate = salary.paymentDate;
+      let displayDate = '';
+      if (rawDate) {
+        displayDate = new Date(rawDate).toISOString().split('T')[0];
+      } else {
+        displayDate = today.toISOString().split('T')[0];
+      }
+
+      const netSalary = salary.netSalary || (
+        (salary.basicSalary || 0) +
+        (salary.festivalBonus || 0) +
+        (salary.allowance || 0) +
+        (salary.medicalAllowance || 0) +
+        (salary.housingAllowance || 0) +
+        (salary.transportationAllowance || 0) -
+        (salary.savingFund || 0) -
+        (salary.taxes || 0)
+      );
+
+      return {
+        id: salary.staffSalaryId || 0,
+        staffId: salary.staffId ? `EMP-${String(salary.staffId).padStart(4, '0')}` : (staffMatch ? `EMP-${String(staffMatch.staffId).padStart(4, '0')}` : 'EMP-0000'),
+        staffName: salary.staffName || '',
+        basicSalary: salary.basicSalary || 0,
+        festivalBonus: salary.festivalBonus || 0,
+        allowance: salary.allowance || 0,
+        medicalAllowance: salary.medicalAllowance || 0,
+        housingAllowance: salary.housingAllowance || 0,
+        transportationAllowance: salary.transportationAllowance || 0,
+        savingFund: salary.savingFund || 0,
+        taxes: salary.taxes || 0,
+        netSalary: netSalary,
+        month: salary.paymentMonth || today.toLocaleString('default', { month: 'long' }),
+        date: displayDate,
+        status: 'Paid',
+        role: staffMatch ? String(staffMatch.designation || 'Staff') : 'Staff',
+        imagePath: staffMatch ? staffMatch.imagePath : ''
+      };
+    });
   }
 
   onSearchChange(): void {
@@ -220,6 +258,9 @@ export class SalarySlipComponent implements OnInit {
     const newSalary: StaffSalary = {
       staffSalaryId: 0,
       staffName: this.staffName,
+      staffId: Number(this.staffId),
+      paymentMonth: this.salaryMonth,
+      paymentDate: this.salaryDate,
       basicSalary: this.basicSalary,
       festivalBonus: this.festivalBonus,
       allowance: this.allowance,
@@ -337,7 +378,19 @@ export class SalarySlipComponent implements OnInit {
   }
 
   getMonthName(monthStr: string): string {
-    const date = new Date(monthStr + '-01');
+    if (!monthStr) return '';
+    if (monthStr.length > 10) return monthStr; // Already formatted
+
+    let date: Date;
+    if (monthStr.includes('-')) {
+      // Handle YYYY-MM
+      date = new Date(monthStr + '-01');
+    } else {
+      // Handle plain month name like 'March'
+      date = new Date(monthStr + ' 01, ' + new Date().getFullYear());
+    }
+
+    if (isNaN(date.getTime())) return monthStr; // Fallback
     return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   }
 
@@ -354,16 +407,100 @@ export class SalarySlipComponent implements OnInit {
 
   printDetailedReceipt(slip: SalaryRecord): void {
     this.selectedSlip = slip;
+    this.printType = 'detailed';
+
+    // Give Angular time to render the template in the background
     setTimeout(() => {
-      window.print();
-    }, 100);
+      this.executePrint('detailed-receipt');
+    }, 300);
   }
 
   printThermalReceipt(slip: SalaryRecord): void {
     this.selectedSlip = slip;
+    this.printType = 'thermal';
+
+    // Give Angular time to render the template in the background
     setTimeout(() => {
-      window.print();
-    }, 100);
+      this.executePrint('thermal-receipt');
+    }, 300);
+  }
+
+  private executePrint(elementId: string): void {
+    const printElement = document.getElementById(elementId);
+    if (!printElement) {
+      console.error('Print element not found:', elementId);
+      return;
+    }
+
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (printWindow) {
+      const content = printElement.innerHTML;
+      const thermalStyles = elementId === 'thermal-receipt' ? `
+        body { width: 80mm; margin: 0 auto; font-family: 'Courier New', monospace; }
+        @page { size: auto; margin: 5mm; }
+      ` : `
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        @page { size: A4 portrait; margin: 15mm; }
+      `;
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Print Receipt</title>
+            <style>
+              ${thermalStyles}
+              * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+              table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+              th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+              th { background-color: #800000 !important; color: white !important; font-weight: bold !important; text-transform: uppercase; font-size: 10pt; }
+              .text-success { color: #28a745 !important; }
+              .text-danger { color: #dc3545 !important; }
+            </style>
+          </head>
+          <body>
+            ${content}
+            <script>
+              window.onload = function() {
+                setTimeout(() => {
+                  window.print();
+                  window.close();
+                }, 500);
+              };
+            </script>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+
+      // Cleanup
+      this.printType = null;
+    }
+  }
+
+  getStaffImageByStaffName(name: string): string {
+    if (!name || !this.staffList || this.staffList.length === 0) return '';
+    const cleanName = name.trim().toLowerCase();
+    const staffMatch = this.staffList.find(s =>
+      s.staffName?.trim().toLowerCase() === cleanName
+    );
+    return this.getStaffImage(staffMatch?.imagePath);
+  }
+
+  getStaffImage(imagePath: string | undefined): string {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('data:')) return imagePath;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${this.apiBaseUrl}/${imagePath}`;
+  }
+
+  getSchoolLogo(): string {
+    if (this.schoolInfo && this.schoolInfo.logoUrl) {
+      if (this.schoolInfo.logoUrl.startsWith('http')) return this.schoolInfo.logoUrl;
+      return `${this.apiBaseUrl}/${this.schoolInfo.logoUrl}`;
+    }
+    // Fallback to absolute path for assets
+    return window.location.origin + '/assets/img/vision_logo.png';
   }
 
   deleteSalaryRecord(id: number): void {

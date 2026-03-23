@@ -47,6 +47,7 @@ export class ExamResultComponent implements OnInit {
   selectedStudentId: number = 0;
   selectedClassId: number = 0;
   selectedSectionId: number = 0;
+  selectedSubjectId: number = 0;
 
   // Real data
   exams: Exam[] = [];
@@ -54,6 +55,7 @@ export class ExamResultComponent implements OnInit {
   sections: Section[] = [];
   students: Student[] = [];
   filteredStudents: Student[] = [];
+  subjects: any[] = [];
 
   // Summary data
   totalMarks: number = 0;
@@ -213,9 +215,11 @@ export class ExamResultComponent implements OnInit {
   onClassChange() {
     this.selectedSectionId = 0;
     this.selectedStudentId = 0;
+    this.selectedSubjectId = 0;
     this.sections = [];
     this.students = [];
     this.filteredStudents = [];
+    this.subjects = [];
     this.examResults = [];
 
     if (this.selectedClassId) {
@@ -290,12 +294,40 @@ export class ExamResultComponent implements OnInit {
 
   onSectionChange() {
     this.selectedStudentId = 0;
+    this.selectedSubjectId = 0;
     this.filterStudents();
+    this.fetchSubjectsForExam();
+  }
+
+  fetchSubjectsForExam() {
+    if (!this.selectedExamId) return;
+    this.examService.getSchedulesByExam(this.selectedExamId).subscribe({
+      next: (res) => {
+        const uniqueSubjects = new Map();
+        // Backend returns ExamScheduleVM with ExamScheduleStandards -> ExamSubjects
+        if (res && res.examScheduleStandards) {
+          res.examScheduleStandards.forEach((std: any) => {
+            if (std.examSubjects) {
+              std.examSubjects.forEach((sub: any) => {
+                if (sub.subjectName && !uniqueSubjects.has(sub.subjectName)) {
+                  uniqueSubjects.set(sub.subjectName, { 
+                    subjectId: uniqueSubjects.size + 1, // Artificial ID for selection
+                    subjectName: sub.subjectName 
+                  });
+                }
+              });
+            }
+          });
+        }
+        this.subjects = Array.from(uniqueSubjects.values());
+      },
+      error: (err) => console.error('Failed to load subjects for exam', err)
+    });
   }
 
   loadResults() {
-    if (!this.selectedExamId || !this.selectedStudentId) {
-      this.triggerWarning('Selection Required', 'Please select Exam and Student.');
+    if (!this.selectedExamId || !this.selectedClassId) {
+      this.triggerWarning('Selection Required', 'Please select Exam and Class.');
       return;
     }
 
@@ -306,40 +338,90 @@ export class ExamResultComponent implements OnInit {
     this.examResults = [];
     this.displayResults = [];
 
+    if (this.selectedStudentId > 0) {
+      // Single Student View
+      this.loadSingleStudentResult();
+    } else {
+      // All Students in Class/Section View
+      this.loadAllStudentsResults();
+    }
+  }
+
+  loadSingleStudentResult() {
     this.examService
       .getResultByStudent(this.selectedStudentId, this.selectedExamId)
       .pipe(finalize(() => { this.loading = false; this.isProcessing = false; }))
       .subscribe({
         next: (res) => {
           if (res && res.subjects && res.subjects.length > 0) {
-            // Map backend fields to frontend model
-            this.displayResults = (res.subjects as any[]).map((s: any) => ({
-              subjectName: s.subjectName || s.SubjectName || 'N/A',
-              totalMarks: s.totalMarks ?? s.TotalMarks ?? 0,
-              obtainedMarks: s.obtainedMarks ?? s.ObtainedMarks ?? s.obtainedScore ?? s.ObtainedScore ?? 0,
-              grade: s.grade || s.Grade || '—',
-              percentage: this.examService.calculatePercentage(
-                s.obtainedMarks ?? s.ObtainedMarks ?? s.obtainedScore ?? 0,
-                s.totalMarks ?? s.TotalMarks ?? 0
-              ),
-              isPassed: (s.status || s.Status || '').toLowerCase() === 'passed' || (s.grade || s.Grade || 'F') !== 'F'
-            }));
+            this.mapSingleResultToDisplay(res);
             this.examResults = [res];
             this.calculateSummary();
           } else {
             this.noResultsFound = true;
-            this.examResults = [];
-            this.displayResults = [];
           }
         },
-        error: () => {
-          this.noResultsFound = true;
-          this.examResults = [];
-          this.displayResults = [];
-        }
+        error: () => this.noResultsFound = true
       });
   }
 
+  loadAllStudentsResults() {
+    this.examService
+      .getResultsByExam(this.selectedExamId, this.selectedClassId, this.selectedSectionId)
+      .pipe(finalize(() => { this.loading = false; this.isProcessing = false; }))
+      .subscribe({
+        next: (res) => {
+          if (res && res.length > 0) {
+            this.examResults = res;
+            this.noResultsFound = false;
+            // No need to map displayResults for bulk view yet, html will handle it
+          } else {
+            this.noResultsFound = true;
+          }
+        },
+        error: () => this.noResultsFound = true
+      });
+  }
+
+  private mapSingleResultToDisplay(res: ExamResult) {
+    this.displayResults = (res.subjects as any[]).map((s: any) => ({
+      subjectName: s.subjectName || s.SubjectName || 'N/A',
+      totalMarks: s.totalMarks ?? s.TotalMarks ?? 0,
+      obtainedMarks: s.obtainedMarks ?? s.ObtainedMarks ?? s.obtainedScore ?? s.ObtainedScore ?? 0,
+      grade: s.grade || s.Grade || '—',
+      percentage: this.examService.calculatePercentage(
+        s.obtainedMarks ?? s.ObtainedMarks ?? s.obtainedScore ?? 0,
+        s.totalMarks ?? s.TotalMarks ?? 0
+      ),
+      isPassed: (s.status || s.Status || '').toLowerCase() === 'passed' || (s.grade || s.Grade || 'F') !== 'F'
+    }));
+  }
+
+  getFilteredBulkResults(): ExamResult[] {
+    if (!this.selectedSubjectId) return this.examResults;
+    const subjectName = this.subjects.find(s => s.subjectId === this.selectedSubjectId)?.subjectName;
+    if (!subjectName) return this.examResults;
+
+    return this.examResults.map(r => {
+      const filteredSubjects = (r.subjects || []).filter(s => s.subjectName === subjectName);
+      if (filteredSubjects.length > 0) {
+        const s = filteredSubjects[0];
+        return {
+          ...r,
+          totalMarks: s.totalMarks,
+          obtainedMarks: s.obtainedMarks,
+          percentage: this.examService.calculatePercentage(s.obtainedMarks, s.totalMarks),
+          grade: s.grade
+        };
+      }
+      return { ...r, totalMarks: 0, obtainedMarks: 0, percentage: 0, grade: '—' };
+    }).filter(r => r.totalMarks > 0); // Only show students who have marks for this subject
+  }
+
+
+  getSelectedSubjectName(): string {
+    return this.subjects.find(s => s.subjectId === this.selectedSubjectId)?.subjectName || 'N/A';
+  }
 
   calculateSummary() {
     this.totalMarks = this.displayResults.reduce((sum, r) => sum + (r.totalMarks || 0), 0);

@@ -55,6 +55,7 @@ export class SalaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+    this.resetForm(); // Set defaults
   }
 
   /* ================= GETTERS FOR STATS ================= */
@@ -210,7 +211,10 @@ export class SalaryComponent implements OnInit {
 
   /* ================= RESET ================= */
   resetForm(): void {
+    const today = new Date();
     this.salary = new StaffSalary();
+    this.salary.paymentDate = today.toISOString().split('T')[0];
+    this.salary.paymentMonth = today.toLocaleString('default', { month: 'long' });
   }
 
   /* ================= FILTER + PAGINATION ================= */

@@ -843,3 +843,7 @@ iconify-icon {
     box-shadow: 0 0 0 12px rgba(128, 0, 0, 0);
   }
 }
+
+.print-only {
+  display: none;
+}

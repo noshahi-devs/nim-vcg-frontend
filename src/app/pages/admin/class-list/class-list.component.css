@@ -939,10 +939,6 @@
     pointer-events: none;
 }
 
-color: #fff;
-box-shadow: 0 4px 12px rgba(128, 0, 0, 0.3);
-}
-
 .page-item.disabled .page-link {
     opacity: 0.4;
     cursor: not-allowed;

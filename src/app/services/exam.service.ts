@@ -149,8 +149,8 @@ export class ExamService {
 
   // ============= EXAM SCHEDULE CRUD =============
 
-  getSchedulesByExam(examId: number): Observable<ExamSchedule[]> {
-    return this.http.get<ExamSchedule[]>(`${this.apiUrl}/ExamSchedules/exam/${examId}`);
+  getSchedulesByExam(examId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/ExamSchedules/${examId}`);
   }
 
   getScheduleById(scheduleId: number): Observable<ExamSchedule> {

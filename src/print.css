@@ -158,6 +158,6 @@
   /* ── 9. Page setup ── */
   @page {
     margin: 15mm;
-    size: A4 landscape;
+    size: A4 portrait;
   }
 }

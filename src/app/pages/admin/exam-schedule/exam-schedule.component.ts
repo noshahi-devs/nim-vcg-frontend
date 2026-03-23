@@ -10,6 +10,8 @@ import { finalize } from 'rxjs';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { DatePipe } from '@angular/common';
+import { SettingsService } from '../../../services/settings.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-exam-schedule',
@@ -42,6 +44,8 @@ export class ExamScheduleComponent implements OnInit {
   selectedSchedule: ExamScheduleVm | null = null;
   public Math: any = Math;
   today: Date = new Date();
+  schoolInfo: any = {};
+  apiBaseUrl = environment.apiBaseUrl;
 
 
   // ── Premium Modal State ──
@@ -59,10 +63,11 @@ export class ExamScheduleComponent implements OnInit {
     private service: ExamScheduleService,
     public authService: AuthService,
     private cdr: ChangeDetectorRef,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private settingsService: SettingsService
   ) { }
 
-  ngOnInit(): void { this.initForm(); this.loadExamSchedules(); }
+  ngOnInit(): void { this.initForm(); this.loadExamSchedules(); this.loadSchoolInfo(); }
 
   // ── Helpers ──
   triggerSuccess(title: string, msg: string) {
@@ -96,6 +101,20 @@ export class ExamScheduleComponent implements OnInit {
         },
         error: (err) => { console.error(err); this.examSchedules = []; this.filteredExamSchedules = []; this.updatePagination(); }
       });
+  }
+
+  loadSchoolInfo(): void {
+    this.settingsService.getSchoolInfo().subscribe(info => {
+      this.schoolInfo = info;
+    });
+  }
+
+  getSchoolLogo(): string {
+    if (this.schoolInfo && this.schoolInfo.logoUrl) {
+      if (this.schoolInfo.logoUrl.startsWith('http')) return this.schoolInfo.logoUrl;
+      return `${this.apiBaseUrl}/${this.schoolInfo.logoUrl}`;
+    }
+    return window.location.origin + '/assets/img/vision_logo.png';
   }
 
   extractYears() {
@@ -289,8 +308,11 @@ export class ExamScheduleComponent implements OnInit {
         </head>
         <body onload="window.print()">
           <div class="header">
-            <h1>VISION COLLEGE GOJRA</h1>
-            <p>Quality Education for a Brighter Future</p>
+            <div style="margin-bottom: 10px;">
+              <img src="${this.getSchoolLogo()}" style="height: 60px; width: auto;">
+            </div>
+            <h1>${this.schoolInfo.instituteName || 'VISION COLLEGE GOJRA'}</h1>
+            <p>${this.schoolInfo.instituteAddress || 'Quality Education for a Brighter Future'}</p>
             <p><strong>Academic Session: ${sch.examYear || 'N/A'}</strong></p>
           </div>
           <div class="title-strap">
@@ -334,22 +356,53 @@ export class ExamScheduleComponent implements OnInit {
   }
 
   private executeManualPDF(sch: ExamScheduleVm) {
+    const img = new Image();
+    img.setAttribute('crossOrigin', 'anonymous');
+    img.src = this.getSchoolLogo();
+    
+    img.onload = () => {
+      this.generatePDFWithImage(sch, img);
+    };
+
+    img.onerror = () => {
+      console.warn('Failed to load logo, generating PDF without it.');
+      this.generatePDFWithImage(sch, null);
+    };
+  }
+
+  private generatePDFWithImage(sch: ExamScheduleVm, img: HTMLImageElement | null) {
     try {
       const doc = new jsPDF('p', 'mm', 'a4');
       const todayStr = this.datePipe.transform(new Date(), 'dd MMM yyyy hh:mm a') || '';
       
+      let currentY = 20;
+
+      // Add Logo if available
+      if (img) {
+        doc.addImage(img, 'PNG', 90, 10, 30, 20); // Center logo (105 - 15)
+        currentY = 40;
+      }
+
       doc.setFontSize(22);
       doc.setTextColor(128, 0, 0); 
-      doc.text('VISION COLLEGE GOJRA', 105, 20, { align: 'center' });
+      doc.text(this.schoolInfo.instituteName || 'VISION COLLEGE GOJRA', 105, currentY, { align: 'center' });
+      currentY += 10;
       
       doc.setFontSize(14);
       doc.setTextColor(0);
-      doc.text(`DATESHEET: ${sch.examScheduleName.toUpperCase()}`, 105, 40, { align: 'center' });
+      doc.text(`DATESHEET: ${sch.examScheduleName.toUpperCase()}`, 105, currentY, { align: 'center' });
+      currentY += 10;
 
-      let currentY = 60;
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`Duration: ${this.datePipe.transform(sch.startDate, 'dd MMM')} - ${this.datePipe.transform(sch.endDate, 'dd MMM yyyy')}`, 105, currentY, { align: 'center' });
+      currentY += 15;
+
       (sch.examScheduleStandards || []).forEach(std => {
+        // ... (rest of autotable logic)
         doc.setFontSize(12);
         doc.setFont('helvetica', 'bold');
+        doc.setTextColor(0);
         doc.text(`Class: ${std.standardName}`, 15, currentY);
         currentY += 5;
 
@@ -365,12 +418,38 @@ export class ExamScheduleComponent implements OnInit {
           head: [['Date', 'Day', 'Subject', 'Timing']],
           body: subjects,
           theme: 'grid',
-          headStyles: { fillColor: [128, 0, 0] }
+          headStyles: { fillColor: [128, 0, 0] },
+          margin: { left: 15, right: 15 }
         });
         currentY = (doc as any).lastAutoTable.finalY + 15;
+
+        // Check for page break
+        if (currentY > 250) {
+          doc.addPage();
+          currentY = 20;
+        }
       });
 
-      // Manual Blob Download to fix UUID filename issue
+      // Signature section
+      if (currentY > 240) {
+        doc.addPage();
+        currentY = 30;
+      }
+      
+      doc.setFontSize(10);
+      doc.setDrawColor(0);
+      doc.line(30, currentY + 20, 80, currentY + 20);
+      doc.text('Examination Controller', 55, currentY + 25, { align: 'center' });
+      
+      doc.line(130, currentY + 20, 180, currentY + 20);
+      doc.text('Principal Signature', 155, currentY + 25, { align: 'center' });
+
+      // Footer
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text(`Generated on ${todayStr} | System: Vision College Gojra Enterprise`, 105, 285, { align: 'center' });
+
+      // Manual Blob Download
       const blob = doc.output('blob');
       const fileName = `datesheet_${sch.examScheduleName.replace(/\s+/g, '_')}.pdf`;
       const url = URL.createObjectURL(blob);

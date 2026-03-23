@@ -62,7 +62,7 @@ export class StudentViewComponent implements OnInit, AfterViewInit {
 
   private mapStudentToUi(data: any): Student {
     if (!data) return {} as Student;
-    
+
     // Normalizing Case Sensitivity (Backend PascalCase -> Frontend camelCase)
     return {
       studentId: data.studentId ?? data.StudentId,

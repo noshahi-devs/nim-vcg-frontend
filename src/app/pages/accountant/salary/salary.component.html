@@ -46,7 +46,7 @@
     <div class="premium-card-body">
       <div class="row g-4">
         <!-- STAFF DROPDOWN -->
-        <div class="col-md-6">
+        <div class="col-md-3">
           <label class="form-label-premium">Staff Name *</label>
           <select class="form-select-premium" [(ngModel)]="$any(salary).staffId" (change)="onStaffSelect()"
             [disabled]="isProcessing">
@@ -55,6 +55,18 @@
               {{ staff.staffName }}
             </option>
           </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label-premium">Payment Month *</label>
+          <select class="form-select-premium" [(ngModel)]="salary.paymentMonth" [disabled]="isProcessing">
+            <option *ngFor="let m of ['January','February','March','April','May','June','July','August','September','October','November','December']" [value]="m">{{m}}</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label-premium">Payment Date *</label>
+          <input type="date" class="form-control-premium" [(ngModel)]="salary.paymentDate" [disabled]="isProcessing">
         </div>
 
         <div class="col-md-3">
@@ -155,6 +167,7 @@
           <tr>
             <th style="width: 80px;">#</th>
             <th>Staff Member</th>
+            <th>Month</th>
             <th>Basic Salary</th>
             <th>Bonus</th>
             <th>Net Salary</th>
@@ -171,9 +184,12 @@
             </td>
             <td>
               <div class="staff-info">
-                <div class="staff-avatar">{{ getInitials(s.staffName) }}</div>
+                <div class="staff-avatar">{{ getInitials(s.staffName || '') }}</div>
                 <span class="fw-bold">{{ s.staffName }}</span>
               </div>
+            </td>
+            <td>
+              <span class="badge bg-light text-dark border">{{ s.paymentMonth || 'Monthly' }}</span>
             </td>
             <td>
               <span class="badge-amount basic">PKR {{ s.basicSalary | number }}</span>

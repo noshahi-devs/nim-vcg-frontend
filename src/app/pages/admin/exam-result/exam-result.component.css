@@ -1517,3 +1517,77 @@
     box-shadow: 0 0 0 12px rgba(128, 0, 0, 0);
   }
 }
+
+/* ========================
+   PREMIUM FILTER BAR
+   ======================== */
+.filter-icon-main {
+  width: 36px;
+  height: 36px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #800000;
+  margin-right: 4px;
+}
+
+.filter-icon-main svg {
+  width: 18px;
+  height: 18px;
+}
+
+.filter-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.01em;
+}
+
+.filter-row-bg {
+  background: #f8fafc;
+  border: 1px solid #edf2f7;
+  transition: all 0.3s ease;
+  margin: 0 !important;
+}
+
+.filter-row-bg:hover {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+.label-icon {
+  width: 14px;
+  height: 14px;
+  color: #64748b;
+  opacity: 0.8;
+}
+
+.premium-select {
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-select:hover {
+  border-color: #cbd5e1;
+}
+
+.premium-select:focus {
+  border-color: #800000;
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.rounded-16 {
+  border-radius: 16px;
+}
+
+/* Custom adjustment for the small text for better alignment */
+.position-relative small {
+  font-size: 11px;
+  color: #94a3b8;
+  padding-left: 4px;
+  white-space: nowrap;
+}

@@ -78,7 +78,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
       next: (res) => {
         const normalized = this.mapStudentToUi(res);
         this.studentData = normalized;
-        
+
         // Populate date strings for HTML input binding
         if (normalized.studentDOB) {
           const dobDate = new Date(normalized.studentDOB);
@@ -86,7 +86,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
             this.studentDOBStr = dobDate.toISOString().split('T')[0];
           }
         }
-        
+
         if (normalized.admissionDate) {
           const admDate = new Date(normalized.admissionDate);
           if (!isNaN(admDate.getTime())) {
@@ -96,7 +96,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
           // Fallback to today if null (for new records or missing data)
           this.admissionDateStr = new Date().toISOString().split('T')[0];
         }
-        
+
         this.loading = false;
       },
       error: (err) => {
@@ -109,7 +109,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
 
   private mapStudentToUi(data: any): Student {
     if (!data) return {} as Student;
-    
+
     // Normalizing Case Sensitivity (Backend PascalCase -> Frontend camelCase)
     const rawStatus = data.status ?? data.Status;
     let normalizedStatus = '';
@@ -163,9 +163,9 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
     if (!val) return '';
     // If we already have sections loaded, try to find a match
     if (this.sections && this.sections.length > 0) {
-      const match = this.sections.find(s => 
-        s.sectionName === val || 
-        s.sectionCode === val || 
+      const match = this.sections.find(s =>
+        s.sectionName === val ||
+        s.sectionCode === val ||
         s.sectionName === `Section ${val}` ||
         s.sectionCode === `Section ${val}`
       );
@@ -308,18 +308,18 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
     const input = event.target;
     if (input.files && input.files[0]) {
       const file = input.files[0];
-      
+
       const reader = new FileReader();
       reader.onload = (e: any) => {
         const base64Content = e.target.result;
-        
+
         if (!this.studentData.imageUpload) {
           this.studentData.imageUpload = {
             imageData: '',
             imageName: ''
           } as any;
         }
-        
+
         this.studentData.imageUpload.imageData = base64Content;
         this.studentData.imageUpload.imageName = file.name;
         this.studentData.imagePath = base64Content; // Update Angular model for preview
