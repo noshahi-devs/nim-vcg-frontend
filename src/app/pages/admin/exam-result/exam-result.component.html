@@ -15,30 +15,30 @@
       </div>
     </div>
     <div class="fee-card-body p-24 pt-0">
-      <div class="row gx-3 gy-4 align-items-end filter-row-bg p-20 rounded-16">
-        <div class="col-md-2">
-          <label class="field-label d-flex align-items-center gap-2 mb-2">
+      <div class="d-flex flex-wrap align-items-end gap-3 filter-row-bg p-20 rounded-16 w-100">
+        <div class="filter-col">
+          <label class="field-label d-flex align-items-center gap-2 mb-2 text-nowrap">
             <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 11l3 3L22 4" />
               <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
             </svg>
-            Select Exam <span class="text-danger">*</span>
+            Exam <span class="text-danger">*</span>
           </label>
-          <select class="field-input premium-select" [(ngModel)]="selectedExamId" name="exam">
-            <option [ngValue]="0" disabled selected hidden>Select Exam</option>
+          <select class="field-input premium-select w-100 text-truncate" [(ngModel)]="selectedExamId" name="exam">
+            <option [ngValue]="0" disabled selected hidden>Select...</option>
             <option *ngFor="let exam of exams" [ngValue]="exam.examId">{{ exam.examName }}</option>
           </select>
         </div>
 
-        <div class="col-md-2">
-          <label class="field-label d-flex align-items-center gap-2 mb-2">
+        <div class="filter-col">
+          <label class="field-label d-flex align-items-center gap-2 mb-2 text-nowrap">
             <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
-            Select Class
+            Class
           </label>
-          <select class="field-input premium-select" [(ngModel)]="selectedClassId" (change)="onClassChange()"
+          <select class="field-input premium-select w-100 text-truncate" [(ngModel)]="selectedClassId" (change)="onClassChange()"
             name="class">
             <option [ngValue]="0">All Classes</option>
             <option *ngFor="let cls of classes" [ngValue]="cls.standardId">{{ formatStandardName(cls.standardName) }}
@@ -46,65 +46,59 @@
           </select>
         </div>
 
-        <div class="col-md-2">
-          <label class="field-label d-flex align-items-center gap-2 mb-2">
+        <div class="filter-col">
+          <label class="field-label d-flex align-items-center gap-2 mb-2 text-nowrap">
             <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
               <line x1="9" y1="3" x2="9" y2="21" />
             </svg>
             Section
           </label>
-          <select class="field-input premium-select" [(ngModel)]="selectedSectionId" (change)="onSectionChange()"
+          <select class="field-input premium-select w-100 text-truncate" [(ngModel)]="selectedSectionId" (change)="onSectionChange()"
             name="section">
             <option [ngValue]="0">All Sections</option>
             <option *ngFor="let sec of sections" [ngValue]="sec.sectionId">{{ sec.sectionName }}</option>
           </select>
         </div>
 
-        <div class="col-md-3">
-          <label class="field-label d-flex align-items-center gap-2 mb-2">
+        <div class="filter-col">
+          <label class="field-label d-flex align-items-center gap-2 mb-2 text-nowrap">
             <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
               <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
             </svg>
             Subject
           </label>
-          <select class="field-input premium-select" [(ngModel)]="selectedSubjectId" name="subject">
+          <select class="field-input premium-select w-100 text-truncate" [(ngModel)]="selectedSubjectId" name="subject">
             <option [ngValue]="0">All Subjects</option>
             <option *ngFor="let sub of subjects" [ngValue]="sub.subjectId">{{ sub.subjectName }}</option>
           </select>
         </div>
 
-        <div class="col-md-3">
-          <label class="field-label d-flex align-items-center gap-2 mb-2">
+        <div class="filter-col">
+          <label class="field-label d-flex align-items-center gap-2 mb-2 text-nowrap">
             <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
             Student
           </label>
-          <div class="position-relative">
-            <select class="field-input premium-select" [(ngModel)]="selectedStudentId" name="student">
-              <option [ngValue]="0">All Students</option>
-              <option *ngFor="let student of filteredStudents" [ngValue]="student.studentId">
-                {{ student.admissionNo }} - {{ student.studentName }}
-              </option>
-            </select>
-            <small class="text-secondary position-absolute w-100"
-              *ngIf="selectedClassId > 0 && filteredStudents.length === 0" style="top: 100%; left: 0;">No students
-              found.</small>
-          </div>
+          <select class="field-input premium-select w-100 text-truncate" [(ngModel)]="selectedStudentId" name="student">
+            <option [ngValue]="0">All Students</option>
+            <option *ngFor="let student of filteredStudents" [ngValue]="student.studentId">
+              {{ student.admissionNo }} - {{ student.studentName }}
+            </option>
+          </select>
         </div>
 
-        <div class="col-12 text-end mt-16">
-          <button class="btn-primary-gradient" (click)="loadResults()"
-            [disabled]="!selectedExamId || !selectedStudentId">
+        <div class="filter-btn-col">
+          <button (click)="loadResults()" class="btn-add w-100 justify-content-center" style="height: 42px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
               style="width: 18px; height: 18px;">
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
-            View Result
+            <span>View Result</span>
           </button>
         </div>
       </div>
@@ -158,7 +152,7 @@
   <div *ngIf="!loading && !noResultsFound && examResults.length > 0">
 
     <!-- Action Menu -->
-    <div class="d-flex justify-content-end gap-3 mb-24">
+    <div class="d-flex justify-content-end gap-3 mb-24 mt-3 pe-3">
       <button type="button" (click)="printResult()" class="btn-ghost" style="padding: 10px 20px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           style="width: 18px; height: 18px; margin-right: 8px;">
@@ -168,7 +162,7 @@
         </svg>
         Print Result
       </button>
-      <button type="button" (click)="printResult()" class="btn-primary-gradient"
+      <button type="button" (click)="downloadPDF()" class="btn-primary-gradient"
         style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
           style="width: 18px; height: 18px; margin-right: 8px;">
@@ -181,85 +175,62 @@
     </div>
 
     <!-- Summary Stats (Only for Single Student) -->
-    <div class="stats-row mb-24" *ngIf="selectedStudentId > 0">
-      <div class="stat-card">
-        <div class="stat-icon-wrapper blue">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-            <line x1="3" y1="9" x2="21" y2="9" />
-            <line x1="9" y1="21" x2="9" y2="9" />
-          </svg>
+    <div class="stats-row mb-24 mx-xl-3" *ngIf="selectedStudentId > 0">
+      <div class="stat-card-glass">
+        <div class="stat-icon-circle primary">
+          <iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon>
         </div>
-        <div class="stat-content">
-          <span class="stat-label">Total Max Marks</span>
-          <h3 class="stat-value">{{ totalMarks }}</h3>
+        <div>
+          <div class="stat-label">Total Max Marks</div>
+          <div class="stat-value">{{ totalMarks }}</div>
         </div>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-icon-wrapper indigo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-          </svg>
+      <div class="stat-card-glass">
+        <div class="stat-icon-circle warning">
+          <iconify-icon icon="solar:chart-square-bold-duotone"></iconify-icon>
         </div>
-        <div class="stat-content">
-          <span class="stat-label">Obtained Marks</span>
-          <h3 class="stat-value">{{ obtainedMarks }}</h3>
+        <div>
+          <div class="stat-label">Obtained Marks</div>
+          <div class="stat-value text-warning">{{ obtainedMarks }}</div>
         </div>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-icon-wrapper green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
-            <path d="M22 12A10 10 0 0 0 12 2v10z" />
-          </svg>
+      <div class="stat-card-glass">
+        <div class="stat-icon-circle success">
+          <iconify-icon icon="solar:pie-chart-2-bold-duotone"></iconify-icon>
         </div>
-        <div class="stat-content">
-          <span class="stat-label">Avg Percentage</span>
-          <h3 class="stat-value">{{ percentage | number:'1.1-1' }}%</h3>
+        <div>
+          <div class="stat-label">Avg Percentage</div>
+          <div class="stat-value text-success">{{ percentage | number:'1.1-1' }}%</div>
         </div>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-icon-wrapper"
-          [ngStyle]="{'background': resultStatus === 'PASS' ? '#dcfce7' : '#fee2e2', 'color': resultStatus === 'PASS' ? '#16a34a' : '#ef4444'}">
-          <svg *ngIf="resultStatus === 'PASS'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="8" r="7" />
-            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
-          </svg>
-          <svg *ngIf="resultStatus === 'FAIL'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
+      <div class="stat-card-glass">
+        <div class="stat-icon-circle" [ngClass]="resultStatus === 'PASS' ? 'success' : 'danger'">
+          <iconify-icon [icon]="resultStatus === 'PASS' ? 'solar:shield-check-bold-duotone' : 'solar:shield-cross-bold-duotone'"></iconify-icon>
         </div>
-        <div class="stat-content">
-          <span class="stat-label">Final Status</span>
-          <h3 class="stat-value">
-            <span class="amount-chip" [ngClass]="resultStatus === 'PASS' ? 'paid' : 'unpaid'"
-              style="font-size: 16px; padding: 6px 12px;">
-              {{ resultStatus }}
-            </span>
-          </h3>
+        <div>
+          <div class="stat-label">Final Status</div>
+          <div class="stat-value" [ngClass]="resultStatus === 'PASS' ? 'text-success' : 'text-danger'">{{ resultStatus }}</div>
         </div>
       </div>
     </div>
 
     <!-- Single Student Details Table -->
-    <div class="fee-card" *ngIf="selectedStudentId > 0">
+    <div class="fee-card mx-xl-3" *ngIf="selectedStudentId > 0">
       <div class="fee-card-header">
         <div class="header-left">
           <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #1e293b;">Detailed Subject Report</h4>
         </div>
         <div>
-          <span class="amount-chip partial" style="padding: 6px 14px;">Academic Results 2025</span>
+          <span class="amount-chip partial" style="padding: 6px 14px;">Academic Results {{ currentYear }}</span>
         </div>
       </div>
 
       <div class="fee-card-body">
         <div class="table-wrapper">
-          <table class="fee-table">
+          <table class="premium-table">
             <thead>
               <tr>
                 <th style="padding-left: 24px;">Subject Name</th>
@@ -286,31 +257,23 @@
                     <div class="progress w-100"
                       style="max-width: 100px; height: 6px; background-color: #f1f5f9; border-radius: 12px; overflow: hidden;">
                       <div class="progress-bar" role="progressbar" [style.width.%]="result.percentage"
-                        [ngStyle]="{'background': result.isPassed ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ef4444, #dc2626)'}">
+                        [ngStyle]="{'background': (result.percentage || 0) >= 50 ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ef4444, #dc2626)'}">
                       </div>
                     </div>
                     <span style="font-size: 13px; font-weight: 600; color: #475569;">{{ result.percentage }}%</span>
                   </div>
                 </td>
                 <td class="text-center">
-                  <span class="badge" [ngStyle]="{
-                    'border': '1px solid',
-                    'background': result.grade === 'A+' || result.grade === 'A' ? '#dcfce7' : (result.grade === 'B' ? '#e0f2fe' : (result.grade === 'F' ? '#fee2e2' : '#fef9c3')),
-                    'color': result.grade === 'A+' || result.grade === 'A' ? '#16a34a' : (result.grade === 'B' ? '#0284c7' : (result.grade === 'F' ? '#ef4444' : '#ca8a04')),
-                    'border-color': result.grade === 'A+' || result.grade === 'A' ? '#bbf7d0' : (result.grade === 'B' ? '#bae6fd' : (result.grade === 'F' ? '#fecaca' : '#fef08a')),
-                    'padding': '6px 12px',
-                    'border-radius': '8px',
-                    'font-weight': '600'
-                  }">
-                    {{ result.grade }}
+                  <span class="badge" [ngStyle]="getGradeStyle(getComputedGrade(result.percentage))">
+                    {{ getComputedGrade(result.percentage) }}
                   </span>
                 </td>
                 <td class="text-center" style="padding-right: 24px;">
-                  <span class="amount-chip" [ngClass]="result.isPassed ? 'paid' : 'unpaid'">
+                  <span class="status-pill" [ngClass]="(result.percentage || 0) >= 50 ? 'status-pass' : 'status-fail'">
                     <iconify-icon
-                      [icon]="result.isPassed ? 'solar:check-circle-bold-duotone' : 'solar:close-circle-bold-duotone'"
-                      style="margin-right: 4px; vertical-align: text-bottom;"></iconify-icon>
-                    {{ result.isPassed ? 'Passed' : 'Failed' }}
+                      [icon]="(result.percentage || 0) >= 50 ? 'solar:check-circle-bold-duotone' : 'solar:close-circle-bold-duotone'"
+                      style="font-size: 15px;"></iconify-icon>
+                    {{ (result.percentage || 0) >= 50 ? 'Passed' : 'Failed' }}
                   </span>
                 </td>
               </tr>
@@ -350,7 +313,7 @@
     </div>
 
     <!-- Bulk Class Results Table -->
-    <div class="fee-card" *ngIf="selectedStudentId === 0">
+    <div class="fee-card mx-xl-3" *ngIf="selectedStudentId === 0">
       <div class="fee-card-header">
         <div class="header-left">
           <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #1e293b;">
@@ -362,7 +325,7 @@
 
       <div class="fee-card-body">
         <div class="table-wrapper">
-          <table class="fee-table">
+          <table class="premium-table">
             <thead>
               <tr>
                 <th style="padding-left: 24px;">Student Name</th>
@@ -375,7 +338,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr class="table-row" *ngFor="let result of getFilteredBulkResults()">
+              <tr class="table-row" *ngFor="let result of paginatedBulkResults">
                 <td style="padding-left: 24px;">
                   <div class="d-flex align-items-center gap-2">
                     <span class="amount-val">{{ result.studentName }}</span>
@@ -412,6 +375,32 @@
             </tbody>
           </table>
         </div>
+        
+        <!-- Pagination -->
+        <div class="pagination-bar" *ngIf="filteredBulkResults.length > 0">
+          <p class="pagination-info mb-0">
+            Page <b>{{ currentPage }}</b> of <b>{{ totalPages }}</b>
+          </p>
+          <nav>
+            <ul class="pagination-pills">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+                  <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon>
+                </a>
+              </li>
+              <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+                [class.active]="currentPage === i + 1">
+                <a class="page-link" (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <a class="page-link" (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+                  <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
       </div>
     </div>
   </div>

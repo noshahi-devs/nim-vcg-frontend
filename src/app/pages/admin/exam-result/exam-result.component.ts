@@ -15,6 +15,10 @@ import { StaffService } from '../../../services/staff.service';
 import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
 import { Staff } from '../../../Models/staff';
 import { SessionService } from '../../../services/session.service';
+import { SettingsService } from '../../../services/settings.service';
+import { environment } from '../../../../environments/environment';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-exam-result',
@@ -57,12 +61,20 @@ export class ExamResultComponent implements OnInit {
   filteredStudents: Student[] = [];
   subjects: any[] = [];
 
+  // Pagination
+  currentPage: number = 1;
+  rowsPerPage: number = 10;
+  totalPages: number = 1;
+  paginatedBulkResults: any[] = [];
+  filteredBulkResults: any[] = [];
+
   // Summary data
   totalMarks: number = 0;
   obtainedMarks: number = 0;
   percentage: number = 0;
-  overallGrade: string = '';
-  resultStatus: string = '';
+  overallGrade = '';
+  resultStatus = '';
+  currentYear = new Date().getFullYear();
 
   constructor(
     private examService: ExamService,
@@ -72,7 +84,8 @@ export class ExamResultComponent implements OnInit {
     private authService: AuthService,
     private staffService: StaffService,
     private assignmentService: SubjectAssignmentService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private settingsService: SettingsService
   ) { }
 
   ngOnInit() {
@@ -326,8 +339,8 @@ export class ExamResultComponent implements OnInit {
   }
 
   loadResults() {
-    if (!this.selectedExamId || !this.selectedClassId) {
-      this.triggerWarning('Selection Required', 'Please select Exam and Class.');
+    if (!this.selectedExamId) {
+      this.triggerWarning('Selection Required', 'Please select an Exam.');
       return;
     }
 
@@ -337,6 +350,8 @@ export class ExamResultComponent implements OnInit {
     this.noResultsFound = false;
     this.examResults = [];
     this.displayResults = [];
+    this.paginatedBulkResults = [];
+    this.filteredBulkResults = [];
 
     if (this.selectedStudentId > 0) {
       // Single Student View
@@ -374,7 +389,7 @@ export class ExamResultComponent implements OnInit {
           if (res && res.length > 0) {
             this.examResults = res;
             this.noResultsFound = false;
-            // No need to map displayResults for bulk view yet, html will handle it
+            this.updateFilteredBulkResults();
           } else {
             this.noResultsFound = true;
           }
@@ -383,39 +398,56 @@ export class ExamResultComponent implements OnInit {
       });
   }
 
-  private mapSingleResultToDisplay(res: ExamResult) {
-    this.displayResults = (res.subjects as any[]).map((s: any) => ({
-      subjectName: s.subjectName || s.SubjectName || 'N/A',
-      totalMarks: s.totalMarks ?? s.TotalMarks ?? 0,
-      obtainedMarks: s.obtainedMarks ?? s.ObtainedMarks ?? s.obtainedScore ?? s.ObtainedScore ?? 0,
-      grade: s.grade || s.Grade || '—',
-      percentage: this.examService.calculatePercentage(
-        s.obtainedMarks ?? s.ObtainedMarks ?? s.obtainedScore ?? 0,
-        s.totalMarks ?? s.TotalMarks ?? 0
-      ),
-      isPassed: (s.status || s.Status || '').toLowerCase() === 'passed' || (s.grade || s.Grade || 'F') !== 'F'
+  private mapSingleResultToDisplay(res: any) {
+    this.displayResults = (res.subjects || []).map((s: any) => ({
+      subjectName: s.subjectName || 'N/A',
+      totalMarks: s.totalMarks || 0,
+      obtainedMarks: s.obtainedMarks || 0,
+      grade: s.grade || '—',
+      percentage: this.examService.calculatePercentage(s.obtainedMarks || 0, s.totalMarks || 0),
+      isPassed: (s.status || '').toLowerCase() === 'passed' || (s.grade || 'F') !== 'F'
     }));
   }
 
-  getFilteredBulkResults(): ExamResult[] {
-    if (!this.selectedSubjectId) return this.examResults;
-    const subjectName = this.subjects.find(s => s.subjectId === this.selectedSubjectId)?.subjectName;
-    if (!subjectName) return this.examResults;
-
-    return this.examResults.map(r => {
-      const filteredSubjects = (r.subjects || []).filter(s => s.subjectName === subjectName);
-      if (filteredSubjects.length > 0) {
-        const s = filteredSubjects[0];
-        return {
-          ...r,
-          totalMarks: s.totalMarks,
-          obtainedMarks: s.obtainedMarks,
-          percentage: this.examService.calculatePercentage(s.obtainedMarks, s.totalMarks),
-          grade: s.grade
-        };
+  updateFilteredBulkResults() {
+    if (!this.selectedSubjectId) {
+      this.filteredBulkResults = [...this.examResults];
+    } else {
+      const subjectName = this.subjects.find(s => s.subjectId === this.selectedSubjectId)?.subjectName;
+      if (subjectName) {
+        this.filteredBulkResults = this.examResults.map(r => {
+          const filteredSubjects = (r.subjects || []).filter((s: any) => s.subjectName === subjectName);
+          if (filteredSubjects.length > 0) {
+            const s = filteredSubjects[0];
+            return {
+              ...r,
+              totalMarks: s.totalMarks,
+              obtainedMarks: s.obtainedMarks,
+              percentage: this.examService.calculatePercentage(s.obtainedMarks, s.totalMarks),
+              grade: s.grade
+            };
+          }
+          return { ...r, totalMarks: 0, obtainedMarks: 0, percentage: 0, grade: '—' };
+        }).filter(r => r.totalMarks > 0);
+      } else {
+        this.filteredBulkResults = [...this.examResults];
       }
-      return { ...r, totalMarks: 0, obtainedMarks: 0, percentage: 0, grade: '—' };
-    }).filter(r => r.totalMarks > 0); // Only show students who have marks for this subject
+    }
+    this.totalPages = Math.ceil(this.filteredBulkResults.length / this.rowsPerPage) || 1;
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  updatePagination() {
+    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
+    this.paginatedBulkResults = this.filteredBulkResults.slice(startIndex, startIndex + this.rowsPerPage);
+  }
+
+  changePage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePagination();
+    }
   }
 
 
@@ -427,11 +459,310 @@ export class ExamResultComponent implements OnInit {
     this.totalMarks = this.displayResults.reduce((sum, r) => sum + (r.totalMarks || 0), 0);
     this.obtainedMarks = this.displayResults.reduce((sum, r) => sum + (r.obtainedMarks || 0), 0);
     this.percentage = this.totalMarks > 0 ? (this.obtainedMarks / this.totalMarks) * 100 : 0;
-    this.overallGrade = this.examService.calculateGrade(this.percentage);
-    this.resultStatus = this.displayResults.every(r => r.isPassed) ? 'PASS' : 'FAIL';
+    // Always compute grade and status from percentage (do not trust backend isPassed)
+    this.overallGrade = this.getComputedGrade(this.percentage);
+    this.resultStatus = this.percentage >= 50 ? 'PASS' : 'FAIL';
   }
 
-  printResult() { window.print(); }
+  // ──────────────────────────────────────────────
+  //  Print & PDF
+  // ──────────────────────────────────────────────
+  schoolName = 'Vision College';
+  schoolAddress = '';
+
+  private ensureSchoolInfo(): Promise<void> {
+    return new Promise(resolve => {
+      this.settingsService.getSchoolInfo().subscribe(info => {
+        this.schoolName = info['schoolName'] || info['SchoolName'] || 'Vision College';
+        this.schoolAddress = info['schoolAddress'] || info['SchoolAddress'] || '';
+        resolve();
+      }, () => resolve());
+    });
+  }
+
+  async printResult() {
+    await this.ensureSchoolInfo();
+    const isSingleStudent = this.selectedStudentId > 0;
+    const student = this.filteredStudents.find(s => s.studentId === this.selectedStudentId);
+    const exam = this.exams.find(e => e.examId === this.selectedExamId);
+    const cls = this.classes.find(c => c.standardId === this.selectedClassId);
+    const section = this.sections.find(s => s.sectionId === this.selectedSectionId);
+    const logoSrc = window.location.origin + '/assets/img/vision_logo.png';
+    const today = new Date().toLocaleDateString('en-PK', { day: '2-digit', month: 'long', year: 'numeric' });
+
+    let bodyContent = '';
+
+    if (isSingleStudent) {
+      // ── Single Student Card ──
+      const statusColor = this.resultStatus === 'PASS' ? '#15803d' : '#dc2626';
+      const statusBg = this.resultStatus === 'PASS' ? '#dcfce7' : '#fee2e2';
+      const studentImg = this.getStudentImageUrl(student || null);
+
+      const rows = this.displayResults.map((r, i) => `
+        <tr style="background:${i % 2 === 0 ? '#fff' : '#f8fafc'}">
+          <td style="padding:10px 16px; border-bottom:1px solid #e2e8f0;">${r.subjectName}</td>
+          <td style="padding:10px 16px; border-bottom:1px solid #e2e8f0; text-align:center;">${r.totalMarks}</td>
+          <td style="padding:10px 16px; border-bottom:1px solid #e2e8f0; text-align:center; font-weight:700;">${r.obtainedMarks}</td>
+          <td style="padding:10px 16px; border-bottom:1px solid #e2e8f0; text-align:center;">${(r.percentage || 0).toFixed(1)}%</td>
+          <td style="padding:10px 16px; border-bottom:1px solid #e2e8f0; text-align:center; font-weight:700; color:#1e40af;">${r.grade}</td>
+          <td style="padding:10px 16px; border-bottom:1px solid #e2e8f0; text-align:center;">
+            <span style="display:inline-flex; align-items:center; gap:5px; padding:5px 14px; border-radius:30px; font-size:12px; font-weight:700; background:${r.isPassed ? '#dcfce7' : '#fee2e2'}; color:${r.isPassed ? '#15803d' : '#dc2626'}; border:1.5px solid ${r.isPassed ? '#86efac' : '#fca5a5'};"><svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='${r.isPassed ? '20 6 9 17 4 12' : '18 6 6 18'}'></polyline>${r.isPassed ? '' : "<line x1='6' y1='6' x2='18' y2='18'></line>"}</svg> ${r.isPassed ? 'Passed' : 'Failed'}</span>
+          </td>
+        </tr>`).join('');
+
+      bodyContent = `
+        <!-- Student Info Panel -->
+        <table style="width:100%; border-collapse:collapse; margin-bottom:20px; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden;">
+          <tr>
+            <td style="vertical-align:top; border-right:1px solid #e2e8f0;">
+              <table style="width:100%; border-collapse:collapse;">
+                <tr style="background:#f1f5f9;">
+                  <td style="padding:9px 16px; font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase; width:130px;">Student Name</td>
+                  <td style="padding:9px 16px; font-size:13px; font-weight:700; color:#1e293b;">${student?.studentName || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td style="padding:9px 16px; font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase;">Admission No</td>
+                  <td style="padding:9px 16px; font-size:13px; font-weight:600; color:#1e293b;">${student?.admissionNo || 'N/A'}</td>
+                </tr>
+                <tr style="background:#f1f5f9;">
+                  <td style="padding:9px 16px; font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase;">Class / Section</td>
+                  <td style="padding:9px 16px; font-size:13px; color:#1e293b;">${cls?.standardName || 'N/A'} / ${section?.sectionName || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td style="padding:9px 16px; font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase;">Exam</td>
+                  <td style="padding:9px 16px; font-size:13px; color:#1e293b;">${exam?.examName || 'N/A'}</td>
+                </tr>
+              </table>
+            </td>
+            <td style="width:110px; padding:12px; text-align:center; vertical-align:middle; background:#fff;">
+              <img src="${studentImg}" style="width:85px; height:85px; object-fit:cover; border-radius:10px; border:2px solid #e2e8f0; background:#f8fafc;" onerror="this.src='assets/images/user-grid/user-grid-img2.png'" />
+              <div style="font-size:9px; color:#94a3b8; margin-top:4px; font-weight:600; text-transform:uppercase;">Student Photo</div>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Results Table -->
+        <table style="width:100%; border-collapse:collapse; font-size:13px; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:20px;">
+          <thead>
+            <tr style="background:#800000;">
+              <th style="padding:11px 16px; text-align:left; color:#fff; font-size:11px; text-transform:uppercase; letter-spacing:0.05em;">Subject</th>
+              <th style="padding:11px 16px; text-align:center; color:#fff; font-size:11px; text-transform:uppercase;">Total Marks</th>
+              <th style="padding:11px 16px; text-align:center; color:#fff; font-size:11px; text-transform:uppercase;">Obtained</th>
+              <th style="padding:11px 16px; text-align:center; color:#fff; font-size:11px; text-transform:uppercase;">Percentage</th>
+              <th style="padding:11px 16px; text-align:center; color:#fff; font-size:11px; text-transform:uppercase;">Grade</th>
+              <th style="padding:11px 16px; text-align:center; color:#fff; font-size:11px; text-transform:uppercase;">Status</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+          <tfoot>
+            <tr style="background:#f8fafc; border-top:2px solid #800000;">
+              <td style="padding:11px 16px; font-weight:800; font-size:13px;">Grand Total</td>
+              <td style="padding:11px 16px; text-align:center; font-weight:800;">${this.totalMarks}</td>
+              <td style="padding:11px 16px; text-align:center; font-weight:800; color:#800000;">${this.obtainedMarks}</td>
+              <td style="padding:11px 16px; text-align:center; font-weight:800;">${this.percentage.toFixed(1)}%</td>
+              <td style="padding:11px 16px; text-align:center; font-weight:800; color:#1e40af;">${this.overallGrade}</td>
+              <td style="padding:11px 16px; text-align:center;">
+                <span style="padding:4px 16px; border-radius:20px; font-size:13px; font-weight:800; background:${statusBg}; color:${statusColor};">${this.resultStatus}</span>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <!-- Result Stamp -->
+        <div style="display:flex; justify-content:flex-end; margin-bottom:28px;">
+          <div style="text-align:center; padding:12px 28px; border-radius:12px; border:3px solid ${statusColor}; background:${statusBg};">
+            <div style="font-size:28px; font-weight:900; color:${statusColor}; letter-spacing:3px;">${this.resultStatus}</div>
+            <div style="font-size:11px; color:#64748b; margin-top:2px;">Overall Result</div>
+          </div>
+        </div>`;
+
+    } else {
+      // ── Class Performance Report ──
+      const rows = this.filteredBulkResults.map((r, i) => {
+        const isPassed = (r.percentage || 0) >= 50;
+        return `
+        <tr style="background:${i % 2 === 0 ? '#fff' : '#f8fafc'}">
+          <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center; color:#64748b;">${i + 1}</td>
+          <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; font-weight:700;">${r.studentName}</td>
+          <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0;">${r.className || ''}</td>
+          <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0;">${r.sectionName || ''}</td>
+          <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center;">${r.totalMarks}</td>
+          <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center; font-weight:700; color:#800000;">${r.obtainedMarks}</td>
+          <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center;">${(r.percentage || 0).toFixed(1)}%</td>
+          <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center; font-weight:700; color:#1e40af;">${r.grade || '-'}</td>
+          <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center;">
+            <span style="display:inline-flex; align-items:center; gap:5px; padding:4px 12px; border-radius:30px; font-size:11px; font-weight:700; background:${isPassed ? '#dcfce7' : '#fee2e2'}; color:${isPassed ? '#15803d' : '#dc2626'}; border:1.5px solid ${isPassed ? '#86efac' : '#fca5a5'};"><svg width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='${isPassed ? '20 6 9 17 4 12' : '18 6 6 18'}'></polyline>${isPassed ? '' : "<line x1='6' y1='6' x2='18' y2='18'></line>"}</svg> ${isPassed ? 'Passed' : 'Failed'}</span>
+          </td>
+        </tr>`; }).join('');
+
+      bodyContent = `
+        <!-- Summary Info -->
+        <table style="width:100%; border-collapse:collapse; margin-bottom:18px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden;">
+          <tr>
+            <td style="padding:10px 16px; font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase;">Exam</td>
+            <td style="padding:10px 16px; font-size:13px; font-weight:700; color:#1e293b;">${exam?.examName || 'N/A'}</td>
+            <td style="padding:10px 16px; font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase;">Class</td>
+            <td style="padding:10px 16px; font-size:13px; color:#1e293b;">${cls?.standardName || 'All Classes'}</td>
+            <td style="padding:10px 16px; font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase;">Total Students</td>
+            <td style="padding:10px 16px; font-size:13px; font-weight:700; color:#800000;">${this.filteredBulkResults.length}</td>
+          </tr>
+        </table>
+
+        <!-- Class Table -->
+        <table style="width:100%; border-collapse:collapse; font-size:12.5px; border:1px solid #e2e8f0; overflow:hidden;">
+          <thead>
+            <tr style="background:#800000;">
+              <th style="padding:10px 14px; text-align:center; color:#fff; font-size:10px; text-transform:uppercase;">#</th>
+              <th style="padding:10px 14px; text-align:left; color:#fff; font-size:10px; text-transform:uppercase;">Student Name</th>
+              <th style="padding:10px 14px; text-align:left; color:#fff; font-size:10px; text-transform:uppercase;">Class</th>
+              <th style="padding:10px 14px; text-align:left; color:#fff; font-size:10px; text-transform:uppercase;">Section</th>
+              <th style="padding:10px 14px; text-align:center; color:#fff; font-size:10px; text-transform:uppercase;">Total</th>
+              <th style="padding:10px 14px; text-align:center; color:#fff; font-size:10px; text-transform:uppercase;">Obtained</th>
+              <th style="padding:10px 14px; text-align:center; color:#fff; font-size:10px; text-transform:uppercase;">%</th>
+              <th style="padding:10px 14px; text-align:center; color:#fff; font-size:10px; text-transform:uppercase;">Grade</th>
+              <th style="padding:10px 14px; text-align:center; color:#fff; font-size:10px; text-transform:uppercase;">Status</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    const html = `<!DOCTYPE html><html><head><title>Result Card</title>
+      <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; background: #fff; }
+        .page { padding: 28px 32px; max-width: 900px; margin: 0 auto; }
+
+        /* Letterhead */
+        .letterhead { display: flex; align-items: center; gap: 20px; padding-bottom: 16px; border-bottom: 3px solid #800000; margin-bottom: 6px; }
+        .logo { width: 72px; height: 72px; object-fit: contain; }
+        .school-info { flex: 1; }
+        .school-name { font-size: 24px; font-weight: 900; color: #800000; letter-spacing: -0.5px; }
+        .school-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+        .print-date { font-size: 11px; color: #94a3b8; text-align: right; }
+
+        /* Title bar */
+        .title-bar { background: #800000; color: #fff; text-align: center; padding: 8px 0;
+          font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px; }
+
+        /* Signatures */
+        .signatures { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 14px; border-top: 1px solid #e2e8f0; }
+        .sig-block { text-align: center; width: 140px; }
+        .sig-line { border-top: 1.5px solid #334155; margin-bottom: 5px; padding-top: 4px; }
+        .sig-label { font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; }
+
+        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .page { padding: 16px; } }
+      </style></head>
+      <body><div class="page">
+        <!-- Letterhead -->
+        <div class="letterhead">
+          <img class="logo" src="${logoSrc}" onerror="this.style.display='none'" alt="Logo" />
+          <div class="school-info">
+            <div class="school-name">${this.schoolName}</div>
+            ${this.schoolAddress ? `<div class="school-sub">${this.schoolAddress}</div>` : ''}
+          </div>
+          <div class="print-date">Printed: ${today}</div>
+        </div>
+        <div class="title-bar">${isSingleStudent ? 'Student Result Card' : 'Class Performance Report'}</div>
+
+        ${bodyContent}
+
+        <!-- Signatures -->
+        <div class="signatures">
+          <div class="sig-block"><div class="sig-line"></div><div class="sig-label">Class Teacher</div></div>
+          <div class="sig-block"><div class="sig-line"></div><div class="sig-label">Exam Controller</div></div>
+          <div class="sig-block"><div class="sig-line"></div><div class="sig-label">Principal</div></div>
+        </div>
+      </div></body></html>`;
+
+    const win = window.open('', '_blank', 'width=960,height=800');
+    if (win) {
+      win.document.write(html);
+      win.document.close();
+      win.focus();
+      setTimeout(() => { win.print(); }, 600);
+    }
+  }
+
+  async downloadPDF() {
+    await this.ensureSchoolInfo();
+    const isSingleStudent = this.selectedStudentId > 0;
+    const student = this.filteredStudents.find(s => s.studentId === this.selectedStudentId);
+    const exam = this.exams.find(e => e.examId === this.selectedExamId);
+    const cls = this.classes.find(c => c.standardId === this.selectedClassId);
+
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+
+    // ── Header ──
+    doc.setFillColor(128, 0, 0);
+    doc.rect(0, 0, pageW, 28, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text(this.schoolName, pageW / 2, 12, { align: 'center' });
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(exam?.examName || '', pageW / 2, 20, { align: 'center' });
+    doc.text(`Printed: ${new Date().toLocaleDateString('en-PK')}`, pageW - 14, 26, { align: 'right' });
+
+    // ── Sub-header ──
+    doc.setTextColor(30, 41, 59);
+    const subTitle = isSingleStudent
+      ? `Student Report: ${student?.studentName || ''}`
+      : `Class Performance Report: ${cls?.standardName || 'All Classes'}`;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text(subTitle, 14, 38);
+
+    // ── Summary bar (single student) ──
+    if (isSingleStudent) {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 116, 139);
+      doc.text(`Total: ${this.totalMarks}  |  Obtained: ${this.obtainedMarks}  |  Percentage: ${this.percentage.toFixed(1)}%  |  Grade: ${this.overallGrade}  |  Status: ${this.resultStatus}`, 14, 46);
+    }
+
+    const startY = isSingleStudent ? 52 : 44;
+
+    if (isSingleStudent) {
+      autoTable(doc, {
+        startY,
+        head: [['Subject', 'Total Marks', 'Obtained', 'Percentage', 'Grade', 'Status']],
+        body: this.displayResults.map(r => [
+          r.subjectName, r.totalMarks, r.obtainedMarks,
+          `${(r.percentage || 0).toFixed(1)}%`, r.grade,
+          { content: r.isPassed ? 'PASS' : 'FAIL', styles: { textColor: r.isPassed ? [22, 163, 74] : [220, 38, 38] } }
+        ]),
+        foot: [['Total', this.totalMarks, this.obtainedMarks, `${this.percentage.toFixed(1)}%`, this.overallGrade,
+          { content: this.resultStatus, styles: { textColor: this.resultStatus === 'PASS' ? [22, 163, 74] : [220, 38, 38] } }]],
+        headStyles: { fillColor: [128, 0, 0], textColor: 255, fontStyle: 'bold', fontSize: 9 },
+        footStyles: { fillColor: [241, 245, 249], textColor: [30, 41, 59], fontStyle: 'bold' },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        styles: { fontSize: 10, cellPadding: 4 },
+        margin: { left: 14, right: 14 }
+      });
+      const fileName = `Result_${(student?.studentName || 'Student').replace(/ /g, '_')}_${exam?.examName || 'Exam'}.pdf`;
+      doc.save(fileName);
+    } else {
+      autoTable(doc, {
+        startY,
+        head: [['#', 'Student Name', 'Class', 'Section', 'Total', 'Obtained', '%', 'Grade', 'Status']],
+        body: this.filteredBulkResults.map((r, i) => [
+          i + 1, r.studentName, r.className || '', r.sectionName || '',
+          r.totalMarks, r.obtainedMarks, `${(r.percentage || 0).toFixed(1)}%`,
+          r.grade || '-',
+          { content: r.status || '-', styles: { textColor: r.status === 'Pass' ? [22, 163, 74] : [220, 38, 38] } }
+        ]),
+        headStyles: { fillColor: [128, 0, 0], textColor: 255, fontStyle: 'bold', fontSize: 9 },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        styles: { fontSize: 9, cellPadding: 3 },
+        margin: { left: 14, right: 14 }
+      });
+      const fileName = `ClassReport_${(cls?.standardName || 'Class').replace(/ /g, '_')}_${exam?.examName || 'Exam'}.pdf`;
+      doc.save(fileName);
+    }
+  }
 
   getGradeBadgeClass(grade: string): string {
     switch (grade) {
@@ -442,6 +773,29 @@ export class ExamResultComponent implements OnInit {
       case 'F': return 'bg-danger-focus text-danger-600 border border-danger-main';
       default: return 'bg-neutral-200 text-neutral-600';
     }
+  }
+
+  // ── Computed Grade (frontend override to fix backend inaccuracies) ──
+  getComputedGrade(percentage: number | null | undefined): string {
+    const pct = percentage || 0;
+    if (pct >= 90) return 'A+';
+    if (pct >= 80) return 'A';
+    if (pct >= 70) return 'B';
+    if (pct >= 60) return 'C';
+    if (pct >= 50) return 'D';
+    return 'F';
+  }
+
+  getGradeStyle(grade: string): { [key: string]: string } {
+    const styles: { [key: string]: { [key: string]: string } } = {
+      'A+': { background: '#dcfce7', color: '#15803d', border: '1px solid #86efac', padding: '6px 12px', borderRadius: '8px', fontWeight: '700' },
+      'A':  { background: '#dcfce7', color: '#15803d', border: '1px solid #86efac', padding: '6px 12px', borderRadius: '8px', fontWeight: '700' },
+      'B':  { background: '#e0f2fe', color: '#0284c7', border: '1px solid #7dd3fc', padding: '6px 12px', borderRadius: '8px', fontWeight: '700' },
+      'C':  { background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', padding: '6px 12px', borderRadius: '8px', fontWeight: '700' },
+      'D':  { background: '#fff7ed', color: '#c2410c', border: '1px solid #fdba74', padding: '6px 12px', borderRadius: '8px', fontWeight: '700' },
+      'F':  { background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5', padding: '6px 12px', borderRadius: '8px', fontWeight: '700' },
+    };
+    return styles[grade] || { background: '#f1f5f9', color: '#64748b', padding: '6px 12px', borderRadius: '8px', fontWeight: '600' };
   }
 
   getResultStatusClass(): string {
@@ -463,6 +817,18 @@ export class ExamResultComponent implements OnInit {
       }
     });
     return formatted;
+  }
+
+  getStudentImageUrl(student: Student | null): string {
+    if (!student) return 'assets/images/user-grid/user-grid-img2.png';
+    if (student.imageUpload?.imageData) return student.imageUpload.imageData;
+    if (student.imagePath) {
+      if (student.imagePath.startsWith('http') || student.imagePath.startsWith('data:')) {
+        return student.imagePath;
+      }
+      return `${environment.apiBaseUrl}/${student.imagePath}`;
+    }
+    return 'assets/images/user-grid/user-grid-img2.png';
   }
 }
 
