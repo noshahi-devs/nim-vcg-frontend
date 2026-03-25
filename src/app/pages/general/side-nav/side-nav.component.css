@@ -278,6 +278,14 @@
     font-weight: 600;
 }
 
+:host ::ng-deep .sidebar-menu .sidebar-submenu li.active-page a i.circle-icon,
+:host ::ng-deep .sidebar-menu .sidebar-submenu li a.active-page i.circle-icon {
+    display: inline-block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: #F4C430 !important;
+}
+
 :host ::ng-deep .sidebar.active .sidebar-menu li a {
     justify-content: center;
     padding-inline: 0.55rem;

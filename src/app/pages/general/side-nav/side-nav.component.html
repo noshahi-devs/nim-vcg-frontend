@@ -85,11 +85,11 @@
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/class-list" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-primary-600"></i> All Classes</a></li>
+                class="ri-circle-fill circle-icon text-primary-600"></i> Class List</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/newclass" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-warning-main"></i> Add New Class</a></li>
+                class="ri-circle-fill circle-icon text-warning-main"></i> Add Class</a></li>
           <li><a routerLink="/class-management" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-danger"></i> Class Manage</a></li>
+                class="ri-circle-fill circle-icon text-danger"></i> Manage Class</a></li>
         </ul>
       </li>
 
@@ -116,7 +116,7 @@
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/subject-list" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-primary-600"></i> All Subjects</a></li>
+                class="ri-circle-fill circle-icon text-primary-600"></i> Subject List</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/subject-add"
               routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-warning-main"></i> Add Subject</a></li>
@@ -135,13 +135,11 @@
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/staff-list" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-primary-600"></i> All Employees</a></li>
+                class="ri-circle-fill circle-icon text-primary-600"></i> Staff List</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-add"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Add
-              Employee</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Add Staff</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-manage-login"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger-main"></i> Manage
-              Login</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger-main"></i> Staff Logins</a></li>
         </ul>
       </li>
 
@@ -156,8 +154,7 @@
           <li><a routerLink="/student-list" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Student List</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/student-add"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Add
-              Student</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Add Student</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/student-promote"
               routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-danger-main"></i> Promote Student</a></li>
@@ -173,7 +170,7 @@
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/fee" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-info-main"></i> Create Fee Type</a></li>
+                class="ri-circle-fill circle-icon text-info-main"></i> Fee Types</a></li>
           <li><a routerLink="/generate-fee-invoice" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Generate Invoice</a></li>
           <li><a routerLink="/invoice-list" routerLinkActive="active-page"><i
@@ -183,7 +180,7 @@
           <li><a routerLink="/other-payment" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-info-main"></i> Other Payment</a></li>
           <li><a routerLink="/payment-detail" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-primary-600"></i> Payment Detail</a></li>
+                class="ri-circle-fill circle-icon text-primary-600"></i> Payment History</a></li>
           <li *ngIf="hasAnyRole(['Accountant'])"><a routerLink="/collect-fee" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-success-main"></i> Collect Fee</a></li>
           <li><a routerLink="/fee-defaulters" routerLinkActive="active-page"><i
@@ -202,7 +199,7 @@
           <li><a routerLink="/salary" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Pay Salary</a></li>
           <li><a routerLink="/salary-slip" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-warning-main"></i> Salary Slip</a></li>
+                class="ri-circle-fill circle-icon text-warning-main"></i> Salary Slips</a></li>
         </ul>
       </li>
 
@@ -215,23 +212,17 @@
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/attendance"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Student
-              Attendance</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Student Attendance</a></li>
           <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/my-attendance"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-success-main"></i> My
-              Attendance</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-success-main"></i> My Attendance</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-attendance"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Staff
-              Attendance</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Staff Attendance</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/class-wise-report"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger"></i> Class Wise
-              Report</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger"></i> Class Report</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/student-attendance-report"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Student
-              Report</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Student Report</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-attendance-report"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Staff
-              Report</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Staff Report</a></li>
         </ul>
       </li>
 
@@ -246,8 +237,7 @@
           <li><a routerLink="/leave" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Leave Dashboard</a></li>
           <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/apply-leave"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Apply
-              Leave</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Apply Leave</a></li>
           <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/my-leaves"
               routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-success-main"></i> My Leaves</a></li>
@@ -273,11 +263,9 @@
           <li><a routerLink="/exam-schedule" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-warning-main"></i> Exam Schedule</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-schedule-standards-create"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Schedule
-              Standard</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Template Std</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-schedule-standards-list"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-info-main"></i> Standard
-              List</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-info-main"></i> Template List</a></li>
           <li *ngIf="hasAnyRole(['Teacher'])"><a routerLink="/marks-entry" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-success-main"></i> Marks Entry</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/auto-grade-calculation"
@@ -302,15 +290,15 @@
           <li><a routerLink="/accounts" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Ledger Home</a></li>
           <li><a routerLink="/income-manage" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-success-main"></i> Income</a></li>
+                class="ri-circle-fill circle-icon text-success-main"></i> Net Income</a></li>
           <li><a routerLink="/expense-manage" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-danger-main"></i> Expenses</a></li>
+                class="ri-circle-fill circle-icon text-danger-main"></i> Net Expenses</a></li>
           <li><a routerLink="/profit-loss" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-warning-main"></i> Profit & Loss</a></li>
           <li><a routerLink="/accounts-ledger" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-neutral-600"></i> Transactions</a></li>
           <li><a routerLink="/bank-cash" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-info-main"></i> Bank Cash</a></li>
+                class="ri-circle-fill circle-icon text-info-main"></i> Bank & Cash</a></li>
         </ul>
       </li>
 
@@ -323,7 +311,7 @@
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/report" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-primary-600"></i> Report Analytics</a></li>
+                class="ri-circle-fill circle-icon text-primary-600"></i> Analytics</a></li>
         </ul>
       </li>
 
