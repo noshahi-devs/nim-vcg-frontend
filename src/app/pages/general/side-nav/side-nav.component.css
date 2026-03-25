@@ -222,16 +222,14 @@
 }
 
 :host ::ng-deep .sidebar-menu li>a.active-page,
-:host ::ng-deep .sidebar-menu li.dropdown.dropdown-open>a,
-:host ::ng-deep .sidebar-menu li.dropdown.open>a {
+:host ::ng-deep .sidebar-menu li.dropdown:has(.active-page)>a {
     background: var(--sidebar-active-bg);
     color: var(--sidebar-active-text);
     box-shadow: 0 10px 20px rgba(128, 0, 0, 0.15);
 }
 
 :host ::ng-deep .sidebar-menu li>a.active-page:hover,
-:host ::ng-deep .sidebar-menu li.dropdown.dropdown-open>a:hover,
-:host ::ng-deep .sidebar-menu li.dropdown.open>a:hover {
+:host ::ng-deep .sidebar-menu li.dropdown:has(.active-page)>a:hover {
     color: var(--sidebar-active-text);
 }
 

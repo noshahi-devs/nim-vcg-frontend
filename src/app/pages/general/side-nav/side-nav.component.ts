@@ -222,12 +222,14 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
         event.preventDefault();
         const item = $(this);
 
-        // Close ALL other dropdowns except the clicked one
+        // Close ALL other dropdowns except the clicked one and the one containing the active page
         $(".sidebar-menu .dropdown").not(item).each(function () {
           const otherItem = $(this);
-          if (otherItem.hasClass("dropdown-open") || otherItem.hasClass("open")) {
-            otherItem.children(".sidebar-submenu").slideUp(280);
-            otherItem.removeClass("dropdown-open open");
+          if (otherItem.has(".active-page").length === 0) {
+            if (otherItem.hasClass("dropdown-open") || otherItem.hasClass("open")) {
+              otherItem.children(".sidebar-submenu").slideUp(280);
+              otherItem.removeClass("dropdown-open open");
+            }
           }
         });
 
