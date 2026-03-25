@@ -1,391 +1,247 @@
-<div class="accounts-shell">
-  <div class="accounts-bg">
-    <span class="glow glow-1"></span>
-    <span class="glow glow-2"></span>
-    <span class="glow glow-3"></span>
-    <span class="grid-mask"></span>
-  </div>
-
-  <div class="dashboard-main-body accounts-page">
+<div class="dashboard-main-body">
     <app-breadcrumb [title]="title" [icon]="'solar:bank-bold-duotone'"></app-breadcrumb>
 
-    <section class="page-toolbar card-surface">
-      <div class="toolbar-left">
-        <div class="toolbar-title">
-          <p class="page-kicker">Accounts overview</p>
-          <h2 class="page-title">Financial Snapshot</h2>
-          <p class="page-subtitle">Welcome {{ displayName }} - here is the latest income, expense, and liquidity view.
-          </p>
+    <!-- Glass Hero Panel -->
+    <div class="glass-hero-panel fade-in-up mt-16 mb-24">
+        <div class="hero-content">
+            <div>
+                <span class="hero-badge">{{ isDemoData ? 'Demo Data' : 'Live Data' }}</span>
+                <h2 class="hero-heading">Accounts Overview</h2>
+                <p class="hero-subtitle">Welcome {{ displayName }}! Here is the latest income, expense, and bank view. <br> Updated {{ lastUpdated || 'Just now' }}</p>
+                <div class="hero-tags mt-16">
+                    <span class="glass-tag">
+                        <iconify-icon icon="solar:wallet-money-bold-duotone" style="font-size: 16px;"></iconify-icon> Cash and Bank: {{ formatCurrency(dashboardData?.cashBankBalance || 0) }}
+                    </span>
+                    <span class="glass-tag">
+                        <iconify-icon icon="solar:chart-square-bold-duotone" style="font-size: 16px;"></iconify-icon> Expected Margin: {{ kpiSummary.profitMargin | number:'1.0-1' }}%
+                    </span>
+                </div>
+            </div>
+            <div class="hero-graphic d-none d-lg-block">
+                <iconify-icon icon="solar:bank-bold-duotone" class="pulsing-icon text-maroon" style="font-size: 8rem; opacity: 0.8;"></iconify-icon>
+            </div>
         </div>
-        <div class="toolbar-meta">
-          <span class="data-badge" [class.demo]="isDemoData">
-            <span class="badge-dot"></span>
-            {{ isDemoData ? 'Demo Data' : 'Live Data' }}
-          </span>
-          <span class="meta-pill">Updated {{ lastUpdated || 'Just now' }}</span>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="glass-quick-actions-grid mb-24 fade-in-up" style="animation-delay: 0.1s;">
+        <div class="glass-action-btn maroon-hue" (click)="loadDashboardData()">
+            <div class="action-icon maroon-light"><iconify-icon icon="solar:refresh-circle-bold-duotone"></iconify-icon></div>
+            <span class="fw-bold text-dark">Refresh Data</span>
         </div>
-      </div>
-      <div class="toolbar-actions">
-        <button type="button" class="btn-primary" (click)="loadDashboardData()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12a9 9 0 1 1-2.64-6.36" />
-            <polyline points="22 4 21 12 13 11" />
-          </svg>
-          Refresh Data
-        </button>
-        <button type="button" class="btn-secondary" (click)="exportData()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>
-          Export Report
-        </button>
-        <a routerLink="/accounts-ledger" class="btn-ghost">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="4" y1="6" x2="20" y2="6" />
-            <line x1="4" y1="12" x2="20" y2="12" />
-            <line x1="4" y1="18" x2="20" y2="18" />
-          </svg>
-          Open Ledger
+        <div class="glass-action-btn maroon-hue" (click)="exportData()">
+            <div class="action-icon maroon-light"><iconify-icon icon="solar:printer-bold-duotone"></iconify-icon></div>
+            <span class="fw-bold text-dark">Export Report</span>
+        </div>
+        <a routerLink="/accounts-ledger" class="glass-action-btn gold-hue text-decoration-none">
+            <div class="action-icon premium-gold"><iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon></div>
+            <span class="fw-bold text-dark">Open Ledger</span>
         </a>
-      </div>
-    </section>
-
-    <section class="ledger-summary" *ngIf="ledgerSummaryLoaded">
-      <div class="summary-card debit">
-        <div class="summary-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <polyline points="19 12 12 19 5 12" />
-          </svg>
-        </div>
-        <div class="summary-content">
-          <span class="summary-label">Total Debit</span>
-          <h4 class="summary-value">{{ formatCurrency(totalDebit) }}</h4>
-          <span class="summary-sub">From ledger</span>
-        </div>
-      </div>
-
-      <div class="summary-card credit">
-        <div class="summary-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="12" y1="19" x2="12" y2="5" />
-            <polyline points="5 12 12 5 19 12" />
-          </svg>
-        </div>
-        <div class="summary-content">
-          <span class="summary-label">Total Credit</span>
-          <h4 class="summary-value">{{ formatCurrency(totalCredit) }}</h4>
-          <span class="summary-sub">From ledger</span>
-        </div>
-      </div>
-
-      <div class="summary-card balance" [class.negative]="currentBalance < 0">
-        <div class="summary-icon">
-          <svg *ngIf="currentBalance >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <polyline points="22 4 12 14.01 9 11.01" />
-          </svg>
-          <svg *ngIf="currentBalance < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-        </div>
-        <div class="summary-content">
-          <span class="summary-label">Current Balance</span>
-          <h4 class="summary-value">{{ formatCurrency(currentBalance) }}</h4>
-          <span class="summary-sub">Latest balance</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="stats-grid" *ngIf="dashboardData">
-      <div class="stat-card income">
-        <div class="stat-icon">
-          <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
-        </div>
-        <div class="stat-body">
-          <span class="stat-label">Total Income</span>
-          <h3 class="stat-value">{{ formatCurrency(dashboardData.totalIncome) }}</h3>
-        </div>
-        <div class="stat-foot">
-          <span class="stat-foot-label">Month over month</span>
-          <span class="stat-chip" [ngClass]="kpiSummary.incomeChange >= 0 ? 'up' : 'down'">
-            {{ kpiSummary.incomeChange >= 0 ? '+' : '' }}{{ kpiSummary.incomeChange | number:'1.0-0' }}%
-          </span>
-        </div>
-      </div>
-
-      <div class="stat-card expense">
-        <div class="stat-icon">
-          <iconify-icon icon="solar:card-transfer-bold-duotone"></iconify-icon>
-        </div>
-        <div class="stat-body">
-          <span class="stat-label">Total Expenses</span>
-          <h3 class="stat-value">{{ formatCurrency(dashboardData.totalExpenses) }}</h3>
-        </div>
-        <div class="stat-foot">
-          <span class="stat-foot-label">Month over month</span>
-          <span class="stat-chip" [ngClass]="kpiSummary.expenseChange >= 0 ? 'down' : 'up'">
-            {{ kpiSummary.expenseChange >= 0 ? '+' : '' }}{{ kpiSummary.expenseChange | number:'1.0-0' }}%
-          </span>
-        </div>
-      </div>
-
-      <div class="stat-card" [ngClass]="dashboardData.profitLoss >= 0 ? 'profit' : 'loss'">
-        <div class="stat-icon">
-          <iconify-icon
-            [icon]="dashboardData.profitLoss >= 0 ? 'solar:graph-up-bold-duotone' : 'solar:graph-down-bold-duotone'"></iconify-icon>
-        </div>
-        <div class="stat-body">
-          <span class="stat-label">Net Result</span>
-          <h3 class="stat-value">{{ formatCurrency(dashboardData.profitLoss) }}</h3>
-        </div>
-        <div class="stat-foot">
-          <span class="stat-foot-label">Momentum</span>
-          <span class="stat-chip" [ngClass]="kpiSummary.netChange >= 0 ? 'up' : 'down'">
-            {{ kpiSummary.netChange >= 0 ? '+' : '' }}{{ kpiSummary.netChange | number:'1.0-0' }}%
-          </span>
-        </div>
-      </div>
-
-      <div class="stat-card cash">
-        <div class="stat-icon">
-          <iconify-icon icon="solar:bank-bold-duotone"></iconify-icon>
-        </div>
-        <div class="stat-body">
-          <span class="stat-label">Cash and Bank</span>
-          <h3 class="stat-value">{{ formatCurrency(dashboardData.cashBankBalance) }}</h3>
-        </div>
-        <div class="stat-foot">
-          <span class="stat-foot-label">Liquidity status</span>
-          <span class="stat-chip up">Healthy</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="insights-grid" *ngIf="dashboardData">
-      <div class="chart-card card-surface">
-        <div class="card-header">
-          <div>
-            <h3 class="card-title">Cashflow Pulse</h3>
-            <p class="card-subtitle">Income vs expenses over the last 6 months</p>
-          </div>
-          <div class="legend">
-            <span class="legend-item"><span class="legend-dot income"></span>Income</span>
-            <span class="legend-item"><span class="legend-dot expense"></span>Expenses</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <apx-chart *ngIf="chartOptions" [series]="chartOptions.series" [chart]="chartOptions.chart"
-            [dataLabels]="chartOptions.dataLabels" [stroke]="chartOptions.stroke" [xaxis]="chartOptions.xaxis"
-            [yaxis]="chartOptions.yaxis" [fill]="chartOptions.fill" [colors]="chartOptions.colors"
-            [legend]="chartOptions.legend" [grid]="chartOptions.grid" [markers]="chartOptions.markers"
-            [tooltip]="chartOptions.tooltip"></apx-chart>
-        </div>
-      </div>
-
-      <div class="kpi-card card-surface">
-        <div class="card-header">
-          <div>
-            <h3 class="card-title">Performance Signals</h3>
-            <p class="card-subtitle">Month on month movement</p>
-          </div>
-        </div>
-        <div class="card-body kpi-body">
-          <div class="kpi-item">
-            <div>
-              <span class="kpi-label">Income momentum</span>
-              <div class="kpi-sub">Compared to last month</div>
-            </div>
-            <span class="kpi-value" [ngClass]="kpiSummary.incomeChange >= 0 ? 'up' : 'down'">
-              {{ kpiSummary.incomeChange >= 0 ? '+' : '' }}{{ kpiSummary.incomeChange | number:'1.0-0' }}%
-            </span>
-          </div>
-          <div class="kpi-item">
-            <div>
-              <span class="kpi-label">Expense movement</span>
-              <div class="kpi-sub">Compared to last month</div>
-            </div>
-            <span class="kpi-value" [ngClass]="kpiSummary.expenseChange >= 0 ? 'down' : 'up'">
-              {{ kpiSummary.expenseChange >= 0 ? '+' : '' }}{{ kpiSummary.expenseChange | number:'1.0-0' }}%
-            </span>
-          </div>
-          <div class="kpi-item">
-            <div>
-              <span class="kpi-label">Net improvement</span>
-              <div class="kpi-sub">Income minus expenses</div>
-            </div>
-            <span class="kpi-value" [ngClass]="kpiSummary.netChange >= 0 ? 'up' : 'down'">
-              {{ kpiSummary.netChange >= 0 ? '+' : '' }}{{ kpiSummary.netChange | number:'1.0-0' }}%
-            </span>
-          </div>
-        </div>
-        <div class="kpi-footer">
-          <div class="footer-row">
-            <span>Operating margin</span>
-            <span>{{ kpiSummary.profitMargin | number:'1.0-1' }}%</span>
-          </div>
-          <div class="footer-row">
-            <span>Cash on hand</span>
-            <span>{{ formatCurrency(dashboardData.cashBankBalance) }}</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="transactions-card card-surface" *ngIf="dashboardData">
-      <div class="card-header">
-        <div>
-          <h3 class="card-title">Recent Transactions</h3>
-          <p class="card-subtitle">Latest verified income and expense entries</p>
-        </div>
-        <a routerLink="/accounts-ledger" class="btn-link">View full ledger</a>
-      </div>
-      <div class="table-filters">
-        <div class="filter-item wide">
-          <label>Search</label>
-          <input type="text" class="filter-input" placeholder="Search by reference, category, or description"
-            [(ngModel)]="searchTerm" (input)="onFilterChange()" />
-        </div>
-        <div class="filter-item">
-          <label>Type</label>
-          <select class="filter-select" [(ngModel)]="typeFilter" (change)="onFilterChange()">
-            <option value="All">All</option>
-            <option value="Income">Income</option>
-            <option value="Expense">Expense</option>
-          </select>
-        </div>
-        <div class="filter-item">
-          <label>From</label>
-          <input type="date" class="filter-input" [(ngModel)]="dateFrom" (change)="onFilterChange()" />
-        </div>
-        <div class="filter-item">
-          <label>To</label>
-          <input type="date" class="filter-input" [(ngModel)]="dateTo" (change)="onFilterChange()" />
-        </div>
-        <div class="filter-item compact">
-          <label>Show</label>
-          <select class="filter-select" [(ngModel)]="rowsPerPage" (change)="onFilterChange()">
-            <option *ngFor="let size of pageSizeOptions" [ngValue]="size">{{ size }}</option>
-          </select>
-        </div>
-        <button type="button" class="btn-clear" (click)="clearFilters()">Reset</button>
-      </div>
-      <div class="table-wrap">
-        <table class="transactions-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Reference</th>
-              <th>Category</th>
-              <th>Description</th>
-              <th>Type</th>
-              <th class="text-end">Amount</th>
-              <th class="text-center">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let transaction of pagedTransactions">
-              <td class="muted">{{ transaction.date | date:'mediumDate' }}</td>
-              <td class="ref">{{ transaction.transactionId }}</td>
-              <td>{{ transaction.category }}</td>
-              <td class="desc">{{ transaction.description }}</td>
-              <td>
-                <span class="type-chip" [ngClass]="transaction.type === 'Income' ? 'income' : 'expense'">
-                  {{ transaction.type }}
-                </span>
-              </td>
-              <td class="text-end">
-                <span class="amount" [ngClass]="transaction.type === 'Income' ? 'positive' : 'negative'">
-                  {{ formatCurrency(transaction.type === 'Income' ? transaction.credit : transaction.debit) }}
-                </span>
-              </td>
-              <td class="text-center">
-                <button type="button" class="action-btn" (click)="viewTransaction(transaction)" title="View Details">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                </button>
-              </td>
-            </tr>
-            <tr *ngIf="filteredTransactions.length === 0">
-              <td colspan="7" class="empty-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-                  <polyline points="13 2 13 9 20 9" />
-                </svg>
-                <p>No transactions found</p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="pagination-bar" *ngIf="filteredTransactions.length > 0">
-        <span class="pagination-info">
-          Showing {{ paginationStart }} to {{ paginationEnd }} of {{ filteredTransactions.length }} entries
-        </span>
-        <div class="pagination-controls">
-          <button class="page-btn" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
-          <button class="page-btn" *ngFor="let page of pageNumbers" [class.active]="currentPage === page"
-            (click)="changePage(page)">
-            {{ page }}
-          </button>
-          <button class="page-btn" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <div *ngIf="loading && !dashboardData" class="loading-panel">
-      <div class="loading-card">
-        <div class="loading-title">Loading accounts dashboard...</div>
-        <div class="loading-bar"></div>
-      </div>
     </div>
-  </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row mb-24 fade-in-up" *ngIf="dashboardData" style="animation-delay: 0.2s;">
+        <!-- Income -->
+        <div class="stat-card-glass">
+            <div class="stat-icon-box premium-gold">
+                <iconify-icon icon="solar:card-transfer-bold-duotone"></iconify-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Total Income</span>
+                <h3 class="stat-value">{{ formatCurrency(dashboardData.totalIncome) }}</h3>
+                <span class="fw-bold" [ngClass]="kpiSummary.incomeChange >= 0 ? 'text-success-main' : 'text-danger-main'" style="font-size: 12px; margin-top: 4px;">
+                    {{ kpiSummary.incomeChange >= 0 ? '+' : '' }}{{ kpiSummary.incomeChange | number:'1.0-0' }}% this month
+                </span>
+            </div>
+        </div>
+        <!-- Expenses -->
+        <div class="stat-card-glass">
+            <div class="stat-icon-box maroon-light">
+                <iconify-icon icon="solar:card-send-bold-duotone"></iconify-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Total Expenses</span>
+                <h3 class="stat-value">{{ formatCurrency(dashboardData.totalExpenses) }}</h3>
+                <span class="fw-bold" [ngClass]="kpiSummary.expenseChange >= 0 ? 'text-warning-main' : 'text-success-main'" style="font-size: 12px; margin-top: 4px;">
+                    {{ kpiSummary.expenseChange >= 0 ? '+' : '' }}{{ kpiSummary.expenseChange | number:'1.0-0' }}% this month
+                </span>
+            </div>
+        </div>
+        <!-- Net Result -->
+        <div class="stat-card-glass">
+            <div class="stat-icon-box" [ngClass]="dashboardData.profitLoss >= 0 ? 'success-teal' : 'maroon-light'">
+                <iconify-icon [icon]="dashboardData.profitLoss >= 0 ? 'solar:graph-up-bold-duotone' : 'solar:graph-down-bold-duotone'"></iconify-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Net {{ dashboardData.profitLoss >= 0 ? 'Profit' : 'Loss' }}</span>
+                <h3 class="stat-value">{{ formatCurrency(dashboardData.profitLoss) }}</h3>
+                <span class="fw-bold" [ngClass]="kpiSummary.netChange >= 0 ? 'text-success-main' : 'text-danger-main'" style="font-size: 12px; margin-top: 4px;">
+                    {{ kpiSummary.netChange >= 0 ? '+' : '' }}{{ kpiSummary.netChange | number:'1.0-0' }}% improvement
+                </span>
+            </div>
+        </div>
+        <!-- Total Bank Balance -->
+        <div class="stat-card-glass">
+            <div class="stat-icon-box maroon-light">
+                <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Current Balance</span>
+                <h3 class="stat-value">{{ formatCurrency(currentBalance) }}</h3>
+                <span class="fw-bold text-success-main" style="font-size: 12px; margin-top: 4px;">
+                    Healthy balance
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chart -->
+    <div class="table-glass-container mb-24 fade-in-up" *ngIf="dashboardData" style="animation-delay: 0.3s;">
+        <div class="panel-sub-header border-bottom border-light">
+            <div>
+                <h5 class="panel-title m-0">Income vs Expenses</h5>
+                <span class="text-secondary-light text-sm">Monthly comparison</span>
+            </div>
+        </div>
+        <div class="p-24 pb-0">
+            <apx-chart *ngIf="chartOptions" [series]="chartOptions.series" [chart]="chartOptions.chart"
+                [dataLabels]="chartOptions.dataLabels" [stroke]="chartOptions.stroke" [xaxis]="chartOptions.xaxis"
+                [yaxis]="chartOptions.yaxis" [fill]="chartOptions.fill" [colors]="chartOptions.colors"
+                [legend]="chartOptions.legend" [grid]="chartOptions.grid" [markers]="chartOptions.markers"
+                [tooltip]="chartOptions.tooltip"></apx-chart>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-glass-container fade-in-up mb-24" *ngIf="dashboardData" style="animation-delay: 0.4s;">
+        <div class="panel-sub-header d-flex flex-wrap align-items-center justify-content-between gap-3 border-bottom border-light">
+            <div>
+                <h5 class="panel-title m-0">Latest Entries</h5>
+                <span class="text-secondary-light text-sm p-0 m-0">Recent verified transactions</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <input type="date" class="filter-select px-3 bg-white" [(ngModel)]="dateFrom" (change)="onFilterChange()" title="Date From" />
+                <span class="fw-bold text-maroon">-</span>
+                <input type="date" class="filter-select px-3 bg-white" [(ngModel)]="dateTo" (change)="onFilterChange()" title="Date To" />
+                <select class="filter-select bg-white" [(ngModel)]="typeFilter" (change)="onFilterChange()">
+                    <option value="All">All Types</option>
+                    <option value="Income">Income</option>
+                    <option value="Expense">Expense</option>
+                </select>
+                <input type="text" class="filter-select bg-white" placeholder="Search..." [(ngModel)]="searchTerm" (input)="onFilterChange()" />
+                <button class="btn-clear text-maroon bg-transparent border-0 fw-bold px-2 py-1" (click)="clearFilters()" *ngIf="searchTerm || typeFilter !== 'All' || dateFrom || dateTo">Clear</button>
+            </div>
+        </div>
+
+        <div class="table-scroll">
+            <table class="fee-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">SL</th>
+                        <th>Date</th>
+                        <th>Reference</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                        <th class="text-end">Amount</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let transaction of pagedTransactions; let i = index" class="table-row">
+                        <td class="text-sm fw-bold text-secondary-light">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
+                        <td><span class="text-dark fw-bolder">{{ transaction.date | date:'mediumDate' }}</span></td>
+                        <td><span class="text-secondary-dark fw-bold text-sm">{{ transaction.transactionId }}</span></td>
+                        <td><span class="text-dark fw-bold text-sm">{{ transaction.category }}</span></td>
+                        <td><span class="text-dark text-sm">{{ transaction.description }}</span></td>
+                        <td>
+                            <span class="status-badge" [ngClass]="transaction.type === 'Income' ? 'active' : 'inactive'">
+                                {{ transaction.type }}
+                            </span>
+                        </td>
+                        <td class="text-end fw-bolder" [ngClass]="transaction.type === 'Income' ? 'text-success-main' : 'text-danger-main'">
+                            {{ formatCurrency(transaction.type === 'Income' ? transaction.credit : transaction.debit) }}
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-outline-maroon text-maroon border-0 bg-maroon-10 bg-hover-maroon text-hover-white rounded-circle" style="width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center;" (click)="viewTransaction(transaction)" title="View Details">
+                                <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="filteredTransactions.length === 0">
+                        <td colspan="8" class="text-center py-4 bg-transparent text-maroon fw-semibold">No transactions found matching your filters.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- ── Pagination ── -->
+        <div class="px-24 py-16 border-top border-light" *ngIf="filteredTransactions.length > rowsPerPage">
+            <nav class="d-flex justify-content-end">
+                <ul class="pagination-pills m-0 p-0 d-flex gap-2" style="list-style: none;">
+                    <li class="page-item" [class.disabled]="currentPage === 1">
+                        <a class="page-link d-flex align-items-center justify-content-center bg-white border rounded" 
+                           (click)="changePage(currentPage - 1)" href="javascript:void(0)" 
+                           style="width: 32px; height: 32px; color: #64748b;">
+                            <iconify-icon icon="solar:alt-arrow-left-bold-duotone"></iconify-icon>
+                        </a>
+                    </li>
+                    <li class="page-item" *ngFor="let page of pageNumbers">
+                        <a class="page-link d-flex align-items-center justify-content-center rounded" 
+                           (click)="changePage(page)" href="javascript:void(0)"
+                           [ngStyle]="{
+                             'width': '32px', 'height': '32px', 'font-weight': '700', 'font-size': '13px',
+                             'background-color': currentPage === page ? '#800000' : '#ffffff',
+                             'color': currentPage === page ? '#ffffff' : '#64748b',
+                             'border': currentPage === page ? '1px solid #800000' : '1px solid #e2e8f0'
+                           }">
+                           {{ page }}
+                        </a>
+                    </li>
+                    <li class="page-item" [class.disabled]="currentPage === totalPages">
+                        <a class="page-link d-flex align-items-center justify-content-center bg-white border rounded" 
+                           (click)="changePage(currentPage + 1)" href="javascript:void(0)" 
+                           style="width: 32px; height: 32px; color: #64748b;">
+                            <iconify-icon icon="solar:alt-arrow-right-bold-duotone"></iconify-icon>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
 </div>
 
-<!-- == Premium Feedback Modal == -->
+<!-- ============================================== -->
+<!--        PREMIUM FEEDBACK & PROCESSING MODALS    -->
+<!-- ============================================== -->
 <div class="premium-overlay" *ngIf="showFeedbackModal">
-  <div class="premium-modal feedback-modal">
-    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span
-        class="pm-sparkle sp3"></span></div>
-    <div class="pm-icon-ring"
-      [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
-      <iconify-icon
-        [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'"
-        style="font-size:2.4rem; color:#fff"></iconify-icon>
+    <div class="premium-modal feedback-modal">
+        <div class="pm-sparkles">
+            <span class="pm-sparkle sp1"></span>
+            <span class="pm-sparkle sp2"></span>
+            <span class="pm-sparkle sp3"></span>
+        </div>
+        <div class="pm-icon-ring" [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
+            <iconify-icon [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'"
+                style="font-size:2.4rem; color:#fff"></iconify-icon>
+        </div>
+        <p class="pm-title">{{ feedbackTitle }}</p>
+        <p class="pm-subtitle">{{ feedbackMessage }}</p>
+        <div class="pm-actions">
+            <button class="pm-btn pm-Ok" [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
+                (click)="closeFeedback()">
+                <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
+            </button>
+        </div>
     </div>
-    <p class="pm-title">{{ feedbackTitle }}</p>
-    <p class="pm-subtitle">{{ feedbackMessage }}</p>
-    <div class="pm-actions">
-      <button class="pm-btn pm-Ok"
-        [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
-        (click)="closeFeedback()">
-        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
-      </button>
-    </div>
-  </div>
 </div>
 
-<!-- == Processing Overlay == -->
 <div class="premium-overlay processing-overlay" *ngIf="isProcessing">
-  <div class="processing-card">
-    <div class="loader-ring"></div>
-    <div>
-      <p class="pc-title">Processing...</p>
-      <p class="pc-subtitle">Please wait a moment</p>
+    <div class="processing-card">
+        <div class="loader-ring"></div>
+        <div>
+            <p class="pc-title">Processing...</p>
+            <p class="pc-subtitle">Please wait a moment</p>
+        </div>
     </div>
-  </div>
 </div>
