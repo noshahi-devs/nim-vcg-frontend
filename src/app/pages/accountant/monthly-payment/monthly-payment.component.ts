@@ -81,7 +81,7 @@ export class MonthlyPaymentComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.initPaymentForm(); 
+    this.initPaymentForm();
     this.loadInitialData(); // New consolidated loader
     this.loadSchoolInfo();
   }
@@ -302,10 +302,10 @@ export class MonthlyPaymentComponent implements OnInit {
   openEditDialog(p: MonthlyPayment) {
     this.isEditMode = true;
     this.showAddEditDialog = true;
-    
+
     // Ensure studentId is treated as string for the select binding if necessary
     // though [value] handles numbers fine, patchValue might need exact match.
-    this.onStudentSelect(p.studentId); 
+    this.onStudentSelect(p.studentId);
 
     // Reconstruct selected fields from snapshots (fallback for backend One-To-Many flaw)
     let selectedFees: Fee[] = p.fees && p.fees.length > 0 ? p.fees : [];

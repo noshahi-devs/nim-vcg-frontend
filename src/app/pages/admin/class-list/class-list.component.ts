@@ -47,8 +47,8 @@ export class ClassListComponent implements OnInit, AfterViewInit {
   classList: Standard[] = [];
 
   get totalClasses(): number { return this.classList.length; }
-  get sumStudents(): number { return this.classList.reduce((acc, curr) => acc + (curr.students?.length || 0), 0); }
-  get sumSubjects(): number { return this.classList.reduce((acc, curr) => acc + (curr.subjects?.length || 0), 0); }
+  get sumStudents(): number { return this.classList.reduce((acc, curr) => acc + (curr.totalStudents ?? curr.students?.length ?? 0), 0); }
+  get sumSubjects(): number { return this.classList.reduce((acc, curr) => acc + (curr.totalSubjects ?? curr.subjects?.length ?? 0), 0); }
 
   // Teacher specific context
   isTeacher = false;

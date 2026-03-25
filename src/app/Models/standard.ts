@@ -12,6 +12,9 @@ export class Standard {
   status?: string;
   students?: Student[] = [];
   subjects?: Subject[] = [];
+  totalStudents?: number;
+  totalSubjects?: number;
+  totalSections?: number;
   classTeacher?: string;
   classCode?: string;
   className?: string;

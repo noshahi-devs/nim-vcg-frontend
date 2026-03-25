@@ -82,7 +82,7 @@
         <div class="es-meta-list">
           <div class="es-meta-item">
             <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
-            <span>Teacher: {{ sectionItem.classTeacher?.staffName || 'N/A' }}</span>
+            <span>Teacher: {{ sectionItem.classTeacherName ?? 'N/A' }}</span>
           </div>
         </div>
 
@@ -158,8 +158,7 @@
           </div>
           <div class="receipt-item">
             <span class="label">Class Teacher</span>
-            <span class="value text-yellow-premium">{{ selectedSection.classTeacher?.staffName || 'Not Assigned'
-              }}</span>
+            <span class="value text-yellow-premium">{{ selectedSection.classTeacherName ?? 'Not Assigned' }}</span>
           </div>
           <div class="receipt-divider"></div>
           <div class="receipt-footer">

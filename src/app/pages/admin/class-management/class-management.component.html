@@ -130,17 +130,17 @@
               </td>
               <td class="text-center">
                 <span class="badge-premium badge-blue">
-                  {{ cls.subjects?.length || 0 }} Dept.
+                  {{ cls.totalSubjects ?? cls.subjects?.length ?? 0 }} Dept.
                 </span>
               </td>
               <td class="text-center">
                 <span class="badge-premium badge-orange">
-                  {{ getSectionsForClass(cls).length }} Units
+                  {{ cls.totalSections ?? getSectionsForClass(cls).length }} Units
                 </span>
               </td>
               <td class="text-center">
                 <span class="badge-premium badge-green">
-                  {{ cls.students?.length || 0 }} Enroll.
+                  {{ cls.totalStudents ?? cls.students?.length ?? 0 }} Enroll.
                 </span>
               </td>
               <td class="text-center">
@@ -227,15 +227,15 @@
       <!-- Quick Stats -->
       <div class="info-cards-grid">
         <div class="info-stat-card blue">
-          <span class="info-stat-val">{{ selectedClass.subjects?.length || 0 }}</span>
+          <span class="info-stat-val">{{ selectedClass.totalSubjects ?? selectedClass.subjects?.length ?? 0 }}</span>
           <span class="info-stat-lab">Subjects</span>
         </div>
         <div class="info-stat-card orange">
-          <span class="info-stat-val">{{ getSectionsForClass(selectedClass).length }}</span>
+          <span class="info-stat-val">{{ selectedClass.totalSections ?? getSectionsForClass(selectedClass).length }}</span>
           <span class="info-stat-lab">Sections</span>
         </div>
         <div class="info-stat-card green">
-          <span class="info-stat-val">{{ selectedClass.students?.length || 0 }}</span>
+          <span class="info-stat-val">{{ selectedClass.totalStudents ?? selectedClass.students?.length ?? 0 }}</span>
           <span class="info-stat-lab">Students</span>
         </div>
       </div>
@@ -267,7 +267,7 @@
         <div class="detail-tags">
           <span class="tag-premium" *ngFor="let sec of getSectionsForClass(selectedClass)">
             {{ sec.sectionName }}
-            <small class="text-muted" *ngIf="sec.classTeacher">({{ sec.classTeacher.staffName }})</small>
+            <small class="text-muted" *ngIf="sec.classTeacherName">({{ sec.classTeacherName }})</small>
           </span>
         </div>
       </div>
@@ -350,7 +350,7 @@
       <div class="loader-inner"></div>
     </div>
     <div class="processing-content">
-      <h4 class="pc-title">Securely Processing</h4>
+      <h4 class="pc-title">Processing please wait...</h4>
       <p class="pc-subtitle">Updating academic matrix...</p>
     </div>
   </div>

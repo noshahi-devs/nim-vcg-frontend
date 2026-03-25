@@ -129,7 +129,7 @@ export class ClassManagementComponent implements OnInit {
   private getClassTeacherNameOriginal(std: Standard, allSections: Section[]): string {
     const classSections = allSections.filter(s => s.className === std.standardName);
     const teachers = classSections
-      .map(s => s.classTeacher?.staffName)
+      .map(s => s.classTeacherName ?? s.classTeacher?.staffName)
       .filter((name): name is string => !!name);
 
     if (teachers.length === 0) return 'Unassigned';
@@ -143,7 +143,7 @@ export class ClassManagementComponent implements OnInit {
   getClassTeacherName(std: Standard): string {
     const classSections = this.getSectionsForClass(std);
     const teachers = classSections
-      .map(s => s.classTeacher?.staffName)
+      .map(s => s.classTeacherName ?? s.classTeacher?.staffName)
       .filter((name): name is string => !!name);
 
     if (teachers.length === 0) return 'Unassigned';
@@ -217,11 +217,11 @@ export class ClassManagementComponent implements OnInit {
   }
 
   get totalStudents(): number {
-    return this.classes.reduce((sum, c) => sum + (c.students?.length || 0), 0);
+    return this.classes.reduce((sum, c) => sum + (c.totalStudents ?? c.students?.length ?? 0), 0);
   }
 
   get totalSubjects(): number {
-    return this.classes.reduce((sum, c) => sum + (c.subjects?.length || 0), 0);
+    return this.classes.reduce((sum, c) => sum + (c.totalSubjects ?? c.subjects?.length ?? 0), 0);
   }
 
   get totalSections(): number {

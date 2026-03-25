@@ -4,7 +4,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "dev": "ng serve --configuration development",
     "build": "ng build",
+    "fast-build": "ng build --configuration development",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:e2e": "playwright test"

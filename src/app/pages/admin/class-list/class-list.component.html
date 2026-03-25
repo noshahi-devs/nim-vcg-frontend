@@ -94,12 +94,12 @@
           <div class="es-meta-pill">
             <iconify-icon icon="solar:book-bold-duotone"></iconify-icon>
             <span class="es-meta-label">Subjects</span>
-            <span class="es-meta-value">{{ classItem.subjects?.length || 0 }}</span>
+            <span class="es-meta-value">{{ classItem.totalSubjects ?? classItem.subjects?.length ?? 0 }}</span>
           </div>
           <div class="es-meta-pill">
             <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
             <span class="es-meta-label">Students</span>
-            <span class="es-meta-value">{{ classItem.students?.length || 0 }}</span>
+            <span class="es-meta-value">{{ classItem.totalStudents ?? classItem.students?.length ?? 0 }}</span>
           </div>
         </div>
 
@@ -178,13 +178,13 @@
           <div class="col-6">
             <div class="p-16 radius-16 bg-f8-gradient border border-f1 text-center">
               <h6 class="text-sm text-secondary-light mb-8">Subjects</h6>
-              <h4 class="fw-extrabold text-maroon">{{ selectedClassForView.subjects?.length || 0 }}</h4>
+              <h4 class="fw-extrabold text-maroon">{{ selectedClassForView.totalSubjects ?? selectedClassForView.subjects?.length ?? 0 }}</h4>
             </div>
           </div>
           <div class="col-6">
             <div class="p-16 radius-16 bg-f8-gradient border border-f1 text-center">
               <h6 class="text-sm text-secondary-light mb-8">Students</h6>
-              <h4 class="fw-extrabold text-yellow-premium">{{ selectedClassForView.students?.length || 0 }}</h4>
+              <h4 class="fw-extrabold text-yellow-premium">{{ selectedClassForView.totalStudents ?? selectedClassForView.students?.length ?? 0 }}</h4>
             </div>
           </div>
         </div>
@@ -330,7 +330,7 @@
         <div class="loader-inner"></div>
       </div>
       <div class="processing-content">
-        <h4 class="pc-title">Securely Processing</h4>
+        <h4 class="pc-title">Processing please wait...</h4>
         <p class="pc-subtitle">Syncing academic hierarchy...</p>
       </div>
     </div>

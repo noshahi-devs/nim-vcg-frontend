@@ -39,12 +39,12 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   // Pagination
   currentPage = 1;
   rowsPerPage = 12;
-  
+
   // Premium Modal Visibility State
   showViewModal = false;
   showEditModal = false;
   showDeleteModal = false;
-  
+
   showFeedbackModal = false;
   feedbackType: 'success' | 'error' | 'warning' = 'success';
   feedbackTitle = '';
@@ -207,7 +207,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
       error: (err) => {
         console.error('Error deleting subject:', err);
         let errorMsg = 'Failed to delete record. It may have dependent records (Marks or Assignments).';
-        
+
         if (err.error) {
           if (typeof err.error === 'string' && err.error.length < 200) {
             errorMsg = err.error;
@@ -215,7 +215,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
             errorMsg = err.error.message;
           }
         }
-        
+
         this.showFeedback('error', 'Cannot Delete', errorMsg);
       }
     });
@@ -253,7 +253,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
       error: (err) => {
         console.error('Error updating subject:', err);
         let errorMsg = 'Failed to save academic changes.';
-        
+
         if (err.error) {
           if (typeof err.error === 'string' && err.error.length < 200) {
             errorMsg = err.error;
@@ -261,7 +261,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
             errorMsg = err.error.message;
           }
         }
-        
+
         this.showFeedback('error', 'Update Failed', errorMsg);
       }
     });

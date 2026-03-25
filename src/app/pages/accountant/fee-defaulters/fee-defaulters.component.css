@@ -851,3 +851,120 @@
         box-shadow: 0 0 0 12px rgba(128, 0, 0, 0);
     }
 }
+
+/* ===================== PRINT VOUCHER STYLES ===================== */
+.print-voucher-only {
+    display: none;
+}
+
+@media print {
+    @page { margin: 0; size: A4 landscape; }
+    body { 
+        padding: 0; 
+        margin: 0;
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact; 
+        background-color: white !important;
+    }
+    body *, .premium-overlay {
+        visibility: hidden !important;
+    }
+    .print-voucher-only, .print-voucher-only * {
+        visibility: visible !important;
+    }
+    .print-voucher-only {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        display: block !important;
+        background: white;
+    }
+    .dashboard-main-body {
+        display: none !important;
+    }
+
+    .voucher-wrapper {
+        display: flex;
+        justify-content: space-between;
+        width: 297mm; /* A4 landscape width */
+        height: auto;
+        padding: 10mm;
+        box-sizing: border-box;
+        gap: 15px;
+    }
+    .voucher-part {
+        flex: 1;
+        border: 1px dashed #94a3b8;
+        padding: 15px;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        color: #000;
+        font-size: 11px;
+    }
+    .v-header {
+        display: flex;
+        align-items: center;
+        border-bottom: 2px solid #800000;
+        padding-bottom: 8px;
+        margin-bottom: 12px;
+    }
+    .v-logo {
+        height: 40px;
+        margin-right: 10px;
+    }
+    .v-school-info h2 {
+        margin: 0;
+        color: #800000;
+        font-size: 14px;
+        font-weight: 800;
+    }
+    .v-school-info p {
+        margin: 2px 0 0;
+        font-size: 9px;
+    }
+    .v-title-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f1f5f9;
+        padding: 4px 8px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        border-radius: 4px;
+    }
+    .v-copy-tag { font-size: 12px; text-transform: uppercase; }
+    .v-student-panel {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4px;
+        margin-bottom: 15px;
+    }
+    .v-row strong { width: 50px; display: inline-block; }
+    .v-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+    }
+    .v-table th, .v-table td {
+        border: 1px solid #cbd5e1;
+        padding: 6px;
+    }
+    .v-table th { background: #f8fafc; text-align: left; }
+    .text-right { text-align: right !important; }
+    .v-bank-info {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 8px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+    .v-bank-info p { margin: 2px 0; font-size: 10px; }
+    .v-footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    .v-sig { text-align: center; width: 80px; }
+    .v-line { border-bottom: 1px solid #000; height: 15px; margin-bottom: 4px; }
+}

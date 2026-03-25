@@ -152,7 +152,8 @@
     <div class="pagination-bar" *ngIf="filteredList.length > 0 && !loading">
       <p class="pagination-info mb-0">
         Showing <b>{{ (currentPage - 1) * rowsPerPage + 1 }}</b> to
-        <b>{{ Math.min(currentPage * rowsPerPage, filteredList.length) }}</b> of <b>{{ filteredList.length }}</b> students
+        <b>{{ Math.min(currentPage * rowsPerPage, filteredList.length) }}</b> of <b>{{ filteredList.length }}</b>
+        students
       </p>
       <nav>
         <ul class="pagination-pills">

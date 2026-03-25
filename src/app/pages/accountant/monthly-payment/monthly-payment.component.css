@@ -1746,3 +1746,97 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(251, 191, 36, 0.3);
 }
+
+/* ===================== PRINT STYLES ===================== */
+.print-only {
+  display: none;
+}
+
+@media print {
+  @page { margin: 0; }
+  body { padding: 2cm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body * {
+    visibility: hidden;
+  }
+  .print-only, .print-only * {
+    visibility: visible;
+  }
+  .print-only {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: block !important;
+  }
+  .dashboard-main-body, .modal-overlay, .premium-overlay {
+    display: none !important;
+  }
+
+  .receipt-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #000;
+  }
+  .receipt-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid #800000;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+  }
+  .school-logo img {
+    height: 80px;
+    margin-right: 20px;
+  }
+  .school-details h2 { margin: 0; color: #800000; font-size: 24px; font-weight: bold; }
+  .school-details p { margin: 3px 0; font-size: 14px; }
+  
+  .receipt-title {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .receipt-title h3 { margin: 0; font-size: 20px; letter-spacing: 2px; }
+  .receipt-no { position: absolute; right: 0; top: 0; font-weight: bold; }
+  
+  .student-info-print {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+    background: #f8fafc;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+  }
+  .info-row { font-size: 14px; }
+  .info-row .lbl { font-weight: 600; display: inline-block; width: 120px; }
+  
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+  }
+  .print-table th, .print-table td {
+    border: 1px solid #cbd5e1;
+    padding: 10px;
+    font-size: 14px;
+  }
+  .print-table th { background: #f1f5f9; font-weight: bold; }
+  .text-right { text-align: right; }
+  
+  .print-tfoot td {
+    border: none;
+    border-top: 1px solid #cbd5e1;
+  }
+  
+  .signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 60px;
+  }
+  .sig-box { text-align: center; width: 200px; }
+  .sig-line { border-bottom: 1px solid #000; margin-bottom: 5px; height: 30px; }
+  .print-note { text-align: center; font-size: 11px; margin-top: 30px; color: #64748b; }
+}

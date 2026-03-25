@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import { DueBalanceService, DueBalance } from '../../../services/due-balance.service';
+import { SettingsService } from '../../../services/settings.service';
 
 interface FeeDefaulter {
   feeId: number;
@@ -58,10 +59,21 @@ export class FeeDefaultersComponent implements OnInit {
   reminderDefaulter: FeeDefaulter | null = null;
   bulkMode = false;
 
-  constructor(private dueBalanceService: DueBalanceService) { }
+  // Print State
+  schoolInfo: any = {};
+  selectedDefaulter: FeeDefaulter | null = null;
+
+  constructor(private dueBalanceService: DueBalanceService, private settingsService: SettingsService) { }
 
   ngOnInit(): void {
+    this.loadSchoolInfo();
     this.loadDefaulters();
+  }
+
+  loadSchoolInfo() {
+    this.settingsService.getSchoolInfo().subscribe(info => {
+      this.schoolInfo = info || {};
+    });
   }
 
   loadDefaulters(): void {
@@ -173,6 +185,13 @@ export class FeeDefaultersComponent implements OnInit {
     if (this.filteredDefaulters.length === 0) return;
     this.bulkMode = true;
     this.showReminderModal = true;
+  }
+
+  printVoucher(defaulter: FeeDefaulter): void {
+    this.selectedDefaulter = defaulter;
+    setTimeout(() => {
+      window.print();
+    }, 100);
   }
 
   showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {

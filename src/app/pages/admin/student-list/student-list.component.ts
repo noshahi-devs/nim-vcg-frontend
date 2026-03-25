@@ -58,7 +58,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   // Pagination
   currentPage = 1;
   rowsPerPage = 12;
-  
+
   academicYears: AcademicYear[] = [];
   selectedYearId: number | null = null;
   private sessionSubscription?: Subscription;
@@ -118,8 +118,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
       // If we have years but no selection (or selection is weirdly old), try to pick best one
       if (this.academicYears.length > 0 && (!this.selectedYearId || this.yearDisplayName.includes('2001'))) {
         const currentYear = new Date().getFullYear().toString();
-        const found = this.academicYears.find(y => y.name.includes(currentYear)) || 
-                      [...this.academicYears].sort((a,b) => b.academicYearId - a.academicYearId)[0];
+        const found = this.academicYears.find(y => y.name.includes(currentYear)) ||
+          [...this.academicYears].sort((a, b) => b.academicYearId - a.academicYearId)[0];
         if (found && found.academicYearId !== this.selectedYearId) {
           this.selectedYearId = found.academicYearId;
           this.checkTeacherContext();
@@ -307,8 +307,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
     if (this.filterSection) {
       const sectionId = Number(this.filterSection);
-      list = list.filter(s => 
-        Number(s.sectionId) === sectionId || 
+      list = list.filter(s =>
+        Number(s.sectionId) === sectionId ||
         // Fallback for legacy data using section name comparison
         (this.sectionList.find(sec => sec.sectionId === sectionId)?.sectionName === s.section)
       );
@@ -384,7 +384,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
       error: (err) => {
         console.error("Delete error:", err);
         let errorMsg = 'Unable to delete student. They might have active academic, attendance, or financial records.';
-        
+
         if (err.error && typeof err.error === 'string') {
           errorMsg = err.error;
         } else if (err.error?.message) {

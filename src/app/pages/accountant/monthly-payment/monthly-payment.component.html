@@ -456,7 +456,7 @@
       <div class="loader-inner"></div>
     </div>
     <div class="processing-content">
-      <h4 class="pc-title">Securely Processing</h4>
+      <h4 class="pc-title">Processing please wait...</h4>
       <p class="pc-subtitle">Synchronizing financial records...</p>
     </div>
   </div>
@@ -565,6 +565,81 @@
         <iconify-icon icon="solar:check-read-linear"></iconify-icon>
         Close
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PRINT RECEIPT TEMPLATE ===================== -->
+<div id="printable-area" *ngIf="selectedPayment" class="print-only">
+  <div class="receipt-container">
+    <div class="receipt-header">
+      <div class="school-logo">
+        <img [src]="schoolInfo?.logoUrl || 'assets/images/logo.png'" alt="School Logo" onerror="this.src='assets/images/logo.png'">
+      </div>
+      <div class="school-details">
+        <h2 class="school-name">{{ schoolInfo?.schoolName || 'Noshahi Institute' }}</h2>
+        <p class="school-address">{{ schoolInfo?.address || 'Main Campus' }}</p>
+        <p class="school-contact">Phone: {{ schoolInfo?.phone || 'N/A' }}</p>
+      </div>
+    </div>
+    <div class="receipt-title">
+      <h3>PAYMENT RECEIPT</h3>
+      <span class="receipt-no">Receipt #: {{ selectedPayment.monthlyPaymentId | number:'minIntegerDigits:5' }}</span>
+    </div>
+    <div class="student-info-print">
+      <div class="info-row"><span class="lbl">Student Name:</span> <span class="val">{{ selectedPayment.student?.studentName }}</span></div>
+      <div class="info-row"><span class="lbl">Enrollment No:</span> <span class="val">{{ selectedPayment.student?.enrollmentNo }}</span></div>
+      <div class="info-row"><span class="lbl">Class:</span> <span class="val">{{ selectedPayment.student?.standard?.standardName || getStandardName(selectedPayment.student?.standardId) }}</span></div>
+      <div class="info-row"><span class="lbl">Payment Date:</span> <span class="val">{{ selectedPayment.paymentDate | date:'dd-MMM-yyyy' }}</span></div>
+    </div>
+    <table class="print-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th class="text-right">Amount (Rs)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="selectedPayment.fees?.length">
+          <td>{{ getFeeString(selectedPayment.fees) }}</td>
+          <td class="text-right">{{ selectedPayment.totalFeeAmount || selectedPayment.totalAmount | number }}</td>
+        </tr>
+        <tr *ngIf="selectedPayment.academicMonths?.length">
+          <td>Months: {{ getMonthString(selectedPayment.academicMonths) }}</td>
+          <td class="text-right">-</td>
+        </tr>
+      </tbody>
+      <tfoot class="print-tfoot">
+        <tr>
+          <td class="text-right"><strong>Subtotal:</strong></td>
+          <td class="text-right">Rs. {{ selectedPayment.totalFeeAmount || selectedPayment.totalAmount | number }}</td>
+        </tr>
+        <tr *ngIf="selectedPayment.waver > 0">
+          <td class="text-right"><strong>Discount ({{ selectedPayment.waver }}%):</strong></td>
+          <td class="text-right">- Rs. {{ ((selectedPayment.totalFeeAmount || selectedPayment.totalAmount) * selectedPayment.waver / 100) | number }}</td>
+        </tr>
+        <tr>
+          <td class="text-right"><strong>Amount Paid:</strong></td>
+          <td class="text-right"><strong>Rs. {{ selectedPayment.amountPaid | number }}</strong></td>
+        </tr>
+        <tr *ngIf="selectedPayment.amountRemaining > 0">
+          <td class="text-right" style="color:#d32f2f;"><strong>Remaining Dues:</strong></td>
+          <td class="text-right" style="color:#d32f2f;"><strong>Rs. {{ selectedPayment.amountRemaining | number }}</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+    <div class="receipt-footer">
+      <div class="signatures">
+        <div class="sig-box">
+          <div class="sig-line"></div>
+          <span>Accountant Signature</span>
+        </div>
+        <div class="sig-box">
+          <div class="sig-line"></div>
+          <span>Depositor Signature</span>
+        </div>
+      </div>
+      <p class="print-note">This is a computer-generated receipt and does not require a physical stamp.</p>
     </div>
   </div>
 </div>
