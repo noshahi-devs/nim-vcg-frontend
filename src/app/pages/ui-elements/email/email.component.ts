@@ -8,6 +8,9 @@ import { AuthService } from '../../../SecurityModels/auth.service';
 import { UserMessage } from '../../../Models/user-message';
 import { StaffService } from '../../../services/staff.service';
 import { Staff } from '../../../Models/staff';
+import { NotificationService } from '../../../services/notification.service';
+import { forkJoin, map, of } from 'rxjs';
+import { Notification } from '../../../Models/notification';
 
 @Component({
   selector: 'app-email',
@@ -47,7 +50,8 @@ export class EmailComponent implements OnInit {
   constructor(
     private messageService: MessageService,
     public authService: AuthService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -57,38 +61,79 @@ export class EmailComponent implements OnInit {
 
   loadMessages() {
     this.loading = true;
-    let obs$;
-    if (this.activeFolder === 'inbox') obs$ = this.messageService.getInbox();
-    else if (this.activeFolder === 'sent') obs$ = this.messageService.getSent();
-    else if (this.activeFolder === 'starred') obs$ = this.messageService.getInbox();
-    else obs$ = this.messageService.getInbox();
+    let messagesObs$;
 
-    obs$.pipe(
+    if (this.activeFolder === 'starred') {
+      messagesObs$ = forkJoin({
+        inbox: this.messageService.getInbox(),
+        sent: this.messageService.getSent()
+      }).pipe(
+        map(({ inbox, sent }) => {
+          const combined = [...inbox, ...sent];
+          // Filter unique IDs (in case someone sent a message to themselves)
+          const seen = new Set();
+          return combined
+            .filter(m => {
+              if (seen.has(m.id)) return false;
+              seen.add(m.id);
+              return m.isStarred;
+            })
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        })
+      );
+    } else if (['Internal', 'Announcements', 'Important'].includes(this.activeFolder)) {
+      messagesObs$ = this.notificationService.getNotifications().pipe(
+        map(notifs => {
+          const typeMap: any = {
+            'Internal': 'Internal',
+            'Announcements': 'Announcement',
+            'Important': 'Important'
+          };
+          const targetType = typeMap[this.activeFolder] || this.activeFolder;
+          return notifs
+            .filter(n => n.notificationType?.toLowerCase() === targetType.toLowerCase() || n.notificationType === 'Broadcast')
+            .map(n => this.mapNotificationToMessage(n))
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        })
+      );
+    } else if (this.activeFolder === 'sent') {
+      messagesObs$ = this.messageService.getSent();
+    } else if (this.activeFolder === 'bin') {
+      messagesObs$ = of([]); // Bin logic to be implemented or fetched if backend supports it
+    } else {
+      messagesObs$ = this.messageService.getInbox();
+    }
+
+    messagesObs$.pipe(
       finalize(() => {
         this.loading = false;
-        this.filterMessages(); // Call filterMessages after loading
+        this.filterMessages();
       })
     ).subscribe({
       next: (data: UserMessage[]) => {
-        if (this.activeFolder === 'starred') {
-          this.messages = data.filter(m => m.isStarred);
-        } else if (['Internal', 'Announcements', 'Important'].includes(this.activeFolder)) {
-          // Assuming subject or content might contain label keywords for mock/demo, 
-          // or if the backend supports labels. For now, we'll filter by subject/content.
-          const label = this.activeFolder.toLowerCase();
-          this.messages = data.filter(m => 
-            m.subject?.toLowerCase().includes(label) || 
-            m.content?.toLowerCase().includes(label)
-          );
-        } else {
-          this.messages = data;
-        }
+        this.messages = data;
         this.filteredMessages = [...this.messages];
       },
       error: (err) => {
         console.error('Error loading messages:', err);
       }
     });
+  }
+
+  private mapNotificationToMessage(n: Notification): UserMessage {
+    return {
+      id: -n.id, // Negative ID to match backend logic for broadcasts
+      senderId: 'System Broadcast',
+      senderName: 'System Notification',
+      receiverId: this.authService.userValue?.id || '',
+      subject: n.title,
+      content: n.message,
+      isRead: n.isRead,
+      isStarred: false,
+      isDeletedIn: false,
+      isDeletedOut: false,
+      createdAt: n.createdAt
+    };
   }
 
   loadStaff() {
@@ -132,6 +177,15 @@ export class EmailComponent implements OnInit {
 
   deleteMessage(id: number, event: Event) {
     event.stopPropagation();
+    if (id < 0) {
+      // Handle notification deletion if service supports it, 
+      // otherwise just remove from UI for this session.
+      this.messages = this.messages.filter(m => m.id !== id);
+      this.filteredMessages = this.filteredMessages.filter(m => m.id !== id);
+      if (this.selectedMessage?.id === id) this.selectedMessage = null;
+      return;
+    }
+
     this.messageService.deleteMessage(id).subscribe(() => {
       this.messages = this.messages.filter(m => m.id !== id);
       this.filteredMessages = this.filteredMessages.filter(m => m.id !== id);

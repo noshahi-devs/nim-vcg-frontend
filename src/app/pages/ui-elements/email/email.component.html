@@ -143,7 +143,7 @@
               <div class="msg-item-body">
                 <div class="msg-item-top">
                   <span class="msg-item-name">
-                    {{ activeFolder === 'sent' ? ('To: ' + (msg.receiverId | slice:0:12)) : (msg.senderId | slice:0:18) }}
+                    {{ msg.senderName || (activeFolder === 'sent' ? ('To: ' + (msg.receiverId | slice:0:12)) : (msg.senderId | slice:0:18)) }}
                   </span>
                   <span class="msg-item-time">{{ msg.createdAt | date:'MMM d' }}</span>
                 </div>
@@ -201,7 +201,7 @@
             <div class="msg-detail-meta">
               <div class="meta-avatar large">{{ getInitial(selectedMessage.senderId) }}</div>
               <div class="meta-info">
-                <div class="meta-name">{{ selectedMessage.senderId }}</div>
+                <div class="meta-name">{{ selectedMessage.senderName || selectedMessage.senderId }}</div>
                 <div class="meta-to">To: {{ selectedMessage.receiverId }}</div>
               </div>
               <div class="meta-time-badge">

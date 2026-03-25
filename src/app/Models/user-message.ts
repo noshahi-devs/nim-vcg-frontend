@@ -9,4 +9,6 @@ export interface UserMessage {
     isDeletedIn: boolean;
     isDeletedOut: boolean;
     createdAt: string;
+    senderName?: string;
+    receiverName?: string;
 }
