@@ -23,8 +23,30 @@ export class ReportComponent implements OnInit {
   incomeExpense;
   userOverviewDonutChart;
   generatedAt = '';
+  
+  // Pagination
+  currentPage = 1;
+  rowsPerPage = 10;
+  Math = Math;
 
   accountData: DashboardData | null = null;
+
+  get paginatedTransactions() {
+    if (!this.accountData?.recentTransactions) return [];
+    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
+    return this.accountData.recentTransactions.slice(startIndex, startIndex + this.rowsPerPage);
+  }
+
+  get totalPages() {
+    if (!this.accountData?.recentTransactions) return 0;
+    return Math.ceil(this.accountData.recentTransactions.length / this.rowsPerPage);
+  }
+
+  changePage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
 
   constructor(
     private dashboardService: DashboardService,

@@ -1,130 +1,111 @@
 <div class="dashboard-main-body report-shell">
 
-    <app-breadcrumb [title]="'Financial & Operational Report'" [main-title]="'Executive Dashboard'" [icon]="'solar:chart-2-bold-duotone'"></app-breadcrumb>
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+        <app-breadcrumb [title]="'Analytics'" [main-title]="'Dashboard'"></app-breadcrumb>
+    </div>
 
     <!-- ===================== HERO ===================== -->
-    <section class="report-hero">
-        <div class="hero-header">
-            <div class="hero-copy">
-                <span class="hero-kicker">Executive Snapshot</span>
-                <h2 class="hero-title">Financial & Operational Report</h2>
-                <p class="hero-subtitle">Monitor income, expenses, cash flow, and the latest activity in one live
-                    view.</p>
-            </div>
-            <div class="hero-tags">
-                <span class="hero-tag">
-                    <iconify-icon icon="solar:bolt-circle-bold"></iconify-icon>
-                    Live Analytics
-                </span>
-                <span class="hero-tag subtle">
-                    <iconify-icon icon="solar:calendar-date-bold"></iconify-icon>
-                    Updated {{ generatedAt || 'Just now' }}
-                </span>
-            </div>
-        </div>
-
-        <div class="stats-row report-stats">
-            <div class="stat-card">
-                <div class="stat-icon-wrapper text-primary-main bg-primary-100">
-                    <iconify-icon icon="solar:wallet-bold" class="text-2xl"></iconify-icon>
-                </div>
-                <div class="stat-content">
-                    <span class="stat-label">Total Income</span>
-                    <h3 class="stat-value text-primary-main">{{ accountData?.totalIncome |
-                        currency:'PKR':'symbol':'1.0-0' }}</h3>
-                    <p class="text-sm text-secondary-light mt-8 mb-0 d-flex align-items-center gap-4">
-                        <span class="text-success-main fw-medium d-flex align-items-center">
-                            <iconify-icon icon="solar:alt-arrow-up-bold" class="me-1"></iconify-icon> Real-time
-                        </span> Latest Data
-                    </p>
+    <div class="glass-hero-panel mb-30">
+        <div class="hero-content">
+            <div class="hero-left">
+                <h2 class="hero-heading">Report Dashboard</h2>
+                <p class="hero-subtitle">Monitor income, expenses, cash flow, and latest activity in one view.</p>
+                <div class="hero-tags mt-16">
+                    <span class="glass-tag">
+                        <iconify-icon icon="solar:bolt-circle-bold-duotone"></iconify-icon> Live Data
+                    </span>
+                    <span class="glass-tag">
+                        <iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon> Updated {{ generatedAt || 'Just now' }}
+                    </span>
                 </div>
             </div>
-
-            <div class="stat-card">
-                <div class="stat-icon-wrapper" style="background: #e0e7ff; color: #4f46e5;">
-                    <iconify-icon icon="solar:cart-large-bold" class="text-2xl"></iconify-icon>
-                </div>
-                <div class="stat-content">
-                    <span class="stat-label">Total Expenses</span>
-                    <h3 class="stat-value" style="color: #4f46e5;">{{ accountData?.totalExpenses |
-                        currency:'PKR':'symbol':'1.0-0' }}</h3>
-                    <p class="text-sm text-secondary-light mt-8 mb-0 d-flex align-items-center gap-4">
-                        <span class="text-danger-main fw-medium d-flex align-items-center">
-                            <iconify-icon icon="solar:alt-arrow-down-bold" class="me-1"></iconify-icon> Active
-                        </span> Monthly tracking
-                    </p>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon-wrapper green">
-                    <iconify-icon icon="solar:money-bag-bold" class="text-2xl"></iconify-icon>
-                </div>
-                <div class="stat-content">
-                    <span class="stat-label">Net Profit</span>
-                    <h3 class="stat-value text-success-main">{{ accountData?.profitLoss |
-                        currency:'PKR':'symbol':'1.0-0' }}</h3>
-                    <p class="text-sm text-secondary-light mt-8 mb-0 d-flex align-items-center gap-4">
-                        <span class="text-success-main fw-medium d-flex align-items-center">
-                            <iconify-icon icon="solar:chart-bold" class="me-1"></iconify-icon> Final
-                        </span> After Deductions
-                    </p>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon-wrapper orange">
-                    <iconify-icon icon="solar:bank-bold" class="text-2xl"></iconify-icon>
-                </div>
-                <div class="stat-content">
-                    <span class="stat-label">Cash/Bank Balance</span>
-                    <h3 class="stat-value text-danger-main">{{ accountData?.cashBankBalance |
-                        currency:'PKR':'symbol':'1.0-0' }}</h3>
-                    <p class="text-sm text-secondary-light mt-8 mb-0 d-flex align-items-center gap-4">
-                        <span class="text-info-main fw-medium d-flex align-items-center">
-                            <iconify-icon icon="solar:hand-money-bold" class="me-1"></iconify-icon> Liquid
-                        </span> Available Now
-                    </p>
+            <div class="hero-right d-none d-lg-block">
+                <div class="hero-graphic">
+                    <iconify-icon icon="solar:chart-square-bold-duotone" class="pulsing-icon text-maroon" style="opacity: 0.9; font-size: 8rem;"></iconify-icon>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+
+    <!-- ===================== STATS ===================== -->
+    <div class="stats-row mb-30">
+        <div class="stat-card-glass">
+            <div class="stat-icon-box maroon">
+                <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
+            </div>
+            <div class="stat-info">
+                <p class="stat-label">Total Income</p>
+                <h3 class="stat-value text-maroon">{{ accountData?.totalIncome | currency:'PKR':'symbol':'1.0-0' }}</h3>
+                <small class="text-xs fw-bold mt-1 text-secondary-light"><i class="ri-arrow-up-line text-success-main"></i> Live tracking</small>
+            </div>
+        </div>
+
+        <div class="stat-card-glass">
+            <div class="stat-icon-box maroon-light">
+                <iconify-icon icon="solar:cart-large-bold-duotone"></iconify-icon>
+            </div>
+            <div class="stat-info">
+                <p class="stat-label">Total Expenses</p>
+                <h3 class="stat-value text-secondary-dark">{{ accountData?.totalExpenses | currency:'PKR':'symbol':'1.0-0' }}</h3>
+                <small class="text-xs fw-bold mt-1 text-secondary-light"><i class="ri-arrow-down-line text-danger-main"></i> Total outflow</small>
+            </div>
+        </div>
+
+        <div class="stat-card-glass">
+            <div class="stat-icon-box maroon">
+                <iconify-icon icon="solar:money-bag-bold-duotone"></iconify-icon>
+            </div>
+            <div class="stat-info">
+                <p class="stat-label">Net Profit</p>
+                <h3 class="stat-value text-success-main">{{ accountData?.profitLoss | currency:'PKR':'symbol':'1.0-0' }}</h3>
+                <small class="text-xs fw-bold mt-1 text-secondary-light"><i class="ri-bar-chart-fill"></i> After expenses</small>
+            </div>
+        </div>
+
+        <div class="stat-card-glass">
+            <div class="stat-icon-box maroon-light">
+                <iconify-icon icon="solar:safe-square-bold-duotone"></iconify-icon>
+            </div>
+            <div class="stat-info">
+                <p class="stat-label">Bank & Cash</p>
+                <h3 class="stat-value text-maroon">{{ accountData?.cashBankBalance | currency:'PKR':'symbol':'1.0-0' }}</h3>
+                <small class="text-xs fw-bold mt-1 text-secondary-light"><i class="ri-bank-card-fill"></i> Available balance</small>
+            </div>
+        </div>
+    </div>
 
     <div class="row gy-24">
         <!-- ===================== MAIN CHART ===================== -->
         <div class="col-xxl-8">
-            <div class="fee-card h-100 mb-0">
-                <div class="fee-card-header d-flex justify-content-between align-items-center">
-                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Income Vs Expense Trend</h6>
-                    <div class="show-entries" style="margin-bottom: 0;">
-                        <span class="badge bg-primary-focus text-primary-main">Live Analytics</span>
-                    </div>
+            <div class="table-glass-container h-100 mb-0">
+                <div class="panel-sub-header">
+                    <h6 class="panel-title d-flex align-items-center gap-2">
+                        <iconify-icon icon="solar:chart-square-bold-duotone" class="text-maroon"></iconify-icon> Income Vs Expense
+                    </h6>
                 </div>
 
-                <div class="fee-card-body p-24">
-                    <ul class="trend-summary d-flex flex-wrap align-items-center justify-content-center mb-16 gap-32">
+                <div class="p-24">
+                    <ul class="trend-summary d-flex flex-wrap align-items-center justify-content-center mb-16 gap-32" style="list-style: none; padding: 0;">
                         <li class="d-flex flex-column gap-4">
                             <div class="d-flex align-items-center gap-8">
-                                <span class="w-12-px h-12-px rounded-circle bg-primary-main"></span>
-                                <span class="text-secondary-light text-sm fw-semibold">Total Income</span>
+                                <span class="w-12-px h-12-px rounded-circle bg-maroon"></span>
+                                <span class="text-maroon text-sm fw-semibold">Income</span>
                             </div>
                             <div class="d-flex align-items-center gap-8">
-                                <h5 class="mb-0 fw-bold">{{ accountData?.totalIncome | currency:'PKR':'symbol':'1.0-0'
-                                    }}</h5>
+                                <h5 class="mb-0 fw-bold">{{ accountData?.totalIncome | currency:'PKR':'symbol':'1.0-0' }}</h5>
                             </div>
                         </li>
                         <li class="d-flex flex-column gap-4">
                             <div class="d-flex align-items-center gap-8">
-                                <span class="w-12-px h-12-px rounded-circle bg-success-main"></span>
-                                <span class="text-secondary-light text-sm fw-semibold">Total Expenses</span>
+                                <span class="w-12-px h-12-px rounded-circle" style="background-color: var(--gold)"></span>
+                                <span class="text-gold text-sm fw-semibold">Expense</span>
                             </div>
                             <div class="d-flex align-items-center gap-8">
-                                <h5 class="mb-0 fw-bold">{{ accountData?.totalExpenses | currency:'PKR':'symbol':'1.0-0'
-                                    }}</h5>
+                                <h5 class="mb-0 fw-bold text-gold">{{ accountData?.totalExpenses | currency:'PKR':'symbol':'1.0-0' }}</h5>
                             </div>
                         </li>
                     </ul>
-                    <div id="incomeExpense" class="apexcharts-tooltip-style-1 mt-16 mt-lg-0 min-h-300">
+                    <div id="incomeExpense" class="mt-16 mt-lg-0 min-h-300">
                         <apx-chart [series]="incomeExpense.series" [chart]="incomeExpense.chart"
                             [xaxis]="incomeExpense.xaxis" [yaxis]="incomeExpense.yaxis" [fill]="incomeExpense.fill"
                             [grid]="incomeExpense.grid" [plotOptions]="incomeExpense.plotOptions"
@@ -139,37 +120,38 @@
 
         <!-- ===================== LATEST STAFF ATTENDANCE ===================== -->
         <div class="col-xxl-4 col-md-6">
-            <div class="fee-card h-100 mb-0">
-                <div class="fee-card-header d-flex justify-content-between align-items-center">
-                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">System Users</h6>
-                    <a routerLink="/staff-list" class="btn-ghost" style="padding: 6px 12px; font-size: 13px;">View
-                        Staff</a>
+            <div class="table-glass-container h-100 mb-0">
+                <div class="panel-sub-header">
+                    <h6 class="panel-title d-flex align-items-center gap-2">
+                        <iconify-icon icon="solar:users-group-two-rounded-bold-duotone" class="text-maroon"></iconify-icon> System Users
+                    </h6>
+                    <a routerLink="/staff-list" class="glass-pill-btn-sm text-decoration-none">View Staff</a>
                 </div>
-                <div class="fee-card-body p-24">
+                <div class="p-24">
                     <div class="d-flex flex-column gap-16">
-                        <div class="user-tile">
+                        <div class="glass-user-tile">
                             <div class="d-flex align-items-center gap-12">
-                                <div class="user-avatar avatar-primary">
+                                <div class="user-avatar bg-maroon text-white shadow-sm border border-maroon-light">
                                     AD
                                 </div>
                                 <div>
-                                    <h6 class="text-md fw-semibold mb-0 text-secondary-dark">System Admin</h6>
-                                    <span class="text-sm text-secondary-light">Administrator</span>
+                                    <h6 class="text-md fw-bold mb-0 text-maroon">System Admin</h6>
+                                    <span class="text-xs text-secondary-light">Admin</span>
                                 </div>
                             </div>
-                            <span class="status-pill">Active</span>
+                            <span class="status-badge active">Active</span>
                         </div>
-                        <div class="user-tile">
+                        <div class="glass-user-tile">
                             <div class="d-flex align-items-center gap-12">
-                                <div class="user-avatar avatar-info">
+                                <div class="user-avatar bg-maroon-light shadow-sm">
                                     PR
                                 </div>
                                 <div>
-                                    <h6 class="text-md fw-semibold mb-0 text-secondary-dark">Principal</h6>
-                                    <span class="text-sm text-secondary-light">Academic Head</span>
+                                    <h6 class="text-md fw-bold mb-0 text-maroon">Principal</h6>
+                                    <span class="text-xs text-secondary-light">Head</span>
                                 </div>
                             </div>
-                            <span class="status-pill">Active</span>
+                            <span class="status-badge active">Active</span>
                         </div>
                     </div>
                 </div>
@@ -178,64 +160,66 @@
 
         <!-- ===================== QUICK LINKS ===================== -->
         <div class="col-xxl-8 col-md-6">
-            <div class="fee-card h-100 mb-0">
-                <div class="fee-card-header d-flex justify-content-between align-items-center">
-                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Detailed Reports & Analytics</h6>
+            <div class="table-glass-container h-100 mb-0">
+                <div class="panel-sub-header">
+                    <h6 class="panel-title d-flex align-items-center gap-2">
+                        <iconify-icon icon="solar:global-bold-duotone" class="text-maroon"></iconify-icon> Quick Reports
+                    </h6>
                 </div>
-                <div class="fee-card-body p-24">
-                    <div class="quick-actions-grid">
-                        <button routerLink="/staff-attendance-report" class="action-card tone-primary">
-                            <span class="action-icon">
+                <div class="p-24">
+                    <div class="glass-quick-actions-grid">
+                        <button routerLink="/staff-attendance-report" class="glass-action-btn">
+                            <span class="action-icon text-maroon maroon-light-bg">
                                 <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
                             </span>
                             <span class="action-text">
-                                <span class="action-title">Staff Attendance</span>
-                                <span class="action-sub">View staff records</span>
+                                <span class="action-title fw-bold text-maroon">Staff Attendance</span>
+                                <span class="action-sub text-xs">Records</span>
                             </span>
                         </button>
-                        <button routerLink="/student-attendance-report" class="action-card tone-success">
-                            <span class="action-icon">
+                        <button routerLink="/student-attendance-report" class="glass-action-btn">
+                            <span class="action-icon text-maroon maroon-light-bg">
                                 <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
                             </span>
                             <span class="action-text">
-                                <span class="action-title">Student Attendance</span>
-                                <span class="action-sub">Analyze student presence</span>
+                                <span class="action-title fw-bold text-maroon">Student Attendance</span>
+                                <span class="action-sub text-xs">Records</span>
                             </span>
                         </button>
-                        <button routerLink="/class-wise-report" class="action-card tone-info">
-                            <span class="action-icon">
+                        <button routerLink="/class-wise-report" class="glass-action-btn">
+                            <span class="action-icon text-maroon maroon-light-bg">
                                 <iconify-icon icon="solar:chart-square-bold-duotone"></iconify-icon>
                             </span>
                             <span class="action-text">
-                                <span class="action-title">Class-Wise Report</span>
-                                <span class="action-sub">Class performance metrics</span>
+                                <span class="action-title fw-bold text-maroon">Class Report</span>
+                                <span class="action-sub text-xs">Metrics</span>
                             </span>
                         </button>
-                        <button routerLink="/fee-defaulters" class="action-card tone-warning">
-                            <span class="action-icon">
+                        <button routerLink="/fee-defaulters" class="glass-action-btn">
+                            <span class="action-icon text-maroon maroon-light-bg">
                                 <iconify-icon icon="solar:bill-cross-bold-duotone"></iconify-icon>
                             </span>
                             <span class="action-text">
-                                <span class="action-title">Fee Defaulters</span>
-                                <span class="action-sub">Track unpaid dues</span>
+                                <span class="action-title fw-bold text-maroon">Fee Defaulters</span>
+                                <span class="action-sub text-xs">Unpaid dues</span>
                             </span>
                         </button>
-                        <button routerLink="/exam-analytics" class="action-card tone-purple">
-                            <span class="action-icon">
+                        <button routerLink="/exam-analytics" class="glass-action-btn">
+                            <span class="action-icon text-maroon maroon-light-bg">
                                 <iconify-icon icon="solar:chart-line-up-bold-duotone"></iconify-icon>
                             </span>
                             <span class="action-text">
-                                <span class="action-title">Exam Analytics</span>
-                                <span class="action-sub">Examine grade distributions</span>
+                                <span class="action-title fw-bold text-maroon">Exam Analytics</span>
+                                <span class="action-sub text-xs">Grades</span>
                             </span>
                         </button>
-                        <button routerLink="/profit-loss" class="action-card tone-neutral">
-                            <span class="action-icon">
+                        <button routerLink="/profit-loss" class="glass-action-btn">
+                            <span class="action-icon text-maroon maroon-light-bg">
                                 <iconify-icon icon="solar:file-check-bold-duotone"></iconify-icon>
                             </span>
                             <span class="action-text">
-                                <span class="action-title">Profit & Loss</span>
-                                <span class="action-sub">View financial statements</span>
+                                <span class="action-title fw-bold text-maroon">Profit & Loss</span>
+                                <span class="action-sub text-xs">Statements</span>
                             </span>
                         </button>
                     </div>
@@ -245,16 +229,15 @@
 
         <!-- ===================== OVERALL REPORT ===================== -->
         <div class="col-xxl-4 col-md-12">
-            <div class="fee-card mb-0">
-                <div class="fee-card-header d-flex justify-content-between align-items-center">
-                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Income vs Expense Ratio</h6>
-                    <div class="show-entries" style="margin-bottom: 0;">
-                        <span class="badge bg-success-focus text-success-main">Dynamic</span>
-                    </div>
+            <div class="table-glass-container h-100 mb-0">
+                <div class="panel-sub-header">
+                    <h6 class="panel-title d-flex align-items-center gap-2">
+                        <iconify-icon icon="solar:pie-chart-3-bold-duotone" class="text-maroon"></iconify-icon> Ratio
+                    </h6>
                 </div>
-                <div class="fee-card-body p-24">
+                <div class="p-24 pb-0">
                     <div class="ratio-chart">
-                        <div id="userOverviewDonutChart" class="mx-auto apexcharts-tooltip-z-none">
+                        <div id="userOverviewDonutChart" class="mx-auto mt-2">
                             <apx-chart [series]="userOverviewDonutChart.series" [chart]="userOverviewDonutChart.chart"
                                 [labels]="userOverviewDonutChart.labels"
                                 [responsive]="userOverviewDonutChart.responsive"
@@ -267,14 +250,14 @@
                         </div>
                     </div>
 
-                    <div class="ratio-legend">
-                        <div class="legend-card income">
-                            <span class="legend-dot income"></span>
-                            <span class="legend-label">Income</span>
+                    <div class="glass-ratio-legend mt-16 mb-20 d-flex justify-content-center gap-3">
+                        <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-pill border border-maroon-light">
+                            <span class="legend-dot bg-maroon" style="width: 10px; height: 10px; border-radius: 50%;"></span>
+                            <span class="text-sm fw-bold text-maroon">Income</span>
                         </div>
-                        <div class="legend-card expense">
-                            <span class="legend-dot expense"></span>
-                            <span class="legend-label">Expense</span>
+                        <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-pill border border-warning" style="background: rgba(244,196,48,0.1)">
+                            <span class="legend-dot bg-gold" style="width: 10px; height: 10px; border-radius: 50%;"></span>
+                            <span class="text-sm fw-bold text-gold">Expense</span>
                         </div>
                     </div>
                 </div>
@@ -283,49 +266,78 @@
 
         <!-- ===================== RECENT TRANSACTIONS ===================== -->
         <div class="col-xxl-12">
-            <div class="fee-card mb-0">
-                <div class="fee-card-header d-flex justify-content-between align-items-center">
-                    <h6 class="text-lg fw-bold mb-0 text-secondary-dark">Recent Transactions (Income & Expenses)</h6>
-                    <a routerLink="/accounts-ledger" class="btn-ghost" style="padding: 6px 12px; font-size: 13px;">View
-                        Full Ledger</a>
+            <div class="table-glass-container mb-0">
+                <div class="panel-sub-header">
+                    <h6 class="panel-title d-flex align-items-center gap-2">
+                        <iconify-icon icon="solar:document-text-bold-duotone" class="text-maroon"></iconify-icon> Recent Transactions
+                    </h6>
+                    <a routerLink="/accounts-ledger" class="glass-pill-btn-sm text-decoration-none border border-maroon text-maroon rounded-pill px-3 py-1">Full Ledger</a>
                 </div>
-                <div class="fee-card-body p-0">
-                    <div class="table-wrapper m-24">
-                        <table class="fee-table">
-                            <thead>
-                                <tr>
-                                    <th scope="col" style="width: 50px;">SL</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Description</th>
-                                    <th scope="col" class="text-end">Debit (Exp)</th>
-                                    <th scope="col" class="text-end">Credit (Inc)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let txn of accountData?.recentTransactions; let i = index"
-                                    class="table-row">
-                                    <td>{{ i + 1 }}</td>
-                                    <td><span class="date-val fw-bold text-secondary-dark">{{ txn.date |
-                                            date:'mediumDate' }}</span></td>
-                                    <td><span class="amount-chip" [class.paid]="txn.type === 'Income'"
-                                            [class.due]="txn.type === 'Expense'">{{ txn.category }}</span></td>
-                                    <td><span class="text-sm text-secondary-light">{{ txn.description }}</span></td>
-                                    <td class="text-end fw-semibold text-danger-main">{{ txn.debit |
-                                        currency:'PKR':'':'1.0-0' }}</td>
-                                    <td class="text-end fw-semibold text-success-main">{{ txn.credit |
-                                        currency:'PKR':'':'1.0-0' }}</td>
-                                </tr>
-                                <tr
-                                    *ngIf="!accountData?.recentTransactions || accountData?.recentTransactions?.length === 0">
-                                    <td colspan="6" class="text-center py-4">No recent transactions found.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="table-scroll">
+                    <table class="fee-table mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: 50px;">SL</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Description</th>
+                                <th scope="col" class="text-end">Debit (Exp)</th>
+                                <th scope="col" class="text-end">Credit (Inc)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let txn of paginatedTransactions; let i = index" class="table-row">
+                                <td class="text-sm fw-bold text-secondary-light">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
+                                <td><span class="text-dark fw-bolder">{{ txn.date | date:'mediumDate' }}</span></td>
+                                <td>
+                                    <span class="status-badge" [ngClass]="txn.type === 'Income' ? 'active' : 'inactive'">
+                                        {{ txn.category }}
+                                    </span>
+                                </td>
+                                <td><span class="text-dark fw-bold text-sm">{{ txn.description }}</span></td>
+                                <td class="text-end fw-bolder text-danger-main">{{ txn.debit | currency:'PKR':'':'1.0-0' }}</td>
+                                <td class="text-end fw-bolder text-success-main">{{ txn.credit | currency:'PKR':'':'1.0-0' }}</td>
+                            </tr>
+                            <tr *ngIf="!accountData?.recentTransactions || accountData?.recentTransactions?.length === 0">
+                                <td colspan="6" class="text-center py-4 bg-transparent text-maroon fw-semibold">No recent transactions found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- ── Pagination ── -->
+                <div class="px-24 py-16 border-top border-light" *ngIf="accountData?.recentTransactions?.length > rowsPerPage">
+                    <nav class="d-flex justify-content-end">
+                        <ul class="pagination-pills m-0 p-0 d-flex gap-2" style="list-style: none;">
+                            <li class="page-item" [class.disabled]="currentPage === 1">
+                                <a class="page-link d-flex align-items-center justify-content-center bg-white border rounded" 
+                                   (click)="changePage(currentPage - 1)" href="javascript:void(0)" 
+                                   style="width: 32px; height: 32px; color: #64748b;">
+                                    <iconify-icon icon="solar:alt-arrow-left-bold-duotone"></iconify-icon>
+                                </a>
+                            </li>
+                            <li class="page-item" *ngFor="let page of [].constructor(totalPages); let pIdx = index">
+                                <a class="page-link d-flex align-items-center justify-content-center rounded" 
+                                   (click)="changePage(pIdx + 1)" href="javascript:void(0)"
+                                   [ngStyle]="{
+                                     'width': '32px', 'height': '32px', 'font-weight': '700', 'font-size': '13px',
+                                     'background-color': currentPage === pIdx + 1 ? '#800000' : '#ffffff',
+                                     'color': currentPage === pIdx + 1 ? '#ffffff' : '#64748b',
+                                     'border': currentPage === pIdx + 1 ? '1px solid #800000' : '1px solid #e2e8f0'
+                                   }">
+                                   {{ pIdx + 1 }}
+                                </a>
+                            </li>
+                            <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                <a class="page-link d-flex align-items-center justify-content-center bg-white border rounded" 
+                                   (click)="changePage(currentPage + 1)" href="javascript:void(0)" 
+                                   style="width: 32px; height: 32px; color: #64748b;">
+                                    <iconify-icon icon="solar:alt-arrow-right-bold-duotone"></iconify-icon>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
-
     </div>
 </div>

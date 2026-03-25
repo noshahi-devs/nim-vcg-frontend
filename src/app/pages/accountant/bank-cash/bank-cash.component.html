@@ -7,7 +7,7 @@
   <div class="stats-row mb-24">
     <div class="stat-card-glass">
       <div class="stat-icon-box maroon-light">
-        <iconify-icon icon="solar:bank-bold-duotone"></iconify-icon>
+        <iconify-icon icon="solar:wad-of-money-bold-duotone"></iconify-icon>
       </div>
       <div class="stat-info">
         <p class="stat-label">Bank Balance</p>
@@ -40,7 +40,7 @@
     <!-- ── Premium Tab Navigation ── -->
     <div class="glass-tab-nav">
       <div class="tab-item" [class.active]="activeTab === 'bank'" (click)="activeTab = 'bank'">
-        <iconify-icon icon="solar:bank-linear" class="tab-icon"></iconify-icon>
+        <iconify-icon icon="solar:safe-linear" class="tab-icon"></iconify-icon>
         Bank Accounts
       </div>
       <div class="tab-item" [class.active]="activeTab === 'cash'" (click)="activeTab = 'cash'">
@@ -207,7 +207,8 @@
                 <td>
                   <div class="d-flex flex-column gap-1">
                     <code class="text-xs text-secondary-600">{{ g.apiKey | slice:0:15 }}...</code>
-                    <span *ngIf="g.isTestMode" class="badge bg-warning-light text-warning-main text-xxs">SANDBOX MODE</span>
+                    <span *ngIf="g.isTestMode" class="badge bg-warning-light text-warning-main text-xxs">SANDBOX
+                      MODE</span>
                   </div>
                 </td>
                 <td class="text-end fw-extrabold text-dark">{{ g.transactionFee }}%</td>
@@ -262,21 +263,24 @@
         <label class="premium-label">Account Title</label>
         <div class="premium-input-wrapper">
           <iconify-icon icon="solar:user-broken" class="input-icon"></iconify-icon>
-          <input type="text" class="premium-input" [(ngModel)]="currentBankAccount.accountName" placeholder="e.g. Primary Operations">
+          <input type="text" class="premium-input" [(ngModel)]="currentBankAccount.accountName"
+            placeholder="e.g. Primary Operations">
         </div>
       </div>
       <div class="form-group">
         <label class="premium-label">Bank Institution</label>
         <div class="premium-input-wrapper">
           <iconify-icon icon="solar:bank-linear" class="input-icon"></iconify-icon>
-          <input type="text" class="premium-input" [(ngModel)]="currentBankAccount.bankName" placeholder="e.g. HBL Bank">
+          <input type="text" class="premium-input" [(ngModel)]="currentBankAccount.bankName"
+            placeholder="e.g. HBL Bank">
         </div>
       </div>
       <div class="form-group">
         <label class="premium-label">Account Number</label>
         <div class="premium-input-wrapper">
           <iconify-icon icon="solar:hashtag-linear" class="input-icon"></iconify-icon>
-          <input type="text" class="premium-input" [(ngModel)]="currentBankAccount.accountNumber" placeholder="XXXX-XXXX-XXXX">
+          <input type="text" class="premium-input" [(ngModel)]="currentBankAccount.accountNumber"
+            placeholder="XXXX-XXXX-XXXX">
         </div>
       </div>
       <div class="form-group">
@@ -329,14 +333,16 @@
         <label class="premium-label">Vault/Account Title</label>
         <div class="premium-input-wrapper">
           <iconify-icon icon="solar:bill-list-linear" class="input-icon"></iconify-icon>
-          <input type="text" class="premium-input" [(ngModel)]="currentCashAccount.accountName" placeholder="e.g. Main Office Petty Cash">
+          <input type="text" class="premium-input" [(ngModel)]="currentCashAccount.accountName"
+            placeholder="e.g. Main Office Petty Cash">
         </div>
       </div>
       <div class="form-group">
         <label class="premium-label">Physical Location</label>
         <div class="premium-input-wrapper">
           <iconify-icon icon="solar:map-point-linear" class="input-icon"></iconify-icon>
-          <input type="text" class="premium-input" [(ngModel)]="currentCashAccount.bankName" placeholder="e.g. Reception Desk">
+          <input type="text" class="premium-input" [(ngModel)]="currentCashAccount.bankName"
+            placeholder="e.g. Reception Desk">
         </div>
       </div>
       <div class="form-group">
@@ -379,7 +385,8 @@
         <label class="premium-label">Processor Name</label>
         <div class="premium-input-wrapper">
           <iconify-icon icon="solar:global-linear" class="input-icon"></iconify-icon>
-          <input type="text" class="premium-input" [(ngModel)]="currentGateway.gatewayName" placeholder="e.g. Stripe, JazzCash">
+          <input type="text" class="premium-input" [(ngModel)]="currentGateway.gatewayName"
+            placeholder="e.g. Stripe, JazzCash">
         </div>
       </div>
       <div class="form-group">
@@ -400,7 +407,8 @@
         <label class="premium-label">Encryption Secret</label>
         <div class="premium-input-wrapper">
           <iconify-icon icon="solar:lock-password-linear" class="input-icon"></iconify-icon>
-          <input type="password" class="premium-input" [(ngModel)]="currentGateway.secretKey" placeholder="••••••••••••••••">
+          <input type="password" class="premium-input" [(ngModel)]="currentGateway.secretKey"
+            placeholder="••••••••••••••••">
         </div>
       </div>
       <div class="form-group">
@@ -447,11 +455,13 @@
   <div class="premium-modal" style="max-width: 450px;">
     <div class="feedback-modal">
       <div class="pm-icon-ring" [ngClass]="feedbackType === 'success' ? 'success-ring' : 'danger-ring'">
-        <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 'solar:close-circle-bold'" style="font-size:2.4rem; color:#fff"></iconify-icon>
+        <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 'solar:close-circle-bold'"
+          style="font-size:2.4rem; color:#fff"></iconify-icon>
       </div>
       <h4 class="pm-title">{{ feedbackTitle }}</h4>
       <p class="pm-subtitle">{{ feedbackMessage }}</p>
-      <button class="pm-btn" [ngClass]="feedbackType === 'success' ? 'pm-success-btn' : 'pm-error-btn'" (click)="closeFeedback()">
+      <button class="pm-btn" [ngClass]="feedbackType === 'success' ? 'pm-success-btn' : 'pm-error-btn'"
+        (click)="closeFeedback()">
         Acknowledged
       </button>
     </div>

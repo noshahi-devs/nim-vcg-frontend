@@ -152,6 +152,12 @@
   opacity: 1;
 }
 
+.tab-icon {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
 /* ── Sub-header with Add Button ── */
 .panel-sub-header {
   padding: 24px 30px;
