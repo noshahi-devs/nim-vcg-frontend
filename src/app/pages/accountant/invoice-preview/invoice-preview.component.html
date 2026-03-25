@@ -1,242 +1,168 @@
 <div class="dashboard-main-body">
-  <app-breadcrumb
-    [title]="'Invoice List'"
-    [main-title]="'Invoice List'"
-  ></app-breadcrumb>
+  <!-- Action Bar -->
+  <div class="inv-action-bar" *ngIf="!loading">
+    <div>
+      <a routerLink="/invoice-list" class="inv-btn inv-btn-ghost">
+        <iconify-icon icon="iconoir:nav-arrow-left"></iconify-icon> Back
+      </a>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <a [routerLink]="['/invoice-edit', invoiceId]" [queryParams]="{ type: invoiceType }" class="inv-btn inv-btn-ghost">
+        <iconify-icon icon="lucide:edit"></iconify-icon> Edit
+      </a>
+      <button class="inv-btn inv-btn-ghost" (click)="printInvoice()">
+        <iconify-icon icon="basil:printer-outline"></iconify-icon> Print
+      </button>
+      <button class="inv-btn inv-btn-primary" (click)="downloadPDF()">
+        <iconify-icon icon="solar:download-linear"></iconify-icon> Download PDF
+      </button>
+    </div>
+  </div>
 
-  <div class="card">
-    <div class="card-header">
-      <div
-        class="d-flex flex-wrap align-items-center justify-content-end gap-2"
-      >
-        <a
-          href="javascript:void(0)"
-          class="btn btn-sm btn-primary-600 radius-8 d-inline-flex align-items-center gap-1"
-        >
-          <iconify-icon
-            icon="pepicons-pencil:paper-plane"
-            class="text-xl"
-          ></iconify-icon>
-          Send Invoice
-        </a>
-        <a
-          href="javascript:void(0)"
-          class="btn btn-sm btn-warning radius-8 d-inline-flex align-items-center gap-1"
-        >
-          <iconify-icon
-            icon="solar:download-linear"
-            class="text-xl"
-          ></iconify-icon>
-          Download
-        </a>
-        <a
-          href="javascript:void(0)"
-          class="btn btn-sm btn-success radius-8 d-inline-flex align-items-center gap-1"
-        >
-          <iconify-icon icon="uil:edit" class="text-xl"></iconify-icon>
-          Edit
-        </a>
-        <button
-          type="button"
-          class="btn btn-sm btn-danger radius-8 d-inline-flex align-items-center gap-1"
-          (click)="printInvoice()"
-        >
-          <iconify-icon
-            icon="basil:printer-outline"
-            class="text-xl"
-          ></iconify-icon>
-          Print
-        </button>
+  <!-- Skeleton -->
+  <div class="receipt-shell" *ngIf="loading">
+    <div *ngFor="let i of [1,2,3,4,5]" class="sk-bar sk-shimmer"></div>
+  </div>
+
+  <!-- ─────────────── RECEIPT ─────────────── -->
+  <div class="receipt-shell" *ngIf="!loading && invoice" id="printable-area">
+
+    <!-- School Header -->
+    <div class="rcpt-head">
+      <div class="rcpt-logo">
+        <img src="assets/images/Vision College emblem design.png" alt="Vision College Logo" class="rcpt-logo-img" />
+      </div>
+      <div class="rcpt-school-text">
+        <div class="rcpt-school-name">Vision College Gojra</div>
+        <div class="rcpt-school-sub">Gojra Campus &nbsp;·&nbsp; Finance Department</div>
       </div>
     </div>
-    <div class="card-body py-40">
-      <div class="row justify-content-center" id="invoice">
-        <div class="col-lg-8">
-          <div class="shadow-4 border radius-8">
-            <div
-              class="p-20 d-flex flex-wrap justify-content-between gap-3 border-bottom"
-            >
-              <div>
-                <h3 class="text-xl">Invoice #3492</h3>
-                <p class="mb-1 text-sm">Date Issued: 25/08/2020</p>
-                <p class="mb-0 text-sm">Date Due: 29/08/2020</p>
-              </div>
-              <div>
-                <img src="assets/images/logo-pro.svg" alt="image" class="mb-8" />
-                <p class="mb-1 text-sm">
-                  4517 Washington Ave. Manchester, Kentucky 39495
-                </p>
-                <p class="mb-0 text-sm">random&#64;gmail.com, +1 543 2198</p>
-              </div>
-            </div>
-            <div class="py-28 px-20">
-              <div
-                class="d-flex flex-wrap justify-content-between align-items-end gap-3"
-              >
-                <div>
-                  <h6 class="text-md">Issus For:</h6>
-                  <table class="text-sm text-secondary-light">
-                    <tbody>
-                      <tr>
-                        <td>Name</td>
-                        <td class="ps-8">:Will Marthas</td>
-                      </tr>
-                      <tr>
-                        <td>Address</td>
-                        <td class="ps-8">:4517 Washington Ave.USA</td>
-                      </tr>
-                      <tr>
-                        <td>Phone number</td>
-                        <td class="ps-8">:+1 543 2198</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div>
-                  <table class="text-sm text-secondary-light">
-                    <tbody>
-                      <tr>
-                        <td>Issus Date</td>
-                        <td class="ps-8">:25 Jan 2024</td>
-                      </tr>
-                      <tr>
-                        <td>Order ID</td>
-                        <td class="ps-8">:#653214</td>
-                      </tr>
-                      <tr>
-                        <td>Shipment ID</td>
-                        <td class="ps-8">:#965215</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
 
-              <div class="mt-24">
-                <div class="table-responsive scroll-sm">
-                  <table class="table bordered-table text-sm">
-                    <thead>
-                      <tr>
-                        <th scope="col" class="text-sm">SL.</th>
-                        <th scope="col" class="text-sm">Items</th>
-                        <th scope="col" class="text-sm">Qty</th>
-                        <th scope="col" class="text-sm">Units</th>
-                        <th scope="col" class="text-sm">Unit Price</th>
-                        <th scope="col" class="text-end text-sm">Price</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>01</td>
-                        <td>Apple's Shoes</td>
-                        <td>5</td>
-                        <td>PC</td>
-                        <td>$200</td>
-                        <td class="text-end">$1000.00</td>
-                      </tr>
-                      <tr>
-                        <td>02</td>
-                        <td>Apple's Shoes</td>
-                        <td>5</td>
-                        <td>PC</td>
-                        <td>$200</td>
-                        <td class="text-end">$1000.00</td>
-                      </tr>
-                      <tr>
-                        <td>03</td>
-                        <td>Apple's Shoes</td>
-                        <td>5</td>
-                        <td>PC</td>
-                        <td>$200</td>
-                        <td class="text-end">$1000.00</td>
-                      </tr>
-                      <tr>
-                        <td>04</td>
-                        <td>Apple's Shoes</td>
-                        <td>5</td>
-                        <td>PC</td>
-                        <td>$200</td>
-                        <td class="text-end">$1000.00</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div class="d-flex flex-wrap justify-content-between gap-3">
-                  <div>
-                    <p class="text-sm mb-0">
-                      <span class="text-primary-light fw-semibold"
-                        >Sales By:</span
-                      >
-                      Jammal
-                    </p>
-                    <p class="text-sm mb-0">Thanks for your business</p>
-                  </div>
-                  <div>
-                    <table class="text-sm">
-                      <tbody>
-                        <tr>
-                          <td class="pe-64">Subtotal:</td>
-                          <td class="pe-16">
-                            <span class="text-primary-light fw-semibold"
-                              >$4000.00</span
-                            >
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class="pe-64">Discount:</td>
-                          <td class="pe-16">
-                            <span class="text-primary-light fw-semibold"
-                              >$0.00</span
-                            >
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class="pe-64 border-bottom pb-4">Tax:</td>
-                          <td class="pe-16 border-bottom pb-4">
-                            <span class="text-primary-light fw-semibold"
-                              >0.00</span
-                            >
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class="pe-64 pt-4">
-                            <span class="text-primary-light fw-semibold"
-                              >Total:</span
-                            >
-                          </td>
-                          <td class="pe-16 pt-4">
-                            <span class="text-primary-light fw-semibold"
-                              >$1690</span
-                            >
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
+    <!-- Title Strip -->
+    <div class="rcpt-title-strip">
+      <span class="rcpt-doc-title">Fee Payment Receipt</span>
+      <span class="rcpt-status-badge" [ngClass]="paymentStatus === 'Paid' ? 'badge-paid' : 'badge-pending'">
+        {{ paymentStatus }}
+      </span>
+    </div>
 
-              <div class="mt-64">
-                <p class="text-center text-secondary-light text-sm fw-semibold">
-                  Thank you for your purchase!
-                </p>
-              </div>
+    <!-- Invoice Meta Row -->
+    <div class="rcpt-meta-row">
+      <div class="rcpt-meta-item">
+        <span class="rcpt-meta-label">Invoice No.</span>
+        <span class="rcpt-meta-value rcpt-inv-num">{{ invoiceNumber }}</span>
+      </div>
+      <div class="rcpt-meta-item">
+        <span class="rcpt-meta-label">Date</span>
+        <span class="rcpt-meta-value">{{ paymentDate }}</span>
+      </div>
+      <div class="rcpt-meta-item">
+        <span class="rcpt-meta-label">Payment Type</span>
+        <span class="rcpt-meta-value">{{ invoiceType | titlecase }} Payment</span>
+      </div>
+    </div>
 
-              <div
-                class="d-flex flex-wrap justify-content-between align-items-end mt-64"
-              >
-                <div class="text-sm border-top d-inline-block px-12">
-                  Signature of Customer
-                </div>
-                <div class="text-sm border-top d-inline-block px-12">
-                  Signature of Authorized
-                </div>
-              </div>
-            </div>
+    <div class="rcpt-divider"></div>
+
+    <!-- Student Info -->
+    <div class="rcpt-student-row">
+      <div class="rcpt-field">
+        <span class="rcpt-field-label">Student Info</span>
+        <div style="display:flex; align-items:center; gap:10px; margin-top: 2px;">
+          <img [src]="studentImage || 'assets/images/user.png'" 
+               (error)="handleImageError($event)"
+               style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1.5px solid #e2e8f0; flex-shrink:0;">
+          <div style="display:flex; flex-direction:column;">
+            <span class="rcpt-field-value">{{ studentName }}</span>
+            <span class="party-sub" style="font-size:11px; color:#64748b;">Class: {{ standard }} &nbsp;|&nbsp; Enr: {{ enrollmentNo }}</span>
           </div>
         </div>
       </div>
+      <div class="rcpt-field" *ngIf="academicMonths">
+        <span class="rcpt-field-label">Period / Months</span>
+        <span class="rcpt-field-value">{{ academicMonths }}</span>
+      </div>
     </div>
-  </div>
-</div>
 
+    <div class="rcpt-divider"></div>
+
+    <!-- Fee Table -->
+    <table class="rcpt-table">
+      <thead>
+        <tr>
+          <th class="col-sl">#</th>
+          <th>Description</th>
+          <th class="col-amt">Amount (Rs.)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of paymentItems; let i = index">
+          <td class="col-sl">{{ i + 1 }}</td>
+          <td>{{ item.feeName ?? item.FeeName ?? 'Fee' }}</td>
+          <td class="col-amt">{{ (item.feeAmount ?? item.FeeAmount ?? 0) | number }}</td>
+        </tr>
+        <tr *ngIf="paymentItems.length === 0">
+          <td colspan="3" class="rcpt-empty">No fee details available.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Summary -->
+    <div class="rcpt-summary-wrap">
+      <div class="rcpt-summary">
+        <div class="rcpt-sum-row" *ngIf="totalFeeAmount">
+          <span>Fee Total</span>
+          <span>Rs. {{ totalFeeAmount | number }}</span>
+        </div>
+        <div class="rcpt-sum-row txt-discount" *ngIf="waver > 0">
+          <span>Waiver ({{ waver }}%)</span>
+          <span>- Rs. {{ (totalFeeAmount * waver / 100) | number }}</span>
+        </div>
+        <div class="rcpt-sum-row txt-due" *ngIf="previousDue > 0">
+          <span>Previous Due</span>
+          <span>+ Rs. {{ previousDue | number }}</span>
+        </div>
+        <div class="rcpt-sum-divider"></div>
+        <div class="rcpt-sum-row rcpt-sum-total">
+          <span>Net Payable</span>
+          <span>Rs. {{ totalAmount | number }}</span>
+        </div>
+        <div class="rcpt-sum-row txt-paid">
+          <span>Paid</span>
+          <span>Rs. {{ amountPaid | number }}</span>
+        </div>
+        <div class="rcpt-sum-divider"></div>
+        <div class="rcpt-sum-row rcpt-sum-balance">
+          <span>Balance</span>
+          <span [ngClass]="amountRemaining > 0 ? 'txt-due' : 'txt-paid'">
+            Rs. {{ amountRemaining | number }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rcpt-divider"></div>
+
+    <!-- Footer -->
+    <div class="rcpt-footer">
+      <div class="rcpt-sig">
+        <div class="rcpt-sig-line"></div>
+        <span>Student / Guardian</span>
+      </div>
+      <p class="rcpt-thank">★ Thank you — Vision College Gojra</p>
+      <div class="rcpt-sig rcpt-sig-r">
+        <div class="rcpt-sig-line"></div>
+        <span>Authorized Signature</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Not found -->
+  <div class="receipt-shell" *ngIf="!loading && !invoice" style="text-align:center;color:#94a3b8;padding:60px;">
+    <iconify-icon icon="solar:document-text-outline" style="font-size:52px;display:block;margin-bottom:12px;"></iconify-icon>
+    <p>Invoice not found.</p>
+    <a routerLink="/invoice-list" class="inv-btn inv-btn-ghost" style="display:inline-flex;margin-top:12px;">Back to List</a>
+  </div>
+
+</div>

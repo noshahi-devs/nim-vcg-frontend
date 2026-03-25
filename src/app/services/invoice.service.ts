@@ -12,6 +12,7 @@ export interface Invoice {
     amountPaid: number;
     status: string;
     type: string;
+    imagePath?: string;
 }
 
 @Injectable({
@@ -28,5 +29,15 @@ export class InvoiceService {
 
     getInvoiceDetails(type: string, id: number): Observable<any> {
         return this.http.get<any>(`${this.apiUrl}/${type}/${id}`);
+    }
+
+    deleteInvoice(type: string, id: number): Observable<any> {
+        const controller = type.toLowerCase() === 'monthly' ? 'MonthlyPayments' : 'OthersPayments';
+        return this.http.delete(`${environment.apiBaseUrl}/api/${controller}/${id}`);
+    }
+
+    updatePayment(type: string, id: number, payload: any): Observable<any> {
+        const controller = type.toLowerCase() === 'monthly' ? 'MonthlyPayments' : 'OthersPayments';
+        return this.http.put(`${environment.apiBaseUrl}/api/${controller}/${id}`, payload);
     }
 }
