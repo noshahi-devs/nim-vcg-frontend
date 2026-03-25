@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormBuilder, NgForm, FormsModule } from '@angular/forms';
 import Swal from '../../../swal';
 import { finalize } from 'rxjs';
@@ -30,7 +30,8 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
   templateUrl: './marks-entry.component.html',
   styleUrl: './marks-entry.component.css',
   standalone: true,
-  imports: [FormsModule, NgForOf, CommonModule, BreadcrumbComponent]
+  imports: [FormsModule, NgForOf, CommonModule, BreadcrumbComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class MarksEntryComponent implements OnInit {
   title = 'Marks Entry';
@@ -59,9 +60,15 @@ export class MarksEntryComponent implements OnInit {
 
   // Define a property to hold enum values for the select dropdown
   gradesSystemValues = Object.keys(GradesSystem).filter(key => isNaN(+key));
-
   passFailStatusValues = Object.values(PassFailStatus);
-  loading: any;
+
+  loading: boolean = false;
+  
+  // Feedback Modal
+  showFeedbackModal: boolean = false;
+  feedbackType: 'success' | 'error' | 'warning' = 'success';
+  feedbackTitle: string = '';
+  feedbackMessage: string = '';
 
 
   constructor(
@@ -151,43 +158,35 @@ export class MarksEntryComponent implements OnInit {
 
   onSubmit(): void {
     if (this.entryForm.valid) {
-      
-      Swal.fire({
-        title: 'Saving Student Marks...',
-        text: 'Please wait while we record the grades.',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        didOpen: () => {
-          Swal.showLoading();
+      this.loading = true;
+
+      this.markEntryService.createMarkEntry(this.markEntry).pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      ).subscribe({
+        next: (response) => {
+          this.feedbackType = 'success';
+          this.feedbackTitle = 'Success!';
+          this.feedbackMessage = 'Student grades have been successfully recorded.';
+          this.showFeedbackModal = true;
+        },
+        error: (error) => {
+          console.error('Error creating Mark Entry:', error);
+          this.feedbackType = 'error';
+          this.feedbackTitle = 'Update Failed';
+          this.feedbackMessage = 'Failed to save student grades. Please check your connection and try again.';
+          this.showFeedbackModal = true;
         }
       });
+    }
+  }
 
-      this.markEntryService.createMarkEntry(this.markEntry).subscribe(
-        (response) => {
-          Swal.close();
-          Swal.fire({
-            title: 'Submitted!',
-            text: 'Student grades have been successfully recorded.',
-            icon: 'success',
-            confirmButtonColor: '#487FFF',
-            confirmButtonText: 'Okay'
-          }).then(() => {
-            this.entryForm.resetForm();
-            this.router.navigate(['/marksentrynewList']);
-          });
-        },
-        (error) => {
-          Swal.close();
-          console.error('Error creating Mark Entry:', error);
-          Swal.fire({
-            title: 'Error!',
-            text: 'Failed to save student grades. Please try again.',
-            icon: 'error',
-            confirmButtonColor: '#ef4444'
-          });
-        }
-      );
+  closeFeedback(): void {
+    this.showFeedbackModal = false;
+    if (this.feedbackType === 'success') {
+      this.entryForm.resetForm();
+      this.router.navigate(['/marksentrynewList']);
     }
   }
 

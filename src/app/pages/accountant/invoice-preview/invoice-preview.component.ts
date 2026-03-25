@@ -1,5 +1,4 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
-import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { InvoiceService } from '../../../services/invoice.service';
 import { CommonModule } from '@angular/common';
@@ -8,7 +7,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-invoice-preview',
   standalone: true,
-  imports: [BreadcrumbComponent, CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './invoice-preview.component.html',
   styleUrl: './invoice-preview.component.css',
@@ -62,7 +61,7 @@ export class InvoicePreviewComponent implements OnInit {
     const months = this.invoice.academicMonths ?? this.invoice.paymentMonths ?? [];
     return months.map((m: any) => m.monthName ?? m.MonthName ?? '').filter(Boolean).join(', ');
   }
-  get studentImage(): string {
+  get studentImage(): string {
     const path = this.invoice?.student?.imagePath ?? this.invoice?.Student?.imagePath;
     if (!path) return '';
     if (path.startsWith('data:') || path.startsWith('http')) return path;
