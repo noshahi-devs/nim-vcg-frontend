@@ -99,6 +99,7 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
   }
 
   onSubmit() {
+    console.log('Final payload being sent:', this.model);
     this.isProcessing = true;
     this.examScheduleStandardsService.SaveExamScheduleStandards(this.model)
       .pipe(finalize(() => this.isProcessing = false))
@@ -108,8 +109,14 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
           setTimeout(() => this.router.navigate(['/exam-schedule-standards-list']), 1800);
         },
         error: err => {
-          console.error(err);
-          this.triggerError('Error', 'Failed to save exam schedule. Please try again.');
+          console.error('Full error object:', err);
+          let errorMsg = 'Failed to save exam schedule. Please try again.';
+          if (err.error && typeof err.error === 'string') {
+            errorMsg = err.error;
+          } else if (err.message) {
+            errorMsg = err.message;
+          }
+          this.triggerError('Save Failed', errorMsg);
         }
       });
   }

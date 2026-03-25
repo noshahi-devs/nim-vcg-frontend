@@ -100,7 +100,7 @@
                       [(ngModel)]="sub.subjectId" name="subject{{i}}">
                       <option [ngValue]="0" disabled selected hidden>Select Subject</option>
                       <option *ngFor="let subject of getFilteredSubjects()" [ngValue]="subject.subjectId">
-                        {{ subject.subjectName }} ({{subject.subjectCode}})
+                        {{ subject.subjectName }}
                       </option>
                     </select>
                   </td>
