@@ -2,6 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs';
 import { MessageService } from '../../../services/message.service';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { UserMessage } from '../../../Models/user-message';
@@ -18,7 +19,7 @@ import { Staff } from '../../../Models/staff';
 })
 export class EmailComponent implements OnInit {
   title = 'Messages';
-  activeFolder: 'inbox' | 'sent' | 'starred' | 'bin' = 'inbox';
+  activeFolder: 'inbox' | 'sent' | 'starred' | 'bin' | 'Internal' | 'Announcements' | 'Important' = 'inbox';
   messages: UserMessage[] = [];
   filteredMessages: UserMessage[] = [];
   selectedMessage: UserMessage | null = null;
@@ -26,6 +27,14 @@ export class EmailComponent implements OnInit {
   searchQuery = '';
   showReplyBox = false;
   replyContent = '';
+
+  get unreadMessages() {
+    return this.messages.filter(m => !m.isRead);
+  }
+
+  get starredMessagesCount() {
+    return this.messages.filter(m => m.isStarred).length;
+  }
 
   // Compose
   allStaff: Staff[] = [];
@@ -54,17 +63,31 @@ export class EmailComponent implements OnInit {
     else if (this.activeFolder === 'starred') obs$ = this.messageService.getInbox();
     else obs$ = this.messageService.getInbox();
 
-    obs$.subscribe({
-      next: (data) => {
+    obs$.pipe(
+      finalize(() => {
+        this.loading = false;
+        this.filterMessages(); // Call filterMessages after loading
+      })
+    ).subscribe({
+      next: (data: UserMessage[]) => {
         if (this.activeFolder === 'starred') {
           this.messages = data.filter(m => m.isStarred);
+        } else if (['Internal', 'Announcements', 'Important'].includes(this.activeFolder)) {
+          // Assuming subject or content might contain label keywords for mock/demo, 
+          // or if the backend supports labels. For now, we'll filter by subject/content.
+          const label = this.activeFolder.toLowerCase();
+          this.messages = data.filter(m => 
+            m.subject?.toLowerCase().includes(label) || 
+            m.content?.toLowerCase().includes(label)
+          );
         } else {
           this.messages = data;
         }
         this.filteredMessages = [...this.messages];
-        this.loading = false;
       },
-      error: () => this.loading = false
+      error: (err) => {
+        console.error('Error loading messages:', err);
+      }
     });
   }
 
@@ -118,9 +141,17 @@ export class EmailComponent implements OnInit {
 
   onSubmitCompose() {
     if (!this.newMessage.receiverId || !this.newMessage.subject || !this.newMessage.content) return;
-    this.messageService.sendMessage(this.newMessage).subscribe(() => {
-      this.newMessage = { receiverId: '', subject: '', content: '' };
-      this.loadMessages();
+    this.loading = true;
+    this.messageService.sendMessage(this.newMessage).pipe(
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: () => {
+        this.newMessage = { receiverId: '', subject: '', content: '' };
+        this.loadMessages();
+      },
+      error: (err) => {
+        console.error('Error sending message:', err);
+      }
     });
   }
 
@@ -132,14 +163,22 @@ export class EmailComponent implements OnInit {
 
   sendReply(msg: UserMessage) {
     if (!this.replyContent.trim()) return;
+    this.loading = true;
     const reply: Partial<UserMessage> = {
       receiverId: msg.senderId,
       subject: 'Re: ' + msg.subject,
       content: this.replyContent
     };
-    this.messageService.sendMessage(reply).subscribe(() => {
-      this.replyContent = '';
-      this.showReplyBox = false;
+    this.messageService.sendMessage(reply).pipe(
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: () => {
+        this.replyContent = '';
+        this.showReplyBox = false;
+      },
+      error: (err) => {
+        console.error('Error sending reply:', err);
+      }
     });
   }
 

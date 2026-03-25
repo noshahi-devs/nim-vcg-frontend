@@ -1,244 +1,311 @@
 <div class="dashboard-main-body">
-  <app-breadcrumb [title]="'Communications / Inbox'" [main-title]="'Messaging'"></app-breadcrumb>
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+    <app-breadcrumb [title]="'Communications / Inbox'" [main-title]="'Messaging'"></app-breadcrumb>
+  </div>
 
-  <div class="messaging-layout">
-
-    <!-- ===== Left Sidebar ===== -->
-    <div class="msg-sidebar">
-      <button class="compose-btn" data-bs-toggle="modal" data-bs-target="#composeModal">
-        <iconify-icon icon="fa6-solid:pen-to-square"></iconify-icon>
-        Compose
-      </button>
-
-      <div class="folder-label">Folders</div>
-      <nav class="folder-nav">
-        <div class="folder-item" [class.active]="activeFolder === 'inbox'" (click)="switchFolder('inbox')">
-          <span class="d-flex align-items-center gap-2">
-            <span class="folder-icon"><iconify-icon icon="uil:envelope"></iconify-icon></span>
-            Inbox
-          </span>
-          <span *ngIf="getUnreadCount() > 0" class="badge-count">{{ getUnreadCount() }}</span>
-        </div>
-
-        <div class="folder-item" [class.active]="activeFolder === 'sent'" (click)="switchFolder('sent')">
-          <span class="d-flex align-items-center gap-2">
-            <span class="folder-icon"><iconify-icon icon="ion:paper-plane-outline"></iconify-icon></span>
-            Sent
-          </span>
-        </div>
-
-        <div class="folder-item" [class.active]="activeFolder === 'starred'" (click)="switchFolder('starred')">
-          <span class="d-flex align-items-center gap-2">
-            <span class="folder-icon"><iconify-icon icon="ph:star-bold"></iconify-icon></span>
-            Starred
-          </span>
-        </div>
-
-        <div class="folder-item" [class.active]="activeFolder === 'bin'" (click)="switchFolder('bin')">
-          <span class="d-flex align-items-center gap-2">
-            <span class="folder-icon"><iconify-icon icon="material-symbols:delete-outline"></iconify-icon></span>
-            Trash
-          </span>
-        </div>
-      </nav>
-
-      <div class="divider"></div>
-
-      <div class="folder-label">Labels</div>
-      <nav class="folder-nav">
-        <div class="folder-item">
-          <span class="d-flex align-items-center gap-2">
-            <span class="w-8-px h-8-px rounded-circle"
-              style="background:#800000; display:inline-block; min-width:8px;"></span>
-            Internal
-          </span>
-        </div>
-        <div class="folder-item">
-          <span class="d-flex align-items-center gap-2">
-            <span class="w-8-px h-8-px rounded-circle"
-              style="background:#10b981; display:inline-block; min-width:8px;"></span>
-            Announcements
-          </span>
-        </div>
-        <div class="folder-item">
-          <span class="d-flex align-items-center gap-2">
-            <span class="w-8-px h-8-px rounded-circle"
-              style="background:#f59e0b; display:inline-block; min-width:8px;"></span>
-            Important
-          </span>
-        </div>
-      </nav>
-
+  <!-- ── Standard Stats Row ── -->
+  <div class="stats-row mb-24">
+    <div class="stat-card-glass">
+      <div class="stat-info">
+        <p class="stat-label">Total Messages</p>
+        <h3 class="stat-value">{{ messages.length }}</h3>
+      </div>
+      <div class="stat-icon-box maroon">
+        <iconify-icon icon="solar:letter-bold"></iconify-icon>
+      </div>
     </div>
 
-    <!-- ===== Message List Panel ===== -->
-    <div class="msg-list-panel">
-      <div class="msg-list-header">
-        <h5 class="text-capitalize">{{ activeFolder }}</h5>
-        <div class="d-flex gap-2">
-          <button class="detail-action-btn" title="Refresh" (click)="loadMessages()">
-            <iconify-icon icon="material-symbols:refresh"></iconify-icon>
+    <div class="stat-card-glass">
+      <div class="stat-info">
+        <p class="stat-label">Unread</p>
+        <h3 class="stat-value text-maroon">{{ unreadMessages.length }}</h3>
+      </div>
+      <div class="stat-icon-box maroon-light">
+        <iconify-icon icon="solar:notification-lines-remove-bold"></iconify-icon>
+      </div>
+    </div>
+
+    <div class="stat-card-glass">
+      <div class="stat-info">
+        <p class="stat-label">Starred</p>
+        <h3 class="stat-value">{{ starredMessagesCount }}</h3>
+      </div>
+      <div class="stat-icon-box warning">
+        <iconify-icon icon="solar:star-bold"></iconify-icon>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-glass-container messaging-container">
+    <div class="messaging-layout">
+
+      <!-- ════ Left Sidebar ════ -->
+      <div class="msg-sidebar">
+        <button class="compose-btn" data-bs-toggle="modal" data-bs-target="#composeModal">
+          <iconify-icon icon="solar:pen-new-square-bold"></iconify-icon>
+          Compose
+        </button>
+
+        <div class="folder-label">Folders</div>
+        <nav class="folder-nav">
+          <div class="folder-item" [class.active]="activeFolder === 'inbox'" (click)="switchFolder('inbox')">
+            <span class="d-flex align-items-center gap-2">
+              <span class="folder-icon"><iconify-icon icon="solar:letter-unread-linear"></iconify-icon></span>
+              Inbox
+            </span>
+            <span *ngIf="getUnreadCount() > 0" class="badge-count">{{ getUnreadCount() }}</span>
+          </div>
+
+          <div class="folder-item" [class.active]="activeFolder === 'sent'" (click)="switchFolder('sent')">
+            <span class="d-flex align-items-center gap-2">
+              <span class="folder-icon"><iconify-icon icon="solar:letter-opened-linear"></iconify-icon></span>
+              Sent
+            </span>
+          </div>
+
+          <div class="folder-item" [class.active]="activeFolder === 'starred'" (click)="switchFolder('starred')">
+            <span class="d-flex align-items-center gap-2">
+              <span class="folder-icon"><iconify-icon icon="solar:star-line-duotone"></iconify-icon></span>
+              Starred
+            </span>
+          </div>
+
+          <div class="folder-item" [class.active]="activeFolder === 'bin'" (click)="switchFolder('bin')">
+            <span class="d-flex align-items-center gap-2">
+              <span class="folder-icon"><iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon></span>
+              Trash
+            </span>
+          </div>
+        </nav>
+
+        <div class="divider"></div>
+
+        <div class="folder-label">Labels</div>
+        <nav class="folder-nav">
+          <div class="folder-item" [class.active]="activeFolder === 'Internal'" (click)="switchFolder('Internal')">
+            <span class="d-flex align-items-center gap-2">
+              <span class="label-dot maroon"></span>
+              Internal
+            </span>
+          </div>
+          <div class="folder-item" [class.active]="activeFolder === 'Announcements'" (click)="switchFolder('Announcements')">
+            <span class="d-flex align-items-center gap-2">
+              <span class="label-dot success"></span>
+              Announcements
+            </span>
+          </div>
+          <div class="folder-item" [class.active]="activeFolder === 'Important'" (click)="switchFolder('Important')">
+            <span class="d-flex align-items-center gap-2">
+              <span class="label-dot warning"></span>
+              Important
+            </span>
+          </div>
+        </nav>
+      </div>
+
+      <!-- ════ Message List Panel ════ -->
+      <div class="msg-list-panel">
+        <div class="msg-list-header">
+          <h5 class="text-capitalize">{{ activeFolder }}</h5>
+          <button class="icon-btn-glass" title="Refresh" (click)="loadMessages()">
+            <iconify-icon icon="solar:restart-linear"></iconify-icon>
           </button>
         </div>
-      </div>
 
-      <div class="msg-search-bar">
-        <div class="search-input">
-          <iconify-icon icon="ion:search-outline" style="color:#aaa; font-size:16px;"></iconify-icon>
-          <input type="text" placeholder="Search messages..." [(ngModel)]="searchQuery" (input)="filterMessages()">
-        </div>
-      </div>
-
-      <!-- Loading Skeletons -->
-      <div class="msg-list-scroll" *ngIf="loading">
-        <div class="skeleton-item" *ngFor="let i of [1,2,3,4,5]">
-          <div class="skeleton-avatar"></div>
-          <div class="skeleton-body">
-            <div class="skeleton-line shorter"></div>
-            <div class="skeleton-line"></div>
-            <div class="skeleton-line short"></div>
+        <div class="msg-search-bar">
+          <div class="premium-search">
+            <iconify-icon icon="solar:magnifer-linear"></iconify-icon>
+            <input type="text" placeholder="Search messages..." [(ngModel)]="searchQuery" (input)="filterMessages()">
           </div>
         </div>
-      </div>
 
-      <!-- Message List -->
-      <div class="msg-list-scroll" *ngIf="!loading">
-        <div *ngIf="filteredMessages.length === 0" class="msg-empty"
-          style="padding: 40px 20px; flex-direction: column;">
-          <iconify-icon icon="uil:envelope" style="font-size: 48px; color: #d1d5db;"></iconify-icon>
-          <p class="text-secondary-light text-sm mt-12">No messages in {{ activeFolder }}</p>
-        </div>
-
-        <div *ngFor="let msg of filteredMessages" class="msg-item" [class.active]="selectedMessage?.id === msg.id"
-          [class.unread]="!msg.isRead && activeFolder === 'inbox'" (click)="selectMessage(msg)">
-
-          <div class="avatar">
-            {{ getInitial(msg.senderId) }}
-          </div>
-
-          <div class="msg-item-body">
-            <div class="msg-item-top">
-              <span class="msg-item-name">
-                {{ activeFolder === 'sent' ? ('To: ' + (msg.receiverId | slice:0:12)) : msg.senderId }}
-              </span>
-              <span class="msg-item-time">{{ msg.createdAt | date:'MMM d' }}</span>
+        <div class="msg-list-scroll">
+          <!-- Empty state -->
+          <div *ngIf="!loading && filteredMessages.length === 0" class="msg-empty-state">
+            <div class="empty-icon-ring">
+              <iconify-icon icon="solar:letter-unread-linear"></iconify-icon>
             </div>
-            <div class="msg-item-subject">{{ msg.subject }}</div>
-            <div class="msg-item-preview">{{ msg.content | slice:0:55 }}...</div>
+            <p>No messages in {{ activeFolder | titlecase }}</p>
+            <span>Your folder is currently empty.</span>
           </div>
 
-          <button class="star-btn" [class.starred]="msg.isStarred" (click)="toggleStar(msg, $event)" title="Star">
-            <iconify-icon [icon]="msg.isStarred ? 'ph:star-fill' : 'ph:star'"></iconify-icon>
-          </button>
+          <!-- Message List -->
+          <div *ngIf="!loading">
+            <div *ngFor="let msg of filteredMessages" class="msg-item" 
+                 [class.active]="selectedMessage?.id === msg.id"
+                 [class.unread]="!msg.isRead && activeFolder === 'inbox'" 
+                 (click)="selectMessage(msg)">
 
-          <span *ngIf="!msg.isRead && activeFolder === 'inbox'" class="unread-dot"></span>
+              <div class="meta-avatar" [ngClass]="msg.isRead ? 'read-avatar' : 'unread-avatar'">
+                {{ getInitial(msg.senderId) }}
+              </div>
+
+              <div class="msg-item-body">
+                <div class="msg-item-top">
+                  <span class="msg-item-name">
+                    {{ activeFolder === 'sent' ? ('To: ' + (msg.receiverId | slice:0:12)) : (msg.senderId | slice:0:18) }}
+                  </span>
+                  <span class="msg-item-time">{{ msg.createdAt | date:'MMM d' }}</span>
+                </div>
+                <div class="msg-item-subject">{{ msg.subject }}</div>
+                <div class="msg-item-preview">{{ msg.content | slice:0:55 }}...</div>
+              </div>
+
+              <div class="msg-item-actions" (click)="$event.stopPropagation()">
+                <button class="star-btn" [class.starred]="msg.isStarred" (click)="toggleStar(msg, $event)">
+                  <iconify-icon [icon]="msg.isStarred ? 'solar:star-bold' : 'solar:star-linear'"></iconify-icon>
+                </button>
+              </div>
+
+              <span *ngIf="!msg.isRead && activeFolder === 'inbox'" class="unread-glow"></span>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- ════ Detail Panel ════ -->
+      <div class="msg-detail-panel">
+        <!-- Detail empty state -->
+        <div *ngIf="!selectedMessage" class="detail-empty">
+          <div class="empty-decor">
+            <span class="decor-bubble dc1"></span>
+            <span class="decor-bubble dc2"></span>
+          </div>
+          <iconify-icon icon="solar:letter-unread-broken"></iconify-icon>
+          <p>Select a message to read</p>
+        </div>
+
+        <!-- Message Detail -->
+        <ng-container *ngIf="selectedMessage">
+          <!-- Header -->
+          <div class="msg-detail-header">
+            <button class="back-btn" (click)="selectedMessage = null">
+              <iconify-icon icon="solar:arrow-left-linear"></iconify-icon>
+            </button>
+            <h5 class="msg-detail-subject">{{ selectedMessage.subject }}</h5>
+            <div class="msg-detail-actions">
+              <button class="icon-btn-glass" [class.starred]="selectedMessage.isStarred" (click)="toggleStar(selectedMessage, $event)">
+                <iconify-icon [icon]="selectedMessage.isStarred ? 'solar:star-bold' : 'solar:star-linear'"></iconify-icon>
+              </button>
+              <button class="icon-btn-glass" (click)="replyTo(selectedMessage)">
+                <iconify-icon icon="solar:reply-linear"></iconify-icon>
+              </button>
+              <button class="icon-btn-glass danger" (click)="deleteMessage(selectedMessage.id, $event)">
+                <iconify-icon icon="solar:trash-bin-minimalistic-linear"></iconify-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="msg-detail-scroll">
+            <!-- Meta -->
+            <div class="msg-detail-meta">
+              <div class="meta-avatar large">{{ getInitial(selectedMessage.senderId) }}</div>
+              <div class="meta-info">
+                <div class="meta-name">{{ selectedMessage.senderId }}</div>
+                <div class="meta-to">To: {{ selectedMessage.receiverId }}</div>
+              </div>
+              <div class="meta-time-badge">
+                <iconify-icon icon="solar:clock-circle-linear"></iconify-icon>
+                {{ selectedMessage.createdAt | date:'medium' }}
+              </div>
+            </div>
+
+            <!-- Body -->
+            <div class="msg-detail-body">
+              <div class="content-glass-card">
+                {{ selectedMessage.content }}
+              </div>
+            </div>
+
+            <!-- Quick Reply -->
+            <div class="p-24" *ngIf="showReplyBox">
+              <div class="reply-container-glass">
+                <div class="reply-header">
+                  <span class="reply-label"><iconify-icon icon="solar:reply-linear"></iconify-icon> Quick Reply</span>
+                  <button class="close-reply" (click)="showReplyBox = false"><iconify-icon icon="solar:close-circle-linear"></iconify-icon></button>
+                </div>
+                <textarea class="reply-field" rows="4" placeholder="Type your response here..." [(ngModel)]="replyContent"></textarea>
+                <div class="d-flex justify-content-end">
+                  <button class="premium-btn maroon" (click)="sendReply(selectedMessage)" [disabled]="!replyContent?.trim()">
+                    <iconify-icon icon="solar:plain-2-bold"></iconify-icon> Send Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
       </div>
     </div>
+  </div>
 
-    <!-- ===== Detail Panel ===== -->
-    <div class="msg-detail-panel">
-
-      <!-- Empty state -->
-      <div *ngIf="!selectedMessage" class="msg-empty">
-        <iconify-icon icon="uil:envelope-open"></iconify-icon>
-        <p>Select a message to read</p>
+  <!-- ══════ Unified Processing Overlay ══════ -->
+  <div class="premium-overlay" *ngIf="loading">
+    <div class="processing-card">
+      <div class="loader-ring"></div>
+      <div class="processing-content">
+        <p class="pc-title">Processing...</p>
+        <p class="pc-subtitle">Please wait a moment</p>
       </div>
-
-      <!-- Message Detail -->
-      <ng-container *ngIf="selectedMessage">
-        <!-- Header -->
-        <div class="msg-detail-header">
-          <button class="detail-action-btn" (click)="selectedMessage = null" title="Back">
-            <iconify-icon icon="iconamoon:arrow-left-2"></iconify-icon>
-          </button>
-          <h5 class="msg-detail-subject flex-1 mx-3 mb-0">{{ selectedMessage.subject }}</h5>
-          <div class="msg-detail-actions">
-            <button class="detail-action-btn" [class.starred]="selectedMessage.isStarred"
-              (click)="toggleStar(selectedMessage, $event)" title="Star">
-              <iconify-icon [icon]="selectedMessage.isStarred ? 'ph:star-fill' : 'ph:star'"></iconify-icon>
-            </button>
-            <button class="detail-action-btn" title="Reply" (click)="replyTo(selectedMessage)">
-              <iconify-icon icon="uil:reply"></iconify-icon>
-            </button>
-            <button class="detail-action-btn danger" (click)="deleteMessage(selectedMessage.id, $event)" title="Delete">
-              <iconify-icon icon="material-symbols:delete-outline"></iconify-icon>
-            </button>
-          </div>
-        </div>
-
-        <!-- Meta -->
-        <div class="msg-detail-meta">
-          <div class="meta-avatar">{{ getInitial(selectedMessage.senderId) }}</div>
-          <div class="meta-info">
-            <div class="meta-name">{{ selectedMessage.senderId }}</div>
-            <div class="meta-to">To: {{ selectedMessage.receiverId }}</div>
-          </div>
-          <div class="meta-time">{{ selectedMessage.createdAt | date:'medium' }}</div>
-        </div>
-
-        <!-- Body -->
-        <div class="msg-detail-body">
-          {{ selectedMessage.content }}
-        </div>
-
-        <!-- Quick Reply -->
-        <div class="p-16 border-top" *ngIf="showReplyBox">
-          <div class="mb-10 d-flex align-items-center justify-content-between">
-            <span class="fw-semibold text-sm text-primary-light">Quick Reply</span>
-            <button class="detail-action-btn" (click)="showReplyBox = false"><iconify-icon
-                icon="radix-icons:cross-2"></iconify-icon></button>
-          </div>
-          <textarea class="form-control mb-10" rows="3" placeholder="Type your reply..."
-            [(ngModel)]="replyContent"></textarea>
-          <button class="btn btn-primary btn-sm" (click)="sendReply(selectedMessage)">
-            <iconify-icon icon="ion:paper-plane-outline" class="me-1"></iconify-icon> Send Reply
-          </button>
-        </div>
-      </ng-container>
-
     </div>
   </div>
 </div>
 
-<!-- ===== Compose Modal ===== -->
-<div class="modal fade compose-modal" id="composeModal" tabindex="-1" aria-hidden="true">
+<!-- ═════ Compose Modal ═════ -->
+<div class="modal fade" id="composeModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
   <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">
-          <iconify-icon icon="fa6-solid:pen-to-square" class="me-2"></iconify-icon>
-          New Message
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-content premium-modal-content">
+      <div class="premium-modal-header">
+        <div class="header-icon-box maroon">
+          <iconify-icon icon="solar:pen-new-square-bold"></iconify-icon>
+        </div>
+        <div>
+          <h5 class="modal-title mb-1">Compose Message</h5>
+          <p class="text-xs opacity-75 mb-0">Write and send a new formal communication</p>
+        </div>
+        <button type="button" class="modal-close-btn" data-bs-dismiss="modal">
+          <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+        </button>
       </div>
+      
       <form (ngSubmit)="onSubmitCompose()" #composeForm="ngForm">
-        <div class="modal-body">
-          <div class="mb-16">
-            <label class="form-label">To (Recipient)</label>
-            <select class="form-select" name="receiverId" [(ngModel)]="newMessage.receiverId" required>
-              <option value="">— Select Recipient —</option>
-              <option *ngFor="let staff of allStaff" [value]="staff.staffId">
-                {{ staff.staffName }} — {{ staff.email || 'No email' }}
-              </option>
-            </select>
+        <div class="modal-body p-24">
+          <div class="premium-form-grid">
+            <div class="form-group">
+              <label class="premium-label">Recipient</label>
+              <div class="premium-input-wrapper">
+                <iconify-icon icon="solar:user-broken" class="input-icon"></iconify-icon>
+                <select class="premium-select" name="receiverId" [(ngModel)]="newMessage.receiverId" required>
+                  <option value="">— Select Staff Member —</option>
+                  <option *ngFor="let staff of allStaff" [value]="staff.staffId">
+                    {{ staff.staffName }} — {{ staff.email || 'No email' }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="premium-label">Subject</label>
+              <div class="premium-input-wrapper">
+                <iconify-icon icon="solar:tag-horizontal-broken" class="input-icon"></iconify-icon>
+                <input type="text" class="premium-input" name="subject" [(ngModel)]="newMessage.subject"
+                  placeholder="What is this regarding?" required>
+              </div>
+            </div>
           </div>
-          <div class="mb-16">
-            <label class="form-label">Subject</label>
-            <input type="text" class="form-control" name="subject" [(ngModel)]="newMessage.subject"
-              placeholder="Enter message subject" required>
-          </div>
-          <div class="mb-8">
-            <label class="form-label">Message</label>
-            <textarea class="form-control" name="content" [(ngModel)]="newMessage.content" rows="8"
-              placeholder="Write your message here..." required></textarea>
+
+          <div class="form-group mt-20">
+            <label class="premium-label">Message Content</label>
+            <div class="premium-input-wrapper content-wrapper">
+              <textarea class="premium-textarea" name="content" [(ngModel)]="newMessage.content" rows="8"
+                placeholder="Type your message content here..." required></textarea>
+            </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary btn-sm" [disabled]="!composeForm.form.valid"
-            data-bs-dismiss="modal">
-            <iconify-icon icon="ion:paper-plane-outline" class="me-1"></iconify-icon>
+
+        <div class="modal-footer premium-modal-footer">
+          <button type="button" class="btn-secondary-light px-24" data-bs-dismiss="modal">Discard</button>
+          <button type="submit" class="premium-btn maroon px-32" [disabled]="!composeForm.form.valid" data-bs-dismiss="modal">
+            <iconify-icon icon="solar:plain-2-bold"></iconify-icon>
             Send Message
           </button>
         </div>
