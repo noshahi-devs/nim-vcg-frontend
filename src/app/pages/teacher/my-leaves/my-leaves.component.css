@@ -1449,40 +1449,11 @@
 ======================== */
 .reason-cell {
   position: relative;
+  overflow: visible !important;
 }
 
-.reason-tooltip {
-  display: none;
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  z-index: 200;
-  background: #1e293b;
-  color: #f8fafc;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.5;
-  padding: 8px 12px;
-  border-radius: 10px;
-  white-space: normal;
-  width: 260px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  pointer-events: none;
-}
+/* Tooltip definitions removed from here as they were conflicting with the upgraded version below */
 
-.reason-tooltip::before {
-  content: '';
-  position: absolute;
-  top: -6px;
-  left: 14px;
-  border-width: 0 6px 6px;
-  border-style: solid;
-  border-color: transparent transparent #1e293b transparent;
-}
-
-.reason-cell:hover .reason-tooltip {
-  display: block;
-}
 
 /* ========================
    PREMIUM MODAL & OVERLAY
@@ -1536,22 +1507,25 @@
   bottom: calc(100% + 12px); /* Always open upwards for safety in bottom rows */
   left: 50%;
   transform: translateX(-50%) translateY(10px);
-  background: rgba(15, 23, 42, 0.95);
+  background: rgba(15, 23, 42, 0.98);
   backdrop-filter: blur(8px);
   color: #fff;
   padding: 10px 14px;
   border-radius: 12px;
   font-size: 12px;
   line-height: 1.5;
-  width: 240px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  width: max-content;
+  max-width: 280px;
+  white-space: normal;
+  word-wrap: break-word;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   opacity: 0;
   visibility: hidden;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 100;
+  z-index: 500;
   pointer-events: none;
   text-align: left;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .reason-tooltip::after {
