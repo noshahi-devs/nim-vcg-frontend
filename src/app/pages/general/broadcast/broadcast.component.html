@@ -1,186 +1,199 @@
 <div class="dashboard-main-body">
-    <app-breadcrumb [title]="'Communications / Broadcast'" [main-title]="'Broadcast'" [icon]="'mdi:megaphone-outline'"></app-breadcrumb>
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
+    <app-breadcrumb [title]="'Communications / Broadcast'" [main-title]="'Broadcast'"></app-breadcrumb>
+  </div>
 
-    <div class="row gy-4">
-        <!-- ===== Compose Broadcast Card ===== -->
-        <div class="col-lg-5 col-xl-4">
-            <div class="broadcast-compose-card card p-0 overflow-hidden">
-                <div class="broadcast-card-header">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="broadcast-icon-wrap">
-                            <iconify-icon icon="mdi:bullhorn-outline" class="text-white"
-                                style="font-size:28px;"></iconify-icon>
-                        </div>
-                        <div>
-                            <h5 class="text-white mb-1 fw-bold">Send Broadcast</h5>
-                            <p class="text-white mb-0 opacity-75 text-sm">Notify all users or specific roles</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-body p-24">
-                    <form (ngSubmit)="sendBroadcast()" #broadcastForm="ngForm">
-                        <div class="mb-20">
-                            <label class="broadcast-label">Target Audience Roles</label>
-                            <div class="role-pills">
-                                <button type="button" *ngFor="let role of availableRoles" class="role-pill"
-                                    [class.active]="selectedRoles.includes(role)" (click)="toggleRole(role)">
-                                    <iconify-icon [icon]="getRoleIcon(role)" class="me-1"></iconify-icon>
-                                    {{ role }}
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Targeted Subjects (Teachers Only) -->
-                        <div class="mb-20" *ngIf="isTeacher && getUniqueSubjects().length > 0">
-                            <label class="broadcast-label">Target Subjects</label>
-                            <div class="role-pills">
-                                <button type="button" *ngFor="let subject of getUniqueSubjects()"
-                                    class="role-pill subject-pill"
-                                    [class.active]="selectedSubjectIds.includes(subject.id)"
-                                    (click)="toggleSubject(subject.id)">
-                                    <iconify-icon icon="solar:book-bookmark-bold-duotone" class="me-1"></iconify-icon>
-                                    {{ subject.name }}
-                                </button>
-                            </div>
-                            <p class="text-xs text-secondary-light mt-8">
-                                <span *ngIf="selectedSubjectIds.length === 0">Select subjects to notify students of
-                                    their performance.</span>
-                                <span *ngIf="selectedSubjectIds.length > 0">Targeting Students in: <strong>{{
-                                        selectedSubjectIds.length }} subjects</strong></span>
-                            </p>
-                        </div>
-
-                        <!-- Targeted Sections (Teachers Only) -->
-                        <div class="mb-20" *ngIf="isTeacher && assignedSections.length > 0">
-                            <label class="broadcast-label">Target Sections</label>
-                            <div class="role-pills">
-                                <button type="button" *ngFor="let section of assignedSections"
-                                    class="role-pill section-pill"
-                                    [class.active]="selectedSectionIds.includes(section.sectionId)"
-                                    (click)="toggleSection(section.sectionId)">
-                                    <iconify-icon icon="mdi:google-classroom" class="me-1"></iconify-icon>
-                                    {{ section.className }} - {{ section.sectionName }}
-                                </button>
-                            </div>
-                            <p class="text-xs text-secondary-light mt-8">
-                                <span *ngIf="selectedSectionIds.length === 0">You can also select specific
-                                    classes.</span>
-                                <span *ngIf="selectedSectionIds.length > 0">Targeting: <strong>{{
-                                        selectedSectionIds.length }} sections</strong></span>
-                            </p>
-                        </div>
-
-                        <div class="mb-20" *ngIf="!isTeacher">
-                            <p class="text-xs text-secondary-light mt-8">
-                                <span *ngIf="selectedRoles.length === 0">Select one or more roles. Leave empty to notify
-                                    everyone.</span>
-                                <span *ngIf="selectedRoles.length > 0">Notifying: <strong>{{ selectedRoles.join(', ')
-                                        }}</strong></span>
-                            </p>
-                        </div>
-
-                        <div class="mb-20">
-                            <label class="broadcast-label">Notification Title</label>
-                            <input type="text" class="broadcast-input" name="title" [(ngModel)]="broadcastData.title"
-                                placeholder="e.g. School Closed Tomorrow" required maxlength="100">
-                        </div>
-
-                        <div class="mb-20">
-                            <label class="broadcast-label">Message</label>
-                            <textarea class="broadcast-input" name="message" [(ngModel)]="broadcastData.message"
-                                rows="5" placeholder="Write your broadcast message here..." required></textarea>
-                        </div>
-
-                        <div class="mb-20">
-                            <label class="broadcast-label">Priority</label>
-                            <div class="priority-selector">
-                                <button type="button" class="priority-btn"
-                                    [class.active]="broadcastData.priority === 'normal'"
-                                    (click)="broadcastData.priority = 'normal'">
-                                    <iconify-icon icon="carbon:circle-dash"></iconify-icon> Normal
-                                </button>
-                                <button type="button" class="priority-btn warning"
-                                    [class.active]="broadcastData.priority === 'important'"
-                                    (click)="broadcastData.priority = 'important'">
-                                    <iconify-icon icon="material-symbols:warning-outline"></iconify-icon> Important
-                                </button>
-                                <button type="button" class="priority-btn danger"
-                                    [class.active]="broadcastData.priority === 'urgent'"
-                                    (click)="broadcastData.priority = 'urgent'">
-                                    <iconify-icon icon="material-symbols:emergency-outline"></iconify-icon> Urgent
-                                </button>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="broadcast-submit-btn"
-                            [disabled]="!broadcastForm.form.valid || sending">
-                            <iconify-icon
-                                [icon]="sending ? 'eos-icons:loading' : 'ion:paper-plane-outline'"></iconify-icon>
-                            {{ sending ? 'Sending...' : 'Send Broadcast' }}
-                        </button>
-                    </form>
-
-                    <!-- Success Message -->
-                    <div *ngIf="successMsg" class="broadcast-success mt-16">
-                        <iconify-icon icon="material-symbols:check-circle-outline"></iconify-icon>
-                        {{ successMsg }}
-                    </div>
-                </div>
+  <div class="row">
+    <!-- ===== Compose Broadcast Card ===== -->
+    <div class="col-lg-5 col-xl-4">
+      <div class="table-glass-container">
+        <div class="premium-card-header maroon">
+          <div class="d-flex align-items-center gap-3">
+            <div class="header-icon-ring white">
+              <iconify-icon icon="mdi:bullhorn"></iconify-icon>
             </div>
+            <div>
+              <h5 class="text-white mb-0">Send Broadcast</h5>
+              <p class="text-white opacity-75 text-xs mb-0">Notify all users or specific roles</p>
+            </div>
+          </div>
         </div>
 
-        <!-- ===== Broadcast History ===== -->
-        <div class="col-lg-7 col-xl-8">
-            <div class="card p-0 overflow-hidden h-100">
-                <div class="card-header p-20 d-flex align-items-center justify-content-between border-bottom">
-                    <h5 class="fw-bold mb-0 text-primary-light">
-                        <iconify-icon icon="mdi:history" class="me-2"></iconify-icon>
-                        Broadcast History
-                    </h5>
-                    <button class="btn btn-outline-secondary btn-sm" (click)="loadLogs()">
-                        <iconify-icon icon="material-symbols:refresh" class="me-1"></iconify-icon>Refresh
-                    </button>
-                </div>
-
-                <!-- Loading Skeleton -->
-                <div *ngIf="loadingLogs" class="p-20">
-                    <div *ngFor="let i of [1,2,3]" class="broadcast-log-skeleton mb-16">
-                        <div class="skeleton-line"
-                            style="width:60%; height:14px; border-radius:6px; margin-bottom:8px;"></div>
-                        <div class="skeleton-line"
-                            style="width:90%; height:10px; border-radius:6px; margin-bottom:4px;"></div>
-                        <div class="skeleton-line" style="width:40%; height:10px; border-radius:6px;"></div>
-                    </div>
-                </div>
-
-                <!-- Log List -->
-                <div class="broadcast-log-scroll" *ngIf="!loadingLogs">
-                    <div *ngIf="logs.length === 0" class="broadcast-empty">
-                        <iconify-icon icon="mdi:bullhorn-outline"
-                            style="font-size:52px; opacity:0.2;"></iconify-icon>
-                        <p>No broadcasts sent yet</p>
-                    </div>
-
-                    <div *ngFor="let log of logs" class="broadcast-log-item">
-                        <div class="log-type-badge"
-                            [class]="'badge-' + (log.notificationType?.toLowerCase() || 'broadcast')">
-                            <iconify-icon icon="mdi:bullhorn-outline"></iconify-icon>
-                        </div>
-                        <div class="log-body">
-                            <div class="log-header">
-                                <span class="log-title">{{ log.title }}</span>
-                                <span class="log-time">{{ log.createdAt | date:'MMM d, h:mm a' }}</span>
-                            </div>
-                            <p class="log-message">{{ log.message }}</p>
-                            <div class="log-meta">
-                                <span class="log-type-tag">{{ log.notificationType || 'Broadcast' }}</span>
-                                <span *ngIf="log.isRead" class="log-read-tag">Read</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="compose-scroll-area">
+          <form (ngSubmit)="sendBroadcast()" #broadcastForm="ngForm">
+            <!-- Target Audience Roles -->
+            <div class="form-group-premium mb-24">
+              <label class="field-label">Target Audience Roles</label>
+              <div class="premium-pill-grid">
+                <button type="button" *ngFor="let role of availableRoles" class="glass-pill-btn"
+                  [class.active]="selectedRoles.includes(role)" (click)="toggleRole(role)">
+                  <iconify-icon [icon]="getRoleIcon(role)"></iconify-icon>
+                  {{ role }}
+                </button>
+              </div>
+              <p class="text-xs text-secondary-light mt-8 px-2" *ngIf="!isTeacher">
+                <iconify-icon icon="solar:info-circle-linear" class="me-1"></iconify-icon>
+                <span *ngIf="selectedRoles.length === 0">Leave empty to notify everyone.</span>
+                <span *ngIf="selectedRoles.length > 0">Targeting: <strong>{{ selectedRoles.join(', ') }}</strong></span>
+              </p>
             </div>
+
+            <!-- Targeted Subjects (Teachers Only) -->
+            <div class="form-group-premium mb-24" *ngIf="isTeacher && getUniqueSubjects().length > 0">
+              <label class="field-label">Target Subjects</label>
+              <div class="premium-pill-grid">
+                <button type="button" *ngFor="let subject of getUniqueSubjects()" class="glass-pill-btn subject"
+                  [class.active]="selectedSubjectIds.includes(subject.id)" (click)="toggleSubject(subject.id)">
+                  <iconify-icon icon="solar:book-bookmark-bold-duotone"></iconify-icon>
+                  {{ subject.name }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Targeted Sections (Teachers Only) -->
+            <div class="form-group-premium mb-24" *ngIf="isTeacher && assignedSections.length > 0">
+              <label class="field-label">Target Sections</label>
+              <div class="premium-pill-grid">
+                <button type="button" *ngFor="let section of assignedSections" class="glass-pill-btn section"
+                  [class.active]="selectedSectionIds.includes(section.sectionId)"
+                  (click)="toggleSection(section.sectionId)">
+                  <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
+                  {{ section.className }} - {{ section.sectionName }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Title -->
+            <div class="form-group-premium mb-20">
+              <label class="field-label">Notification Title</label>
+              <div class="premium-input-wrapper">
+                <input type="text" class="premium-input ps-40" name="title" [(ngModel)]="broadcastData.title"
+                  placeholder="e.g. School Closed Tomorrow" required maxlength="100">
+              </div>
+            </div>
+
+            <!-- Message -->
+            <div class="form-group-premium mb-24">
+              <label class="field-label">Message Content</label>
+              <textarea class="premium-textarea" name="message" [(ngModel)]="broadcastData.message" rows="5"
+                placeholder="Write your broadcast message here..." required></textarea>
+            </div>
+
+            <!-- Priority -->
+            <div class="form-group-premium mb-32">
+              <label class="field-label">Set Priority</label>
+              <div class="priority-pills">
+                <button type="button" class="priority-pill" [class.active]="broadcastData.priority === 'normal'"
+                  (click)="broadcastData.priority = 'normal'">
+                  <span class="p-dot normal"></span> Normal
+                </button>
+                <button type="button" class="priority-pill important"
+                  [class.active]="broadcastData.priority === 'important'"
+                  (click)="broadcastData.priority = 'important'">
+                  <span class="p-dot important"></span> Important
+                </button>
+                <button type="button" class="priority-pill urgent" [class.active]="broadcastData.priority === 'urgent'"
+                  (click)="broadcastData.priority = 'urgent'">
+                  <span class="p-dot urgent"></span> Urgent
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="premium-btn maroon w-100" [disabled]="!broadcastForm.form.valid || sending">
+              <iconify-icon icon="mdi:send"></iconify-icon>
+              {{ sending ? 'Sending Broadcast...' : 'Submit Broadcast' }}
+            </button>
+          </form>
+
+          <!-- Success Alert -->
+          <div *ngIf="successMsg" class="premium-alert mt-16" [class.success]="!successMsg.includes('Failed')">
+            <iconify-icon
+              [icon]="successMsg.includes('Failed') ? 'mdi:alert-circle' : 'mdi:check-circle'"></iconify-icon>
+            {{ successMsg }}
+          </div>
         </div>
+      </div>
     </div>
+
+    <!-- ===== Broadcast History ===== -->
+    <div class="col-lg-7 col-xl-8">
+      <div class="table-glass-container">
+        <div class="table-glass-header">
+          <div class="d-flex align-items-center gap-3">
+            <div class="header-icon-ring maroon">
+              <iconify-icon icon="mdi:history"></iconify-icon>
+            </div>
+            <div>
+              <h5 class="mb-0">Broadcast History</h5>
+              <p class="text-xs text-secondary-light mb-0">Record of recently sent notifications</p>
+            </div>
+          </div>
+          <button class="icon-btn-glass" (click)="loadLogs()" [disabled]="loadingLogs">
+            <iconify-icon [icon]="loadingLogs ? 'eos-icons:loading' : 'mdi:refresh'"></iconify-icon>
+          </button>
+        </div>
+
+        <div class="broadcast-log-container">
+          <!-- Loading Skeletons -->
+          <div *ngIf="loadingLogs" class="p-24">
+            <div *ngFor="let i of [1,2,3,4]" class="skeleton-log-item mb-20">
+              <div class="skeleton-ring"></div>
+              <div class="flex-1">
+                <div class="skeleton-line w-40 mb-10"></div>
+                <div class="skeleton-line w-100 mb-6"></div>
+                <div class="skeleton-line w-75"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Log List -->
+          <div class="log-scroll-area" *ngIf="!loadingLogs">
+            <div *ngIf="logs.length === 0" class="empty-log-state">
+              <div class="empty-icon-box">
+                <iconify-icon icon="mdi:bullhorn-outline"></iconify-icon>
+              </div>
+              <h5>No Broadcasts Sent</h5>
+              <p>Your notification history will appear here.</p>
+            </div>
+
+            <div *ngFor="let log of logs" class="premium-log-item">
+              <div class="type-icon-ring" [ngClass]="log.notificationType?.toLowerCase() || 'broadcast'">
+                <iconify-icon
+                  [icon]="log.notificationType === 'Urgent' ? 'mdi:alert-circle' : 'mdi:bullhorn'"></iconify-icon>
+              </div>
+              <div class="log-content">
+                <div class="log-top">
+                  <h6 class="log-title">{{ log.title }}</h6>
+                  <span class="log-date">
+                    <iconify-icon icon="mdi:calendar"></iconify-icon>
+                    {{ log.createdAt | date:'MMM d, h:mm a' }}
+                  </span>
+                </div>
+                <p class="log-msg">{{ log.message }}</p>
+                <div class="log-footer">
+                  <span class="type-badge" [ngClass]="log.notificationType?.toLowerCase() || 'broadcast'">
+                    {{ log.notificationType || 'Broadcast' }}
+                  </span>
+                  <span *ngIf="log.isRead" class="read-status">
+                    <iconify-icon icon="mdi:check-all"></iconify-icon> Seen
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Standardized Processing Overlay -->
+  <div class="premium-overlay" *ngIf="sending">
+    <div class="processing-card">
+      <div class="loader-ring"></div>
+      <div class="processing-content">
+        <p class="pc-title">Broadcasting...</p>
+        <p class="pc-subtitle">Notifying all target users</p>
+      </div>
+    </div>
+  </div>
 </div>

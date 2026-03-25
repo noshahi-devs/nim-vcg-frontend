@@ -144,7 +144,7 @@ export class BroadcastComponent implements OnInit {
             'Principal': 'mdi:account-tie',
             'Teacher': 'mdi:teach',
             'Accountant': 'mdi:calculator',
-            'Student': 'mdi:account-school'
+            'Student': 'mdi:account-group'
         };
         return icons[role] || 'mdi:account';
     }
