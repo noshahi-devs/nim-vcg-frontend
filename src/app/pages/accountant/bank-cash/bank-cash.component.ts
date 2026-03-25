@@ -286,6 +286,10 @@ export class BankCashComponent implements OnInit {
   formatCurrency(amount: number): string {
     return new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', minimumFractionDigits: 0 }).format(amount);
   }
+
+  getInitial(name: string | undefined): string {
+    return name ? name.charAt(0).toUpperCase() : '?';
+  }
 }
 
 
