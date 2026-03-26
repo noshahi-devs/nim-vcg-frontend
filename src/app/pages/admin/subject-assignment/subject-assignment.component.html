@@ -284,7 +284,7 @@
                 <button class="pm-btn pm-save" (click)="removeAssignment(null)" [disabled]="isProcessing"
                     style="background: #ef4444; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
                     <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
-                    {{ isProcessing ? 'Archiving...' : 'Delete Permanently' }}
+                    {{ isProcessing ? 'Deleting...' : 'Delete Permanently' }}
                 </button>
             </div>
         </div>

@@ -245,7 +245,7 @@
                   <div class="empty-glass-state my-16 mx-auto" style="max-width: 600px; margin-top: 32px; margin-bottom: 32px;">
                     <iconify-icon class="empty-icon" icon="solar:shield-network-bold-duotone"></iconify-icon>
                     <h5>No gateways</h5>
-                    <p>No external gateways configured.</p>
+                    <p>No external gateways set up.</p>
                   </div>
                 </td>
               </tr>
@@ -390,7 +390,7 @@
         <iconify-icon icon="solar:shield-keyhole-bold"></iconify-icon>
       </div>
       <div>
-        <h5 class="mb-1 fw-bold">{{ isEditGatewayMode ? 'Configure Gateway' : 'New Gateway Integration' }}</h5>
+        <h5 class="mb-1 fw-bold">{{ isEditGatewayMode ? 'Edit Gateway' : 'New Gateway Integration' }}</h5>
         <p class="text-xs opacity-75 mb-0">Secure digital payment processing settings</p>
       </div>
       <button class="modal-close-btn" (click)="closeGatewayModal()">
@@ -445,7 +445,7 @@
       <button class="pm-btn pm-cancel" (click)="closeGatewayModal()">Close</button>
       <button class="glass-pill-btn" (click)="saveGateway()">
         <iconify-icon icon="solar:plug-circle-bold"></iconify-icon>
-        Deploy Configuration
+        Deploy Settings
       </button>
     </div>
   </div>

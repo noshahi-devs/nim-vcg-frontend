@@ -169,7 +169,7 @@ export class GeneralSettingsComponent implements OnInit {
         this.settingsService.updateGeneralSettings(settingsToSend).subscribe({
             next: () => {
                 this.isSaving = false;
-                this.showFeedback('success', 'Settings Saved', 'General institute configurations have been updated successfully.');
+                this.showFeedback('success', 'Settings Saved', 'General institute settings have been updated successfully.');
                 this.sessionService.refreshSession(true);
             },
             error: () => {

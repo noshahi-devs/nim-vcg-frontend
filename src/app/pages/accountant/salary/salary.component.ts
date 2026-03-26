@@ -185,14 +185,14 @@ export class SalaryComponent implements OnInit {
         this.isProcessing = false;
         this.showDeleteModal = false;
         this.salaryToDeleteId = null;
-        this.showFeedback('success', 'Archived Successfully', 'The salary record has been permanently deleted.');
+        this.showFeedback('success', 'Deleted Successfully', 'The salary record has been permanently deleted.');
         this.loadSalaries();
       },
       error: () => {
         this.isProcessing = false;
         this.showDeleteModal = false;
         this.salaryToDeleteId = null;
-        this.showFeedback('error', 'Archive Failed', 'Could not delete the salary record. Please try again.');
+        this.showFeedback('error', 'Deletion Failed', 'Could not delete the salary record. Please try again.');
       }
     });
   }

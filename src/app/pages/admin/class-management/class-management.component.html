@@ -164,12 +164,12 @@
                     <iconify-icon icon="solar:user-plus-bold-duotone"></iconify-icon>
                   </a>
                   <a [routerLink]="['/section-add']" [queryParams]="{ className: cls.standardName }"
-                    class="icon-btn btn-section" title="Configure Sections"
+                    class="icon-btn btn-section" title="Section Settings"
                     *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
                     <iconify-icon icon="solar:layers-bold-duotone"></iconify-icon>
                   </a>
                   <button type="button" (click)="openDeleteModal(cls)" class="icon-btn btn-delete"
-                    title="Archive Record" *ngIf="authService.hasRole('Admin')">
+                    title="Delete Record" *ngIf="authService.hasRole('Admin')">
                     <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
                   </button>
                 </div>

@@ -124,7 +124,8 @@
     <div class="pagination-bar" *ngIf="filteredStaffList.length > 0 && !loading">
       <p class="pagination-info mb-0">
         Showing <b>{{ (currentPage - 1) * rowsPerPage + 1 }}</b> to
-        <b>{{ Math.min(currentPage * rowsPerPage, filteredStaffList.length) }}</b> of <b>{{ filteredStaffList.length }}</b> staff
+        <b>{{ Math.min(currentPage * rowsPerPage, filteredStaffList.length) }}</b> of <b>{{ filteredStaffList.length
+          }}</b> staff
       </p>
       <nav>
         <ul class="pagination-pills">
@@ -169,7 +170,7 @@
         <button class="pm-btn pm-save" (click)="deleteStaff()" [disabled]="isProcessing"
           style="background: #ef4444; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
           <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
-          {{ isProcessing ? 'Archiving...' : 'Delete Permanently' }}
+          {{ isProcessing ? 'Deleting...' : 'Delete Permanently' }}
         </button>
       </div>
     </div>
