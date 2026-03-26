@@ -86,7 +86,7 @@
 
         <div class="es-card-head">
           <div class="es-avatar-wrap">
-            <img [src]="staff.imagePath || defaultImage" class="es-avatar" />
+            <img [src]="getImage(staff.imagePath)" class="es-avatar" />
           </div>
           <h6 class="es-card-title">{{ staff.staffName }}</h6>
           <span class="es-card-subtitle">{{ staff.email || 'No email provided' }}</span>

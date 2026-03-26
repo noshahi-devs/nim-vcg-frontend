@@ -259,13 +259,13 @@
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-primary-600"></i> Create Exam</a></li>
+                class="ri-circle-fill circle-icon text-primary-600"></i> Create Exam Type</a></li>
           <li><a routerLink="/exam-schedule" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-warning-main"></i> Exam Schedule</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-schedule-standards-create"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Template Std</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-schedule-standards-list"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-info-main"></i> Template List</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-info-main"></i> Exam Classes List</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-schedule-standards-create"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Add Exam Classes</a></li>
           <li *ngIf="hasAnyRole(['Teacher'])"><a routerLink="/marks-entry" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-success-main"></i> Marks Entry</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/auto-grade-calculation"

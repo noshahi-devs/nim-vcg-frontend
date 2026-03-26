@@ -8,6 +8,7 @@ import { Designation } from '../../../Models/staff';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import Swal from '../../../swal';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-staff-list',
@@ -35,6 +36,15 @@ export class StaffListComponent implements OnInit, AfterViewInit {
   feedbackTitle = '';
   feedbackMessage = '';
   isProcessing = false;
+
+  apiBaseUrl = environment.apiBaseUrl;
+
+  getImage(imagePath: string | undefined): string {
+    if (!imagePath) return this.defaultImage;
+    if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
+    const normalizedPath = imagePath.replace(/\\/g, '/');
+    return `${this.apiBaseUrl}/${normalizedPath}`;
+  }
 
   // For Deletion Confirmation
   showDeleteModal = false;

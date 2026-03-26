@@ -196,12 +196,12 @@
               </td>
             </tr>
             <tr *ngIf="filteredTransactions.length === 0">
-              <td colspan="9" class="empty-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-                  <polyline points="13 2 13 9 20 9" />
-                </svg>
-                <p>No transactions found</p>
+              <td colspan="9" class="p-0 border-0 bg-transparent">
+                <div class="empty-glass-state my-16 mx-auto" style="max-width: 600px; margin-top: 32px; margin-bottom: 32px;">
+                  <iconify-icon class="empty-icon" icon="solar:bill-list-bold-duotone"></iconify-icon>
+                  <h5>No transactions found</h5>
+                  <p>No transactions matching your criteria.</p>
+                </div>
               </td>
             </tr>
           </tbody>

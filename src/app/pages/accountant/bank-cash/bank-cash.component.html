@@ -111,7 +111,13 @@
                 </td>
               </tr>
               <tr *ngIf="bankAccounts.length === 0">
-                <td colspan="5" class="text-center py-48 opacity-50">No bank accounts registered.</td>
+                <td colspan="5" class="p-0 border-0 bg-transparent">
+                  <div class="empty-glass-state my-16 mx-auto" style="max-width: 600px; margin-top: 32px; margin-bottom: 32px;">
+                    <iconify-icon class="empty-icon" icon="solar:safe-square-bold-duotone"></iconify-icon>
+                    <h5>No accounts found</h5>
+                    <p>No bank accounts registered.</p>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -168,7 +174,13 @@
                 </td>
               </tr>
               <tr *ngIf="cashAccounts.length === 0">
-                <td colspan="5" class="text-center py-48 opacity-50">No cash accounts tracked.</td>
+                <td colspan="5" class="p-0 border-0 bg-transparent">
+                  <div class="empty-glass-state my-16 mx-auto" style="max-width: 600px; margin-top: 32px; margin-bottom: 32px;">
+                    <iconify-icon class="empty-icon" icon="solar:wad-of-money-bold-duotone"></iconify-icon>
+                    <h5>No cash vaults</h5>
+                    <p>No cash accounts tracked.</p>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -229,7 +241,13 @@
                 </td>
               </tr>
               <tr *ngIf="paymentGateways.length === 0">
-                <td colspan="5" class="text-center py-48 opacity-50">No external gateways configured.</td>
+                <td colspan="5" class="p-0 border-0 bg-transparent">
+                  <div class="empty-glass-state my-16 mx-auto" style="max-width: 600px; margin-top: 32px; margin-bottom: 32px;">
+                    <iconify-icon class="empty-icon" icon="solar:shield-network-bold-duotone"></iconify-icon>
+                    <h5>No gateways</h5>
+                    <p>No external gateways configured.</p>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>

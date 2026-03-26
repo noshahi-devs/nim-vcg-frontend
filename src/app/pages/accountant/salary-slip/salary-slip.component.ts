@@ -193,6 +193,8 @@ export class SalarySlipComponent implements OnInit {
         (salary.taxes || 0)
       );
 
+      const staffImagePath = staffMatch ? this.getStaffImage(staffMatch.imagePath) : '';
+
       return {
         id: salary.staffSalaryId || 0,
         staffId: salary.staffId ? `EMP-${String(salary.staffId).padStart(4, '0')}` : (staffMatch ? `EMP-${String(staffMatch.staffId).padStart(4, '0')}` : 'EMP-0000'),
@@ -210,7 +212,7 @@ export class SalarySlipComponent implements OnInit {
         date: displayDate,
         status: 'Paid',
         role: staffMatch ? String(staffMatch.designation || 'Staff') : 'Staff',
-        imagePath: staffMatch ? staffMatch.imagePath : ''
+        imagePath: staffImagePath
       };
     });
   }
@@ -290,7 +292,8 @@ export class SalarySlipComponent implements OnInit {
           savingFund: this.savingFund,
           taxes: this.taxes,
           netSalary: this.netSalary,
-          status: 'Paid'
+          status: 'Paid',
+          imagePath: this.getStaffImage(this.staffList.find(s => s.staffId.toString() === this.staffId)?.imagePath)
         };
 
         this.salaryRecords.unshift(newRecord);
@@ -478,17 +481,10 @@ export class SalarySlipComponent implements OnInit {
     }
   }
 
-  getStaffImageByStaffName(name: string): string {
-    if (!name || !this.staffList || this.staffList.length === 0) return '';
-    const cleanName = name.trim().toLowerCase();
-    const staffMatch = this.staffList.find(s =>
-      s.staffName?.trim().toLowerCase() === cleanName
-    );
-    return this.getStaffImage(staffMatch?.imagePath);
-  }
+
 
   getStaffImage(imagePath: string | undefined): string {
-    if (!imagePath) return '';
+    if (!imagePath) return window.location.origin + '/assets/images/user-grid/user-grid-img2.png';
     if (imagePath.startsWith('data:')) return imagePath;
     if (imagePath.startsWith('http')) return imagePath;
     return `${this.apiBaseUrl}/${imagePath}`;

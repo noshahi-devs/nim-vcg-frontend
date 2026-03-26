@@ -1,138 +1,161 @@
-<div class="dashboard-main-body exam-analytics-page">
-  <app-breadcrumb [title]="title"></app-breadcrumb>
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title" [icon]="'solar:chart-square-bold-duotone'"></app-breadcrumb>
 
-  <section class="ea-hero">
-    <div class="ea-hero-content">
-      <p class="ea-eyebrow">Principal Intelligence</p>
-      <h2>Exam Analytics Center</h2>
-      <p>Track pass trends, subject performance, and top outcomes with one clean dashboard.</p>
-      <div class="ea-meta">
-        <span>{{ exams.length }} exams</span>
-        <span>{{ classes.length }} classes</span>
-        <span *ngIf="analytics">{{ analytics.passPercentage }}% pass rate</span>
+  <!-- Glass Hero Panel -->
+  <div class="glass-hero-panel fade-in-up mt-16 mb-24">
+      <div class="hero-content">
+          <div>
+              <span class="hero-badge">Principal Intelligence</span>
+              <h2 class="hero-heading">Exam Analytics Center</h2>
+              <p class="hero-subtitle">Track pass trends, subject performance, and top outcomes with one clean dashboard.</p>
+              <div class="hero-tags mt-16">
+                  <span class="glass-tag">
+                      <iconify-icon icon="solar:document-bold-duotone" style="font-size: 16px;"></iconify-icon> {{ exams.length }} Exams
+                  </span>
+                  <span class="glass-tag">
+                      <iconify-icon icon="solar:users-group-two-rounded-bold-duotone" style="font-size: 16px;"></iconify-icon> {{ classes.length }} Classes
+                  </span>
+                  <span class="glass-tag" *ngIf="analytics">
+                      <iconify-icon icon="solar:chart-2-bold-duotone" style="font-size: 16px;"></iconify-icon> {{ analytics.passPercentage }}% Pass Rate
+                  </span>
+              </div>
+          </div>
+          <div class="hero-graphic d-none d-lg-block">
+              <iconify-icon icon="solar:chart-square-bold-duotone" class="pulsing-icon text-maroon" style="font-size: 8rem; opacity: 0.8;"></iconify-icon>
+          </div>
       </div>
-    </div>
-  </section>
+  </div>
 
-  <section class="ea-panel ea-controls">
-    <div class="ea-control-item">
-      <label class="ea-label">Select Exam</label>
-      <select class="ea-select" [(ngModel)]="selectedExamId" (change)="loadAnalytics()" name="exam">
-        <option [ngValue]="null" disabled selected hidden>Select Exam</option>
+  <!-- Filters / Controls Panel -->
+  <div class="glass-controls-panel fade-in-up mb-24" style="animation-delay: 0.1s;">
+    <div class="control-item">
+      <label class="control-label">Select Exam</label>
+      <select class="glass-select" [(ngModel)]="selectedExamId" (change)="loadAnalytics()" name="exam">
+        <option [ngValue]="null" disabled selected hidden>Select Exam...</option>
         <option *ngFor="let exam of exams" [ngValue]="exam.examId">{{ exam.examName }}</option>
       </select>
     </div>
 
-    <div class="ea-control-item">
-      <label class="ea-label">Select Class</label>
-      <select class="ea-select" [(ngModel)]="selectedClassId" (change)="onClassChange()" name="class">
+    <div class="control-item">
+      <label class="control-label">Select Class</label>
+      <select class="glass-select" [(ngModel)]="selectedClassId" (change)="onClassChange()" name="class">
         <option [ngValue]="null">All Classes</option>
         <option *ngFor="let cls of classes" [ngValue]="cls.standardId">{{ cls.standardName }}</option>
       </select>
     </div>
 
-    <div class="ea-control-item">
-      <label class="ea-label">Select Section</label>
-      <select class="ea-select" [(ngModel)]="selectedSectionId" (change)="loadAnalytics()" name="section"
-        [disabled]="!selectedClassId">
+    <div class="control-item">
+      <label class="control-label">Select Section</label>
+      <select class="glass-select" [(ngModel)]="selectedSectionId" (change)="loadAnalytics()" name="section" [disabled]="!selectedClassId">
         <option [ngValue]="null">All Sections</option>
         <option *ngFor="let sec of sections" [ngValue]="sec.sectionId">{{ sec.sectionName }}</option>
       </select>
     </div>
-  </section>
-
-  <div *ngIf="isLoading" class="ea-loading">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p>Loading exam analytics...</p>
   </div>
 
-  <div *ngIf="analytics && !isLoading" class="ea-content">
-    <section class="ea-stats">
-      <article class="ea-stat-card">
-        <div class="ea-stat-icon primary">
+  <!-- Loading View -->
+  <div *ngIf="isLoading" class="loading-spinner fade-in-up">
+    <div class="spinner-border" role="status"></div>
+    <p>Crunching analytics data...</p>
+  </div>
+
+  <!-- Analytics Content -->
+  <div *ngIf="analytics && !isLoading" class="fade-in-up" style="animation-delay: 0.2s;">
+    
+    <!-- Stats Row -->
+    <div class="stats-row mb-24">
+      <div class="stat-card-glass">
+        <div class="stat-icon-box primary-blue">
           <iconify-icon icon="solar:chart-2-bold-duotone"></iconify-icon>
         </div>
-        <div>
-          <p class="ea-stat-label">Pass Percentage</p>
-          <h4>{{ analytics.passPercentage }}%</h4>
+        <div class="stat-info">
+          <span class="stat-label">Pass Rate</span>
+          <h3 class="stat-value">{{ analytics.passPercentage }}%</h3>
         </div>
-      </article>
-
-      <article class="ea-stat-card">
-        <div class="ea-stat-icon success">
-          <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
-        </div>
-        <div>
-          <p class="ea-stat-label">Passed Students</p>
-          <h4>{{ analytics.passedStudents }} <span>/ {{ analytics.totalStudents }}</span></h4>
-        </div>
-      </article>
-
-      <article class="ea-stat-card">
-        <div class="ea-stat-icon danger">
-          <iconify-icon icon="solar:shield-cross-bold-duotone"></iconify-icon>
-        </div>
-        <div>
-          <p class="ea-stat-label">Failed Students</p>
-          <h4>{{ analytics.failedStudents }}</h4>
-        </div>
-      </article>
-
-      <article class="ea-stat-card">
-        <div class="ea-stat-icon highlight">
-          <iconify-icon icon="solar:crown-star-bold-duotone"></iconify-icon>
-        </div>
-        <div>
-          <p class="ea-stat-label">Top Performer</p>
-          <h4 class="ea-performer">{{ analytics.topPerformer || 'N/A' }}</h4>
-        </div>
-      </article>
-    </section>
-
-    <section class="ea-panel ea-table-panel">
-      <div class="ea-table-head">
-        <h5>Subject Performance Analysis</h5>
-        <span>{{ analytics.subjectWiseAnalytics?.length || 0 }} subjects</span>
       </div>
 
-      <div class="ea-table-wrap">
-        <table class="ea-table">
+      <div class="stat-card-glass">
+        <div class="stat-icon-box success-teal">
+          <iconify-icon icon="solar:shield-check-bold-duotone"></iconify-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Passed Students</span>
+          <h3 class="stat-value">{{ analytics.passedStudents }} <span style="font-size: 1rem; color: #94a3b8;">/ {{ analytics.totalStudents }}</span></h3>
+        </div>
+      </div>
+
+      <div class="stat-card-glass">
+        <div class="stat-icon-box danger-red">
+          <iconify-icon icon="solar:shield-cross-bold-duotone"></iconify-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Failed Students</span>
+          <h3 class="stat-value">{{ analytics.failedStudents }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card-glass">
+        <div class="stat-icon-box premium-gold">
+          <iconify-icon icon="solar:crown-star-bold-duotone"></iconify-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Top Performer</span>
+          <h3 class="stat-value" style="font-size: 1.2rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;">{{ analytics.topPerformer || 'N/A' }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subject Performance Table Panel -->
+    <div class="table-glass-container fade-in-up" style="animation-delay: 0.3s;">
+      <div class="panel-sub-header">
+        <div>
+          <h5 class="panel-title m-0">Subject Performance Analysis</h5>
+        </div>
+        <div>
+          <span class="glass-tag">{{ analytics.subjectWiseAnalytics?.length || 0 }} subjects analyzed</span>
+        </div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="premium-table">
           <thead>
             <tr>
               <th>Subject</th>
-              <th>Average Marks</th>
+              <th>Avg Marks</th>
               <th>Highest Marks</th>
-              <th>Pass Percentage</th>
+              <th>Pass Rate</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let sub of analytics.subjectWiseAnalytics">
-              <td><span class="ea-subject">{{ sub.subjectName }}</span></td>
-              <td><span class="ea-pill neutral">{{ sub.averageMarks }}</span></td>
-              <td><span class="ea-pill primary">{{ sub.highestMarks }}</span></td>
+            <tr *ngFor="let sub of analytics.subjectWiseAnalytics" class="table-row">
+              <td><span class="fw-bold">{{ sub.subjectName }}</span></td>
+              <td><span class="value-pill neutral">{{ sub.averageMarks }}</span></td>
+              <td><span class="value-pill primary">{{ sub.highestMarks }}</span></td>
               <td>
-                <div class="ea-progress-row">
-                  <div class="ea-progress-track">
-                    <div class="ea-progress-fill" [style.width.%]="sub.passPercentage"
-                      [class.good]="sub.passPercentage >= 50"></div>
+                <div class="progress-inline">
+                  <div class="progress-track">
+                    <div class="progress-fill" [style.width.%]="sub.passPercentage" [class.good]="sub.passPercentage >= 50"></div>
                   </div>
-                  <span>{{ sub.passPercentage }}%</span>
+                  <span class="progress-text">{{ sub.passPercentage }}%</span>
                 </div>
               </td>
+            </tr>
+            <tr *ngIf="!analytics.subjectWiseAnalytics || analytics.subjectWiseAnalytics.length === 0">
+              <td colspan="4" class="text-center py-4 bg-transparent text-maroon fw-semibold">No subject data available.</td>
             </tr>
           </tbody>
         </table>
       </div>
-    </section>
+    </div>
   </div>
 
-  <section class="ea-panel ea-empty" *ngIf="!analytics && selectedExamId && !isLoading">
-    <iconify-icon icon="solar:chart-square-bold-duotone"></iconify-icon>
+  <!-- Empty State -->
+  <div class="empty-glass-state fade-in-up mt-24" *ngIf="!analytics && selectedExamId && !isLoading" style="animation-delay: 0.2s;">
+    <iconify-icon class="empty-icon" icon="solar:chart-square-bold-duotone"></iconify-icon>
     <h5>No analytics found</h5>
     <p>No exam analytics data is available for the selected filters.</p>
-  </section>
+  </div>
 </div>
-
 
 <!-- == Premium Feedback Modal == -->
 <div class="premium-overlay" *ngIf="showFeedbackModal">

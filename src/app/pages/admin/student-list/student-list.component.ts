@@ -417,7 +417,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
         return student.imagePath;
       }
       // Otherwise prepend API base URL
-      return `${environment.apiBaseUrl}/${student.imagePath}`;
+      const normalizedPath = student.imagePath.replace(/\\/g, '/');
+      return `${environment.apiBaseUrl}/${normalizedPath}`;
     }
 
     // 3. Fallback to default
