@@ -23,6 +23,7 @@ import { StudentService } from '../../../services/student.service';
 import { AcademicYear } from '../../../Models/academic-year';
 declare const $: any;
 import { CommonModule, NgIf } from "@angular/common";
+import { environment } from "../../../../environments/environment";
 
 @Component({
   selector: 'app-side-nav',
@@ -87,30 +88,20 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!isNaN(studentId)) {
         this.studentService.GetStudent(studentId).subscribe({
           next: (student) => {
-            if (student && student.studentName) {
-              this.displayName = student.studentName;
+            if (student) {
+              this.displayName = student.studentName || this.displayName;
+              this.profileImageUrl = this.resolveImageUrl(student.imagePath);
             }
           },
           error: () => { }
         });
       }
-    } else if (this.currentUser?.email && !this.currentUser?.fullName) {
-      this.staffService.getStaffByEmail(this.currentUser.email).subscribe({
-        next: (staff) => {
-          if (staff && staff.staffName) {
-            this.displayName = staff.staffName;
-          }
-          if (staff && staff.imagePath) {
-            this.profileImageUrl = staff.imagePath;
-          }
-        },
-        error: () => { }
-      });
     } else if (this.currentUser?.email) {
       this.staffService.getStaffByEmail(this.currentUser.email).subscribe({
         next: (staff) => {
-          if (staff && staff.imagePath) {
-            this.profileImageUrl = staff.imagePath;
+          if (staff) {
+            this.displayName = staff.staffName || this.displayName;
+            this.profileImageUrl = this.resolveImageUrl(staff.imagePath);
           }
         },
         error: () => { }
@@ -204,6 +195,17 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hasAnyRole(roles: string[]): boolean {
     return this.authService.hasAnyRole(roles);
+  }
+
+  resolveImageUrl(imagePath: string | undefined): string {
+    if (!imagePath) return 'assets/images/user.png';
+    // If it's already a full URL or base64, return as is
+    if (imagePath.startsWith('http') || imagePath.startsWith('data:') || imagePath.startsWith('assets/')) {
+      return imagePath;
+    }
+    // Otherwise prepend API base URL
+    const normalizedPath = imagePath.replace(/\\/g, '/').replace(/^\//, '');
+    return `${environment.apiBaseUrl}/${normalizedPath}`;
   }
 
 
