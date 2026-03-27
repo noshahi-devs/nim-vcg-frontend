@@ -167,16 +167,16 @@ export class CollectFeeComponent implements OnInit {
   }
 
   printReceipt() {
-    const printContent = document.getElementById('receipt')?.innerHTML;
-    if (!printContent) return;
-    const w = window.open('', '', 'height=600,width=800');
-    if (w) {
-      w.document.write('<html><head><title>Fee Receipt</title></head><body>');
-      w.document.write(printContent);
-      w.document.write('</body></html>');
-      w.document.close();
-      w.print();
-    }
+    if (!this.studentId) return;
+    // We navigate to the payment detail or invoice list to print, 
+    // but for immediate feedback, we can try to find the last payment ID.
+    this.commonService.getAllPaymentsByStudentId(this.studentId).subscribe(payments => {
+      if (payments && payments.length > 0) {
+        const lastPayment = payments[0]; // Assuming descending order
+        const url = `/invoice-preview/${lastPayment.monthlyPaymentId}?type=monthly&print=true`;
+        window.open(url, '_blank');
+      }
+    });
   }
 
   downloadReceipt() {

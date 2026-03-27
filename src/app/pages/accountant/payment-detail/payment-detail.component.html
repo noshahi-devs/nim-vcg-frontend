@@ -105,7 +105,7 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="header-actions">
+      <div class="header-actions no-print">
         <button class="btn-secondary-premium" (click)="printPayments()" title="Print List" [disabled]="isProcessing">
           <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
           <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -309,6 +309,10 @@
     </div>
 
     <div class="modal-footer-premium">
+      <button class="btn-secondary-premium" (click)="printReceipt(selectedPayment)" [disabled]="isProcessing">
+        <iconify-icon icon="basil:printer-outline" class="me-2"></iconify-icon>
+        {{ selectedPayment?.amountRemaining <= 0 ? 'Print Receipt' : 'Print Voucher' }}
+      </button>
       <button class="btn-primary-gradient" style="background: linear-gradient(135deg,#0ea5e9,#0284c7)"
         (click)="closeDialog()" [disabled]="isProcessing">
         <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
@@ -379,8 +383,8 @@
       <div class="loader-inner"></div>
     </div>
     <div class="processing-content">
-      <h4 class="pc-title">Synchronizing Data</h4>
-      <p class="pc-subtitle">Fetching secure financial records...</p>
+      <h4 class="pc-title">Processing Request</h4>
+      <p class="pc-subtitle">Please wait a moment...</p>
     </div>
   </div>
 </div>

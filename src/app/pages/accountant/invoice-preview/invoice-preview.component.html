@@ -40,7 +40,7 @@
 
     <!-- Title Strip -->
     <div class="rcpt-title-strip">
-      <span class="rcpt-doc-title">Fee Payment Receipt</span>
+      <span class="rcpt-doc-title">{{ documentTitle }}</span>
       <span class="rcpt-status-badge" [ngClass]="paymentStatus === 'Paid' ? 'badge-paid' : 'badge-pending'">
         {{ paymentStatus }}
       </span>

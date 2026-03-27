@@ -29,10 +29,11 @@ export class InvoicePreviewComponent implements OnInit {
   ngOnInit(): void {
     this.invoiceId = +this.route.snapshot.params['id'];
     this.invoiceType = this.route.snapshot.queryParams['type'] || 'monthly';
-    this.loadInvoice();
+    const autoPrint = this.route.snapshot.queryParams['print'] === 'true';
+    this.loadInvoice(autoPrint);
   }
 
-  loadInvoice(): void {
+  loadInvoice(autoPrint: boolean = false): void {
     this.loading = true;
     this.invoiceService.getInvoiceDetails(this.invoiceType, this.invoiceId).subscribe({
       next: (data) => {
@@ -40,6 +41,11 @@ export class InvoicePreviewComponent implements OnInit {
         const prefix = this.invoiceType.toLowerCase() === 'monthly' ? 'M' : 'O';
         this.invoiceNumber = `INV-${prefix}-${String(this.invoiceId).padStart(6, '0')}`;
         this.loading = false;
+        if (autoPrint) {
+          setTimeout(() => {
+            window.print();
+          }, 1500);
+        }
       },
       error: (err) => {
         console.error('Error loading invoice:', err);
@@ -96,6 +102,9 @@ export class InvoicePreviewComponent implements OnInit {
   get amountPaid(): number { return +(this.invoice?.amountPaid ?? this.invoice?.AmountPaid ?? 0); }
   get amountRemaining(): number { return +(this.invoice?.amountRemaining ?? this.invoice?.AmountRemaining ?? 0); }
   get paymentStatus(): string { return this.amountRemaining <= 0 ? 'Paid' : 'Pending'; }
+  get documentTitle(): string { 
+    return this.paymentStatus === 'Paid' ? 'Fee Payment Receipt' : 'Fee Payment Voucher'; 
+  }
 
   printInvoice(): void {
     window.print();

@@ -8,25 +8,26 @@
   /* ── 1. Hide all chrome / navigation / actions ── */
   app-side-nav,
   app-header,
+  .sidebar,
+  aside,
   .dashboard-sidebar,
   .navbar-header,
-  .side-nav,
   .breadcrumb-nav,
   .filter-glass,
-  .fee-card:first-child, /* filter card */
   .stats-row,
   .action-bar-glass,
   .table-glass-header .btn-add,
   .table-glass-header .d-flex,
   .es-pagination-glass,
   .table-filter-glass,
-  .fee-card-header .d-flex.align-items-center.gap-2,
-  .fee-card-header .d-flex.align-items-center.gap-12 .enrollment-badge,
   .empty-state-glass,
   .loading-glass,
   .premium-overlay,
   .btn-refresh-glass,
   .btn-generate,
+  .header-actions,
+  .tabs-container,
+  .pagination-footer-premium,
   button,
   .icon-btn,
   .no-print {
@@ -55,11 +56,17 @@
   }
 
   .dashboard-main-body {
-    padding: 12px !important;
+    padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
     background: white !important;
     overflow: visible !important;
+  }
+
+  /* Specific fix for filter bars inside fee-cards */
+  .fee-card-header.premium-header .header-filters,
+  .fee-card-header .header-filters {
+    display: none !important;
   }
 
   /* ── 4. Make fee-card / glass containers print-safe ── */

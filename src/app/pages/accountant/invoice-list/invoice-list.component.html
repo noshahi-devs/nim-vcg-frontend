@@ -118,6 +118,10 @@
                     [queryParams]="{ type: invoice.type }" title="Edit">
                     <iconify-icon icon="lucide:edit"></iconify-icon>
                   </button>
+                  <button class="icon-btn print-btn" [routerLink]="['/invoice-preview', invoice.invoiceId]" 
+                    [queryParams]="{ type: invoice.type, print: true }" title="Print" style="color: #6366f1;">
+                    <iconify-icon icon="basil:printer-outline"></iconify-icon>
+                  </button>
                   <button class="icon-btn delete-btn" (click)="confirmDelete(invoice)" title="Delete">
                     <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
                   </button>
@@ -234,8 +238,8 @@
       <div class="loader-inner"></div>
     </div>
     <div class="processing-content">
-      <h4 class="pc-title">Processing please wait...</h4>
-      <p class="pc-subtitle">Synchronizing financial records...</p>
+      <h4 class="pc-title">Processing Request</h4>
+      <p class="pc-subtitle">Please wait a moment...</p>
     </div>
   </div>
 </div>

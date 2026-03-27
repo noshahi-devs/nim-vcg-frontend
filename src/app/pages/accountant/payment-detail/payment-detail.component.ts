@@ -229,6 +229,12 @@ export class PaymentDetailComponent implements OnInit {
     this.selectedPayment = null;
   }
 
+  printReceipt(payment: any) {
+    const id = this.activeTab === 'monthly' ? payment.monthlyPaymentId : payment.othersPaymentId;
+    const url = `/invoice-preview/${id}?type=${this.activeTab}&print=true`;
+    window.open(url, '_blank');
+  }
+
   printPayments() {
     window.print();
   }

@@ -303,8 +303,22 @@
 
 /* ───── PRINT ───── */
 @media print {
-  .inv-action-bar, app-breadcrumb { display: none !important; }
-  body, .dashboard-main-body { background: #fff !important; padding: 0 !important; }
-  .receipt-shell { box-shadow: none !important; border: none !important; max-width: 100% !important; }
+  .inv-action-bar, app-breadcrumb, .sidebar, aside, .navbar-header, .navbar-search, .d-footer { display: none !important; }
+  body, .dashboard-main, .dashboard-main-body { 
+    background: #fff !important; 
+    padding: 0 !important; 
+    margin: 0 !important; 
+    overflow: visible !important;
+    display: block !important;
+  }
+  .receipt-shell { 
+    display: block !important;
+    visibility: visible !important;
+    box-shadow: none !important; 
+    border: none !important; 
+    max-width: 100% !important; 
+    padding: 20px !important;
+    margin: 0 !important;
+  }
   .rcpt-logo, .rcpt-status-badge, .rcpt-title-strip { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
