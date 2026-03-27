@@ -10,6 +10,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OthersPayment } from '../../../Models/other-payment';
+import { ActivatedRoute } from '@angular/router';
 import Swal from '../../../swal';
 
 @Component({
@@ -66,10 +67,22 @@ export class OtherPaymentComponent implements OnInit {
 
   constructor(
     private commonService: CommonServices,
-    private paymentService: OtherPaymentService
+    private paymentService: OtherPaymentService,
+    private route: ActivatedRoute
   ) { }
 
+  autoAddClassId: any = null;
+  autoAddStudentId: any = null;
+  autoAddTriggered = false;
+
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['action'] === 'add') {
+        this.autoAddClassId = params['classId'];
+        this.autoAddStudentId = params['studentId'];
+      }
+    });
+
     this.initForm();
     this.loadAll();
     this.loadPayments();
@@ -114,7 +127,10 @@ export class OtherPaymentComponent implements OnInit {
 
   /* ---------- LOADERS ---------- */
   loadAll() {
-    this.commonService.getAllStudents().subscribe(r => this.students = r);
+    this.commonService.getAllStudents().subscribe(r => {
+      this.students = r;
+      this.checkAutoAdd();
+    });
     this.commonService.getAllStandards().subscribe(r => this.standards = r);
     this.commonService.getAllFees().subscribe(r => this.fees = r);
     this.commonService.getAllAcademicMonths().subscribe(r => this.academicMonths = r);
@@ -448,6 +464,16 @@ export class OtherPaymentComponent implements OnInit {
     if (!standardId) return '--';
     const std = this.standards.find(s => s.standardId == standardId);
     return std ? std.standardName : '--';
+  }
+
+// ----- Helper Methods -----
+  checkAutoAdd() {
+    if (this.autoAddClassId && this.autoAddStudentId && !this.autoAddTriggered) {
+      this.autoAddTriggered = true;
+      this.openAddDialog();
+      this.selectedClassId = Number(this.autoAddClassId);
+      this.form.patchValue({ studentId: Number(this.autoAddStudentId) });
+    }
   }
 
   // ----- PRINTING HELPERS -----

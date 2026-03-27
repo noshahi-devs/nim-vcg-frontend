@@ -201,7 +201,17 @@
                   <circle cx="12" cy="12" r="10" />
                   <path d="M8 12h8" />
                 </svg>
-                <p>{{ studentId ? 'No payment records found for this student.' : 'Please select a student to view payments.' }}</p>
+                <p>{{ studentId ? 'No payment records found for this student.' : 'Please select a student to view
+                  payments.' }}</p>
+                <button *ngIf="studentId && selectedStandardId" class="btn-primary-gradient mx-auto"
+                  (click)="goToAddPayment()"
+                  style="margin-top: 15px; padding: 8px 18px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; gap: 6px; background: linear-gradient(135deg, #800000, #5a0000);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    style="width: 16px; height: 16px;">
+                    <path d="M12 5v14M5 12h14"></path>
+                  </svg>
+                  <span>Add {{ activeTab === 'monthly' ? 'Monthly' : 'Other' }} Payment</span>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -246,73 +256,65 @@
 </div>
 
 <!-- ===================== VIEW MODAL ===================== -->
-<div *ngIf="showViewDialog" class="modal-overlay" (click)="closeDialog()">
-  <div class="modal-box" (click)="$event.stopPropagation()">
-    <div class="modal-header-premium">
-      <div class="header-gradient" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);"></div>
-      <div class="header-content">
-        <div class="modal-icon-premium" style="background: linear-gradient(135deg, #0ea5e9, #0284c7);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        </div>
-        <div>
-          <h4 class="modal-title-premium">Transaction Details</h4>
-          <p class="modal-subtitle-premium">Viewing {{ activeTab }} payment record</p>
-        </div>
-      </div>
-      <button class="modal-close-premium" (click)="closeDialog()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M18 6 6 18M6 6l12 12" />
-        </svg>
-      </button>
+<div *ngIf="showViewDialog" class="premium-overlay scroll-overlay" (click)="closeDialog()">
+  <div class="premium-modal view-modal" (click)="$event.stopPropagation()">
+    <button class="pm-close" (click)="closeDialog()">
+      <iconify-icon icon="mingcute:close-line" style="font-size: 20px;"></iconify-icon>
+    </button>
+    <div class="pm-sparkles">
+      <div class="pm-sparkle sp1"></div>
+      <div class="pm-sparkle sp2"></div>
+      <div class="pm-sparkle sp3"></div>
     </div>
-
-    <div class="modal-body-premium">
-      <div class="detail-grid">
-        <div class="detail-row">
-          <span class="detail-label">Student</span>
-          <span class="detail-value">{{ selectedPayment?.student?.studentName }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Enrollment #</span>
-          <span class="detail-value">{{ selectedPayment?.student?.enrollmentNo }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Class / Standard</span>
-          <span class="detail-value">{{ selectedPayment?.student?.standard?.standardName }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Total Amount</span>
-          <span class="detail-value amount-val">Rs. {{ selectedPayment?.totalAmount | number }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Amount Paid</span>
-          <span class="detail-value amount-paid">Rs. {{ selectedPayment?.amountPaid | number }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Remaining</span>
-          <span class="detail-value" [class.amount-paid]="selectedPayment?.amountRemaining === 0"
-            [class.amount-pending]="selectedPayment?.amountRemaining > 0">
-            Rs. {{ selectedPayment?.amountRemaining | number }}
-          </span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Payment Date</span>
-          <span class="detail-value">{{ selectedPayment?.paymentDate | date:'mediumDate' }}</span>
-        </div>
+    
+    <div class="pm-icon-ring info-ring">
+      <iconify-icon icon="mdi:eye-outline" style="font-size: 38px; color: #fff;"></iconify-icon>
+    </div>
+    
+    <h3 class="pm-title">Transaction Details</h3>
+    <p class="pm-subtitle">Viewing {{ activeTab }} payment record</p>
+    
+    <div class="view-details-grid detail-grid">
+      <div class="detail-row">
+        <span class="detail-label">Student</span>
+        <span class="detail-value">{{ selectedPayment?.student?.studentName }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Enrollment #</span>
+        <span class="detail-value">{{ selectedPayment?.student?.enrollmentNo }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Class / Standard</span>
+        <span class="detail-value">{{ selectedPayment?.student?.standard?.standardName }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Total Amount</span>
+        <span class="detail-value amount-val">Rs. {{ selectedPayment?.totalAmount | number }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Amount Paid</span>
+        <span class="detail-value amount-paid">Rs. {{ selectedPayment?.amountPaid | number }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Remaining</span>
+        <span class="detail-value" [class.amount-paid]="selectedPayment?.amountRemaining === 0"
+          [class.amount-pending]="selectedPayment?.amountRemaining > 0">
+          Rs. {{ selectedPayment?.amountRemaining | number }}
+        </span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Payment Date</span>
+        <span class="detail-value">{{ selectedPayment?.paymentDate | date:'mediumDate' }}</span>
       </div>
     </div>
-
-    <div class="modal-footer-premium">
-      <button class="btn-secondary-premium" (click)="printReceipt(selectedPayment)" [disabled]="isProcessing">
-        <iconify-icon icon="basil:printer-outline" class="me-2"></iconify-icon>
+    
+    <div class="pm-actions view-actions">
+      <button class="pm-btn pm-cancel" style="justify-content: center; width: 100%; border-radius: 12px; font-size: 14px; background: #f8fafc;" (click)="printReceipt(selectedPayment)" [disabled]="isProcessing">
+        <iconify-icon icon="basil:printer-outline" style="font-size: 20px;"></iconify-icon>
         {{ selectedPayment?.amountRemaining <= 0 ? 'Print Receipt' : 'Print Voucher' }}
       </button>
-      <button class="btn-primary-gradient" style="background: linear-gradient(135deg,#0ea5e9,#0284c7)"
-        (click)="closeDialog()" [disabled]="isProcessing">
-        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+      <button class="pm-btn pm-save" style="justify-content: center; width: 100%; border-radius: 12px; font-size: 14px; background: linear-gradient(135deg, #0ea5e9, #0284c7);" (click)="closeDialog()" [disabled]="isProcessing">
+        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
         Close
       </button>
     </div>

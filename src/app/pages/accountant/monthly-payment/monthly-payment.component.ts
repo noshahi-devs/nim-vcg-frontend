@@ -11,6 +11,7 @@ import { SettingsService } from '../../../services/settings.service';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import Swal from '../../../swal';
 import { finalize, forkJoin } from 'rxjs';
 
@@ -79,10 +80,21 @@ export class MonthlyPaymentComponent implements OnInit {
   constructor(
     private commonService: CommonServices,
     private paymentService: MonthlyPaymentService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private route: ActivatedRoute
   ) { }
 
+  autoAddClassId: any = null;
+  autoAddStudentId: any = null;
+  autoAddTriggered = false;
+
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['action'] === 'add') {
+        this.autoAddClassId = params['classId'];
+        this.autoAddStudentId = params['studentId'];
+      }
+    });
     this.initForm();
     this.initPaymentForm();
     this.loadInitialData(); // New consolidated loader
@@ -163,6 +175,15 @@ export class MonthlyPaymentComponent implements OnInit {
     this.form.get('dueBalance')!.setValue(due, { emitEvent: false });
   }
 
+// ----- Helper Methods -----
+  checkAutoAdd() {
+    if (this.autoAddClassId && this.autoAddStudentId && !this.autoAddTriggered) {
+      this.autoAddTriggered = true;
+      this.openAddDialog();
+      this.selectedClassId = Number(this.autoAddClassId);
+      this.form.patchValue({ studentId: Number(this.autoAddStudentId) });
+    }
+  }
   /* ---------- LOADERS ---------- */
   loadInitialData() {
     this.loading = true;
@@ -181,6 +202,7 @@ export class MonthlyPaymentComponent implements OnInit {
         this.academicMonths = res.months || [];
         this.payments = res.history || [];
         this.applyFilters();
+        this.checkAutoAdd();
       },
       error: () => this.showFeedback('error', 'Sync Failed', 'Unable to synchronize payment records with the server.')
     });

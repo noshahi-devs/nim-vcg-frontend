@@ -7,6 +7,7 @@ import { MonthlyPayment } from '../../../Models/monthly-payment';
 import { OthersPayment } from '../../../Models/other-payment';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-payment-detail',
@@ -56,11 +57,20 @@ export class PaymentDetailComponent implements OnInit {
   showDeleteModal = false;
   showViewDialog = false;
 
-  constructor(private commonService: CommonServices) { }
+  constructor(private commonService: CommonServices, private router: Router) { }
 
   ngOnInit(): void {
     this.fetchStandards();
     this.fetchStudents();
+  }
+
+  goToAddPayment() {
+    if (!this.studentId || !this.selectedStandardId) return;
+    if (this.activeTab === 'monthly') {
+      this.router.navigate(['/monthly-payment'], { queryParams: { classId: this.selectedStandardId, studentId: this.studentId, action: 'add' } });
+    } else {
+      this.router.navigate(['/other-payment'], { queryParams: { classId: this.selectedStandardId, studentId: this.studentId, action: 'add' } });
+    }
   }
 
   /* ---------- GETTERS (STATS) ---------- */
