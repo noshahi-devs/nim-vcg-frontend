@@ -7,6 +7,7 @@ import { Student } from '../../../Models/student';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { forkJoin } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'app-student-profile',
@@ -73,9 +74,15 @@ export class StudentProfileComponent implements OnInit {
             return this.studentData.imageUpload.imageData;
         }
         if (this.studentData?.imagePath) {
-            return this.studentData.imagePath;
+            if (this.studentData.imagePath.startsWith('http') || 
+                this.studentData.imagePath.startsWith('data:') || 
+                this.studentData.imagePath.startsWith('assets/')) {
+                return this.studentData.imagePath;
+            }
+            const normalizedPath = this.studentData.imagePath.replace(/\\/g, '/').replace(/^\//, '');
+            return `${environment.apiBaseUrl}/${normalizedPath}`;
         }
-        return 'assets/images/user.png';
+        return 'assets/images/user-grid/user-grid-img2.png';
     }
 
     getInitials(name: string | undefined): string {

@@ -191,8 +191,20 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     reader.onload = () => {
       this.newStudent.imageUpload.file = file;
       this.newStudent.imageUpload.getBase64 = reader.result as string; // ✅ store string
+      this.newStudent.imagePath = reader.result as string; // For preview
     };
     reader.readAsDataURL(file);
+  }
+
+  getStudentImage(): string {
+    const defaultImg = 'assets/images/user-grid/user-grid-img2.png';
+    if (!this.newStudent.imagePath) return defaultImg;
+    if (this.newStudent.imagePath.startsWith('http') || 
+        this.newStudent.imagePath.startsWith('data:') || 
+        this.newStudent.imagePath.startsWith('assets/')) {
+      return this.newStudent.imagePath;
+    }
+    return this.newStudent.imagePath;
   }
 
   // ── Premium Feedback ──
@@ -318,7 +330,10 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
       section: this.newStudent.section || null,
       standardId: this.newStudent.standardId || null,
       academicYearId: this.sessionService.getCurrentYearId(),
-      imagePath: this.newStudent.imageUpload.getBase64 || null
+      imageUpload: this.newStudent.imageUpload.getBase64 ? {
+        imageData: this.newStudent.imageUpload.getBase64,
+        imageName: this.newStudent.imageUpload.file?.name || 'student_photo.png'
+      } : null
     };
 
     this.studentService.SaveStudent(studentToSave).pipe(

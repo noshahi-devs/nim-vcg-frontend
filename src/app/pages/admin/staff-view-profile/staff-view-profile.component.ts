@@ -7,6 +7,7 @@ import { StaffService } from '../../../services/staff.service';
 import { Designation } from '../../../Models/staff';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { AttendanceService } from '../../../services/attendance.service';
+import { environment } from '../../../../environments/environment';
 
 declare var $: any;
 
@@ -150,7 +151,7 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
       qualification: staff.qualifications || 'N/A',
       address: staff.permanentAddress || staff.temporaryAddress || 'N/A',
       joiningDate: this.formatDate(staff.joiningDate),
-      profile: staff.imagePath || this.defaultAvatar,
+      profile: this.getStaffImage(staff.imagePath),
       status: staff.status || 'Active',
       role: this.getDesignationName(staff.designation),
       experience: staff.experience || staff.Experience || (staff.staffExperiences?.length ? `${staff.staffExperiences.length} History Entries` : 'N/A'),
@@ -179,10 +180,14 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
   }
 
   private getDesignationName(designation: any): string {
-    if (typeof designation === 'number') {
-      return Designation[designation] || 'Staff Member';
-    }
     return designation || 'Staff Member';
+  }
+
+  getStaffImage(imagePath: string | undefined): string {
+    if (!imagePath) return this.defaultAvatar;
+    if (imagePath.startsWith('http') || imagePath.startsWith('data:') || imagePath.startsWith('assets/')) return imagePath;
+    const normalizedPath = imagePath.replace(/\\/g, '/').replace(/^\//, '');
+    return `${environment.apiBaseUrl}/${normalizedPath}`;
   }
 
   getStatusClass(status: string): string {

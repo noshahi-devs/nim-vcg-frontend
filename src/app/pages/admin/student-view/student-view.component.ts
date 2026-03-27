@@ -148,11 +148,12 @@ export class StudentViewComponent implements OnInit, AfterViewInit {
     // 2. Check if we have a saved path from the server
     if (this.studentData?.imagePath) {
       // If it's already a full URL or base64, return as is
-      if (this.studentData.imagePath.startsWith('http') || this.studentData.imagePath.startsWith('data:')) {
+      if (this.studentData.imagePath.startsWith('http') || this.studentData.imagePath.startsWith('data:') || this.studentData.imagePath.startsWith('assets/')) {
         return this.studentData.imagePath;
       }
       // Otherwise prepend API base URL
-      return `${environment.apiBaseUrl}/${this.studentData.imagePath}`;
+      const normalizedPath = this.studentData.imagePath.replace(/\\/g, '/').replace(/^\//, '');
+      return `${environment.apiBaseUrl}/${normalizedPath}`;
     }
 
     // 3. Fallback to default

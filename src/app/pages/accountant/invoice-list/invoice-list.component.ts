@@ -154,9 +154,11 @@ export class InvoiceListComponent implements OnInit {
 
   getStudentImage(invoice: Invoice): string {
     const path = invoice.imagePath;
-    if (!path) return 'assets/images/user.png';
-    if (path.startsWith('data:') || path.startsWith('http')) return path;
-    return `${this.env.apiBaseUrl}/${path}`;
+    const defaultImg = 'assets/images/user.png';
+    if (!path) return defaultImg;
+    if (path.startsWith('data:') || path.startsWith('http') || path.startsWith('assets/')) return path;
+    const normalizedPath = path.replace(/\\/g, '/').replace(/^\//, '');
+    return `${this.env.apiBaseUrl}/${normalizedPath}`;
   }
 
   protected readonly Math = Math;

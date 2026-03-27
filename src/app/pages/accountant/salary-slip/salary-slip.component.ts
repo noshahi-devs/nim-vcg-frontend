@@ -484,10 +484,11 @@ export class SalarySlipComponent implements OnInit {
 
 
   getStaffImage(imagePath: string | undefined): string {
-    if (!imagePath) return window.location.origin + '/assets/images/user-grid/user-grid-img2.png';
-    if (imagePath.startsWith('data:')) return imagePath;
-    if (imagePath.startsWith('http')) return imagePath;
-    return `${this.apiBaseUrl}/${imagePath}`;
+    const defaultImg = 'assets/images/user-grid/user-grid-img2.png';
+    if (!imagePath) return defaultImg;
+    if (imagePath.startsWith('data:') || imagePath.startsWith('http') || imagePath.startsWith('assets/')) return imagePath;
+    const normalizedPath = imagePath.replace(/\\/g, '/').replace(/^\//, '');
+    return `${this.apiBaseUrl}/${normalizedPath}`;
   }
 
   getSchoolLogo(): string {

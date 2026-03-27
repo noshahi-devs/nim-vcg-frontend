@@ -120,8 +120,11 @@
                 <label class="form-label-premium">
                   <i class="ri-image-add-line me-2 text-primary-500"></i>Staff Photograph
                 </label>
-                <div class="input-wrapper-premium">
-                  <input type="file" class="form-control-premium" id="imageUpload" accept=".png, .jpg, .jpeg"
+                <div class="input-wrapper-premium d-flex align-items-center gap-3">
+                  <div class="preview-box-small radius-8 overflow-hidden border" style="width: 50px; height: 50px; min-width: 50px;">
+                    <img [src]="newStaff.profile" class="w-100 h-100 object-fit-cover" alt="Preview">
+                  </div>
+                  <input type="file" class="form-control-premium flex-grow-1" id="imageUpload" accept=".png, .jpg, .jpeg"
                     (change)="onImageSelected($event)" />
                 </div>
               </div>

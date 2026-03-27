@@ -41,8 +41,8 @@ export class StaffListComponent implements OnInit, AfterViewInit {
 
   getImage(imagePath: string | undefined): string {
     if (!imagePath) return this.defaultImage;
-    if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
-    const normalizedPath = imagePath.replace(/\\/g, '/');
+    if (imagePath.startsWith('http') || imagePath.startsWith('data:') || imagePath.startsWith('assets/')) return imagePath;
+    const normalizedPath = imagePath.replace(/\\/g, '/').replace(/^\//, '');
     return `${this.apiBaseUrl}/${normalizedPath}`;
   }
 

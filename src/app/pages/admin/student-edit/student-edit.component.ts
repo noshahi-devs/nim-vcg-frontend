@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { SessionService } from '../../../services/session.service';
 import { finalize } from 'rxjs';
 import Swal from '../../../swal';
+import { environment } from '../../../../environments/environment';
 
 declare var $: any;
 
@@ -176,6 +177,27 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
       if (match) return match.sectionName;
     }
     return val;
+  }
+
+  getStudentImage(): string {
+    // 1. Check if we have a base64 image (newly selected upload)
+    if (this.studentData.imageUpload && (this.studentData.imageUpload as any).imageData) {
+      return (this.studentData.imageUpload as any).imageData;
+    }
+
+    // 2. Check if we have a saved path from the server
+    if (this.studentData.imagePath) {
+      // If it's already a full URL or base64, return as is
+      if (this.studentData.imagePath.startsWith('http') || this.studentData.imagePath.startsWith('data:') || this.studentData.imagePath.startsWith('assets/')) {
+        return this.studentData.imagePath;
+      }
+      // Otherwise prepend API base URL
+      const normalizedPath = this.studentData.imagePath.replace(/\\/g, '/').replace(/^\//, '');
+      return `${environment.apiBaseUrl}/${normalizedPath}`;
+    }
+
+    // 3. Fallback to default
+    return 'assets/images/user-grid/user-grid-img2.png';
   }
 
   onClassChange() {

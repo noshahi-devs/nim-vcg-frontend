@@ -7,6 +7,7 @@ import { StaffService } from '../../../services/staff.service';
 import { Staff, Designation, Gender } from '../../../Models/staff';
 import { finalize } from 'rxjs';
 import Swal from '../../../swal';
+import { environment } from '../../../../environments/environment';
 
 declare var $: any;
 declare var bootstrap: any;
@@ -78,7 +79,7 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
       email: staff.email || '',
       qualification: staff.qualifications || '',
       address: staff.permanentAddress || staff.temporaryAddress || '',
-      profile: staff.imagePath || 'assets/images/user-grid/user-grid-img2.png',
+      profile: this.getStaffImage(staff.imagePath),
       status: staff.status || 'Active',
       role: this.getDesignationName(staff.designation),
       experience: staff.experience || staff.Experience || ''
@@ -91,10 +92,15 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   private getDesignationName(designation: any): string {
-    if (typeof designation === 'number') {
-      return Designation[designation] || 'Teacher';
-    }
     return designation || 'Teacher';
+  }
+
+  getStaffImage(imagePath: string | undefined): string {
+    const defaultImg = 'assets/images/user-grid/user-grid-img2.png';
+    if (!imagePath) return defaultImg;
+    if (imagePath.startsWith('http') || imagePath.startsWith('data:') || imagePath.startsWith('assets/')) return imagePath;
+    const normalizedPath = imagePath.replace(/\\/g, '/').replace(/^\//, '');
+    return `${environment.apiBaseUrl}/${normalizedPath}`;
   }
 
   saveStaff() {

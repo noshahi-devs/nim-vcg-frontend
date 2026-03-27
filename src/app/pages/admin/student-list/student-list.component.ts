@@ -413,11 +413,11 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     // 2. Check if we have a saved path from the server
     if (student.imagePath) {
       // If it's already a full URL or base64, return as is
-      if (student.imagePath.startsWith('http') || student.imagePath.startsWith('data:')) {
+      if (student.imagePath.startsWith('http') || student.imagePath.startsWith('data:') || student.imagePath.startsWith('assets/')) {
         return student.imagePath;
       }
       // Otherwise prepend API base URL
-      const normalizedPath = student.imagePath.replace(/\\/g, '/');
+      const normalizedPath = student.imagePath.replace(/\\/g, '/').replace(/^\//, '');
       return `${environment.apiBaseUrl}/${normalizedPath}`;
     }
 
