@@ -256,65 +256,98 @@
 </div>
 
 <!-- ===================== VIEW MODAL ===================== -->
-<div *ngIf="showViewDialog" class="premium-overlay scroll-overlay" (click)="closeDialog()">
-  <div class="premium-modal view-modal" (click)="$event.stopPropagation()">
-    <button class="pm-close" (click)="closeDialog()">
-      <iconify-icon icon="mingcute:close-line" style="font-size: 20px;"></iconify-icon>
-    </button>
-    <div class="pm-sparkles">
-      <div class="pm-sparkle sp1"></div>
-      <div class="pm-sparkle sp2"></div>
-      <div class="pm-sparkle sp3"></div>
-    </div>
-    
-    <div class="pm-icon-ring info-ring">
-      <iconify-icon icon="mdi:eye-outline" style="font-size: 38px; color: #fff;"></iconify-icon>
-    </div>
-    
-    <h3 class="pm-title">Transaction Details</h3>
-    <p class="pm-subtitle">Viewing {{ activeTab }} payment record</p>
-    
-    <div class="view-details-grid detail-grid">
-      <div class="detail-row">
-        <span class="detail-label">Student</span>
-        <span class="detail-value">{{ selectedPayment?.student?.studentName }}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">Enrollment #</span>
-        <span class="detail-value">{{ selectedPayment?.student?.enrollmentNo }}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">Class / Standard</span>
-        <span class="detail-value">{{ selectedPayment?.student?.standard?.standardName }}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">Total Amount</span>
-        <span class="detail-value amount-val">Rs. {{ selectedPayment?.totalAmount | number }}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">Amount Paid</span>
-        <span class="detail-value amount-paid">Rs. {{ selectedPayment?.amountPaid | number }}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">Remaining</span>
-        <span class="detail-value" [class.amount-paid]="selectedPayment?.amountRemaining === 0"
-          [class.amount-pending]="selectedPayment?.amountRemaining > 0">
-          Rs. {{ selectedPayment?.amountRemaining | number }}
-        </span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">Payment Date</span>
-        <span class="detail-value">{{ selectedPayment?.paymentDate | date:'mediumDate' }}</span>
+<div class="premium-overlay scroll-overlay" *ngIf="showViewDialog && selectedPayment" (click.self)="closeDialog()">
+  <div class="premium-modal" style="max-width:520px; text-align:left; padding:0; overflow:hidden; margin: auto;">
+
+    <!-- Modal Header -->
+    <div style="background: linear-gradient(135deg, #800000, #5a0000); padding: 24px 28px;">
+      <div class="d-flex align-items-center gap-16" style="gap: 16px; display: flex; align-items: center;">
+        <div
+          style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center;">
+          <iconify-icon icon="solar:wallet-money-bold-duotone" style="font-size:24px; color:#fff;"></iconify-icon>
+        </div>
+        <div>
+          <h5 style="color:#fff; margin:0; font-weight:700; font-size:17px;">Transaction Details</h5>
+          <span style="color:rgba(255,255,255,0.7); font-size:13px;">Viewing {{ activeTab }} payment record</span>
+        </div>
+        <button (click)="closeDialog()"
+          style="margin-left:auto; width:34px; height:34px; border-radius:50%; background:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; font-weight:700; color:#800000; line-height:1; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.25);">
+          &times;
+        </button>
       </div>
     </div>
-    
-    <div class="pm-actions view-actions">
-      <button class="pm-btn pm-cancel" style="justify-content: center; width: 100%; border-radius: 12px; font-size: 14px; background: #f8fafc;" (click)="printReceipt(selectedPayment)" [disabled]="isProcessing">
-        <iconify-icon icon="basil:printer-outline" style="font-size: 20px;"></iconify-icon>
-        {{ selectedPayment?.amountRemaining <= 0 ? 'Print Receipt' : 'Print Voucher' }}
+
+    <!-- Status Banner -->
+    <div style="padding:16px 28px; background:#f8fafc; border-bottom:1px solid #e2e8f0; display: flex; align-items: center; gap: 12px;">
+      <span [ngStyle]="{'background': selectedPayment.amountRemaining === 0 ? '#dcfce7' : '#fee2e2', 'color': selectedPayment.amountRemaining === 0 ? '#16a34a' : '#dc2626'}" style="padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+        <iconify-icon [icon]="selectedPayment.amountRemaining === 0 ? 'solar:verified-check-bold' : 'solar:shield-cross-bold'"></iconify-icon>
+        {{ selectedPayment.amountRemaining === 0 ? 'Fully Paid' : 'Pending Dues' }}
+      </span>
+      <span style="color:#64748b; font-size:13px; font-weight: 600;">Date: {{ selectedPayment.paymentDate | date:'mediumDate' }}</span>
+    </div>
+
+    <!-- Info Rows -->
+    <div style="padding:20px 28px; display:grid; gap:14px;">
+
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:#ede9fe; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <iconify-icon icon="solar:user-bold-duotone" style="color:#7c3aed; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Student</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:700;">{{ selectedPayment.student?.studentName || 'Unknown' }}</div>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:#e0f2fe; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <iconify-icon icon="solar:hashtag-bold-duotone" style="color:#0284c7; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Enrollment / Class</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:700;">{{ selectedPayment.student?.enrollmentNo }} | {{ selectedPayment.student?.standard?.standardName }}</div>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:#fef3c7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <iconify-icon icon="solar:tag-bold-duotone" style="color:#d97706; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Total Amount</div>
+          <div style="font-size:14px; color:#1e293b; font-weight:700;">Rs. {{ selectedPayment.totalAmount | number }}</div>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:#dcfce7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <iconify-icon icon="solar:wallet-bold-duotone" style="color:#16a34a; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Amount Paid</div>
+          <div style="font-size:14px; color:#16a34a; font-weight:700;">Rs. {{ selectedPayment.amountPaid | number }}</div>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: start; gap: 14px;" *ngIf="selectedPayment.amountRemaining > 0">
+        <div style="width:36px; height:36px; border-radius:10px; background:#fee2e2; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+          <iconify-icon icon="solar:danger-triangle-bold-duotone" style="color:#dc2626; font-size:18px;"></iconify-icon>
+        </div>
+        <div>
+          <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Remaining Due</div>
+          <div style="font-size:14px; color:#dc2626; font-weight:700; line-height:1.5;">Rs. {{ selectedPayment.amountRemaining | number }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:16px 28px; background:#f8fafc; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end; gap: 12px;">
+      <button (click)="printReceipt(selectedPayment)" style="background: #f1f5f9; color:#64748b; border:1px solid #e2e8f0; border-radius:10px; padding:10px 24px; font-weight:600; font-size:14px; cursor:pointer; transition: all 0.2s; display:flex; align-items:center; gap:8px;">
+        <iconify-icon icon="basil:printer-outline" style="font-size:18px;"></iconify-icon>
+        {{ selectedPayment.amountRemaining <= 0 ? 'Print Receipt' : 'Print Voucher' }}
       </button>
-      <button class="pm-btn pm-save" style="justify-content: center; width: 100%; border-radius: 12px; font-size: 14px; background: linear-gradient(135deg, #0ea5e9, #0284c7);" (click)="closeDialog()" [disabled]="isProcessing">
-        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
+      <button (click)="closeDialog()" style="background: linear-gradient(135deg, #800000, #5a0000); color:#fff; border:none; border-radius:10px; padding:10px 24px; font-weight:600; font-size:14px; cursor:pointer; transition: all 0.2s; display:flex; align-items:center; gap:8px;">
+        <iconify-icon icon="solar:close-circle-bold" style="font-size:18px;"></iconify-icon>
         Close
       </button>
     </div>
