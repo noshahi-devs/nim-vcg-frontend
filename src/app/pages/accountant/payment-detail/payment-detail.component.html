@@ -196,15 +196,12 @@
               </td>
             </tr>
             <tr *ngIf="paginatedData.length === 0">
-              <td colspan="8" class="empty-state">
-                <div class="empty-content">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M8 12h8" />
-                  </svg>
-                  <p>{{ studentId ? 'No payment records found for this student.' : 'Please select a student to view
-                    payments.' }}</p>
-                </div>
+              <td colspan="8" class="payment-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M8 12h8" />
+                </svg>
+                <p>{{ studentId ? 'No payment records found for this student.' : 'Please select a student to view payments.' }}</p>
               </td>
             </tr>
           </tbody>
