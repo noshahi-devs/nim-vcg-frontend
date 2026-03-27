@@ -29,6 +29,14 @@ export class StudentService {
     return this.http.get<Student[]>(url, this.getAuthHeaders());
   }
 
+  public getStudentStats(academicYearId?: number | null): Observable<any> {
+    let url = `${this.apiUrl}/stats`;
+    if (academicYearId) {
+      url += `?academicYearId=${academicYearId}`;
+    }
+    return this.http.get<any>(url, this.getAuthHeaders());
+  }
+
   public GetStudent(id: number): Observable<Student> {
     return this.http.get<Student>(`${this.apiUrl}/${id}`, this.getAuthHeaders());
   }

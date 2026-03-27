@@ -29,6 +29,11 @@ export class StaffService {
     return this.http.get<Staff[]>(this.apiUrl, this.getAuthHeaders());
   }
 
+  // GET staff stats (Total, Teachers, Departments)
+  getStaffStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/stats`, this.getAuthHeaders());
+  }
+
   // GET staff by ID
   getStaffById(id: number): Observable<Staff> {
     return this.http.get<Staff>(`${this.apiUrl}/${id}`, this.getAuthHeaders());

@@ -72,9 +72,22 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   feedbackMessage = '';
   isDeleting = false;
 
-  get totalStudents(): number { return this.studentList.length; }
-  get activeStudents(): number { return this.studentList.filter(s => s.status?.toLowerCase() === 'active').length; }
-  get inactiveStudents(): number { return this.studentList.filter(s => s.status?.toLowerCase() === 'inactive').length; }
+  // Real-time stats from server
+  stats = { totalStudents: 0, activeStudents: 0, inactiveStudents: 0 };
+
+  get totalStudents(): number { return this.studentList.length > 0 ? this.studentList.length : this.stats.totalStudents; }
+  get activeStudents(): number { 
+    if (this.studentList.length > 0) {
+      return this.studentList.filter(s => s.status?.toLowerCase() === 'active').length; 
+    }
+    return this.stats.activeStudents;
+  }
+  get inactiveStudents(): number { 
+    if (this.studentList.length > 0) {
+      return this.studentList.filter(s => s.status?.toLowerCase() === 'inactive').length; 
+    }
+    return this.stats.inactiveStudents;
+  }
 
   get yearDisplayName(): string {
     if (!this.selectedYearId) return 'Registry';
@@ -103,13 +116,15 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit(): void {
+    this.loadStats();
+    this.checkAuthorization();
     // Initial sync with session
     this.selectedYearId = this.sessionService.getCurrentYearId();
 
     this.sessionSubscription = this.sessionService.currentYear$.subscribe(year => {
       if (year) {
         this.selectedYearId = year.academicYearId;
-        this.checkTeacherContext();
+        this.checkAuthorization();
       }
     });
 
@@ -122,13 +137,13 @@ export class StudentListComponent implements OnInit, AfterViewInit {
           [...this.academicYears].sort((a, b) => b.academicYearId - a.academicYearId)[0];
         if (found && found.academicYearId !== this.selectedYearId) {
           this.selectedYearId = found.academicYearId;
-          this.checkTeacherContext();
+          this.checkAuthorization();
         }
       }
     });
   }
 
-  private checkTeacherContext() {
+  private checkAuthorization() {
     this.loading = true;
     const roles: string[] = this.authService.roles || [];
     this.isTeacher = roles.some(r => r.toLowerCase() === 'teacher');
@@ -189,6 +204,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
   }
 
   private loadAllData() {
+    this.loadStats();
     const yearId = this.selectedYearId;
     forkJoin({
       students: this.studentService.GetStudents(yearId),
@@ -230,10 +246,11 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
 
   // -------------------------------------------------------
-  // Fetch Students From API
+  // Fetch Students From API (Replaced by loadAllData in most cases)
   // -------------------------------------------------------
   loadStudents() {
-    const yearId = this.sessionService.getCurrentYearId();
+    this.loadStats();
+    const yearId = this.selectedYearId || this.sessionService.getCurrentYearId();
     this.studentService.GetStudents(yearId).subscribe({
       next: (res) => {
         this.studentList = res;
@@ -467,6 +484,15 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit(): void { }
+
+  loadStats(): void {
+    this.studentService.getStudentStats(this.selectedYearId).subscribe({
+      next: (res) => {
+        this.stats = res;
+      },
+      error: (err) => console.error('Error fetching student stats:', err)
+    });
+  }
 
   ngOnDestroy(): void {
     if (this.sessionSubscription) {

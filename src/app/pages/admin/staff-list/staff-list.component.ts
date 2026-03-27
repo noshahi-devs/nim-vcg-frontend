@@ -39,6 +39,9 @@ export class StaffListComponent implements OnInit, AfterViewInit {
 
   apiBaseUrl = environment.apiBaseUrl;
 
+  // Real-time stats from server
+  stats = { totalStaff: 0, teacherCount: 0, departmentCount: 0 };
+
   getImage(imagePath: string | undefined): string {
     if (!imagePath) return this.defaultImage;
     if (imagePath.startsWith('http') || imagePath.startsWith('data:') || imagePath.startsWith('assets/')) return imagePath;
@@ -52,14 +55,22 @@ export class StaffListComponent implements OnInit, AfterViewInit {
   selectedStaff: any = null;
   showViewModal = false;
 
-  get totalStaff(): number { return this.staffList.length; }
+  get totalStaff(): number { return this.staffList.length > 0 ? this.staffList.length : this.stats.totalStaff; }
   get teacherCount(): number {
-    return this.staffList.filter(s => {
-      const d = s.designation?.toString().toLowerCase();
-      return d === 'teacher' || s.designation === 0;
-    }).length;
+    if (this.staffList.length > 0) {
+      return this.staffList.filter(s => {
+        const d = s.designation?.toString().toLowerCase();
+        return d === 'teacher' || s.designation === 0;
+      }).length;
+    }
+    return this.stats.teacherCount;
   }
-  get departmentsCount(): number { return new Set(this.staffList.map(s => s.department?.departmentName || 'N/A')).size; }
+  get departmentsCount(): number {
+    if (this.staffList.length > 0) {
+      return new Set(this.staffList.map(s => s.department?.departmentName || 'N/A')).size;
+    }
+    return this.stats.departmentCount;
+  }
 
   constructor(
     private staffService: StaffService,
@@ -67,7 +78,17 @@ export class StaffListComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
+    this.loadStats();
     this.loadStaff();
+  }
+
+  loadStats(): void {
+    this.staffService.getStaffStats().subscribe({
+      next: (res) => {
+        this.stats = res;
+      },
+      error: (err) => console.error('Error fetching staff stats:', err)
+    });
   }
 
   loadStaff(): void {
