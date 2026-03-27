@@ -110,27 +110,28 @@
 }
 
 .premium-header {
-    padding: 24px;
+    padding: 16px 24px;
     background: linear-gradient(to bottom, #ffffff, #fcfdfe);
     border-bottom: 1px solid #f1f5f9;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
     flex-wrap: wrap;
-    gap: 20px;
+    align-items: center;
+    gap: 14px;
 }
 
 .header-filters {
     display: flex;
-    align-items: flex-end;
-    gap: 16px;
-    flex-wrap: wrap;
-    flex: 1;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    width: 100%;
+    min-width: 0;
 }
 
 .search-wrapper-premium {
     position: relative;
-    min-width: 240px;
+    min-width: 160px;
+    max-width: 260px;
     flex: 1;
 }
 
@@ -162,7 +163,7 @@
 
 .filter-group {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 6px;
 }
 
@@ -170,13 +171,13 @@
     font-size: 12px;
     font-weight: 700;
     color: #64748b;
-    margin-left: 4px;
+    white-space: nowrap;
 }
 
 .select-wrapper-premium,
 .input-wrapper-premium {
     position: relative;
-    min-width: 150px;
+    min-width: 110px;
 }
 
 .field-select-premium,
@@ -217,7 +218,9 @@
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-left: auto;
 }
 
 .action-divider {
@@ -238,7 +241,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
-    padding: 10px 16px;
+    padding: 8px 12px;
     border: 1.5px solid transparent;
 }
 
@@ -858,21 +861,16 @@
 }
 
 @media print {
-    @page { margin: 0; size: A4 landscape; }
-    body { 
-        padding: 0; 
-        margin: 0;
-        -webkit-print-color-adjust: exact; 
-        print-color-adjust: exact; 
-        background-color: white !important;
-    }
-    body *, .premium-overlay {
+    /* --- Voucher-specific print: only when body has .printing-voucher class --- */
+    body.printing-voucher *,
+    body.printing-voucher .premium-overlay {
         visibility: hidden !important;
     }
-    .print-voucher-only, .print-voucher-only * {
+    body.printing-voucher .print-voucher-only,
+    body.printing-voucher .print-voucher-only * {
         visibility: visible !important;
     }
-    .print-voucher-only {
+    body.printing-voucher .print-voucher-only {
         position: absolute;
         left: 0;
         top: 0;
@@ -880,9 +878,11 @@
         display: block !important;
         background: white;
     }
-    .dashboard-main-body {
+    body.printing-voucher .dashboard-main-body {
         display: none !important;
     }
+
+    @page { margin: 0; }
 
     .voucher-wrapper {
         display: flex;
@@ -967,4 +967,4 @@
     }
     .v-sig { text-align: center; width: 80px; }
     .v-line { border-bottom: 1px solid #000; height: 15px; margin-bottom: 4px; }
-}
+}

@@ -1,18 +1,23 @@
 /* ============================================================
    PRINT STYLES - NIM PRODUCTION
-   Applied globally for Student, Staff, and Class-Wise reports
+   Applied globally for all pages that use window.print()
    ============================================================ */
 
 @media print {
 
-  /* ── 1. Hide all chrome / navigation / actions ── */
-  app-side-nav,
-  app-header,
+  /* ── 1. Hide navigation chrome & interactive elements ──
+     IMPORTANT: Do NOT hide app-side-nav * or aside * here,
+     because <main class="dashboard-main"> is a child of
+     <app-side-nav>, not a sibling. Hiding app-side-nav *
+     would kill ALL page content. Instead, hide only the
+     sidebar <aside> element itself. */
+  aside.sidebar,
   .sidebar,
-  aside,
-  .dashboard-sidebar,
   .navbar-header,
   .breadcrumb-nav,
+  app-breadcrumb,
+  .d-footer,
+  footer.d-footer,
   .filter-glass,
   .stats-row,
   .action-bar-glass,
@@ -23,18 +28,21 @@
   .empty-state-glass,
   .loading-glass,
   .premium-overlay,
+  .processing-overlay,
   .btn-refresh-glass,
   .btn-generate,
   .header-actions,
   .tabs-container,
   .pagination-footer-premium,
+  .pagination-bar,
   button,
   .icon-btn,
-  .no-print {
+  .no-print,
+  .fee-card-header .header-filters {
     display: none !important;
   }
 
-  /* ── 2. Reset layout so page renders flat ── */
+  /* ── 2. Reset HTML & body ── */
   html, body {
     background: white !important;
     font-size: 11pt !important;
@@ -42,34 +50,39 @@
     margin: 0 !important;
     padding: 0 !important;
     height: auto !important;
+    width: 100% !important;
     overflow: visible !important;
   }
 
-  /* ── 3. Remove sidebar/flex effects from main layout ── */
-  .layout-container,
-  .dashboard-layout,
-  .main-layout,
-  .content-wrapper,
-  app-layout {
-    display: block !important;
+  /* ── 3. CRITICAL: Remove sidebar margin from main layout ──
+     .dashboard-main normally has margin-inline-start equal
+     to the sidebar width. We must zero it for printing. */
+  main.dashboard-main,
+  .dashboard-main,
+  .dashboard-main.active {
+    margin: 0 !important;
+    margin-inline-start: 0 !important;
+    margin-left: 0 !important;
+    padding: 0 !important;
     width: 100% !important;
+    display: block !important;
+    position: static !important;
+    overflow: visible !important;
+    background: white !important;
+    transform: none !important;
+    transition: none !important;
   }
 
+  /* ── 4. Flatten inner content body ── */
   .dashboard-main-body {
-    padding: 0 !important;
+    padding: 10px !important;
     margin: 0 !important;
     width: 100% !important;
     background: white !important;
     overflow: visible !important;
   }
 
-  /* Specific fix for filter bars inside fee-cards */
-  .fee-card-header.premium-header .header-filters,
-  .fee-card-header .header-filters {
-    display: none !important;
-  }
-
-  /* ── 4. Make fee-card / glass containers print-safe ── */
+  /* ── 5. Make fee-card / glass containers print-safe ── */
   .fee-card,
   .table-glass-container,
   .glass-card {
@@ -82,19 +95,18 @@
     break-inside: avoid;
     page-break-inside: avoid;
     width: 100% !important;
+    overflow: visible !important;
   }
 
-  /* ── 5. Reset card header (keep title, hide buttons) ── */
+  /* ── 6. Reset card header (keep title, hide buttons) ── */
   .fee-card-header,
   .table-glass-header {
     background: #f8fafc !important;
     border-bottom: 2px solid #800000 !important;
     padding: 10px 16px !important;
-    display: flex !important;
-    flex-wrap: nowrap !important;
   }
 
-  /* ── 6. Table core styles for print ── */
+  /* ── 7. Table core styles for print ── */
   .fee-table,
   .premium-table {
     width: 100% !important;
@@ -130,7 +142,7 @@
     print-color-adjust: exact !important;
   }
 
-  /* ── 7. Status pills and badges ── */
+  /* ── 8. Status pills and badges ── */
   .amount-chip,
   .status-pill {
     border: 1px solid #ccc !important;
@@ -156,13 +168,13 @@
     print-color-adjust: exact !important;
   }
 
-  /* ── 8. Table overflow - enable for print ── */
+  /* ── 9. Table overflow - enable for print ── */
   .table-responsive,
   .table-wrapper {
     overflow: visible !important;
   }
 
-  /* ── 9. Page setup ── */
+  /* ── 10. Page setup ── */
   @page {
     margin: 15mm;
     size: A4 portrait;
