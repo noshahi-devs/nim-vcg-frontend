@@ -706,12 +706,16 @@ export class MonthlyPaymentComponent implements OnInit {
   getSelectedFeesNames(): string {
     const fees = this.form.value.fees || [];
     if (!fees.length) return 'Select Fees';
+    if (this.availableFees.length > 0 && fees.length === this.availableFees.length) return 'All Fees Selected';
+    if (fees.length > 2) return `${fees.length} Fees Selected`;
     return fees.map((f: any) => f.feeType?.typeName).join(', ');
   }
 
   getSelectedMonthsNames(): string {
     const months = this.form.value.academicMonths || [];
     if (!months.length) return 'Select Months';
+    if (this.academicMonths.length > 0 && months.length === this.academicMonths.length) return 'All Months Selected';
+    if (months.length > 2) return `${months.length} Months Selected`;
     return months.map((m: any) => m.monthName).join(', ');
   }
 

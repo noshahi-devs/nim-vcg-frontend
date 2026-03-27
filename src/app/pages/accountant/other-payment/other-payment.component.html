@@ -209,17 +209,49 @@
             <span class="card-dot maroon" style="background: #800000;"></span>
             Student Selection
           </div>
-          <div class="form-group-premium">
-            <label class="field-label">Student Name</label>
-            <div class="select-wrapper-premium">
-              <select class="field-select" formControlName="studentId">
-                <option value="">Choose a student...</option>
-                <option *ngFor="let s of students" [value]="s.studentId">{{ s.studentName }} — {{
-                  s.standard?.standardName }}</option>
-              </select>
-              <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
+          <div class="form-row-2">
+            <!-- Class Dropdown -->
+            <div class="form-group-premium">
+              <label class="field-label">Class</label>
+              <div class="select-wrapper-premium">
+                <select class="field-select" [(ngModel)]="selectedClassId" [ngModelOptions]="{standalone: true}" (change)="onClassChange()">
+                  <option [ngValue]="null">Select a class...</option>
+                  <option *ngFor="let std of standards" [value]="std.standardId">{{ std.standardName }}</option>
+                </select>
+                <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Custom Searchable Dropdown for Student -->
+            <div class="form-group-premium">
+              <label class="field-label">Student Name</label>
+              <div class="multi-select-wrap" [style.opacity]="(!selectedClassId && !isEditMode) ? '0.6' : '1'">
+                <div class="multi-select-btn" (click)="(!selectedClassId && !isEditMode) ? null : toggleStudentDropdown()">
+                  <span class="multi-select-val" [style.color]="!form.get('studentId')?.value ? '#94a3b8' : 'inherit'">
+                    {{ getSelectedStudentName() }}
+                  </span>
+                  <svg class="field-chevron" [class.rotated]="showStudentDropdown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
+                <div class="multi-select-panel" *ngIf="showStudentDropdown">
+                  <div class="panel-search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input type="text" [(ngModel)]="studentSearchTerm" [ngModelOptions]="{standalone: true}" (click)="$event.stopPropagation()" placeholder="Search student..." autofocus />
+                  </div>
+                  <div class="check-scroll">
+                    <div class="check-row" *ngFor="let s of filteredClassStudents" (click)="selectStudent(s.studentId); $event.stopPropagation()">
+                      <div class="check-text" style="display:flex; flex-direction:column; gap:2px;">
+                        <span class="bold">{{ s.studentName }}</span>
+                        <span style="font-size:10px; color:#64748b;">{{ s.enrollmentNo || 'No Enroll #' }}</span>
+                      </div>
+                    </div>
+                    <div *ngIf="filteredClassStudents.length === 0" class="empty-drop">No students found</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -342,6 +374,16 @@
             <span class="summary-label">Due Balance</span>
             <span class="summary-value">Rs. {{ form.get('dueBalance')?.value | number:'1.0-0' }}</span>
           </div>
+        </div>
+
+        <div class="toggles-bar" style="justify-content: flex-end; padding: 10px 4px 0;">
+          <label class="toggle-pill">
+            <span class="field-label" style="font-size: 11.5px; margin:0; font-weight:800; color: #800000;">Print Receipt</span>
+            <div class="pill-switch">
+              <input type="checkbox" formControlName="printReceipt">
+              <div class="pill-track"></div>
+            </div>
+          </label>
         </div>
 
       </form>
