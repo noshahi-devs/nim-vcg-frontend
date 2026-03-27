@@ -86,7 +86,7 @@
                 </label>
                 <div class="input-wrapper-premium">
                   <select class="form-select-premium" name="class" [(ngModel)]="newStudent.standardId"
-                    #standardId="ngModel" required
+                    #standardId="ngModel" required (change)="onClassChange()"
                     [ngClass]="{ 'is-invalid': standardId.invalid && standardId.touched }">
                     <option [ngValue]="null" disabled selected>Select Class</option>
                     <option *ngFor="let c of classes" [ngValue]="c.standardId">{{ c.standardName }}</option>
@@ -108,10 +108,7 @@
                   <select class="form-select-premium" name="section" [(ngModel)]="newStudent.section" #section="ngModel"
                     required [ngClass]="{ 'is-invalid': section.invalid && section.touched }">
                     <option value="" disabled selected>Select Section</option>
-                    <option value="A">Section A</option>
-                    <option value="B">Section B</option>
-                    <option value="C">Section C</option>
-                    <option value="D">Section D</option>
+                    <option *ngFor="let s of filteredSections" [value]="s.sectionName">{{ s.sectionName }}</option>
                   </select>
                 </div>
                 <div *ngIf="section.invalid && section.touched" class="error-feedback">

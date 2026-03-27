@@ -11,6 +11,8 @@ import { Standard } from '../../../Models/standard';
 import { OnInit } from '@angular/core';
 import { SessionService } from '../../../services/session.service';
 import { finalize } from 'rxjs';
+import { SectionService } from '../../../services/section.service';
+import { Section } from '../../../Models/section';
 import Swal from '../../../swal';
 
 declare var bootstrap: any;
@@ -88,6 +90,8 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
   admissionDateStr: string = '';
 
   classes: Standard[] = [];
+  sections: Section[] = [];
+  filteredSections: Section[] = [];
 
   // Premium Modal Visibility State
   showConfirmModal = false;
@@ -102,11 +106,13 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private studentService: StudentService,
     private standardService: StandardService,
+    private sectionService: SectionService,
     private sessionService: SessionService
   ) { }
 
   ngOnInit(): void {
     this.loadClasses();
+    this.loadSections();
 
     // Check if a classId was passed via query params (e.g., from class-list quick action)
     this.route.queryParams.subscribe(params => {
@@ -131,9 +137,47 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
 
   loadClasses() {
     this.standardService.getStandards().subscribe({
-      next: (res) => this.classes = res,
+      next: (res) => {
+        this.classes = res;
+        // If standardId was already set (via query params), trigger filter
+        if (this.newStudent.standardId) {
+          this.onClassChange();
+        }
+      },
       error: (err) => console.error('Failed to load classes', err)
     });
+  }
+
+  loadSections() {
+    this.sectionService.getSections().subscribe({
+      next: (res) => {
+        this.sections = res;
+        // If standardId was already set (via query params), trigger filter
+        if (this.newStudent.standardId) {
+          this.onClassChange();
+        }
+      },
+      error: (err) => console.error('Failed to load sections', err)
+    });
+  }
+
+  onClassChange() {
+    if (this.newStudent.standardId) {
+      const selectedClassName = this.getClassName(this.newStudent.standardId);
+      this.filteredSections = this.sections.filter(s => s.className === selectedClassName);
+    } else {
+      this.filteredSections = [];
+    }
+    // Reset section if current one isn't in filtered list
+    if (this.newStudent.section && !this.filteredSections.some(s => s.sectionName === this.newStudent.section)) {
+      this.newStudent.section = '';
+    }
+  }
+
+  getClassName(id: number | null | undefined): string {
+    if (!id) return '';
+    const cls = this.classes.find(c => c.standardId === id);
+    return cls ? cls.standardName : '';
   }
 
   // -------------------------------------------------------

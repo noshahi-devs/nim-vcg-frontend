@@ -175,7 +175,7 @@
             <!-- Class (Standard) -->
             <div class="col-md-4 form-group-premium">
               <label class="field-label">Standard / Class</label>
-              <select class="field-select" [(ngModel)]="studentData.standardId">
+              <select class="field-select" [(ngModel)]="studentData.standardId" (change)="onClassChange()">
                 <option *ngFor="let c of classes" [value]="c.standardId">{{ c.standardName }}</option>
               </select>
             </div>
@@ -184,8 +184,7 @@
             <div class="col-md-4 form-group-premium">
               <label class="field-label">Section</label>
               <select class="field-select" [(ngModel)]="studentData.section" name="section">
-                <option *ngFor="let s of sections" [value]="s.sectionName">{{ s.sectionName }} ({{ s.className }})
-                </option>
+                <option *ngFor="let s of filteredSections" [value]="s.sectionName">{{ s.sectionName }}</option>
               </select>
             </div>
 

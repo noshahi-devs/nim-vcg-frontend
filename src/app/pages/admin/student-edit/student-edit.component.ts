@@ -28,6 +28,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
   studentData: Student = new Student();
   classes: Standard[] = [];
   sections: Section[] = [];
+  filteredSections: Section[] = [];
   loading: boolean = false;
   isSaving: boolean = false;
 
@@ -62,9 +63,13 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
   }
 
   loadFilterData() {
-    this.standardService.getStandards().subscribe(res => this.classes = res);
+    this.standardService.getStandards().subscribe(res => {
+      this.classes = res;
+      this.onClassChange();
+    });
     this.sectionService.getSections().subscribe(res => {
       this.sections = res;
+      this.onClassChange();
       // Re-normalize section if student data is already loaded
       if (this.studentData && this.studentData.section) {
         this.studentData.section = this.findMatchingSection(this.studentData.section);
@@ -78,6 +83,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
       next: (res) => {
         const normalized = this.mapStudentToUi(res);
         this.studentData = normalized;
+        this.onClassChange(); // Filter sections for current class
 
         // Populate date strings for HTML input binding
         if (normalized.studentDOB) {
@@ -161,17 +167,30 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
 
   private findMatchingSection(val: string): string {
     if (!val) return '';
-    // If we already have sections loaded, try to find a match
     if (this.sections && this.sections.length > 0) {
       const match = this.sections.find(s =>
         s.sectionName === val ||
         s.sectionCode === val ||
-        s.sectionName === `Section ${val}` ||
-        s.sectionCode === `Section ${val}`
+        s.sectionName === `Section ${val}`
       );
       if (match) return match.sectionName;
     }
     return val;
+  }
+
+  onClassChange() {
+    if (this.studentData.standardId) {
+      const selectedClassName = this.getClassName(this.studentData.standardId);
+      this.filteredSections = this.sections.filter(s => s.className === selectedClassName);
+    } else {
+      this.filteredSections = [];
+    }
+  }
+
+  getClassName(id: number | null | undefined): string {
+    if (!id) return '';
+    const cls = this.classes.find(c => c.standardId === id);
+    return cls ? cls.standardName : '';
   }
 
   // ── Premium Feedback ──
