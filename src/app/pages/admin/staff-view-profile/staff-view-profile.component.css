@@ -11,6 +11,13 @@
   border-radius: 12px 12px 0 0;
 }
 
+@media (max-width: 767px) {
+  .profile-header-premium {
+    min-height: auto;
+    padding-bottom: 24px;
+  }
+}
+
 .profile-cover-bg {
   position: absolute;
   top: 0;
@@ -41,6 +48,14 @@
   background-color: #fff;
 }
 
+@media (max-width: 767px) {
+  .staff-profile-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 18px;
+  }
+}
+
 .status-indicator {
   position: absolute;
   bottom: 8px;
@@ -56,6 +71,12 @@
   background: #fff;
   padding-top: 12px;
   border-bottom: 1px solid #f1f5f9;
+  overflow-x: auto;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.profile-tabs-nav::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
 }
 
 .tab-item {
@@ -342,4 +363,68 @@
   font-size: 11px;
   letter-spacing: 0.5px;
   padding: 12px 16px;
+}
+/* Additional utility for responsiveness */
+@media (max-width: 575px) {
+  .card-body {
+    padding: 16px !important;
+  }
+  
+  .profile-header-content {
+    padding: 20px 16px !important;
+  }
+  
+  .stat-card-premium {
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .stat-info .value {
+    font-size: 18px;
+  }
+}
+
+/* Mobile Only Style Overrides */
+@media (max-width: 767px) {
+  .profile-header-content {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 16px !important;
+  }
+  
+  .profile-basic-info {
+    width: 100% !important;
+  }
+  
+  .profile-basic-info .d-flex {
+    justify-content: center !important;
+  }
+  
+  .profile-actions {
+    width: 100% !important;
+    justify-content: center !important;
+    margin-top: 16px !important;
+    flex-wrap: wrap;
+  }
+
+  .profile-actions .btn {
+    flex: 1 1 auto;
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 575px) {
+  .info-item-row-new {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    padding-bottom: 16px !important;
+  }
+  
+  .info-item-row-new span:last-child {
+    text-align: left !important;
+    padding-left: 48px !important;
+    max-width: 100% !important;
+  }
 }
