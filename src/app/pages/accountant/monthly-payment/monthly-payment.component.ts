@@ -67,6 +67,9 @@ export class MonthlyPaymentComponent implements OnInit {
   schoolInfo: any = {};
 
   // Dropdown & Search state
+  selectedClassId: number | null = null;
+  showStudentDropdown = false;
+  studentSearchTerm = '';
   showFeesDropdown = false;
   showMonthsDropdown = false;
   feeSearchTerm = '';
@@ -284,7 +287,10 @@ export class MonthlyPaymentComponent implements OnInit {
   openAddDialog() {
     this.isEditMode = false;
     this.showAddEditDialog = true;
-    this.availableFees = [...this.fees];
+    this.availableFees = [];
+    this.selectedClassId = null;
+    this.showStudentDropdown = false;
+    this.studentSearchTerm = '';
     this.form.reset({
       monthlyPaymentId: 0,
       fees: [],
@@ -302,6 +308,9 @@ export class MonthlyPaymentComponent implements OnInit {
   openEditDialog(p: MonthlyPayment) {
     this.isEditMode = true;
     this.showAddEditDialog = true;
+    this.selectedClassId = p.student?.standardId || null;
+    this.showStudentDropdown = false;
+    this.studentSearchTerm = '';
 
     // Ensure studentId is treated as string for the select binding if necessary
     // though [value] handles numbers fine, patchValue might need exact match.
@@ -490,6 +499,9 @@ export class MonthlyPaymentComponent implements OnInit {
     this.showPaymentDialog = false; // Close payment dialog
     this.feeSearchTerm = '';
     this.monthSearchTerm = '';
+    this.selectedClassId = null;
+    this.showStudentDropdown = false;
+    this.studentSearchTerm = '';
     this.form.reset();
   }
 
@@ -611,9 +623,53 @@ export class MonthlyPaymentComponent implements OnInit {
     }
   }
 
+  // ----- Student Custom Dropdown Helpers -----
+  onClassChange() {
+    this.form.patchValue({ studentId: '' });
+    this.studentSearchTerm = '';
+    this.showStudentDropdown = false;
+    this.availableFees = [];
+  }
+
+  toggleStudentDropdown() {
+    this.showStudentDropdown = !this.showStudentDropdown;
+    if (this.showStudentDropdown) {
+      this.showFeesDropdown = false;
+      this.showMonthsDropdown = false;
+    }
+  }
+
+  get filteredClassStudents() {
+    let list = this.students;
+    if (this.selectedClassId) {
+      list = list.filter(s => s.standardId == this.selectedClassId);
+    }
+    if (this.studentSearchTerm) {
+      const term = this.studentSearchTerm.toLowerCase();
+      list = list.filter(s => 
+        (s.studentName || '').toLowerCase().includes(term) || 
+        String(s.enrollmentNo || '').toLowerCase().includes(term)
+      );
+    }
+    return list;
+  }
+
+  getSelectedStudentName(): string {
+    const sId = this.form.get('studentId')?.value;
+    if (!sId) return 'Choose a student...';
+    const s = this.students.find(x => x.studentId == sId);
+    return s ? `${s.studentName} ${s.enrollmentNo ? '(' + s.enrollmentNo + ')' : ''}` : 'Choose a student...';
+  }
+
+  selectStudent(studentId: number) {
+    this.form.patchValue({ studentId });
+    this.showStudentDropdown = false;
+    this.studentSearchTerm = '';
+  }
+
   // ----- Multi-select dropdown helpers -----
-  toggleFeesDropdown() { this.showFeesDropdown = !this.showFeesDropdown; if (this.showFeesDropdown) this.showMonthsDropdown = false; }
-  toggleMonthsDropdown() { this.showMonthsDropdown = !this.showMonthsDropdown; if (this.showMonthsDropdown) this.showFeesDropdown = false; }
+  toggleFeesDropdown() { this.showFeesDropdown = !this.showFeesDropdown; if (this.showFeesDropdown) { this.showMonthsDropdown = false; this.showStudentDropdown = false; } }
+  toggleMonthsDropdown() { this.showMonthsDropdown = !this.showMonthsDropdown; if (this.showMonthsDropdown) { this.showFeesDropdown = false; this.showStudentDropdown = false; } }
 
   isFeeSelected(fee: Fee) {
     return (this.form.value.fees || []).some((f: any) => f.feeId === fee.feeId);
