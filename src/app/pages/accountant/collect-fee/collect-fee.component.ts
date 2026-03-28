@@ -1,6 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonServices } from '../../../services/common.service';
+import { SettingsService } from '../../../services/settings.service';
 import { Student } from '../../../Models/student';
 import { Standard } from '../../../Models/standard';
 import { MonthlyPayment } from '../../../Models/monthly-payment';
@@ -20,6 +21,7 @@ import Swal from '../../../swal';
 export class CollectFeeComponent implements OnInit {
 
   title = 'Collect Fee';
+  schoolInfo: any = {};
 
   standards: Standard[] = [];
   students: Student[] = [];
@@ -54,6 +56,7 @@ export class CollectFeeComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private commonService: CommonServices,
+    private settingsService: SettingsService,
     private authService: AuthService
   ) {
     this.paymentForm = this.fb.group({
@@ -67,6 +70,13 @@ export class CollectFeeComponent implements OnInit {
   ngOnInit(): void {
     this.loadStandards();
     this.loadStudents();
+    this.loadSchoolInfo();
+  }
+
+  loadSchoolInfo() {
+    this.settingsService.getSchoolInfo().subscribe(info => {
+      this.schoolInfo = info;
+    });
   }
 
   hasRole(role: string): boolean {
@@ -142,8 +152,6 @@ export class CollectFeeComponent implements OnInit {
       amountPaid: val.amountPaid,
       paymentDate: val.paymentDate,
       // The backend will calculate totals, dues, remaining based on StudentId and AmountPaid
-      // We pass empty arrays if we aren't selecting specific months/fees in this UI,
-      // assuming this is a payment against Due Balance.
       fees: [],
       academicMonths: [],
       paymentMonths: [],
@@ -167,42 +175,159 @@ export class CollectFeeComponent implements OnInit {
   }
 
   printReceipt() {
-    if (!this.studentId) return;
-    // We navigate to the payment detail or invoice list to print, 
-    // but for immediate feedback, we can try to find the last payment ID.
-    this.commonService.getAllPaymentsByStudentId(this.studentId).subscribe(payments => {
-      if (payments && payments.length > 0) {
-        const lastPayment = payments[0]; // Assuming descending order
-        const url = `/invoice-preview/${lastPayment.monthlyPaymentId}?type=monthly&print=true`;
-        window.open(url, '_blank');
-      }
-    });
+    if (!this.selectedStudent) return;
+    
+    const schoolName = this.schoolInfo?.schoolName || 'Vision College';
+    const today = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    const student = this.selectedStudent;
+    const className = this.standards.find(s => s.standardId == student.standardId)?.standardName || 'N/A';
+    
+    // Rows logic - showing summary for the collection
+    let rowsHtml = `<tr><td>Student Fee Collection (Due Clearance)</td><td class="text-right">${this.paidAmount.toLocaleString()}</td></tr>`;
+    rowsHtml += `<tr><td>&nbsp;</td><td>&nbsp;</td></tr>`;
+
+    // Footer
+    let tfootHtml = `<tr><td class="text-right"><strong>Total Paid:</strong></td><td class="text-right"><strong>Rs. ${this.paidAmount.toLocaleString()}</strong></td></tr>`;
+    if (this.remainingAmount > 0) {
+      tfootHtml += `<tr><td class="text-right" style="color:#d32f2f;"><strong>Remaining Dues:</strong></td><td class="text-right" style="color:#d32f2f;"><strong>Rs. ${this.remainingAmount.toLocaleString()}</strong></td></tr>`;
+    }
+
+    const voucherParts = ['Bank Copy', 'Office Copy', 'Student Copy'].map(copyName => `
+      <div class="voucher-part">
+        <div class="v-header">
+          <img src="assets/images/Vision College emblem design.png" alt="Logo" class="v-logo" onerror="this.style.display='none'">
+          <div class="v-school-info">
+            <h2>${schoolName}</h2>
+            <p class="v-campus">GOJRA CAMPUS</p>
+          </div>
+        </div>
+        <div class="v-title-bar">
+          <span class="v-copy-tag">${copyName}</span>
+          <span class="v-date">Date: ${today}</span>
+        </div>
+        <div class="v-student-panel">
+          <div class="v-row"><strong>Receipt #:</strong> <span style="color:#800000; font-weight:bold;">${Date.now().toString().slice(-6)}</span></div>
+          <div class="v-row"><strong>Name:</strong> <span>${student.studentName || '-'}</span></div>
+          <div class="v-row"><strong>Class:</strong> <span>${className}</span></div>
+          <div class="v-row"><strong>Enrollment:</strong> <span>${student.enrollmentNo || '-'}</span></div>
+        </div>
+        <table class="v-table">
+          <thead><tr><th>Description</th><th class="text-right">Amount (Rs.)</th></tr></thead>
+          <tbody>${rowsHtml}</tbody>
+          <tfoot>${tfootHtml}</tfoot>
+        </table>
+        <div class="v-bank-footer">
+          <div class="v-bank-details">
+            <p><strong>Bank:</strong> Habib Bank Limited (HBL)</p>
+            <p><strong>A/C Title:</strong> Vision College</p>
+            <p><strong>A/C No:</strong> 0123-4567890-11</p>
+          </div>
+        </div>
+        <div class="v-signatures">
+          <div class="v-sig">Cashier</div>
+          <div class="v-sig">Officer</div>
+        </div>
+      </div>
+    `).join('');
+
+    const html = `<!DOCTYPE html>
+<html><head><title>Fee Voucher - ${student.studentName}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+  body { background: white; color: #000; padding: 10px; }
+  @page { size: A4 landscape; margin: 5mm; }
+  .voucher-page { display: flex; gap: 10px; width: 100%; height: 95vh; page-break-after: always; }
+  .voucher-part {
+    flex: 1; border: 1.5px dashed #94a3b8; padding: 14px;
+    font-size: 11px; border-radius: 4px;
+  }
+  .v-header {
+    display: flex; align-items: center; border-bottom: 2.5px solid #800000;
+    padding-bottom: 8px; margin-bottom: 10px; gap: 10px;
+  }
+  .v-logo { height: 38px; width: auto; }
+  .v-school-info h2 { color: #800000; font-size: 15px; font-weight: 800; margin: 0; }
+  .v-campus { font-size: 10px; font-weight: 700; color: #800000; letter-spacing: 1px; margin: 1px 0 0 !important; }
+  .v-title-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #f1f5f9; padding: 5px 10px; font-weight: bold;
+    margin-bottom: 10px; border-radius: 4px; font-size: 11px;
+  }
+  .v-copy-tag { text-transform: uppercase; letter-spacing: 0.5px; color: #800000; }
+  .v-date { font-weight: 600; color: #475569; }
+  .v-student-panel { margin-bottom: 12px; }
+  .v-row { padding: 3px 0; font-size: 12px; }
+  .v-row strong { display: inline-block; width: 75px; color: #475569; }
+  .v-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  .v-table th, .v-table td { border: 1px solid #cbd5e1; padding: 6px 8px; font-size: 11px; }
+  .v-table th { background: #f8fafc; text-align: left; font-weight: 700; color: #1e293b; }
+  .text-right { text-align: right !important; }
+  .v-table tfoot td { background: #fef2f2; font-size: 12px; border-top: 2px solid #800000; }
+  .v-bank-footer { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px; border-radius: 4px; margin-bottom: 20px; }
+  .v-bank-details p { margin: 2px 0; font-size: 10px; color: #1e293b; }
+  .v-signatures { display: flex; justify-content: space-between; margin-top: 30px; padding: 0 10px; }
+  .v-sig { border-top: 1px solid #000; width: 80px; text-align: center; padding-top: 5px; font-size: 10px; font-weight: 600; }
+  @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style></head>
+<body><div class="voucher-page">${voucherParts}</div>
+<script>window.onload = function() { window.print(); window.close(); };</script>
+</body></html>`;
+
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.write(html);
+      win.document.close();
+    }
   }
 
   downloadReceipt() {
-    if (!this.selectedStudent) return;
+    if (!this.selectedStudent) {
+      this.showFeedback('warning', 'No Student', 'Please select a student first!');
+      return;
+    }
 
-    const headers = ['Student Name', 'Enrollment #', 'Paid Amount', 'Payment Type', 'Payment Date', 'Remaining Amount'];
-    const rows = [[
-      this.selectedStudent.studentName,
-      this.selectedStudent.enrollmentNo,
-      this.paymentForm.value.amountPaid,
-      this.paymentForm.value.paymentType,
-      this.paymentForm.value.paymentDate,
-      this.remainingAmount
-    ]];
+    const student = this.selectedStudent;
+    const className = this.standards.find(s => s.standardId == student.standardId)?.standardName || 'N/A';
 
-    let csvContent = "data:text/csv;charset=utf-8,"
-      + headers.join(",") + "\n"
+    // Build CSV rows from transaction history (or summary row if none)
+    const headers = ['Trans ID', 'Payment Date', 'Student Name', 'Enrollment #', 'Class', 'Paid Amount (Rs)', 'Remaining After (Rs)'];
+    
+    let rows: any[][];
+    if (this.previousPayments.length > 0) {
+      rows = this.previousPayments.map(p => [
+        p.monthlyPaymentId,
+        new Date(p.paymentDate).toLocaleDateString('en-GB'),
+        student.studentName,
+        student.enrollmentNo || 'N/A',
+        className,
+        p.amountPaid,
+        p.amountRemaining
+      ]);
+    } else {
+      // Export summary row when no transactions
+      rows = [[
+        'N/A',
+        new Date().toLocaleDateString('en-GB'),
+        student.studentName,
+        student.enrollmentNo || 'N/A',
+        className,
+        0,
+        this.totalFee
+      ]];
+    }
+
+    const csvContent = headers.join(",") + "\n"
       + rows.map(e => e.join(",")).join("\n");
 
-    const encodedUri = encodeURI(csvContent);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "fee_receipt.csv");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `FeeReport_${student.studentName.replace(/\s/g, '_')}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 
   updatePagination() {
