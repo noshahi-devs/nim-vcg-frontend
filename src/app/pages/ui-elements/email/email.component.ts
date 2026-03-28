@@ -170,8 +170,26 @@ export class EmailComponent implements OnInit {
 
   toggleStar(msg: UserMessage, event: Event) {
     event.stopPropagation();
-    this.messageService.toggleStar(msg.id).subscribe(res => {
-      msg.isStarred = res.isStarred;
+    if (msg.id < 0) {
+      msg.isStarred = !msg.isStarred;
+      return;
+    }
+    
+    // Optimistic UI update
+    const previousState = msg.isStarred;
+    msg.isStarred = !msg.isStarred;
+
+    this.messageService.toggleStar(msg.id).subscribe({
+      next: (res) => {
+        // If backend returns the exact state, sync it, otherwise trust our optimistic toggle
+        if (res && res.isStarred !== undefined) {
+          msg.isStarred = res.isStarred;
+        }
+      },
+      error: (err) => {
+        console.error('Error toggling star:', err);
+        msg.isStarred = previousState; // Revert on failure
+      }
     });
   }
 

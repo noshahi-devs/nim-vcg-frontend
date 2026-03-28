@@ -6,32 +6,32 @@
   <!-- ── Standard Stats Row ── -->
   <div class="stats-row mb-24">
     <div class="stat-card-glass">
+      <div class="stat-icon-box maroon">
+        <iconify-icon icon="solar:letter-bold"></iconify-icon>
+      </div>
       <div class="stat-info">
         <p class="stat-label">Total Messages</p>
         <h3 class="stat-value">{{ messages.length }}</h3>
       </div>
-      <div class="stat-icon-box maroon">
-        <iconify-icon icon="solar:letter-bold"></iconify-icon>
-      </div>
     </div>
 
     <div class="stat-card-glass">
+      <div class="stat-icon-box maroon-light">
+        <iconify-icon icon="solar:notification-lines-remove-bold"></iconify-icon>
+      </div>
       <div class="stat-info">
         <p class="stat-label">Unread</p>
         <h3 class="stat-value text-maroon">{{ unreadMessages.length }}</h3>
       </div>
-      <div class="stat-icon-box maroon-light">
-        <iconify-icon icon="solar:notification-lines-remove-bold"></iconify-icon>
-      </div>
     </div>
 
     <div class="stat-card-glass">
+      <div class="stat-icon-box warning">
+        <iconify-icon icon="solar:star-bold"></iconify-icon>
+      </div>
       <div class="stat-info">
         <p class="stat-label">Starred</p>
         <h3 class="stat-value">{{ starredMessagesCount }}</h3>
-      </div>
-      <div class="stat-icon-box warning">
-        <iconify-icon icon="solar:star-bold"></iconify-icon>
       </div>
     </div>
   </div>
