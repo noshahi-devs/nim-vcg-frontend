@@ -26,7 +26,7 @@ export class ReportComponent implements OnInit {
   
   // Pagination
   currentPage = 1;
-  rowsPerPage = 10;
+  rowsPerPage = 5;
   Math = Math;
 
   accountData: DashboardData | null = null;

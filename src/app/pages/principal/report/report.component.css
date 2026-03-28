@@ -328,3 +328,7 @@
 @media (max-width: 768px) {
   .stats-row { grid-template-columns: 1fr; }
 }
+
+/* Missing Spacing Utilities */
+.mb-30 { margin-bottom: 30px !important; }
+.gy-24 { --bs-gutter-y: 24px; }

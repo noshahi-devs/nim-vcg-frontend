@@ -143,7 +143,7 @@
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
-            Export PDF
+            Export Report
           </button>
         </div>
       </div>
@@ -329,7 +329,7 @@
     <div class="pm-actions">
       <button class="pm-btn pm-Ok"
         [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
-        (click)="closeFeedback()" style="background: linear-gradient(135deg, #800000, #5a0000);">
+        (click)="closeFeedback()">
         <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
       </button>
     </div>

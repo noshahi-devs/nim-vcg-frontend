@@ -569,11 +569,53 @@ export class IncomeManageComponent implements OnInit {
 
   exportData(): void {
     this.isProcessing = true;
-    // Simulate export delay for premium feel
     setTimeout(() => {
-      this.isProcessing = false;
-      this.triggerSuccess('Export Complete!', 'Income data has been exported successfully.');
-    }, 1500);
+      try {
+        if (!this.filteredList || this.filteredList.length === 0) {
+          this.isProcessing = false;
+          this.triggerError('No Data', 'There is no income data to export based on current filters.');
+          return;
+        }
+
+        const headers = ['ID', 'Date', 'Source', 'Description', 'Campus', 'Payment Method', 'Received By', 'Amount (PKR)'];
+        const csvRows = [headers.join(',')];
+
+        this.filteredList.forEach(income => {
+          const row = [
+            `"${income.id}"`,
+            `"${new Date(income.date).toLocaleDateString()}"`,
+            `"${income.source || ''}"`,
+            `"${income.description || ''}"`,
+            `"${income.campus || ''}"`,
+            `"${income.paymentMethod || ''}"`,
+            `"${income.receivedBy || ''}"`,
+            `"${income.amount}"`
+          ];
+          csvRows.push(row.join(','));
+        });
+
+        // Add Total Row
+        csvRows.push(`"","","","","","","TOTAL","${this.totalIncome}"`);
+
+        const csvContent = "data:text/csv;charset=utf-8," + csvRows.join('\n');
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        
+        const timestamp = new Date().toISOString().split('T')[0];
+        link.setAttribute("download", `Income_Report_${timestamp}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        this.isProcessing = false;
+        this.triggerSuccess('Export Complete!', 'Income report (CSV) has been downloaded successfully.');
+      } catch (err) {
+        console.error('Export failed:', err);
+        this.isProcessing = false;
+        this.triggerError('Export Failed', 'An error occurred while generating the report.');
+      }
+    }, 800);
   }
 
   formatCurrency(amount: number): string {

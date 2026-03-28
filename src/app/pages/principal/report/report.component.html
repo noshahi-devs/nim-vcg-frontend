@@ -305,7 +305,10 @@
                     </table>
                 </div>
                 <!-- ── Pagination ── -->
-                <div class="px-24 py-16 border-top border-light" *ngIf="accountData?.recentTransactions?.length > rowsPerPage">
+                <div class="px-24 py-16 border-top border-light d-flex justify-content-between align-items-center flex-wrap gap-3" *ngIf="accountData?.recentTransactions?.length">
+                    <div class="text-sm text-secondary-light fw-medium">
+                        Showing {{ (currentPage - 1) * rowsPerPage + 1 }} to {{ (currentPage * rowsPerPage) > accountData!.recentTransactions.length ? accountData!.recentTransactions.length : (currentPage * rowsPerPage) }} of {{ accountData!.recentTransactions.length }} entries
+                    </div>
                     <nav class="d-flex justify-content-end">
                         <ul class="pagination-pills m-0 p-0 d-flex gap-2" style="list-style: none;">
                             <li class="page-item" [class.disabled]="currentPage === 1">

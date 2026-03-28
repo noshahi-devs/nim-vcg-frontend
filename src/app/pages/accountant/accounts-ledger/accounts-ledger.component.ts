@@ -107,9 +107,52 @@ export class AccountsLedgerComponent implements OnInit {
   exportLedger(): void {
     this.isProcessing = true;
     setTimeout(() => {
-      this.isProcessing = false;
-      this.triggerSuccess('Export Complete!', 'Ledger data has been exported successfully.');
-    }, 1500);
+      try {
+        if (!this.filteredTransactions || this.filteredTransactions.length === 0) {
+          this.isProcessing = false;
+          this.triggerError('No Data', 'There is no ledger data to export based on current filters.');
+          return;
+        }
+
+        const headers = ['Transaction ID', 'Date', 'Type', 'Category', 'Description', 'Debit (PKR)', 'Credit (PKR)', 'Balance (PKR)'];
+        const csvRows = [headers.join(',')];
+
+        this.filteredTransactions.forEach(t => {
+          const row = [
+            `"${t.transactionId || ''}"`,
+            `"${new Date(t.date).toLocaleDateString()}"`,
+            `"${t.type || ''}"`,
+            `"${t.category || ''}"`,
+            `"${(t.description || '').replace(/"/g, '""')}"`,
+            `"${t.debit}"`,
+            `"${t.credit}"`,
+            `"${t.balance}"`
+          ];
+          csvRows.push(row.join(','));
+        });
+
+        // Add Total Row
+        csvRows.push(`"","","","","TOTAL","${this.totalDebit}","${this.totalCredit}","${this.finalBalance}"`);
+
+        const csvContent = "data:text/csv;charset=utf-8," + csvRows.join('\n');
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        
+        const timestamp = new Date().toISOString().split('T')[0];
+        link.setAttribute("download", `Accounts_Ledger_${timestamp}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        this.isProcessing = false;
+        this.triggerSuccess('Export Complete!', 'Ledger data (CSV) has been exported successfully.');
+      } catch (err) {
+        console.error('Export failed:', err);
+        this.isProcessing = false;
+        this.triggerError('Export Failed', 'An error occurred while generating the report.');
+      }
+    }, 800);
   }
 
   clearFilters(): void {

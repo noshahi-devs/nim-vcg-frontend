@@ -198,22 +198,27 @@ export class AccountsComponent implements OnInit {
 
   loadDashboardData(): void {
     this.loading = true;
+    this.isProcessing = true;
     this.loadLedgerSummary();
     this.accountsService.getDashboardData().subscribe({
       next: (data) => {
         if (!this.isValidDashboardData(data)) {
           this.setDashboardData(this.fallbackDashboardData, 'Demo');
           this.loading = false;
+          this.isProcessing = false;
           return;
         }
         this.setDashboardData(data, 'Live');
         this.syncTotalsWithIncomeExpense();
         this.loading = false;
+        this.isProcessing = false;
+        this.triggerSuccess('Refreshed!', 'Dashboard data has been updated successfully.');
       },
       error: (err) => {
         console.error('Error loading dashboard data:', err);
         this.setDashboardData(this.fallbackDashboardData, 'Demo');
         this.loading = false;
+        this.isProcessing = false;
         this.triggerWarning('Demo Data Loaded', 'Live data is unavailable right now. Showing the latest demo snapshot.');
       }
     });
@@ -540,7 +545,7 @@ export class AccountsComponent implements OnInit {
               </div>
               <div class="total-row">
                 <span>Tax / Service Fee</span>
-                <span>$0.00</span>
+                <span>Rs. 0</span>
               </div>
               <div class="receipt-divider" style="opacity: 0.1;"></div>
               <div class="total-row grand-total ${amountClass}">
@@ -551,11 +556,11 @@ export class AccountsComponent implements OnInit {
           </div>
 
           <div class="receipt-footer">
-            <button class="receipt-btn btn-secondary" onclick="window.downloadReceipt('${transaction.transactionId}')">
-              <iconify-icon icon="solar:download-minimalistic-linear"></iconify-icon>
-              Download PDF
+            <button class="receipt-btn btn-secondary" onclick="window.printReceipt()">
+              <iconify-icon icon="solar:printer-minimalistic-linear"></iconify-icon>
+              Print Receipt
             </button>
-            <button class="receipt-btn btn-primary" onclick="Swal.close()">
+            <button class="receipt-btn btn-primary" onclick="window.closeReceipt()">
               Done
             </button>
           </div>
@@ -574,20 +579,22 @@ export class AccountsComponent implements OnInit {
         popup: 'animate__animated animate__fadeOutDown animate__faster'
       },
       didOpen: () => {
-        (window as any).downloadReceipt = (id: string) => {
-          Swal.showLoading();
-          setTimeout(() => {
-            Swal.hideLoading();
-            Swal.fire({
-              title: 'Success!',
-              text: 'Receipt has been downloaded successfully.',
-              icon: 'success',
-              timer: 2000,
-              showConfirmButton: false,
-              toast: true,
-              position: 'top-end'
-            });
-          }, 1500);
+        (window as any).printReceipt = () => {
+          const popupEl = document.querySelector('.modern-receipt-popup') as HTMLElement;
+          if (!popupEl) return;
+          const printWindow = window.open('', '', 'width=450,height=700');
+          if (!printWindow) return;
+          printWindow.document.write(`
+            <html><head><title>Transaction Receipt</title>
+            <style>body{font-family:sans-serif;padding:20px;} .receipt-footer{display:none;}</style>
+            </head><body>${popupEl.innerHTML}</body></html>
+          `);
+          printWindow.document.close();
+          printWindow.focus();
+          setTimeout(() => { printWindow.print(); printWindow.close(); }, 300);
+        };
+        (window as any).closeReceipt = () => {
+          Swal.close();
         };
       }
     });

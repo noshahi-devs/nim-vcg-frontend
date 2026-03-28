@@ -231,7 +231,53 @@ export class ExpenseManageComponent implements OnInit {
   }
 
   exportData(): void {
-    this.triggerSuccess('Export', 'Exporting expense data to PDF...');
+    this.isProcessing = true;
+    setTimeout(() => {
+      try {
+        if (!this.filteredList || this.filteredList.length === 0) {
+          this.isProcessing = false;
+          this.triggerError('No Data', 'There is no expense data to export based on current filters.');
+          return;
+        }
+
+        const headers = ['ID', 'Date', 'Type', 'Description', 'Approved By', 'Payment Method', 'Amount (PKR)'];
+        const csvRows = [headers.join(',')];
+
+        this.filteredList.forEach(expense => {
+          const row = [
+            `"${expense.id}"`,
+            `"${new Date(expense.date).toLocaleDateString()}"`,
+            `"${expense.expenseType || ''}"`,
+            `"${expense.description || ''}"`,
+            `"${expense.approvedBy || ''}"`,
+            `"${expense.paymentMethod || ''}"`,
+            `"${expense.amount}"`
+          ];
+          csvRows.push(row.join(','));
+        });
+
+        // Add Total Row
+        csvRows.push(`"","","","","","TOTAL","${this.totalExpenses}"`);
+
+        const csvContent = "data:text/csv;charset=utf-8," + csvRows.join('\n');
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        
+        const timestamp = new Date().toISOString().split('T')[0];
+        link.setAttribute("download", `Expense_Report_${timestamp}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        this.isProcessing = false;
+        this.triggerSuccess('Export Complete!', 'Expense report (CSV) has been downloaded successfully.');
+      } catch (err) {
+        console.error('Export failed:', err);
+        this.isProcessing = false;
+        this.triggerError('Export Failed', 'An error occurred while generating the report.');
+      }
+    }, 800);
   }
 
   formatCurrency(amount: number): string {

@@ -7,18 +7,22 @@
             <div>
                 <span class="hero-badge">{{ isDemoData ? 'Demo Data' : 'Live Data' }}</span>
                 <h2 class="hero-heading">Accounts Overview</h2>
-                <p class="hero-subtitle">Welcome {{ displayName }}! Here is the latest income, expense, and bank view. <br> Updated {{ lastUpdated || 'Just now' }}</p>
+                <p class="hero-subtitle">Welcome {{ displayName }}! Here is the latest income, expense, and bank view.
+                    <br> Updated {{ lastUpdated || 'Just now' }}</p>
                 <div class="hero-tags mt-16">
                     <span class="glass-tag">
-                        <iconify-icon icon="solar:wallet-money-bold-duotone" style="font-size: 16px;"></iconify-icon> Cash and Bank: {{ formatCurrency(dashboardData?.cashBankBalance || 0) }}
+                        <iconify-icon icon="solar:wallet-money-bold-duotone" style="font-size: 16px;"></iconify-icon>
+                        Cash and Bank: {{ formatCurrency(dashboardData?.cashBankBalance || 0) }}
                     </span>
                     <span class="glass-tag">
-                        <iconify-icon icon="solar:chart-square-bold-duotone" style="font-size: 16px;"></iconify-icon> Expected Margin: {{ kpiSummary.profitMargin | number:'1.0-1' }}%
+                        <iconify-icon icon="solar:chart-square-bold-duotone" style="font-size: 16px;"></iconify-icon>
+                        Expected Margin: {{ kpiSummary.profitMargin | number:'1.0-1' }}%
                     </span>
                 </div>
             </div>
             <div class="hero-graphic d-none d-lg-block">
-                <iconify-icon icon="solar:bank-bold-duotone" class="pulsing-icon text-maroon" style="font-size: 8rem; opacity: 0.8;"></iconify-icon>
+                <iconify-icon icon="solar:bank-bold-duotone" class="pulsing-icon text-maroon"
+                    style="font-size: 8rem; opacity: 0.8;"></iconify-icon>
             </div>
         </div>
     </div>
@@ -29,14 +33,6 @@
             <div class="action-icon maroon-light"><iconify-icon icon="solar:refresh-circle-bold-duotone"></iconify-icon></div>
             <span class="fw-bold text-dark">Refresh Data</span>
         </div>
-        <div class="glass-action-btn maroon-hue" (click)="exportData()">
-            <div class="action-icon maroon-light"><iconify-icon icon="solar:printer-bold-duotone"></iconify-icon></div>
-            <span class="fw-bold text-dark">Export Report</span>
-        </div>
-        <a routerLink="/accounts-ledger" class="glass-action-btn gold-hue text-decoration-none">
-            <div class="action-icon premium-gold"><iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon></div>
-            <span class="fw-bold text-dark">Open Ledger</span>
-        </a>
     </div>
 
     <!-- Stats Row -->
@@ -49,8 +45,11 @@
             <div class="stat-info">
                 <span class="stat-label">Total Income</span>
                 <h3 class="stat-value">{{ formatCurrency(dashboardData.totalIncome) }}</h3>
-                <span class="fw-bold" [ngClass]="kpiSummary.incomeChange >= 0 ? 'text-success-main' : 'text-danger-main'" style="font-size: 12px; margin-top: 4px;">
-                    {{ kpiSummary.incomeChange >= 0 ? '+' : '' }}{{ kpiSummary.incomeChange | number:'1.0-0' }}% this month
+                <span class="fw-bold"
+                    [ngClass]="kpiSummary.incomeChange >= 0 ? 'text-success-main' : 'text-danger-main'"
+                    style="font-size: 12px; margin-top: 4px;">
+                    {{ kpiSummary.incomeChange >= 0 ? '+' : '' }}{{ kpiSummary.incomeChange | number:'1.0-0' }}% this
+                    month
                 </span>
             </div>
         </div>
@@ -62,20 +61,25 @@
             <div class="stat-info">
                 <span class="stat-label">Total Expenses</span>
                 <h3 class="stat-value">{{ formatCurrency(dashboardData.totalExpenses) }}</h3>
-                <span class="fw-bold" [ngClass]="kpiSummary.expenseChange >= 0 ? 'text-warning-main' : 'text-success-main'" style="font-size: 12px; margin-top: 4px;">
-                    {{ kpiSummary.expenseChange >= 0 ? '+' : '' }}{{ kpiSummary.expenseChange | number:'1.0-0' }}% this month
+                <span class="fw-bold"
+                    [ngClass]="kpiSummary.expenseChange >= 0 ? 'text-warning-main' : 'text-success-main'"
+                    style="font-size: 12px; margin-top: 4px;">
+                    {{ kpiSummary.expenseChange >= 0 ? '+' : '' }}{{ kpiSummary.expenseChange | number:'1.0-0' }}% this
+                    month
                 </span>
             </div>
         </div>
         <!-- Net Result -->
         <div class="stat-card-glass">
             <div class="stat-icon-box" [ngClass]="dashboardData.profitLoss >= 0 ? 'success-teal' : 'maroon-light'">
-                <iconify-icon [icon]="dashboardData.profitLoss >= 0 ? 'solar:graph-up-bold-duotone' : 'solar:graph-down-bold-duotone'"></iconify-icon>
+                <iconify-icon
+                    [icon]="dashboardData.profitLoss >= 0 ? 'solar:graph-up-bold-duotone' : 'solar:graph-down-bold-duotone'"></iconify-icon>
             </div>
             <div class="stat-info">
                 <span class="stat-label">Net {{ dashboardData.profitLoss >= 0 ? 'Profit' : 'Loss' }}</span>
                 <h3 class="stat-value">{{ formatCurrency(dashboardData.profitLoss) }}</h3>
-                <span class="fw-bold" [ngClass]="kpiSummary.netChange >= 0 ? 'text-success-main' : 'text-danger-main'" style="font-size: 12px; margin-top: 4px;">
+                <span class="fw-bold" [ngClass]="kpiSummary.netChange >= 0 ? 'text-success-main' : 'text-danger-main'"
+                    style="font-size: 12px; margin-top: 4px;">
                     {{ kpiSummary.netChange >= 0 ? '+' : '' }}{{ kpiSummary.netChange | number:'1.0-0' }}% improvement
                 </span>
             </div>
@@ -114,22 +118,32 @@
 
     <!-- Table -->
     <div class="table-glass-container fade-in-up mb-24" *ngIf="dashboardData" style="animation-delay: 0.4s;">
-        <div class="panel-sub-header d-flex flex-wrap align-items-center justify-content-between gap-3 border-bottom border-light">
+        <div
+            class="panel-sub-header d-flex flex-wrap align-items-center justify-content-between gap-3 border-bottom border-light">
             <div>
                 <h5 class="panel-title m-0">Latest Entries</h5>
                 <span class="text-secondary-light text-sm p-0 m-0">Recent verified transactions</span>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <input type="date" class="filter-select px-3 bg-white" [(ngModel)]="dateFrom" (change)="onFilterChange()" title="Date From" />
+                <input type="date" class="filter-select px-3 bg-white" [(ngModel)]="dateFrom"
+                    (change)="onFilterChange()" title="Date From" />
                 <span class="fw-bold text-maroon">-</span>
-                <input type="date" class="filter-select px-3 bg-white" [(ngModel)]="dateTo" (change)="onFilterChange()" title="Date To" />
+                <input type="date" class="filter-select px-3 bg-white" [(ngModel)]="dateTo" (change)="onFilterChange()"
+                    title="Date To" />
                 <select class="filter-select bg-white" [(ngModel)]="typeFilter" (change)="onFilterChange()">
                     <option value="All">All Types</option>
                     <option value="Income">Income</option>
                     <option value="Expense">Expense</option>
                 </select>
-                <input type="text" class="filter-select bg-white" placeholder="Search..." [(ngModel)]="searchTerm" (input)="onFilterChange()" />
-                <button class="btn-clear text-maroon bg-transparent border-0 fw-bold px-2 py-1" (click)="clearFilters()" *ngIf="searchTerm || typeFilter !== 'All' || dateFrom || dateTo">Clear</button>
+                <input type="text" class="filter-select bg-white" placeholder="Search..." [(ngModel)]="searchTerm"
+                    (input)="onFilterChange()" />
+                <select class="filter-select bg-white" [(ngModel)]="rowsPerPage" (change)="currentPage=1" title="Rows per page">
+                    <option [value]="5">5 rows</option>
+                    <option [value]="10">10 rows</option>
+                    <option [value]="20">20 rows</option>
+                </select>
+                <button class="btn-clear text-maroon bg-transparent border-0 fw-bold px-2 py-1" (click)="clearFilters()"
+                    *ngIf="searchTerm || typeFilter !== 'All' || dateFrom || dateTo">Clear</button>
             </div>
         </div>
 
@@ -149,59 +163,66 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let transaction of pagedTransactions; let i = index" class="table-row">
-                        <td class="text-sm fw-bold text-secondary-light">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</td>
+                        <td class="text-sm fw-bold text-secondary-light">{{ (currentPage - 1) * rowsPerPage + i + 1 }}
+                        </td>
                         <td><span class="text-dark fw-bolder">{{ transaction.date | date:'mediumDate' }}</span></td>
-                        <td><span class="text-secondary-dark fw-bold text-sm">{{ transaction.transactionId }}</span></td>
+                        <td><span class="text-secondary-dark fw-bold text-sm">{{ transaction.transactionId }}</span>
+                        </td>
                         <td><span class="text-dark fw-bold text-sm">{{ transaction.category }}</span></td>
                         <td><span class="text-dark text-sm">{{ transaction.description }}</span></td>
                         <td>
-                            <span class="status-badge" [ngClass]="transaction.type === 'Income' ? 'active' : 'inactive'">
+                            <span class="status-badge"
+                                [ngClass]="transaction.type === 'Income' ? 'active' : 'inactive'">
                                 {{ transaction.type }}
                             </span>
                         </td>
-                        <td class="text-end fw-bolder" [ngClass]="transaction.type === 'Income' ? 'text-success-main' : 'text-danger-main'">
+                        <td class="text-end fw-bolder"
+                            [ngClass]="transaction.type === 'Income' ? 'text-success-main' : 'text-danger-main'">
                             {{ formatCurrency(transaction.type === 'Income' ? transaction.credit : transaction.debit) }}
                         </td>
                         <td class="text-center">
-                            <button type="button" class="btn btn-sm btn-outline-maroon text-maroon border-0 bg-maroon-10 bg-hover-maroon text-hover-white rounded-circle" style="width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center;" (click)="viewTransaction(transaction)" title="View Details">
+                            <button type="button"
+                                class="btn btn-sm btn-outline-maroon text-maroon border-0 bg-maroon-10 bg-hover-maroon text-hover-white rounded-circle"
+                                style="width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center;"
+                                (click)="viewTransaction(transaction)" title="View Details">
                                 <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon>
                             </button>
                         </td>
                     </tr>
                     <tr *ngIf="filteredTransactions.length === 0">
-                        <td colspan="8" class="text-center py-4 bg-transparent text-maroon fw-semibold">No transactions found matching your filters.</td>
+                        <td colspan="8" class="text-center py-4 bg-transparent text-maroon fw-semibold">No transactions
+                            found matching your filters.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        
+
         <!-- ── Pagination ── -->
         <div class="px-24 py-16 border-top border-light" *ngIf="filteredTransactions.length > rowsPerPage">
             <nav class="d-flex justify-content-end">
                 <ul class="pagination-pills m-0 p-0 d-flex gap-2" style="list-style: none;">
                     <li class="page-item" [class.disabled]="currentPage === 1">
-                        <a class="page-link d-flex align-items-center justify-content-center bg-white border rounded" 
-                           (click)="changePage(currentPage - 1)" href="javascript:void(0)" 
-                           style="width: 32px; height: 32px; color: #64748b;">
+                        <a class="page-link d-flex align-items-center justify-content-center bg-white border rounded"
+                            (click)="changePage(currentPage - 1)" href="javascript:void(0)"
+                            style="width: 32px; height: 32px; color: #64748b;">
                             <iconify-icon icon="solar:alt-arrow-left-bold-duotone"></iconify-icon>
                         </a>
                     </li>
                     <li class="page-item" *ngFor="let page of pageNumbers">
-                        <a class="page-link d-flex align-items-center justify-content-center rounded" 
-                           (click)="changePage(page)" href="javascript:void(0)"
-                           [ngStyle]="{
+                        <a class="page-link d-flex align-items-center justify-content-center rounded"
+                            (click)="changePage(page)" href="javascript:void(0)" [ngStyle]="{
                              'width': '32px', 'height': '32px', 'font-weight': '700', 'font-size': '13px',
                              'background-color': currentPage === page ? '#800000' : '#ffffff',
                              'color': currentPage === page ? '#ffffff' : '#64748b',
                              'border': currentPage === page ? '1px solid #800000' : '1px solid #e2e8f0'
                            }">
-                           {{ page }}
+                            {{ page }}
                         </a>
                     </li>
                     <li class="page-item" [class.disabled]="currentPage === totalPages">
-                        <a class="page-link d-flex align-items-center justify-content-center bg-white border rounded" 
-                           (click)="changePage(currentPage + 1)" href="javascript:void(0)" 
-                           style="width: 32px; height: 32px; color: #64748b;">
+                        <a class="page-link d-flex align-items-center justify-content-center bg-white border rounded"
+                            (click)="changePage(currentPage + 1)" href="javascript:void(0)"
+                            style="width: 32px; height: 32px; color: #64748b;">
                             <iconify-icon icon="solar:alt-arrow-right-bold-duotone"></iconify-icon>
                         </a>
                     </li>
@@ -221,14 +242,17 @@
             <span class="pm-sparkle sp2"></span>
             <span class="pm-sparkle sp3"></span>
         </div>
-        <div class="pm-icon-ring" [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
-            <iconify-icon [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'"
+        <div class="pm-icon-ring"
+            [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
+            <iconify-icon
+                [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'"
                 style="font-size:2.4rem; color:#fff"></iconify-icon>
         </div>
         <p class="pm-title">{{ feedbackTitle }}</p>
         <p class="pm-subtitle">{{ feedbackMessage }}</p>
         <div class="pm-actions">
-            <button class="pm-btn pm-Ok" [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
+            <button class="pm-btn pm-Ok"
+                [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
                 (click)="closeFeedback()">
                 <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
             </button>
