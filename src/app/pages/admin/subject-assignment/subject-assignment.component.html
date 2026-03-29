@@ -305,7 +305,7 @@
              'warning-ring': feedbackType === 'warning'
            }">
                 <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
-                          feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
+                          feedbackType === 'error' ? 'solar:danger-bold' : 'solar:info-circle-bold'"
                     style="font-size: 38px; color: #fff;"></iconify-icon>
             </div>
 
@@ -325,13 +325,11 @@
     </div>
 
     <!-- PROCESSING / LOADING OVERLAY -->
-    <div class="premium-overlay processing-overlay" *ngIf="isProcessing">
+    <div class="premium-overlay" *ngIf="isProcessing">
         <div class="processing-card">
-            <div class="loader-ring">
-                <div class="loader-inner"></div>
-            </div>
+            <div class="loader-ring"></div>
             <div class="processing-content">
-                <h4 class="pc-title">Processing Request</h4>
+                <p class="pc-title">Processing Request</p>
                 <p class="pc-subtitle">Please wait a moment...</p>
             </div>
         </div>

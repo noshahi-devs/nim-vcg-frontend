@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AccountsService, Transaction } from '../../../services/accounts.service';
-import Swal from '../../../swal';
 
 @Component({
   selector: 'app-accounts-ledger',
@@ -67,7 +66,7 @@ export class AccountsLedgerComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading ledger:', err);
-        Swal.fire('Error', 'Failed to load ledger', 'error');
+        this.triggerError('Error', 'Failed to load ledger');
       }
     });
   }

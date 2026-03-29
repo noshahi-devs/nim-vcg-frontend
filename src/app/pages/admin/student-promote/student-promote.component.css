@@ -794,3 +794,41 @@
         transform: translateY(-10px);
     }
 }
+
+/* EMPTY STATE STYLES */
+.empty-state {
+  border: 1px dashed #d8cdb8;
+  border-radius: 18px;
+  background: #fffdf8;
+  padding: 64px 20px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.empty-state iconify-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(128, 0, 0, 0.14);
+  color: var(--brand-primary);
+  font-size: 35px;
+}
+
+.empty-state h5 {
+  margin: 0;
+  font-size: 18px;
+  color: #1e293b;
+  font-weight: 800;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+}

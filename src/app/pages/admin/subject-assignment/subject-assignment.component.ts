@@ -12,7 +12,6 @@ import { AppConfigService } from '../../../services/app-config.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import Swal from '../../../swal';
 
 
 export interface GroupedAssignment {
@@ -124,7 +123,7 @@ export class SubjectAssignmentComponent implements OnInit {
       error: (err) => {
         console.error("Failed to load initial data", err);
         this.errorMessage = "Failed to synchronize with server.";
-        Swal.fire('Error', 'Failed to load initial data. Please check connectivity.', 'error');
+        this.showFeedback('error', 'Sync Error', 'Failed to load initial data. Please check your connectivity.');
       }
     });
   }
@@ -185,7 +184,7 @@ export class SubjectAssignmentComponent implements OnInit {
           },
           error: (err) => {
             console.error("Failed to load sections", err);
-            Swal.fire('Error', 'Failed to load sections.', 'error');
+            this.showFeedback('error', 'Error', 'Failed to load sections.');
           }
         });
       }

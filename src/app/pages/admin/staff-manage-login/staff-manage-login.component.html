@@ -134,10 +134,11 @@
           </tr>
 
           <tr *ngIf="!loading && paginatedLogins.length === 0">
-            <td colspan="8" class="empty-state">
-              <div class="empty-content">
-                <iconify-icon icon="mdi:account-off-outline" class="empty-icon"></iconify-icon>
-                <p>No logins found.</p>
+            <td colspan="8" class="p-0 border-0">
+              <div class="empty-state">
+                <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
+                <h5>No Logins Found</h5>
+                <p>No staff login accounts found matching your search.</p>
               </div>
             </td>
           </tr>

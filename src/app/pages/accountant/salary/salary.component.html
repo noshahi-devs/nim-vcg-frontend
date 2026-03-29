@@ -208,9 +208,12 @@
             </td>
           </tr>
           <tr *ngIf="filteredSalaries.length === 0">
-            <td colspan="6" class="text-center py-5 text-muted">
-              <iconify-icon icon="mdi:account-alert-outline" style="font-size: 48px; opacity: 0.2;"></iconify-icon>
-              <p class="mt-2">No salary records found matching your search.</p>
+            <td colspan="6" class="p-0 border-0">
+              <div class="empty-state">
+                <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
+                <h5>No Salary Records</h5>
+                <p>No records found matching your current search criteria</p>
+              </div>
             </td>
           </tr>
         </tbody>

@@ -351,23 +351,42 @@
 }
 
 .empty-state {
+  border: 1px dashed #d8cdb8;
+  border-radius: 18px;
+  background: #fffdf8;
+  padding: 64px 20px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
   text-align: center;
-  padding: 48px 20px !important;
-  color: #94a3b8;
 }
 
-.empty-state svg {
-  width: 46px;
-  height: 46px;
-  margin: 0 auto 12px;
-  display: block;
-  color: #cbd5e1;
+.empty-state iconify-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(128, 0, 0, 0.14);
+  color: #800000;
+  font-size: 35px;
+}
+
+.empty-state h5 {
+  margin: 0;
+  font-size: 18px;
+  color: #1e293b;
+  font-weight: 800;
 }
 
 .empty-state p {
-  font-size: 14px;
   margin: 0;
+  font-size: 14px;
+  color: #64748b;
 }
+
 
 /* ========================
    MODALS — PREMIUM REDESIGN

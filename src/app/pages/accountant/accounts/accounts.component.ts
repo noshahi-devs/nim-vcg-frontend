@@ -49,7 +49,6 @@ export class AccountsComponent implements OnInit {
   closeFeedback() { this.showFeedbackModal = false; }
 
   // Data state
-  dataMode: 'Live' | 'Demo' = 'Live';
   lastUpdated = '';
   kpiSummary: DashboardKpis = {
     incomeChange: 0,
@@ -76,107 +75,20 @@ export class AccountsComponent implements OnInit {
   // Chart configuration
   chartOptions: any;
 
-  private readonly fallbackDashboardData: DashboardData = {
-    chartData: {
-      months: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
-      income: [850000, 910000, 980000, 1020000, 1090000, 1160000],
-      expenses: [620000, 640000, 710000, 690000, 730000, 760000]
-    },
-    totalIncome: 6010000,
-    totalExpenses: 4150000,
-    profitLoss: 1860000,
-    cashBankBalance: 2450000,
-    recentTransactions: [
-      {
-        id: 1,
-        date: '2026-03-10T09:15:00',
-        transactionId: 'RCPT-1042',
-        type: 'Income',
-        category: 'Tuition',
-        description: 'Grade 7 March tuition',
-        debit: 0,
-        credit: 65000,
-        balance: 2450000
+  private emptyDashboardData(): DashboardData {
+    return {
+      chartData: {
+        months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        income: [0, 0, 0, 0, 0, 0],
+        expenses: [0, 0, 0, 0, 0, 0]
       },
-      {
-        id: 2,
-        date: '2026-03-09T13:45:00',
-        transactionId: 'EXP-7841',
-        type: 'Expense',
-        category: 'Utilities',
-        description: 'Electricity bill (February)',
-        debit: 42000,
-        credit: 0,
-        balance: 2388000
-      },
-      {
-        id: 3,
-        date: '2026-03-08T10:05:00',
-        transactionId: 'EXP-7834',
-        type: 'Expense',
-        category: 'Salaries',
-        description: 'Staff payroll - February',
-        debit: 320000,
-        credit: 0,
-        balance: 2068000
-      },
-      {
-        id: 4,
-        date: '2026-03-07T11:20:00',
-        transactionId: 'RCPT-1033',
-        type: 'Income',
-        category: 'Admissions',
-        description: 'New admission fee',
-        debit: 0,
-        credit: 120000,
-        balance: 2188000
-      },
-      {
-        id: 5,
-        date: '2026-03-06T15:10:00',
-        transactionId: 'EXP-7821',
-        type: 'Expense',
-        category: 'Maintenance',
-        description: 'AC servicing and repairs',
-        debit: 28000,
-        credit: 0,
-        balance: 2160000
-      },
-      {
-        id: 6,
-        date: '2026-03-05T09:40:00',
-        transactionId: 'RCPT-1025',
-        type: 'Income',
-        category: 'Transport',
-        description: 'Transport fees - March',
-        debit: 0,
-        credit: 54000,
-        balance: 2214000
-      },
-      {
-        id: 7,
-        date: '2026-03-04T14:25:00',
-        transactionId: 'EXP-7809',
-        type: 'Expense',
-        category: 'Supplies',
-        description: 'Classroom supplies restock',
-        debit: 18500,
-        credit: 0,
-        balance: 2195500
-      },
-      {
-        id: 8,
-        date: '2026-03-03T12:05:00',
-        transactionId: 'RCPT-1018',
-        type: 'Income',
-        category: 'Labs',
-        description: 'Science lab fee - Grade 9',
-        debit: 0,
-        credit: 36000,
-        balance: 2231500
-      }
-    ]
-  };
+      totalIncome: 0,
+      totalExpenses: 0,
+      profitLoss: 0,
+      cashBankBalance: 0,
+      recentTransactions: []
+    };
+  }
 
   constructor(
     private accountsService: AccountsService,
@@ -187,9 +99,6 @@ export class AccountsComponent implements OnInit {
     return this.authService.userValue?.username || this.authService.userValue?.email || 'Accountant';
   }
 
-  get isDemoData(): boolean {
-    return this.dataMode === 'Demo';
-  }
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -203,23 +112,23 @@ export class AccountsComponent implements OnInit {
     this.accountsService.getDashboardData().subscribe({
       next: (data) => {
         if (!this.isValidDashboardData(data)) {
-          this.setDashboardData(this.fallbackDashboardData, 'Demo');
+          this.setDashboardData(this.emptyDashboardData());
           this.loading = false;
           this.isProcessing = false;
           return;
         }
-        this.setDashboardData(data, 'Live');
+        this.setDashboardData(data);
         this.syncTotalsWithIncomeExpense();
         this.loading = false;
         this.isProcessing = false;
-        this.triggerSuccess('Refreshed!', 'Dashboard data has been updated successfully.');
+        this.triggerSuccess('Refreshed!', 'Dashboard data has been updated from real-time records.');
       },
       error: (err) => {
         console.error('Error loading dashboard data:', err);
-        this.setDashboardData(this.fallbackDashboardData, 'Demo');
+        this.setDashboardData(this.emptyDashboardData());
         this.loading = false;
         this.isProcessing = false;
-        this.triggerWarning('Demo Data Loaded', 'Live data is unavailable right now. Showing the latest demo snapshot.');
+        this.triggerError('Load Error', 'Could not synchronize dashboard with live server records.');
       }
     });
   }
@@ -233,9 +142,8 @@ export class AccountsComponent implements OnInit {
     return true;
   }
 
-  private setDashboardData(data: DashboardData, mode: 'Live' | 'Demo'): void {
+  private setDashboardData(data: DashboardData): void {
     this.dashboardData = data;
-    this.dataMode = mode;
     this.lastUpdated = new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
     this.kpiSummary = this.buildKpiSummary(data);
     this.initializeChart();

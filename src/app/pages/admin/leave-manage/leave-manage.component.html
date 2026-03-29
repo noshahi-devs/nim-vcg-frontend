@@ -151,10 +151,12 @@
             </td>
           </tr>
           <tr *ngIf="paginatedLeaves.length === 0 && !loading">
-            <td colspan="8" class="text-center" style="padding: 60px 20px;">
-              <iconify-icon icon="solar:sleeping-linear" style="font-size: 4rem; color: #c7d2fe;"></iconify-icon>
-              <h5 class="mt-3" style="color: #94a3b8; font-weight: 700;">All Quiet Here</h5>
-              <p style="color: #cbd5e1;">No leave requests found for the current selection</p>
+            <td colspan="8" class="p-0 border-0">
+              <div class="empty-state">
+                <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
+                <h5>All Quiet Here</h5>
+                <p>No leave requests found for the current selection</p>
+              </div>
             </td>
           </tr>
         </tbody>

@@ -420,14 +420,10 @@ export class IncomeManageComponent implements OnInit {
         this.applyFilters();
       },
       error: (err) => {
-        console.error(err);
-        // Fallback to mock data if API is down
-        this.incomeList = [
-          { id: 1, date: '2024-03-15', source: 'Fee', amount: 50000, paymentMethod: 'Cash', campus: 'Main Campus', description: 'Tuition Fee - Ali Khan', receivedBy: 'Admin', createdAt: '2024-03-15T08:00:00Z' },
-          { id: 2, date: '2024-03-14', source: 'Donation', amount: 100000, paymentMethod: 'Bank', campus: 'Main Campus', description: 'Annual Donation', receivedBy: 'Admin', createdAt: '2024-03-14T09:30:00Z' },
-          { id: 3, date: '2024-03-12', source: 'Misc', amount: 5000, paymentMethod: 'Cash', campus: 'Branch Campus', description: 'Event Ticket Sales', receivedBy: 'Staff', createdAt: '2024-03-12T14:15:00Z' }
-        ];
+        console.error('Error loading income records:', err);
+        this.incomeList = [];
         this.applyFilters();
+        this.triggerError('Load Error', 'Failed to synchronize income records with live server.');
       }
     });
   }
@@ -557,11 +553,11 @@ export class IncomeManageComponent implements OnInit {
 
   validateForm(): boolean {
     if (!this.currentIncome.description || !this.currentIncome.amount) {
-      Swal.fire('Validation Error', 'Please fill all required fields', 'warning');
+      this.triggerError('Validation Error', 'Please fill all required fields');
       return false;
     }
     if (this.currentIncome.amount <= 0) {
-      Swal.fire('Validation Error', 'Amount must be greater than 0', 'warning');
+      this.triggerError('Validation Error', 'Amount must be greater than 0');
       return false;
     }
     return true;

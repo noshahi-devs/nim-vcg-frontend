@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AccountsService, ProfitLossReport } from '../../../services/accounts.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
-import Swal from '../../../swal';
 
 @Component({
   selector: 'app-profit-loss',
@@ -52,12 +51,12 @@ export class ProfitLossComponent implements OnInit {
 
   generateReport(): void {
     if (!this.startDate || !this.endDate) {
-      Swal.fire('Validation Error', 'Please select date range', 'warning');
+      this.triggerError('Validation Error', 'Please select date range');
       return;
     }
 
     if (new Date(this.startDate) > new Date(this.endDate)) {
-      Swal.fire('Validation Error', 'Start date must be before end date', 'warning');
+      this.triggerError('Validation Error', 'Start date must be before end date');
       return;
     }
 
@@ -69,7 +68,7 @@ export class ProfitLossComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error generating report:', err);
-        Swal.fire('Error', 'Failed to generate report', 'error');
+        this.triggerError('Error', 'Failed to generate report');
       }
     });
   }

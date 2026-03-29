@@ -116,10 +116,12 @@
           </tr>
           <!-- Empty state -->
           <tr *ngIf="paginatedApplications.length === 0 && !loading">
-            <td colspan="6" class="text-center" style="padding: 60px 20px;">
-              <iconify-icon icon="solar:folder-error-linear" style="font-size: 4rem; color: #c7d2fe;"></iconify-icon>
-              <h5 class="mt-3" style="color: #94a3b8; font-weight: 700;">Registry Empty</h5>
-              <p style="color: #cbd5e1;">No leave records found</p>
+            <td colspan="6" class="p-0 border-0">
+              <div class="empty-state">
+                <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
+                <h5>Registry Empty</h5>
+                <p>No leave records found</p>
+              </div>
             </td>
           </tr>
           <!-- Loading state -->

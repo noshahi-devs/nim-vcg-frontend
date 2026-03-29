@@ -132,13 +132,10 @@
 
     <!-- EMPTY STATE -->
     <div class="col-12" *ngIf="filteredRecords.length === 0">
-      <div class="empty-glass-container">
-        <div class="empty-visual">
-          <iconify-icon icon="mdi:file-search-outline"></iconify-icon>
-        </div>
-        <h3>No Salary Records Found</h3>
-        <p>Type the staff member's name in the search bar above to see their monthly salary slips and print receipts.
-        </p>
+      <div class="empty-state">
+        <iconify-icon icon="solar:file-search-bold-duotone"></iconify-icon>
+        <h5>No Salary Records Found</h5>
+        <p>Type the staff member's name in the search bar above to see their monthly salary slips and print receipts.</p>
       </div>
     </div>
   </div>

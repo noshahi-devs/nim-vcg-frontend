@@ -62,21 +62,24 @@
   <!-- ===================== FILTER & ACTION CARD ===================== -->
   <div class="fee-card">
 
-    <div class="fee-card-header premium-header">
+    <div class="feecard-header premium-header">
       <div class="header-filters">
         <!-- Search -->
-        <div class="search-wrapper-premium">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" />
-          </svg>
-          <input class="search-input-premium" [(ngModel)]="searchQuery" (input)="onSearchChange()"
-            placeholder="Search by student name or class..." [disabled]="isProcessing" />
+        <div class="filter-group">
+          <label class="filter-label">Search Students</label>
+          <div class="search-wrapper-premium">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+            <input class="search-input-premium" [(ngModel)]="searchQuery" (input)="onSearchChange()"
+              placeholder="Name or Class..." [disabled]="isProcessing" />
+          </div>
         </div>
 
         <!-- Class Filter -->
         <div class="filter-group">
-          <label class="filter-label">Class</label>
+          <label class="filter-label">Filter by Class</label>
           <div class="select-wrapper-premium">
             <select class="field-select-premium" [(ngModel)]="selectedClass" (change)="onFilterChange()"
               [disabled]="isProcessing">
@@ -91,7 +94,7 @@
 
         <!-- Status Filter -->
         <div class="filter-group">
-          <label class="filter-label">Status</label>
+          <label class="filter-label">Payment Status</label>
           <div class="select-wrapper-premium">
             <select class="field-select-premium" [(ngModel)]="selectedStatus" (change)="onFilterChange()"
               [disabled]="isProcessing">
@@ -108,7 +111,7 @@
 
         <!-- Min Amount -->
         <div class="filter-group">
-          <label class="filter-label">Min Amount</label>
+          <label class="filter-label">Minimum Amount</label>
           <div class="input-wrapper-premium">
             <input type="number" class="field-input-premium" [(ngModel)]="minAmount" (input)="onFilterChange()"
               placeholder="0" [disabled]="isProcessing" />
@@ -189,6 +192,7 @@
               <td><span class="date-val-def">{{ d.dueDate | date:'mediumDate' }}</span></td>
               <td>
                 <span class="overdue-badge">
+                  <iconify-icon icon="solar:clock-circle-bold-duotone" class="me-1"></iconify-icon>
                   {{ d.daysOverdue }} Days
                 </span>
               </td>
@@ -199,30 +203,22 @@
                 </span>
               </td>
               <td class="text-center">
-                <div style="display: inline-flex; gap: 6px;">
+                <div style="display: inline-flex; gap: 8px;">
                   <button class="icon-btn-premium send-btn" (click)="sendReminder(d)" title="Send Reminder">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 15px; height: 15px;">
-                      <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-                    </svg>
+                    <iconify-icon icon="solar:letter-bold-duotone" style="font-size: 18px;"></iconify-icon>
                   </button>
-                  <button class="icon-btn-premium" style="background: #e0f2fe; color: #0284c7; width: 34px; height: 34px; border: none; border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s;" (click)="printVoucher(d)" title="Print Bank Voucher">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 15px; height: 15px;">
-                      <polyline points="6 9 6 2 18 2 18 9" />
-                      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                      <rect x="6" y="14" width="12" height="8" />
-                    </svg>
+                  <button class="icon-btn-premium" style="background: #e0f2fe; color: #0284c7;" (click)="printVoucher(d)" title="Print Bank Voucher">
+                    <iconify-icon icon="solar:printer-minimalistic-bold-duotone" style="font-size: 18px;"></iconify-icon>
                   </button>
                 </div>
               </td>
             </tr>
             <tr *ngIf="paginatedDefaulters.length === 0">
-              <td colspan="9" class="empty-state-premium">
-                <div class="empty-content-premium">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M8 12h8" />
-                  </svg>
-                  <p>No defaulters match the current filters.</p>
+              <td colspan="9" class="p-0 border-0">
+                <div class="empty-state">
+                  <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
+                  <h5>No Defaulters Found</h5>
+                  <p>No student records match your current filters.</p>
                 </div>
               </td>
             </tr>

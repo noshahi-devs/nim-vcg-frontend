@@ -486,23 +486,43 @@
   }
 }
 
-/* ── Empty State ── */
-.empty-log-state {
-  padding: 80px 40px;
-  text-align: center;
-  color: #94a3b8;
+/* Standardized Empty State */
+.empty-state {
+  border: 1px dashed #d8cdb8 !important;
+  border-radius: 18px !important;
+  background: #fffdf8 !important;
+  padding: 64px 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+  text-align: center !important;
+  margin: 20px;
 }
 
-.empty-icon-box {
-  font-size: 64px;
-  opacity: 0.15;
-  margin-bottom: 24px;
+.empty-state iconify-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(128, 0, 0, 0.14);
+  color: #800000;
+  font-size: 35px;
 }
 
-.empty-log-state h5 {
+.empty-state h5 {
+  margin: 0;
+  font-size: 18px;
+  color: #1e293b;
   font-weight: 800;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
   color: #64748b;
-  margin-bottom: 8px;
 }
 
 /* ── Alerts ── */

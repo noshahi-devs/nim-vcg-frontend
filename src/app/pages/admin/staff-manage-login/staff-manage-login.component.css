@@ -365,21 +365,42 @@
 }
 
 .empty-state {
-  text-align: center;
-  padding: 42px 20px !important;
-}
-
-.empty-content {
-  display: inline-flex;
+  border: 1px dashed #d8cdb8;
+  border-radius: 18px;
+  background: #fffdf8;
+  padding: 64px 20px !important;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  color: #94a3b8;
+  gap: 12px;
+  text-align: center;
 }
 
-.empty-icon {
-  font-size: 36px;
+.empty-state iconify-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(128, 0, 0, 0.14);
+  color: var(--sml-primary);
+  font-size: 35px;
 }
+
+.empty-state h5 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--sml-ink);
+  font-weight: 800;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--sml-muted);
+}
+
 
 .sml-pagination-wrap {
   display: flex;

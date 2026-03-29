@@ -227,8 +227,13 @@
                 <td>{{ record.remarks || record.description || '-' }}</td>
               </tr>
               <tr *ngIf="attendanceHistory.length === 0">
-                <td colspan="3" class="text-center py-24 text-secondary-light">No attendance records found for the
-                  recent period.</td>
+                <td colspan="3" class="p-0 border-0">
+                  <div class="empty-state mt-24">
+                    <iconify-icon icon="solar:calendar-minimalistic-bold-duotone"></iconify-icon>
+                    <h5>No Attendance Records</h5>
+                    <p>No attendance records found for the recent period.</p>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -267,10 +272,12 @@
               </div>
             </div>
           </div>
-          <div *ngIf="marksHistory.length === 0" class="col-12 text-center py-40">
-            <iconify-icon icon="solar:document-text-bold-duotone" class="text-neutral-200"
-              style="font-size: 64px;"></iconify-icon>
-            <p class="mt-16 text-secondary-light">No academic marks recorded yet for this student.</p>
+          <div *ngIf="marksHistory.length === 0" class="col-12">
+            <div class="empty-state">
+              <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
+              <h5>No Marks Found</h5>
+              <p>No academic marks recorded yet for this student.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -300,7 +307,13 @@
                 <td>{{ payment.paymentDate | date:'mediumDate' }}</td>
               </tr>
               <tr *ngIf="paymentHistory.length === 0">
-                <td colspan="6" class="text-center py-24 text-secondary-light">No payment history available.</td>
+                <td colspan="6" class="p-0 border-0">
+                  <div class="empty-state mt-24">
+                    <iconify-icon icon="solar:card-2-bold-duotone"></iconify-icon>
+                    <h5>No Payment History</h5>
+                    <p>No payment history available for this student.</p>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>

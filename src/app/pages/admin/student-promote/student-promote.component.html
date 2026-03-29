@@ -133,10 +133,12 @@
 
             <!-- Empty State -->
             <tr *ngIf="paginatedStudents.length === 0 && !loading">
-              <td colspan="6" class="text-center py-60">
-                <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"
-                  style="font-size: 48px; color: #cbd5e1;"></iconify-icon>
-                <p class="text-secondary-light mt-12 fw-medium">No students discovered matching these parameters.</p>
+              <td colspan="6" class="p-0 border-0">
+                <div class="empty-state">
+                  <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
+                  <h5>No Students Found</h5>
+                  <p>No students discovered matching these parameters.</p>
+                </div>
               </td>
             </tr>
 

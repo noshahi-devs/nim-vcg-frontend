@@ -148,10 +148,8 @@
 
           <!-- Log List -->
           <div class="log-scroll-area" *ngIf="!loadingLogs">
-            <div *ngIf="logs.length === 0" class="empty-log-state">
-              <div class="empty-icon-box">
-                <iconify-icon icon="mdi:bullhorn-outline"></iconify-icon>
-              </div>
+            <div *ngIf="logs.length === 0" class="empty-state">
+              <iconify-icon icon="solar:bell-bing-bold-duotone"></iconify-icon>
               <h5>No Broadcasts Sent</h5>
               <p>Your notification history will appear here.</p>
             </div>
