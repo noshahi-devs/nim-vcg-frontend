@@ -36,7 +36,7 @@ export class UserManagementService {
     }
 
     getAllUsers(): Observable<User[]> {
-        return this.http.get<User[]>(`${environment.apiBaseUrl}/GetUsers`, this.getAuthHeaders());
+        return this.http.get<User[]>(`${this.apiUrl}/GetUsers`, this.getAuthHeaders());
     }
 
     registerUser(user: RegisterRequest): Observable<any> {
@@ -52,7 +52,7 @@ export class UserManagementService {
     }
 
     getAllRoles(): Observable<any[]> {
-        return this.http.get<any[]>(`${environment.apiBaseUrl}/GetRoles`, this.getAuthHeaders());
+        return this.http.get<any[]>(`${this.apiUrl}/GetRoles`, this.getAuthHeaders());
     }
 
     toggleUserStatus(userId: string, status: string): Observable<any> {
