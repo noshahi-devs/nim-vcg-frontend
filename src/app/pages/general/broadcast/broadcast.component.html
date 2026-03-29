@@ -99,9 +99,9 @@
               </div>
             </div>
 
-            <button type="submit" class="premium-btn maroon w-100" [disabled]="!broadcastForm.form.valid || sending">
+            <button type="submit" class="premium-btn maroon w-100" [disabled]="!broadcastForm.form.valid">
               <iconify-icon icon="mdi:send"></iconify-icon>
-              {{ sending ? 'Sending Broadcast...' : 'Submit Broadcast' }}
+              Submit Broadcast
             </button>
           </form>
 
@@ -128,26 +128,15 @@
               <p class="text-xs text-secondary-light mb-0">Record of recently sent notifications</p>
             </div>
           </div>
-          <button class="icon-btn-glass" (click)="loadLogs()" [disabled]="loadingLogs">
-            <iconify-icon [icon]="loadingLogs ? 'eos-icons:loading' : 'mdi:refresh'"></iconify-icon>
+          <button class="icon-btn-glass" (click)="loadLogs()">
+            <iconify-icon icon="mdi:refresh"></iconify-icon>
           </button>
         </div>
 
         <div class="broadcast-log-container">
-          <!-- Loading Skeletons -->
-          <div *ngIf="loadingLogs" class="p-24">
-            <div *ngFor="let i of [1,2,3,4]" class="skeleton-log-item mb-20">
-              <div class="skeleton-ring"></div>
-              <div class="flex-1">
-                <div class="skeleton-line w-40 mb-10"></div>
-                <div class="skeleton-line w-100 mb-6"></div>
-                <div class="skeleton-line w-75"></div>
-              </div>
-            </div>
-          </div>
 
           <!-- Log List -->
-          <div class="log-scroll-area" *ngIf="!loadingLogs">
+          <div class="log-scroll-area">
             <div *ngIf="logs.length === 0" class="empty-state">
               <iconify-icon icon="solar:bell-bing-bold-duotone"></iconify-icon>
               <h5>No Broadcasts Sent</h5>
@@ -184,14 +173,4 @@
     </div>
   </div>
 
-  <!-- Standardized Processing Overlay -->
-  <div class="premium-overlay" *ngIf="sending">
-    <div class="processing-card">
-      <div class="loader-ring"></div>
-      <div class="processing-content">
-        <p class="pc-title">Broadcasting...</p>
-        <p class="pc-subtitle">Please wait a moment...</p>
-      </div>
-    </div>
-  </div>
 </div>

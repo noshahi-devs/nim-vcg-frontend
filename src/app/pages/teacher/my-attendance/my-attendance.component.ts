@@ -111,7 +111,8 @@ export class MyAttendanceComponent implements OnInit {
             'Confirm Check-In',
             `Record your presence for today, ${this.today.toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' })}?`,
             'Confirm action',
-            'Not now'
+            'Not now',
+            'primary'
         ).then(confirmed => {
             if (confirmed) this.processCheckIn();
         });
@@ -153,7 +154,8 @@ export class MyAttendanceComponent implements OnInit {
             'Confirm Check-Out',
             `Are you sure you want to clock out for today?`,
             'Confirm action',
-            'Not now'
+            'Not now',
+            'primary'
         ).then(confirmed => {
             if (confirmed) this.processCheckOut();
         });

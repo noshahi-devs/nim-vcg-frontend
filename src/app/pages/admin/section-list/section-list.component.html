@@ -265,11 +265,10 @@
         </form>
       </div>
       <div class="modal-footer-premium">
-        <button class="btn-ghost" (click)="showEditModal = false">Cancel</button>
-        <button class="btn-primary-gradient" (click)="updateSection()" [disabled]="editLoading"
+        <button class="btn-ghost" (click)="showEditModal = false" [disabled]="isProcessing">Cancel</button>
+        <button class="btn-primary-gradient" (click)="updateSection()" [disabled]="isProcessing"
           style="background: linear-gradient(135deg, #F4C430, #d4a71c); color: #800000; box-shadow: 0 4px 14px rgba(244, 196, 48, 0.3);">
-          <span *ngIf="!editLoading">Save Changes</span>
-          <span *ngIf="editLoading">Updating...</span>
+          Save
         </button>
       </div>
     </div>

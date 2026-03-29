@@ -8,6 +8,7 @@ import { AuthService } from '../../../SecurityModels/auth.service';
 import Swal from '../../../swal';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { PopupService } from '../../../services/popup.service';
 
 type DashboardKpis = {
   incomeChange: number;
@@ -29,24 +30,7 @@ export class AccountsComponent implements OnInit {
   dashboardData: DashboardData | null = null;
   loading = true;
 
-  // ── Premium Modal State ──
-  isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-
-  // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerWarning(title: string, msg: string) {
-    this.feedbackType = 'warning'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  closeFeedback() { } // Handled by PopupService
 
   // Data state
   lastUpdated = '';
@@ -92,7 +76,8 @@ export class AccountsComponent implements OnInit {
 
   constructor(
     private accountsService: AccountsService,
-    public authService: AuthService
+    public authService: AuthService,
+    private popup: PopupService
   ) { }
 
   get displayName(): string {
@@ -107,28 +92,28 @@ export class AccountsComponent implements OnInit {
 
   loadDashboardData(): void {
     this.loading = true;
-    this.isProcessing = true;
+    this.popup.loading('Synchronizing dashboard data...');
     this.loadLedgerSummary();
     this.accountsService.getDashboardData().subscribe({
       next: (data) => {
         if (!this.isValidDashboardData(data)) {
           this.setDashboardData(this.emptyDashboardData());
           this.loading = false;
-          this.isProcessing = false;
+          this.popup.closeLoading();
           return;
         }
         this.setDashboardData(data);
         this.syncTotalsWithIncomeExpense();
         this.loading = false;
-        this.isProcessing = false;
-        this.triggerSuccess('Refreshed!', 'Dashboard data has been updated from real-time records.');
+        this.popup.closeLoading();
+        this.popup.success('Success!', 'Dashboard data updated.');
       },
       error: (err) => {
         console.error('Error loading dashboard data:', err);
         this.setDashboardData(this.emptyDashboardData());
         this.loading = false;
-        this.isProcessing = false;
-        this.triggerError('Load Error', 'Could not synchronize dashboard with live server records.');
+        this.popup.closeLoading();
+        this.popup.error('Update Failed', 'Could not synchronize accounts data.');
       }
     });
   }
@@ -509,10 +494,10 @@ export class AccountsComponent implements OnInit {
   }
 
   exportData(): void {
-    this.isProcessing = true;
+    this.popup.loading('Generating export file...');
     setTimeout(() => {
-      this.isProcessing = false;
-      this.triggerSuccess('Exported!', 'The report has been generated successfully.');
+      this.popup.closeLoading();
+      this.popup.success('Exported!', 'The report has been generated successfully.');
     }, 1500);
   }
 }

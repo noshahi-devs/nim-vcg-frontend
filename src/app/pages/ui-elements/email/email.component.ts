@@ -11,6 +11,7 @@ import { Staff } from '../../../Models/staff';
 import { NotificationService } from '../../../services/notification.service';
 import { forkJoin, map, of } from 'rxjs';
 import { Notification } from '../../../Models/notification';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-email',
@@ -51,7 +52,8 @@ export class EmailComponent implements OnInit {
     private messageService: MessageService,
     public authService: AuthService,
     private staffService: StaffService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -61,6 +63,7 @@ export class EmailComponent implements OnInit {
 
   loadMessages() {
     this.loading = true;
+    this.popup.loading('Synchronizing inbox...');
     let messagesObs$;
 
     if (this.activeFolder === 'starred') {
@@ -106,15 +109,18 @@ export class EmailComponent implements OnInit {
 
     messagesObs$.pipe(
       finalize(() => {
-        this.loading = false;
+        this.popup.closeLoading();
         this.filterMessages();
       })
     ).subscribe({
       next: (data: UserMessage[]) => {
+        this.loading = false;
         this.messages = data;
         this.filteredMessages = [...this.messages];
       },
       error: (err) => {
+        this.loading = false;
+        this.popup.error('Load Failed', 'Could not retrieve messages.');
         console.error('Error loading messages:', err);
       }
     });
@@ -195,33 +201,54 @@ export class EmailComponent implements OnInit {
 
   deleteMessage(id: number, event: Event) {
     event.stopPropagation();
+    this.popup.confirm(
+      'Are you sure?',
+      'Do you want to permanently delete this message?'
+    ).then(isConfirmed => {
+      if (isConfirmed) {
+        this.executeDelete(id);
+      }
+    });
+  }
+
+  executeDelete(id: number) {
     if (id < 0) {
-      // Handle notification deletion if service supports it, 
-      // otherwise just remove from UI for this session.
       this.messages = this.messages.filter(m => m.id !== id);
       this.filteredMessages = this.filteredMessages.filter(m => m.id !== id);
       if (this.selectedMessage?.id === id) this.selectedMessage = null;
+      this.popup.success('Removed', 'Broadcast removed from view.');
       return;
     }
 
-    this.messageService.deleteMessage(id).subscribe(() => {
-      this.messages = this.messages.filter(m => m.id !== id);
-      this.filteredMessages = this.filteredMessages.filter(m => m.id !== id);
-      if (this.selectedMessage?.id === id) this.selectedMessage = null;
+    this.popup.loading('Deleting message...');
+    this.messageService.deleteMessage(id).subscribe({
+      next: () => {
+        this.popup.closeLoading();
+        this.popup.success('Deleted', 'Message has been removed.');
+        this.messages = this.messages.filter(m => m.id !== id);
+        this.filteredMessages = this.filteredMessages.filter(m => m.id !== id);
+        if (this.selectedMessage?.id === id) this.selectedMessage = null;
+      },
+      error: () => {
+        this.popup.closeLoading();
+        this.popup.error('Delete Failed', 'Could not remove the message.');
+      }
     });
   }
 
   onSubmitCompose() {
     if (!this.newMessage.receiverId || !this.newMessage.subject || !this.newMessage.content) return;
-    this.loading = true;
+    this.popup.loading('Transmitting message...');
     this.messageService.sendMessage(this.newMessage).pipe(
-      finalize(() => this.loading = false)
+      finalize(() => this.popup.closeLoading())
     ).subscribe({
       next: () => {
+        this.popup.success('Sent!', 'Your message has been delivered.');
         this.newMessage = { receiverId: '', subject: '', content: '' };
         this.loadMessages();
       },
       error: (err) => {
+        this.popup.error('Delivery Failed', 'Could not send the message.');
         console.error('Error sending message:', err);
       }
     });
@@ -235,20 +262,22 @@ export class EmailComponent implements OnInit {
 
   sendReply(msg: UserMessage) {
     if (!this.replyContent.trim()) return;
-    this.loading = true;
+    this.popup.loading('Sending response...');
     const reply: Partial<UserMessage> = {
       receiverId: msg.senderId,
       subject: 'Re: ' + msg.subject,
       content: this.replyContent
     };
     this.messageService.sendMessage(reply).pipe(
-      finalize(() => this.loading = false)
+      finalize(() => this.popup.closeLoading())
     ).subscribe({
       next: () => {
+        this.popup.success('Replied', 'Your response has been sent.');
         this.replyContent = '';
         this.showReplyBox = false;
       },
       error: (err) => {
+        this.popup.error('Reply Failed', 'Could not send the response.');
         console.error('Error sending reply:', err);
       }
     });

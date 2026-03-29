@@ -256,13 +256,13 @@
           </div>
         </div>
         <div class="modal-footer-premium">
-          <button type="button" class="btn-ghost" (click)="showEditModal = false">Cancel</button>
+          <button type="button" class="btn-ghost" (click)="showEditModal = false" [disabled]="isProcessing">Cancel</button>
           <button type="button" class="btn-primary-gradient px-32" [disabled]="!editForm.valid || isProcessing"
             (click)="updateClass()"
             style="background: linear-gradient(135deg, #F4C430, #d4a71c); color: #800000; box-shadow: 0 4px 14px rgba(244, 196, 48, 0.3);">
             <iconify-icon icon="solar:diskette-bold-duotone" *ngIf="!isProcessing" class="me-2"></iconify-icon>
             <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
-            {{ isProcessing ? 'Saving...' : 'Save Changes' }}
+            Save
           </button>
         </div>
       </form>

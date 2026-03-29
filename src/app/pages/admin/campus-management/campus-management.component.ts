@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CampusService } from '../../../services/campus.service';
 import { Campus } from '../../../Models/campus';
-import Swal from '../../../swal';
+import { PopupService } from '../../../services/popup.service';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-campus-management',
@@ -18,8 +19,12 @@ export class CampusManagementComponent implements OnInit {
     selectedCampus: Campus = this.getEmptyCampus();
     isEditMode = false;
     showModal = false;
+    isProcessing = false;
 
-    constructor(private campusService: CampusService) { }
+    constructor(
+        private campusService: CampusService,
+        private popup: PopupService
+    ) { }
 
     ngOnInit(): void {
         this.loadCampuses();
@@ -61,74 +66,72 @@ export class CampusManagementComponent implements OnInit {
     }
 
     saveCampus() {
-        Swal.fire({
-            title: 'Saving Campus...',
-            text: 'Please wait while we process the request.',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
+        if (!this.selectedCampus.campusName || !this.selectedCampus.campusCode) {
+            this.popup.warning('Validation Required', 'Please fill in mandatory fields (Name and Code).');
+            return;
+        }
+
+        this.isProcessing = true;
+        this.popup.loading('Synchronizing campus registry...');
 
         if (this.isEditMode) {
-            this.campusService.updateCampus(this.selectedCampus).subscribe({
+            this.campusService.updateCampus(this.selectedCampus).pipe(
+                finalize(() => {
+                    this.isProcessing = false;
+                    this.popup.closeLoading();
+                })
+            ).subscribe({
                 next: () => {
-                    Swal.close();
-                    Swal.fire({ icon: 'success', title: 'Updated!', timer: 1500, showConfirmButton: false });
+                    this.popup.success('Registry Updated!', `Campus "${this.selectedCampus.campusName}" has been updated.`);
                     this.loadCampuses();
                     this.closeModal();
                 },
                 error: (err) => {
-                    Swal.close();
                     console.error('Error updating campus', err);
-                    Swal.fire('Error', 'Failed to update campus', 'error');
+                    this.popup.error('Update Failed', 'Failed to update campus record.');
                 }
             });
         } else {
-            this.campusService.createCampus(this.selectedCampus).subscribe({
+            this.campusService.createCampus(this.selectedCampus).pipe(
+                finalize(() => {
+                    this.isProcessing = false;
+                    this.popup.closeLoading();
+                })
+            ).subscribe({
                 next: () => {
-                    Swal.close();
-                    Swal.fire({ icon: 'success', title: 'Saved!', timer: 1500, showConfirmButton: false });
+                    this.popup.success('Registry Saved!', `New campus "${this.selectedCampus.campusName}" has been registered.`);
                     this.loadCampuses();
                     this.closeModal();
                 },
                 error: (err) => {
-                    Swal.close();
                     console.error('Error creating campus', err);
-                    Swal.fire('Error', 'Failed to create campus', 'error');
+                    this.popup.error('Save Failed', 'Failed to create new campus record.');
                 }
             });
         }
     }
 
     deleteCampus(id: number) {
-        Swal.fire({
-            title: 'Delete Campus?',
-            text: 'Are you sure you want to delete this campus?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, Delete',
-            confirmButtonColor: '#d33',
-            cancelButtonText: 'Cancel'
-        }).then(result => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Deleting...',
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading()
-                });
-                this.campusService.deleteCampus(id).subscribe({
+        const campus = this.campuses.find(c => c.campusId === id);
+        const name = campus ? campus.campusName : 'this campus';
+
+        this.popup.confirm('Delete Campus?', `Are you sure you want to remove "${name}" registry?`).then(result => {
+            if (result) {
+                this.isProcessing = true;
+                this.popup.loading('Purging campus registry...');
+                this.campusService.deleteCampus(id).pipe(
+                    finalize(() => {
+                        this.isProcessing = false;
+                        this.popup.closeLoading();
+                    })
+                ).subscribe({
                     next: () => {
-                        Swal.close();
-                        Swal.fire({ icon: 'success', title: 'Deleted!', timer: 1500, showConfirmButton: false });
+                        this.popup.success('Registry Deleted!', 'The campus has been removed from the system.');
                         this.loadCampuses();
                     },
                     error: (err) => {
-                        Swal.close();
                         console.error('Error deleting campus', err);
-                        Swal.fire('Error', 'Failed to delete campus', 'error');
+                        this.popup.error('Purge Failed', 'Failed to delete campus registry.');
                     }
                 });
             }

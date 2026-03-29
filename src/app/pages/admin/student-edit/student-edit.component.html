@@ -210,9 +210,9 @@
 
       <!-- FOOTER ACTIONS -->
       <div class="form-footer">
-        <button type="button" (click)="cancel()" class="btn-cancel">Discard Changes</button>
-        <button type="button" (click)="saveStudent()" class="btn-save-premium">
-          Update Student
+        <button type="button" (click)="cancel()" class="btn-cancel" [disabled]="isSaving">Cancel</button>
+        <button type="button" (click)="saveStudent()" class="btn-save-premium" [disabled]="isSaving">
+          Save
         </button>
       </div>
 

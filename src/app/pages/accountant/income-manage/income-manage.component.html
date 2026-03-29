@@ -85,7 +85,7 @@
     <div class="fee-card-body">
       <div class="table-wrapper">
         <!-- Premium Skeleton Loading -->
-        <div *ngIf="loading && !isProcessing" class="sk-table-container animate-fade-in border-0 p-24 mb-0">
+        <div *ngIf="loading" class="sk-table-container animate-fade-in border-0 p-24 mb-0">
           <div class="sk-table-header sk-shimmer mb-16"></div>
           <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
         </div>
@@ -262,68 +262,6 @@
   </div>
 </div>
 
-<!-- ===================== DELETE MODAL ===================== -->
-<div *ngIf="showDeleteDialog" class="modal-overlay" (click)="showDeleteDialog = false">
-  <div class="modal-box delete-box" (click)="$event.stopPropagation()">
-    <div class="delete-icon-wrapper">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-        <line x1="12" y1="9" x2="12" y2="13" />
-        <line x1="12" y1="17" x2="12.01" y2="17" />
-      </svg>
-    </div>
-    <h3 class="delete-title">Confirm Delete</h3>
-    <p class="delete-message">
-      Are you sure you want to delete the income record for "<strong>{{ itemToDeleteDesc }}</strong>"? This action
-      cannot be undone.
-    </p>
-    <div class="delete-actions">
-      <button class="btn-ghost" (click)="showDeleteDialog = false">Cancel</button>
-      <button class="btn-danger-gradient" (click)="executeDelete()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="3 6 5 6 21 6" />
-          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-          <path d="M10 11v6M14 11v6" />
-        </svg>
-        Delete
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- == Premium Feedback Modal == -->
-<div class="premium-overlay" *ngIf="showFeedbackModal">
-  <div class="premium-modal feedback-modal">
-    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span
-        class="pm-sparkle sp3"></span></div>
-    <div class="pm-icon-ring"
-      [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
-      <iconify-icon
-        [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'"
-        style="font-size:2.4rem; color:#fff"></iconify-icon>
-    </div>
-    <p class="pm-title">{{ feedbackTitle }}</p>
-    <p class="pm-subtitle">{{ feedbackMessage }}</p>
-    <div class="pm-actions">
-      <button class="pm-btn pm-Ok"
-        [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
-        (click)="closeFeedback()">
-        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- == Processing Overlay == -->
-<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
-  <div class="processing-card">
-    <div class="loader-ring"></div>
-    <div class="processing-content">
-      <h4 class="pc-title">Processing Request</h4>
-      <p class="pc-subtitle">Please wait a moment...</p>
-    </div>
-  </div>
-</div>
 
 <!-- ===================== ADD / EDIT INCOME MODAL ===================== -->
 <div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
@@ -424,12 +362,12 @@
 
     <!-- Footer -->
     <div class="modal-footer-premium">
-      <button class="btn-ghost" (click)="closeModal()">Cancel</button>
-      <button class="btn-primary-gradient" (click)="saveIncome()">
+      <button class="btn-ghost" (click)="closeModal()" [disabled]="isProcessing">Cancel</button>
+      <button class="btn-primary-gradient" (click)="saveIncome()" [disabled]="isProcessing">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="20 6 9 17 4 12" />
         </svg>
-        {{ isEditMode ? 'Update Income' : 'Save Income' }}
+        Save
       </button>
     </div>
 

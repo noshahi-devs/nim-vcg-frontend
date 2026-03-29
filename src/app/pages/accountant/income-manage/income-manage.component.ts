@@ -346,6 +346,7 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { finalize } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-income-manage',
@@ -378,31 +379,17 @@ export class IncomeManageComponent implements OnInit {
   rowsPerPage = 10;
   pageSizeOptions = [5, 10, 25, 50, 100];
 
-  // ── Premium Modal State ──
-  isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
   loading = false;
-
-  showDeleteDialog = false;
-  itemToDeleteId: number | null = null;
-  itemToDeleteDesc = '';
+  isProcessing = false;
 
   constructor(
     private accountsService: AccountsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private popup: PopupService
   ) { }
 
   // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  closeFeedback() { }
 
   ngOnInit(): void {
     this.loadIncomeList();
@@ -423,7 +410,7 @@ export class IncomeManageComponent implements OnInit {
         console.error('Error loading income records:', err);
         this.incomeList = [];
         this.applyFilters();
-        this.triggerError('Load Error', 'Failed to synchronize income records with live server.');
+        this.popup.error('Load Error', 'Failed to synchronize income records.');
       }
     });
   }
@@ -503,76 +490,89 @@ export class IncomeManageComponent implements OnInit {
     if (!this.validateForm()) return;
 
     this.isProcessing = true;
+    this.popup.loading('Saving income record...');
 
     if (this.isEditMode && this.currentIncome.id) {
       this.accountsService.updateIncome(this.currentIncome.id, this.currentIncome)
-        .pipe(finalize(() => this.isProcessing = false))
+        .pipe(finalize(() => {
+          this.isProcessing = false;
+          this.popup.closeLoading();
+        }))
         .subscribe({
           next: () => {
-            this.triggerSuccess('Updated Successfully!', 'Income record has been updated.');
+            this.popup.success('Success!', 'Income record updated.');
             this.loadIncomeList();
             this.closeModal();
           },
-          error: () => this.triggerError('Error', 'Failed to update income')
+          error: () => this.popup.error('Update Failed', 'Could not update income record.')
         });
     } else {
       this.accountsService.addIncome(this.currentIncome)
-        .pipe(finalize(() => this.isProcessing = false))
+        .pipe(finalize(() => {
+          this.isProcessing = false;
+          this.popup.closeLoading();
+        }))
         .subscribe({
           next: () => {
-            this.triggerSuccess('Added Successfully!', 'Income record has been saved.');
+            this.popup.success('Success!', 'Income record added.');
             this.loadIncomeList();
             this.closeModal();
           },
-          error: () => this.triggerError('Error', 'Failed to add income')
+          error: () => this.popup.error('Save Failed', 'Could not add income record.')
         });
     }
   }
 
   confirmDelete(income: Income) {
-    this.itemToDeleteId = income.id;
-    this.itemToDeleteDesc = income.description || '';
-    this.showDeleteDialog = true;
+    this.popup.confirm(
+      'Are you sure?',
+      `Do you want to delete the income record for "${income.description}"?`
+    ).then(isConfirmed => {
+      if (isConfirmed) {
+        this.executeDelete(income.id!);
+      }
+    });
   }
 
-  executeDelete() {
-    if (this.itemToDeleteId === null) return;
-    this.showDeleteDialog = false;
+  executeDelete(id: number) {
     this.isProcessing = true;
-    this.accountsService.deleteIncome(this.itemToDeleteId)
-      .pipe(finalize(() => this.isProcessing = false))
+    this.popup.loading('Deleting income record...');
+    this.accountsService.deleteIncome(id)
+      .pipe(finalize(() => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
+      }))
       .subscribe({
         next: () => {
-          this.triggerSuccess('Deleted!', 'Income record has been deleted.');
-          this.itemToDeleteId = null;
+          this.popup.success('Deleted!', 'The record has been removed.');
           this.loadIncomeList();
         },
-        error: () => this.triggerError('Error', 'Failed to delete income')
+        error: () => this.popup.error('Delete Failed', 'Failed to delete the record.')
       });
   }
 
   validateForm(): boolean {
     if (!this.currentIncome.description || !this.currentIncome.amount) {
-      this.triggerError('Validation Error', 'Please fill all required fields');
+      this.popup.warning('Validation Required', 'Please fill all mandatory fields.');
       return false;
     }
     if (this.currentIncome.amount <= 0) {
-      this.triggerError('Validation Error', 'Amount must be greater than 0');
+      this.popup.warning('Invalid Amount', 'Amount must be greater than zero.');
       return false;
     }
     return true;
   }
 
   exportData(): void {
+    if (!this.filteredList || this.filteredList.length === 0) {
+      this.popup.warning('No Data', 'No records found to export.');
+      return;
+    }
+
     this.isProcessing = true;
+    this.popup.loading('Extracting income report...');
     setTimeout(() => {
       try {
-        if (!this.filteredList || this.filteredList.length === 0) {
-          this.isProcessing = false;
-          this.triggerError('No Data', 'There is no income data to export based on current filters.');
-          return;
-        }
-
         const headers = ['ID', 'Date', 'Source', 'Description', 'Campus', 'Payment Method', 'Received By', 'Amount (PKR)'];
         const csvRows = [headers.join(',')];
 
@@ -590,7 +590,6 @@ export class IncomeManageComponent implements OnInit {
           csvRows.push(row.join(','));
         });
 
-        // Add Total Row
         csvRows.push(`"","","","","","","TOTAL","${this.totalIncome}"`);
 
         const csvContent = "data:text/csv;charset=utf-8," + csvRows.join('\n');
@@ -604,12 +603,13 @@ export class IncomeManageComponent implements OnInit {
         link.click();
         document.body.removeChild(link);
 
-        this.isProcessing = false;
-        this.triggerSuccess('Export Complete!', 'Income report (CSV) has been downloaded successfully.');
+        this.popup.closeLoading();
+        this.popup.success('Report Ready!', 'Your export is complete.');
       } catch (err) {
         console.error('Export failed:', err);
         this.isProcessing = false;
-        this.triggerError('Export Failed', 'An error occurred while generating the report.');
+        this.popup.closeLoading();
+        this.popup.error('Export Error', 'Failed to generate report.');
       }
     }, 800);
   }

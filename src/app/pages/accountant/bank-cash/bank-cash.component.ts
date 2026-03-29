@@ -5,6 +5,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { finalize } from 'rxjs';
 import { BankAccount, BankAccountService } from '../../../services/bank-account.service';
 import { PaymentGatewaySetting, PaymentGatewayService } from '../../../services/payment-gateway.service';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-bank-cash',
@@ -40,31 +41,16 @@ export class BankCashComponent implements OnInit {
   totalBankBalance = 0;
   totalCashBalance = 0;
   totalBalance = 0;
-
-  // ── Premium Modal State ──
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
 
-  showDeleteDialog = false;
-  itemToDeleteId: number | null = null;
-  itemToDeleteDesc = '';
-  deleteTarget: 'bank' | 'cash' | 'gateway' = 'bank';
 
   // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  closeFeedback() { }
 
   constructor(
     private bankAccountService: BankAccountService,
-    private gatewayService: PaymentGatewayService
+    private gatewayService: PaymentGatewayService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -105,70 +91,71 @@ export class BankCashComponent implements OnInit {
   saveBankAccount(): void {
     const account = this.currentBankAccount as BankAccount;
     if (!account.accountName || !account.accountNumber) {
-      this.triggerError('Error', 'Please fill all required fields');
+      this.popup.warning('Incomplete Form', 'Please fill all required account details.');
       return;
     }
     account.accountType = 'Bank';
 
     this.isProcessing = true;
+    this.popup.loading('Saving account details...');
     if (this.isEditBankMode) {
       this.bankAccountService.updateBankAccount(account.bankAccountId, account)
-        .pipe(finalize(() => this.isProcessing = false))
+        .pipe(finalize(() => {
+          this.isProcessing = false;
+          this.popup.closeLoading();
+        }))
         .subscribe({
           next: () => {
-            this.triggerSuccess('Updated!', 'Bank account updated');
+            this.popup.success('Updated!', 'Bank account details updated.');
             this.loadData();
             this.closeBankModal();
           },
-          error: () => this.triggerError('Error', 'Failed to update bank account')
+          error: () => this.popup.error('Update Failed', 'Could not update bank account.')
         });
     } else {
       this.bankAccountService.createBankAccount(account)
-        .pipe(finalize(() => this.isProcessing = false))
+        .pipe(finalize(() => {
+          this.isProcessing = false;
+          this.popup.closeLoading();
+        }))
         .subscribe({
           next: () => {
-            this.triggerSuccess('Added!', 'Bank account added');
+            this.popup.success('Added!', 'New bank account registered.');
             this.loadData();
             this.closeBankModal();
           },
-          error: () => this.triggerError('Error', 'Failed to add bank account')
+          error: () => this.popup.error('Save Failed', 'Could not register bank account.')
         });
     }
   }
 
   deleteBankAccount(account: BankAccount): void {
-    this.itemToDeleteId = account.bankAccountId;
-    this.itemToDeleteDesc = account.accountName;
-    this.deleteTarget = account.accountType === 'Cash' ? 'cash' : 'bank';
-    this.showDeleteDialog = true;
+    const typeLabel = account.accountType === 'Cash' ? 'cash account' : 'bank account';
+    this.popup.confirm(
+      'Are you sure?',
+      `Do you want to delete the ${typeLabel}: "${account.accountName}"?`
+    ).then(isConfirmed => {
+      if (isConfirmed) {
+        this.executeDelete(account.bankAccountId, typeLabel);
+      }
+    });
   }
 
-  executeDelete() {
-    if (this.itemToDeleteId === null) return;
-    this.showDeleteDialog = false;
+  executeDelete(id: number, typeLabel: string) {
     this.isProcessing = true;
-
-    if (this.deleteTarget === 'gateway') {
-      this.gatewayService.deleteGateway(this.itemToDeleteId)
-        .pipe(finalize(() => this.isProcessing = false))
-        .subscribe({
-          next: () => {
-            this.triggerSuccess('Deleted!', 'Gateway has been removed.');
-            this.loadData();
-          },
-          error: () => this.triggerError('Error', 'Failed to delete gateway')
-        });
-    } else {
-      this.bankAccountService.deleteBankAccount(this.itemToDeleteId)
-        .pipe(finalize(() => this.isProcessing = false))
-        .subscribe({
-          next: () => {
-            this.triggerSuccess('Deleted!', (this.deleteTarget === 'bank' ? 'Bank account' : 'Cash account') + ' deleted');
-            this.loadData();
-          },
-          error: () => this.triggerError('Error', 'Failed to delete account')
-        });
-    }
+    this.popup.loading(`Deleting ${typeLabel}...`);
+    this.bankAccountService.deleteBankAccount(id)
+      .pipe(finalize(() => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
+      }))
+      .subscribe({
+        next: () => {
+          this.popup.success('Deleted!', `The ${typeLabel} has been removed.`);
+          this.loadData();
+        },
+        error: () => this.popup.error('Delete Failed', `Could not delete the ${typeLabel}.`)
+      });
   }
 
   closeBankModal(): void { this.showBankModal = false; }
@@ -190,33 +177,40 @@ export class BankCashComponent implements OnInit {
   saveCashAccount(): void {
     const account = this.currentCashAccount as BankAccount;
     if (!account.accountName) {
-      this.triggerError('Error', 'Please fill name');
+      this.popup.warning('Missing Name', 'Please provide a name for the cash account.');
       return;
     }
     account.accountType = 'Cash';
 
     this.isProcessing = true;
+    this.popup.loading('Saving cash account...');
     if (this.isEditCashMode) {
       this.bankAccountService.updateBankAccount(account.bankAccountId, account)
-        .pipe(finalize(() => this.isProcessing = false))
+        .pipe(finalize(() => {
+          this.isProcessing = false;
+          this.popup.closeLoading();
+        }))
         .subscribe({
           next: () => {
-            this.triggerSuccess('Updated!', 'Cash account updated');
+            this.popup.success('Updated!', 'Cash account updated.');
             this.loadData();
             this.closeCashModal();
           },
-          error: () => this.triggerError('Error', 'Failed to update cash account')
+          error: () => this.popup.error('Update Failed', 'Could not update cash account.')
         });
     } else {
       this.bankAccountService.createBankAccount(account)
-        .pipe(finalize(() => this.isProcessing = false))
+        .pipe(finalize(() => {
+          this.isProcessing = false;
+          this.popup.closeLoading();
+        }))
         .subscribe({
           next: () => {
-            this.triggerSuccess('Added!', 'Cash account added');
+            this.popup.success('Added!', 'New cash account registered.');
             this.loadData();
             this.closeCashModal();
           },
-          error: () => this.triggerError('Error', 'Failed to add cash account')
+          error: () => this.popup.error('Save Failed', 'Could not register cash account.')
         });
     }
   }
@@ -244,41 +238,69 @@ export class BankCashComponent implements OnInit {
   saveGateway(): void {
     const gw = this.currentGateway as PaymentGatewaySetting;
     if (!gw.gatewayName) {
-      this.triggerError('Error', 'Please fill required fields');
+      this.popup.warning('Incomplete Form', 'Please provide the gateway provider name.');
       return;
     }
 
     this.isProcessing = true;
+    this.popup.loading('Saving gateway settings...');
     if (this.isEditGatewayMode) {
       this.gatewayService.updateGateway(gw.id, gw)
-        .pipe(finalize(() => this.isProcessing = false))
+        .pipe(finalize(() => {
+          this.isProcessing = false;
+          this.popup.closeLoading();
+        }))
         .subscribe({
           next: () => {
-            this.triggerSuccess('Updated!', 'Gateway settings updated');
+            this.popup.success('Updated!', 'Gateway settings optimized.');
             this.loadData();
             this.closeGatewayModal();
           },
-          error: () => this.triggerError('Error', 'Failed to update gateway')
+          error: () => this.popup.error('Update Failed', 'Could not update gateway configuration.')
         });
     } else {
       this.gatewayService.createGateway(gw)
-        .pipe(finalize(() => this.isProcessing = false))
+        .pipe(finalize(() => {
+          this.isProcessing = false;
+          this.popup.closeLoading();
+        }))
         .subscribe({
           next: () => {
-            this.triggerSuccess('Added!', 'Gateway settings added');
+            this.popup.success('Added!', 'New payment gateway integrated.');
             this.loadData();
             this.closeGatewayModal();
           },
-          error: () => this.triggerError('Error', 'Failed to add gateway')
+          error: () => this.popup.error('Integration Failed', 'Could not add the payment gateway.')
         });
     }
   }
 
   deleteGateway(gateway: PaymentGatewaySetting): void {
-    this.itemToDeleteId = gateway.id;
-    this.itemToDeleteDesc = gateway.gatewayName;
-    this.deleteTarget = 'gateway';
-    this.showDeleteDialog = true;
+    this.popup.confirm(
+      'Are you sure?',
+      `Do you want to remove the gateway: "${gateway.gatewayName}"?`
+    ).then(isConfirmed => {
+      if (isConfirmed) {
+        this.executeDeleteGateway(gateway.id);
+      }
+    });
+  }
+
+  executeDeleteGateway(id: number) {
+    this.isProcessing = true;
+    this.popup.loading('Removing gateway...');
+    this.gatewayService.deleteGateway(id)
+      .pipe(finalize(() => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
+      }))
+      .subscribe({
+        next: () => {
+          this.popup.success('Removed!', 'Payment gateway disconnected.');
+          this.loadData();
+        },
+        error: () => this.popup.error('Action Failed', 'Could not remove the gateway.')
+      });
   }
 
   closeGatewayModal(): void { this.showGatewayModal = false; }

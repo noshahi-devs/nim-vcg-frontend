@@ -29,6 +29,7 @@ export class SectionListComponent implements OnInit {
   editLoading = false;
   allStaff: any[] = [];
   Math = Math;
+  isProcessing = false;
 
   // Pagination
   currentPage = 1;
@@ -161,15 +162,18 @@ export class SectionListComponent implements OnInit {
   }
 
   executeDelete(section: Section) {
+    this.isProcessing = true;
     this.popup.loading('Deleting...');
     this.sectionService.deleteSection(section.sectionId).subscribe({
       next: () => {
+        this.isProcessing = false;
         this.popup.closeLoading();
         this.sectionList = this.sectionList.filter(s => s.sectionId !== section.sectionId);
         this.popup.success('Deleted!', `Section "${section.sectionName}" has been permanently deleted.`);
       },
       error: (err) => {
         console.error('Error deleting section:', err);
+        this.isProcessing = false;
         this.popup.closeLoading();
         this.popup.deleteError(section.sectionName, err.error?.message);
       }
@@ -194,10 +198,13 @@ export class SectionListComponent implements OnInit {
       this.popup.warning('Please fill in all required fields (Section Name and Class).', 'Incomplete Form');
       return;
     }
-    this.editLoading = true;
+    this.isProcessing = true;
     this.popup.loading('Updating section...');
     this.sectionService.updateSection(this.selectedSection.sectionId, this.selectedSection).pipe(
-      finalize(() => this.editLoading = false)
+      finalize(() => {
+        this.isProcessing = false;
+        this.editLoading = false;
+      })
     ).subscribe({
       next: () => {
         this.popup.closeLoading();

@@ -185,10 +185,11 @@ export class ClassListComponent implements OnInit, AfterViewInit {
       console.warn("No class selected for edit or missing ID");
       return;
     }
-    
+    this.isProcessing = true;
     this.popup.loading('Saving changes...');
     this.standardService.updateStandard(this.selectedClassForEdit).pipe(
       finalize(() => {
+        this.isProcessing = false;
         this.popup.closeLoading();
       })
     ).subscribe({
@@ -205,9 +206,14 @@ export class ClassListComponent implements OnInit, AfterViewInit {
 
   deleteClass() {
     if (!this.classToDelete) return;
-    this.popup.loading('Deleting...');
     this.isProcessing = true;
-    this.standardService.deleteStandard(this.classToDelete.standardId).subscribe({
+    this.popup.loading('Deleting...');
+    this.standardService.deleteStandard(this.classToDelete.standardId).pipe(
+      finalize(() => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
+      })
+    ).subscribe({
       next: () => {
         this.isProcessing = false;
         this.popup.closeLoading();

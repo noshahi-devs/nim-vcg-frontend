@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AccountsService, ProfitLossReport } from '../../../services/accounts.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-profit-loss',
@@ -24,22 +25,12 @@ export class ProfitLossComponent implements OnInit {
 
   chartOptions: any;
 
-  // ── Premium Modal State ──
-  isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
+  closeFeedback() { }
 
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
-
-  constructor(private accountsService: AccountsService) { }
+  constructor(
+    private accountsService: AccountsService,
+    private popup: PopupService
+  ) { }
 
   ngOnInit(): void {
     const today = new Date();
@@ -51,24 +42,28 @@ export class ProfitLossComponent implements OnInit {
 
   generateReport(): void {
     if (!this.startDate || !this.endDate) {
-      this.triggerError('Validation Error', 'Please select date range');
+      this.popup.warning('Incomplete Input', 'Please select a valid date range.');
       return;
     }
 
     if (new Date(this.startDate) > new Date(this.endDate)) {
-      this.triggerError('Validation Error', 'Start date must be before end date');
+      this.popup.warning('Invalid Range', 'Start date cannot be after the end date.');
       return;
     }
 
+    this.popup.loading('Analyzing financial data...');
     this.accountsService.getProfitLossReport(this.startDate, this.endDate).subscribe({
       next: (data) => {
         this.report = data;
         this.generatedAt = new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
         this.initializeChart();
+        this.popup.closeLoading();
+        this.popup.success('Report Ready!', 'Financial analysis has been refreshed.');
       },
       error: (err) => {
         console.error('Error generating report:', err);
-        this.triggerError('Error', 'Failed to generate report');
+        this.popup.closeLoading();
+        this.popup.error('Analysis Failed', 'Could not retrieve profit/loss data.');
       }
     });
   }
@@ -111,23 +106,21 @@ export class ProfitLossComponent implements OnInit {
 
   exportReport(): void {
     if (!this.report) {
-      this.triggerError('No Report', 'Please generate the report first before exporting.');
+      this.popup.warning('No Report', 'Please generate the report first before exporting.');
       return;
     }
 
-    this.isProcessing = true;
+    this.popup.loading('Extracting P&L report...');
     setTimeout(() => {
       try {
         const _r = this.report!;
         const csvRows: string[] = [];
         
-        // Report Header
         csvRows.push(`"Profit & Loss Report",""`);
         csvRows.push(`"Generated","${this.generatedAt}"`);
         csvRows.push(`"Date Range","${_r.startDate} to ${_r.endDate}"`);
         csvRows.push(`"",""`);
         
-        // Income Breakdown
         csvRows.push(`"INCOME BY CATEGORY",""`);
         csvRows.push(`"Category","Amount (PKR)"`);
         _r.incomeByCategory.forEach(ic => {
@@ -136,7 +129,6 @@ export class ProfitLossComponent implements OnInit {
         csvRows.push(`"Total Income","${_r.totalIncome}"`);
         csvRows.push(`"",""`);
 
-        // Expense Breakdown
         csvRows.push(`"EXPENSE BY CATEGORY",""`);
         csvRows.push(`"Category","Amount (PKR)"`);
         _r.expenseByCategory.forEach(ec => {
@@ -145,7 +137,6 @@ export class ProfitLossComponent implements OnInit {
         csvRows.push(`"Total Expenses","${_r.totalExpenses}"`);
         csvRows.push(`"",""`);
 
-        // Net Result
         const profitStatus = _r.netProfit >= 0 ? 'Net Profit' : 'Net Loss';
         csvRows.push(`"OVERALL RESULT",""`);
         csvRows.push(`"${profitStatus}","${_r.netProfit}"`);
@@ -160,12 +151,12 @@ export class ProfitLossComponent implements OnInit {
         link.click();
         document.body.removeChild(link);
 
-        this.isProcessing = false;
-        this.triggerSuccess('Export Complete!', 'Profit & Loss report has been generated.');
+        this.popup.closeLoading();
+        this.popup.success('Export Ready!', 'Profit & Loss report has been generated.');
       } catch (err) {
         console.error('Export failed:', err);
-        this.isProcessing = false;
-        this.triggerError('Export Failed', 'An error occurred while generating the report.');
+        this.popup.closeLoading();
+        this.popup.error('Export Failed', 'An error occurred while generating the report.');
       }
     }, 800);
   }

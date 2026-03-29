@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AccountsService, Transaction } from '../../../services/accounts.service';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-accounts-ledger',
@@ -24,13 +25,7 @@ export class AccountsLedgerComponent implements OnInit {
   searchTerm = '';
   selectedTransaction: Transaction | null = null;
 
-  // ── Premium Modal State ──
-  isProcessing = false;
-  showFeedbackModal = false;
   showViewModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
 
   // Pagination
   rowsPerPage = 10;
@@ -42,16 +37,13 @@ export class AccountsLedgerComponent implements OnInit {
   totalCredit = 0;
   finalBalance = 0;
 
-  constructor(private accountsService: AccountsService) { }
+  constructor(
+    private accountsService: AccountsService,
+    private popup: PopupService
+  ) { }
 
   // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  closeFeedback() { }
   closeViewModal() { this.showViewModal = false; }
 
   ngOnInit(): void {
@@ -59,14 +51,18 @@ export class AccountsLedgerComponent implements OnInit {
   }
 
   loadLedger(): void {
+    this.popup.loading('Scanning account ledger...');
     this.accountsService.getLedger().subscribe({
       next: (data) => {
         this.transactions = data;
         this.applyFilters();
+        this.popup.closeLoading();
+        this.popup.success('Ledger Loaded', 'Transaction history synchronized.');
       },
       error: (err) => {
         console.error('Error loading ledger:', err);
-        this.triggerError('Error', 'Failed to load ledger');
+        this.popup.closeLoading();
+        this.popup.error('Load Error', 'Failed to synchronize ledger records.');
       }
     });
   }
@@ -104,15 +100,14 @@ export class AccountsLedgerComponent implements OnInit {
   }
 
   exportLedger(): void {
-    this.isProcessing = true;
+    if (!this.filteredTransactions || this.filteredTransactions.length === 0) {
+      this.popup.warning('No Data', 'No records found to export.');
+      return;
+    }
+
+    this.popup.loading('Generating ledger export...');
     setTimeout(() => {
       try {
-        if (!this.filteredTransactions || this.filteredTransactions.length === 0) {
-          this.isProcessing = false;
-          this.triggerError('No Data', 'There is no ledger data to export based on current filters.');
-          return;
-        }
-
         const headers = ['Transaction ID', 'Date', 'Type', 'Category', 'Description', 'Debit (PKR)', 'Credit (PKR)', 'Balance (PKR)'];
         const csvRows = [headers.join(',')];
 
@@ -130,7 +125,6 @@ export class AccountsLedgerComponent implements OnInit {
           csvRows.push(row.join(','));
         });
 
-        // Add Total Row
         csvRows.push(`"","","","","TOTAL","${this.totalDebit}","${this.totalCredit}","${this.finalBalance}"`);
 
         const csvContent = "data:text/csv;charset=utf-8," + csvRows.join('\n');
@@ -144,12 +138,12 @@ export class AccountsLedgerComponent implements OnInit {
         link.click();
         document.body.removeChild(link);
 
-        this.isProcessing = false;
-        this.triggerSuccess('Export Complete!', 'Ledger data (CSV) has been exported successfully.');
+        this.popup.closeLoading();
+        this.popup.success('Export Ready!', 'Ledger report (CSV) has been downloaded.');
       } catch (err) {
         console.error('Export failed:', err);
-        this.isProcessing = false;
-        this.triggerError('Export Failed', 'An error occurred while generating the report.');
+        this.popup.closeLoading();
+        this.popup.error('Export Error', 'Failed to generate report.');
       }
     }, 800);
   }

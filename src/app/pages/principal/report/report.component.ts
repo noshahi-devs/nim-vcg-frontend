@@ -8,6 +8,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { DashboardService } from '../../../services/dashboard.service';
 import { AccountsService, DashboardData } from '../../../services/accounts.service';
 import { CommonModule } from '@angular/common';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-report',
@@ -50,17 +51,26 @@ export class ReportComponent implements OnInit {
 
   constructor(
     private dashboardService: DashboardService,
-    private accountsService: AccountsService
+    private accountsService: AccountsService,
+    private popup: PopupService
   ) {
     this.initStaticCharts();
   }
 
   ngOnInit() {
-    this.accountsService.getDashboardData().subscribe(data => {
-      this.accountData = data;
-      this.generatedAt = new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
-      this.updateHistoricalCharts(data.chartData);
-      this.updateDonutChartFromAccount(data);
+    this.popup.loading('Synthesizing report data...');
+    this.accountsService.getDashboardData().subscribe({
+      next: data => {
+        this.accountData = data;
+        this.generatedAt = new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+        this.updateHistoricalCharts(data.chartData);
+        this.updateDonutChartFromAccount(data);
+        this.popup.closeLoading();
+      },
+      error: () => {
+        this.popup.closeLoading();
+        this.popup.error('Generation Failed', 'Could not synthesize analytics data.');
+      }
     });
 
     this.dashboardService.getStudentDistribution().subscribe(data => {

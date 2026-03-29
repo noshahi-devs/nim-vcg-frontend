@@ -5,6 +5,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { AccountsService, Expense } from '../../../services/accounts.service';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { finalize } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-expense-manage',
@@ -38,31 +39,17 @@ export class ExpenseManageComponent implements OnInit {
   rowsPerPage = 10;
   pageSizeOptions = [5, 10, 25, 50, 100];
 
-  // ── Premium Modal State ──
-  isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
   loading = false;
-
-  showDeleteDialog = false;
-  itemToDeleteId: number | null = null;
-  itemToDeleteDesc = '';
+  isProcessing = false;
 
   constructor(
     private accountsService: AccountsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private popup: PopupService
   ) { }
 
   // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  closeFeedback() { }
 
   ngOnInit(): void {
     this.loadExpenseList();
@@ -81,7 +68,7 @@ export class ExpenseManageComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading expenses:', err);
-        this.triggerError('Error', 'Failed to load expense list');
+        this.popup.error('Load Error', 'Failed to synchronize expense records.');
       }
     });
   }
@@ -161,85 +148,98 @@ export class ExpenseManageComponent implements OnInit {
     if (!this.validateForm()) return;
 
     this.isProcessing = true;
+    this.popup.loading('Saving expense record...');
 
     if (this.isEditMode && this.currentExpense.id) {
       this.accountsService.updateExpense(this.currentExpense.id, this.currentExpense)
-        .pipe(finalize(() => this.isProcessing = false))
+        .pipe(finalize(() => {
+          this.isProcessing = false;
+          this.popup.closeLoading();
+        }))
         .subscribe({
           next: () => {
-            this.triggerSuccess('Updated Successfully!', 'Expense record has been updated.');
+            this.popup.success('Success!', 'Expense record updated.');
             this.loadExpenseList();
             this.closeModal();
           },
           error: (err) => {
             console.error('Error updating expense:', err);
-            this.triggerError('Error', 'Failed to update expense');
+            this.popup.error('Update Failed', 'Could not update expense record.');
           }
         });
     } else {
       this.accountsService.addExpense(this.currentExpense)
-        .pipe(finalize(() => this.isProcessing = false))
+        .pipe(finalize(() => {
+          this.isProcessing = false;
+          this.popup.closeLoading();
+        }))
         .subscribe({
           next: () => {
-            this.triggerSuccess('Added Successfully!', 'Expense record has been saved.');
+            this.popup.success('Success!', 'Expense record added.');
             this.loadExpenseList();
             this.closeModal();
           },
           error: (err) => {
             console.error('Error adding expense:', err);
-            this.triggerError('Error', 'Failed to add expense');
+            this.popup.error('Save Failed', 'Could not add expense record.');
           }
         });
     }
   }
 
   confirmDelete(expense: Expense) {
-    this.itemToDeleteId = expense.id;
-    this.itemToDeleteDesc = expense.description || '';
-    this.showDeleteDialog = true;
+    this.popup.confirm(
+      'Are you sure?',
+      `Do you want to delete the expense: "${expense.description}"?`
+    ).then(isConfirmed => {
+      if (isConfirmed) {
+        this.executeDelete(expense.id!);
+      }
+    });
   }
 
-  executeDelete() {
-    if (this.itemToDeleteId === null) return;
-    this.showDeleteDialog = false;
+  executeDelete(id: number) {
     this.isProcessing = true;
-    this.accountsService.deleteExpense(this.itemToDeleteId)
-      .pipe(finalize(() => this.isProcessing = false))
+    this.popup.loading('Deleting expense record...');
+    this.accountsService.deleteExpense(id)
+      .pipe(finalize(() => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
+      }))
       .subscribe({
         next: () => {
-          this.triggerSuccess('Deleted!', 'Expense has been deleted.');
-          this.itemToDeleteId = null;
+          this.popup.success('Deleted!', 'The expense has been removed.');
           this.loadExpenseList();
         },
         error: (err) => {
           console.error('Error deleting expense:', err);
-          this.triggerError('Error', 'Failed to delete expense');
+          this.popup.error('Delete Failed', 'Failed to delete the record.');
         }
       });
   }
 
   validateForm(): boolean {
     if (!this.currentExpense.description || !this.currentExpense.amount) {
-      this.triggerError('Validation Error', 'Please fill all required fields');
+      this.popup.warning('Validation Required', 'Please fill all mandatory fields.');
       return false;
     }
     if (this.currentExpense.amount <= 0) {
-      this.triggerError('Validation Error', 'Amount must be greater than 0');
+      this.popup.warning('Invalid Amount', 'Amount must be greater than zero.');
       return false;
     }
     return true;
   }
 
   exportData(): void {
+    if (!this.filteredList || this.filteredList.length === 0) {
+      this.popup.warning('No Data', 'No records found to export.');
+      return;
+    }
+
     this.isProcessing = true;
+    this.popup.loading('Extracting expense report...');
     setTimeout(() => {
       try {
-        if (!this.filteredList || this.filteredList.length === 0) {
-          this.isProcessing = false;
-          this.triggerError('No Data', 'There is no expense data to export based on current filters.');
-          return;
-        }
-
         const headers = ['ID', 'Date', 'Type', 'Description', 'Approved By', 'Payment Method', 'Amount (PKR)'];
         const csvRows = [headers.join(',')];
 
@@ -256,7 +256,6 @@ export class ExpenseManageComponent implements OnInit {
           csvRows.push(row.join(','));
         });
 
-        // Add Total Row
         csvRows.push(`"","","","","","TOTAL","${this.totalExpenses}"`);
 
         const csvContent = "data:text/csv;charset=utf-8," + csvRows.join('\n');
@@ -270,12 +269,13 @@ export class ExpenseManageComponent implements OnInit {
         link.click();
         document.body.removeChild(link);
 
-        this.isProcessing = false;
-        this.triggerSuccess('Export Complete!', 'Expense report (CSV) has been downloaded successfully.');
+        this.popup.closeLoading();
+        this.popup.success('Report Ready!', 'Your export is complete.');
       } catch (err) {
         console.error('Export failed:', err);
         this.isProcessing = false;
-        this.triggerError('Export Failed', 'An error occurred while generating the report.');
+        this.popup.closeLoading();
+        this.popup.error('Export Error', 'Failed to generate report.');
       }
     }, 800);
   }

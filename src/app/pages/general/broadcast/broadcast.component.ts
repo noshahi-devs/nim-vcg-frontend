@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NotificationService, NotificationLog } from '../../../services/notification.service';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { PopupService } from '../../../services/popup.service';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-broadcast',
@@ -16,9 +18,7 @@ export class BroadcastComponent implements OnInit {
 
     availableRoles = ['Admin', 'Principal', 'Teacher', 'Accountant', 'Student'];
     selectedRoles: string[] = [];
-    sending = false;
     successMsg = '';
-    loadingLogs = false;
     logs: NotificationLog[] = [];
     assignedSections: any[] = [];
     selectedSectionIds: number[] = [];
@@ -31,7 +31,10 @@ export class BroadcastComponent implements OnInit {
         priority: 'normal'
     };
 
-    constructor(private notificationService: NotificationService) { }
+    constructor(
+        private notificationService: NotificationService,
+        private popup: PopupService
+    ) { }
 
     ngOnInit(): void {
         this.loadLogs();
@@ -96,9 +99,17 @@ export class BroadcastComponent implements OnInit {
     }
 
     sendBroadcast() {
-        if (!this.broadcastData.title || !this.broadcastData.message) return;
-        this.sending = true;
-        this.successMsg = '';
+        if (!this.broadcastData.title || !this.broadcastData.message) {
+            this.popup.warning('Incomplete Broadcast', 'Please provide both a title and message content.');
+            return;
+        }
+
+        if (this.selectedRoles.length === 0 && this.selectedSectionIds.length === 0) {
+            this.popup.warning('No Recipients', 'Please select at least one role or target group.');
+            return;
+        }
+
+        this.popup.loading('Transmitting system broadcast...');
 
         const payload = {
             title: this.broadcastData.title,
@@ -111,31 +122,34 @@ export class BroadcastComponent implements OnInit {
             targetSubjectIds: this.selectedSubjectIds
         };
 
-        this.notificationService.broadcast(payload).subscribe({
-            next: (res) => {
-                this.sending = false;
-                this.successMsg = `Broadcast sent successfully to ${res.count ?? 'all'} users!`;
-                this.broadcastData = { title: '', message: '', priority: 'normal' };
-                this.selectedRoles = [];
-                this.loadLogs();
-                setTimeout(() => this.successMsg = '', 5000);
-            },
-            error: () => {
-                this.sending = false;
-                this.successMsg = 'Failed to send broadcast. Please try again.';
-            }
-        });
+        this.notificationService.broadcast(payload)
+            .pipe(finalize(() => this.popup.closeLoading()))
+            .subscribe({
+                next: (res) => {
+                    this.popup.success('Broadcast Sent!', `Message delivered to ${res.count ?? 'the targeted'} users.`);
+                    this.broadcastData = { title: '', message: '', priority: 'normal' };
+                    this.selectedRoles = [];
+                    this.selectedSectionIds = [];
+                    this.selectedSubjectIds = [];
+                    this.loadLogs();
+                },
+                error: (err) => {
+                    this.popup.error('Transmission Failed', 'Could not deliver the broadcast message.');
+                    console.error('Broadcast error:', err);
+                }
+            });
     }
 
     loadLogs() {
-        this.loadingLogs = true;
-        this.notificationService.getLogs().subscribe({
-            next: (data) => {
-                this.logs = data;
-                this.loadingLogs = false;
-            },
-            error: () => this.loadingLogs = false
-        });
+        this.popup.loading('Retrieving broadcast history...');
+        this.notificationService.getLogs()
+            .pipe(finalize(() => this.popup.closeLoading()))
+            .subscribe({
+                next: (data) => {
+                    this.logs = data;
+                },
+                error: () => this.popup.error('Load Failed', 'Could not retrieve broadcast logs.')
+            });
     }
 
     getRoleIcon(role: string): string {

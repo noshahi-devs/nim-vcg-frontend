@@ -75,21 +75,34 @@ export class LeaveTypeComponent implements OnInit {
     if (!this.validateForm()) return;
     const payload = { ...this.leaveTypeForm };
     this.isProcessing = true;
+    this.popup.loading(this.isEditMode ? 'Updating leave type...' : 'Saving leave type...');
     this.closeModal();
 
     if (this.isEditMode) {
       this.leaveTypeService.updateLeaveType(payload.leaveTypeMasterId, payload)
         .pipe(finalize(() => this.isProcessing = false))
         .subscribe({
-          next: () => { this.popup.success('Updated!', 'Leave type updated successfully.'); this.loadLeaveTypes(); },
-          error: (err) => { console.error('Error updating leave type:', err); this.popup.error('Error', 'Failed to update leave type.'); }
+          next: () => { 
+            this.popup.success('Updated!', 'Leave type updated successfully.'); 
+            this.loadLeaveTypes(); 
+          },
+          error: (err) => { 
+            console.error('Error updating leave type:', err); 
+            this.popup.error('Error', 'Failed to update leave type.'); 
+          }
         });
     } else {
       this.leaveTypeService.createLeaveType(payload)
         .pipe(finalize(() => this.isProcessing = false))
         .subscribe({
-          next: () => { this.popup.success('Added!', 'Leave type added successfully.'); this.loadLeaveTypes(); },
-          error: (err) => { console.error('Error creating leave type:', err); this.popup.error('Error', 'Failed to create leave type.'); }
+          next: () => { 
+            this.popup.success('Saved!', 'Leave type added successfully.'); 
+            this.loadLeaveTypes(); 
+          },
+          error: (err) => { 
+            console.error('Error creating leave type:', err); 
+            this.popup.error('Error', 'Failed to create leave type.'); 
+          }
         });
     }
   }

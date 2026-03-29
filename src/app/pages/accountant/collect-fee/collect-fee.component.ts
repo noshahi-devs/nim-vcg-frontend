@@ -8,7 +8,7 @@ import { MonthlyPayment } from '../../../Models/monthly-payment';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AuthService } from '../../../SecurityModels/auth.service';
-import Swal from '../../../swal';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-collect-fee',
@@ -43,13 +43,8 @@ export class CollectFeeComponent implements OnInit {
   rowsPerPage = 10;
   totalPages = 1;
   toEntry = 0;
-
-  // Premium Modal States
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
   isProcessing = false;
+
 
   paymentForm: FormGroup;
 
@@ -57,7 +52,8 @@ export class CollectFeeComponent implements OnInit {
     private fb: FormBuilder,
     private commonService: CommonServices,
     private settingsService: SettingsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private popup: PopupService
   ) {
     this.paymentForm = this.fb.group({
       amountPaid: ['', [Validators.required, Validators.min(1)]],
@@ -139,11 +135,12 @@ export class CollectFeeComponent implements OnInit {
     if (!this.selectedStudent || !this.studentId || this.paymentForm.invalid) return;
 
     if (this.paymentForm.value.amountPaid > this.remainingAmount) {
-      this.showFeedback('warning', 'Invalid Amount', 'Amount cannot exceed remaining balance!');
+      this.popup.warning('Irregular Amount', 'Payment cannot exceed the outstanding balance.');
       return;
     }
 
     this.isProcessing = true;
+    this.popup.loading('Collecting fee from student...');
 
     const val = this.paymentForm.value;
 
@@ -162,14 +159,16 @@ export class CollectFeeComponent implements OnInit {
     this.commonService.createMonthlyPayment(newPayment as MonthlyPayment).subscribe({
       next: (savedPayment) => {
         this.isProcessing = false;
-        this.showFeedback('success', 'Success', 'Payment collected successfully!');
+        this.popup.closeLoading();
+        this.popup.success('Payment Logged', 'Fee collection has been recorded.');
         this.paymentForm.reset({ paymentDate: new Date().toISOString().substring(0, 10), paymentType: 'Cash' });
-        this.loadFeeInfo(); // Reload to get updated balance and list
+        this.loadFeeInfo();
       },
       error: (err) => {
         this.isProcessing = false;
+        this.popup.closeLoading();
         console.error('Error collecting fee', err);
-        this.showFeedback('error', 'Error', 'Failed to collect fee.');
+        this.popup.error('Entry Failed', 'Could not record the fee collection.');
       }
     });
   }
@@ -282,7 +281,7 @@ export class CollectFeeComponent implements OnInit {
 
   downloadReceipt() {
     if (!this.selectedStudent) {
-      this.showFeedback('warning', 'No Student', 'Please select a student first!');
+      this.popup.warning('Selection Required', 'Please select a student record to continue.');
       return;
     }
 
@@ -343,15 +342,5 @@ export class CollectFeeComponent implements OnInit {
     this.updatePagination();
   }
 
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
-  }
 
 }

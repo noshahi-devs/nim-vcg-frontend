@@ -254,13 +254,12 @@
         </form>
       </div>
       <div class="modal-footer-premium">
-        <button class="btn-ghost" (click)="showEditModal = false">Cancel</button>
+        <button class="btn-ghost" (click)="showEditModal = false" [disabled]="isProcessing">Cancel</button>
         <button class="btn-primary-gradient" (click)="updateSubject()" [disabled]="isProcessing"
           style="background: linear-gradient(135deg, #F4C430, #d4a71c); color: #800000; box-shadow: 0 4px 14px rgba(244, 196, 48, 0.3);">
           <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop"
             class="me-2 text-maroon-premium"></iconify-icon>
-          <span *ngIf="!isProcessing">Save Subject</span>
-          <span *ngIf="isProcessing">Saving...</span>
+          Save
         </button>
       </div>
     </div>

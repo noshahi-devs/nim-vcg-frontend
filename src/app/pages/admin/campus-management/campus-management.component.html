@@ -105,8 +105,8 @@
       </div>
 
       <div class="modal-footer border-0 p-0 mt-20 d-flex align-items-center justify-content-end gap-2">
-        <button type="button" class="btn btn-secondary radius-8 px-20 py-11" (click)="closeModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary-600 radius-8 px-20 py-11" (click)="saveCampus()">Save Changes</button>
+        <button type="button" class="btn btn-secondary radius-8 px-20 py-11" (click)="closeModal()" [disabled]="isProcessing">Cancel</button>
+        <button type="submit" class="btn btn-primary-600 radius-8 px-20 py-11" (click)="saveCampus()" [disabled]="isProcessing">Save</button>
       </div>
     </div>
   </div>

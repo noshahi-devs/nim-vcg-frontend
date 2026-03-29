@@ -112,7 +112,8 @@
               </tr>
               <tr *ngIf="bankAccounts.length === 0">
                 <td colspan="5" class="p-0 border-0 bg-transparent">
-                  <div class="empty-glass-state my-16 mx-auto" style="max-width: 600px; margin-top: 32px; margin-bottom: 32px;">
+                  <div class="empty-glass-state my-16 mx-auto"
+                    style="max-width: 600px; margin-top: 32px; margin-bottom: 32px;">
                     <iconify-icon class="empty-icon" icon="solar:safe-square-bold-duotone"></iconify-icon>
                     <h5>No accounts found</h5>
                     <p>No bank accounts registered.</p>
@@ -175,7 +176,8 @@
               </tr>
               <tr *ngIf="cashAccounts.length === 0">
                 <td colspan="5" class="p-0 border-0 bg-transparent">
-                  <div class="empty-glass-state my-16 mx-auto" style="max-width: 600px; margin-top: 32px; margin-bottom: 32px;">
+                  <div class="empty-glass-state my-16 mx-auto"
+                    style="max-width: 600px; margin-top: 32px; margin-bottom: 32px;">
                     <iconify-icon class="empty-icon" icon="solar:wad-of-money-bold-duotone"></iconify-icon>
                     <h5>No cash vaults</h5>
                     <p>No cash accounts tracked.</p>
@@ -242,7 +244,8 @@
               </tr>
               <tr *ngIf="paymentGateways.length === 0">
                 <td colspan="5" class="p-0 border-0 bg-transparent">
-                  <div class="empty-glass-state my-16 mx-auto" style="max-width: 600px; margin-top: 32px; margin-bottom: 32px;">
+                  <div class="empty-glass-state my-16 mx-auto"
+                    style="max-width: 600px; margin-top: 32px; margin-bottom: 32px;">
                     <iconify-icon class="empty-icon" icon="solar:shield-network-bold-duotone"></iconify-icon>
                     <h5>No gateways</h5>
                     <p>No external gateways set up.</p>
@@ -321,10 +324,10 @@
     </div>
 
     <div class="premium-modal-footer">
-      <button class="pm-btn pm-cancel" (click)="closeBankModal()">Discard</button>
-      <button class="glass-pill-btn" (click)="saveBankAccount()">
+      <button class="pm-btn pm-cancel" (click)="closeBankModal()" [disabled]="isProcessing">Cancel</button>
+      <button class="glass-pill-btn" (click)="saveBankAccount()" [disabled]="isProcessing">
         <iconify-icon icon="solar:check-read-bold"></iconify-icon>
-        {{ isEditBankMode ? 'Sync Changes' : 'Initialize Account' }}
+        Save
       </button>
     </div>
   </div>
@@ -373,10 +376,10 @@
     </div>
 
     <div class="premium-modal-footer">
-      <button class="pm-btn pm-cancel" (click)="closeCashModal()">Cancel</button>
-      <button class="glass-pill-btn" (click)="saveCashAccount()">
+      <button class="pm-btn pm-cancel" (click)="closeCashModal()" [disabled]="isProcessing">Cancel</button>
+      <button class="glass-pill-btn" (click)="saveCashAccount()" [disabled]="isProcessing">
         <iconify-icon icon="solar:check-read-bold"></iconify-icon>
-        Commit Registry
+        Save
       </button>
     </div>
   </div>
@@ -442,57 +445,11 @@
     </div>
 
     <div class="premium-modal-footer">
-      <button class="pm-btn pm-cancel" (click)="closeGatewayModal()">Close</button>
-      <button class="glass-pill-btn" (click)="saveGateway()">
+      <button class="pm-btn pm-cancel" (click)="closeGatewayModal()" [disabled]="isProcessing">Cancel</button>
+      <button class="glass-pill-btn" (click)="saveGateway()" [disabled]="isProcessing">
         <iconify-icon icon="solar:plug-circle-bold"></iconify-icon>
-        Deploy Settings
+        Save
       </button>
-    </div>
-  </div>
-</div>
-
-<!-- == CONFIRM DELETE == -->
-<div class="premium-overlay" *ngIf="showDeleteDialog">
-  <div class="premium-modal delete-modal">
-    <div class="feedback-modal">
-      <div class="pm-icon-ring danger-ring">
-        <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size:2.4rem; color:#fff"></iconify-icon>
-      </div>
-      <h4 class="pm-title">Registry Removal</h4>
-      <p class="pm-subtitle">Terminate <b>{{ itemToDeleteDesc }}</b> from the ledger? This action is irreversible.</p>
-      <div class="pm-actions">
-        <button class="pm-btn pm-cancel" (click)="showDeleteDialog = false">Abort</button>
-        <button class="pm-btn pm-save" (click)="executeDelete()">Permanently Delete</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- == FEEDBACK MODAL == -->
-<div class="premium-overlay" *ngIf="showFeedbackModal">
-  <div class="premium-modal" style="max-width: 450px;">
-    <div class="feedback-modal">
-      <div class="pm-icon-ring" [ngClass]="feedbackType === 'success' ? 'success-ring' : 'danger-ring'">
-        <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 'solar:close-circle-bold'"
-          style="font-size:2.4rem; color:#fff"></iconify-icon>
-      </div>
-      <h4 class="pm-title">{{ feedbackTitle }}</h4>
-      <p class="pm-subtitle">{{ feedbackMessage }}</p>
-      <button class="pm-btn" [ngClass]="feedbackType === 'success' ? 'pm-success-btn' : 'pm-error-btn'"
-        (click)="closeFeedback()">
-        Acknowledged
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- == PROCESSING OVERLAY == -->
-<div class="premium-overlay" *ngIf="isProcessing">
-  <div class="processing-card">
-    <div class="loader-ring"></div>
-    <div>
-      <p class="pc-title">Ledger Syncing...</p>
-      <p class="pc-subtitle">Please wait a moment...</p>
     </div>
   </div>
 </div>
