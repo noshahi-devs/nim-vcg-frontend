@@ -187,7 +187,10 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
     if (!imagePath) return this.defaultAvatar;
     if (imagePath.startsWith('http') || imagePath.startsWith('data:') || imagePath.startsWith('assets/')) return imagePath;
     const normalizedPath = imagePath.replace(/\\/g, '/').replace(/^\//, '');
-    return `${environment.apiBaseUrl}/${normalizedPath}`;
+    
+    // ⭐ Fix for live server: Use /api as fallback if apiBaseUrl is empty (Nginx forwards /api to backend)
+    const base = environment.apiBaseUrl || '/api';
+    return `${base}/${normalizedPath}`;
   }
 
   getStatusClass(status: string): string {

@@ -80,7 +80,10 @@ export class StudentProfileComponent implements OnInit {
                 return this.studentData.imagePath;
             }
             const normalizedPath = this.studentData.imagePath.replace(/\\/g, '/').replace(/^\//, '');
-            return `${environment.apiBaseUrl}/${normalizedPath}`;
+            
+            // ⭐ Fix for live server where /images/ is intercepted by frontend
+            const base = environment.apiBaseUrl || '/api';
+            return `${base}/${normalizedPath}`;
         }
         return 'assets/images/user-grid/user-grid-img2.png';
     }

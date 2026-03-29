@@ -153,7 +153,10 @@ export class StudentViewComponent implements OnInit, AfterViewInit {
       }
       // Otherwise prepend API base URL
       const normalizedPath = this.studentData.imagePath.replace(/\\/g, '/').replace(/^\//, '');
-      return `${environment.apiBaseUrl}/${normalizedPath}`;
+      
+      // ⭐ Fix for live server: Use /api as fallback if apiBaseUrl is empty
+      const base = environment.apiBaseUrl || '/api';
+      return `${base}/${normalizedPath}`;
     }
 
     // 3. Fallback to default

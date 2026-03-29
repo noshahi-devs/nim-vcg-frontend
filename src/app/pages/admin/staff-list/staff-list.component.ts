@@ -46,7 +46,11 @@ export class StaffListComponent implements OnInit, AfterViewInit {
     if (!imagePath) return this.defaultImage;
     if (imagePath.startsWith('http') || imagePath.startsWith('data:') || imagePath.startsWith('assets/')) return imagePath;
     const normalizedPath = imagePath.replace(/\\/g, '/').replace(/^\//, '');
-    return `${this.apiBaseUrl}/${normalizedPath}`;
+    
+    // ⭐ Fix for live server where /images/ is intercepted by frontend
+    // Use /api as fallback base to ensure Nginx forwards to backend
+    const base = this.apiBaseUrl || '/api';
+    return `${base}/${normalizedPath}`;
   }
 
   // For Deletion Confirmation

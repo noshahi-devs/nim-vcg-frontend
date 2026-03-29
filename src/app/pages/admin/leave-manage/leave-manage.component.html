@@ -118,10 +118,11 @@
               <div class="duration-count">{{ getDurationDays(leave.startDate, leave.endDate) }}</div>
               <div class="duration-label">Days</div>
             </td>
-            <td>
-              <span style="color:#64748b; font-size: 13px;" [title]="leave.reason">
-                {{ leave.reason.length > 35 ? leave.reason.substring(0, 35) + '...' : leave.reason }}
+            <td style="max-width: 180px; position: relative;" class="reason-cell">
+              <span class="d-inline-block text-truncate w-100" style="color:#64748b; font-size: 13px; font-weight: 500;">
+                {{ leave.reason }}
               </span>
+              <div class="reason-tooltip">{{ leave.reason }}</div>
             </td>
             <td class="text-center">
               <span class="status-pill" [ngClass]="{

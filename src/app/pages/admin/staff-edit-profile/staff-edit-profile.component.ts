@@ -100,7 +100,10 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
     if (!imagePath) return defaultImg;
     if (imagePath.startsWith('http') || imagePath.startsWith('data:') || imagePath.startsWith('assets/')) return imagePath;
     const normalizedPath = imagePath.replace(/\\/g, '/').replace(/^\//, '');
-    return `${environment.apiBaseUrl}/${normalizedPath}`;
+    
+    // ⭐ Fix for live server where /images/ is intercepted by frontend
+    const base = environment.apiBaseUrl || '/api';
+    return `${base}/${normalizedPath}`;
   }
 
   saveStaff() {
