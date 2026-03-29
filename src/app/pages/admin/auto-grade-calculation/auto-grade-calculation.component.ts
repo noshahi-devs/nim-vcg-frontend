@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { ExamService, GradeScale, Exam } from '../../../services/exam.service';
 import { finalize } from 'rxjs/operators';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-auto-grade-calculation',
@@ -40,28 +41,16 @@ export class AutoGradeCalculationComponent implements OnInit {
   selectedGenerateExamId = 0;
   isGeneratingResult = false;
 
-  // ── Premium Modal State ──
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
 
-  constructor(private examService: ExamService) { }
+  constructor(
+    private examService: ExamService,
+    private popup: PopupService
+  ) { }
 
   ngOnInit() { this.loadGradeScales(); this.loadExams(); }
 
-  // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerWarning(title: string, msg: string) {
-    this.feedbackType = 'warning'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  // Modals handled by PopupService
 
   loadExams() {
     this.examService.getAllExams().subscribe({
@@ -78,20 +67,18 @@ export class AutoGradeCalculationComponent implements OnInit {
 
   generateExamResults() {
     if (!this.selectedGenerateExamId || this.selectedGenerateExamId === 0) {
-      this.triggerError('Error', 'Please select an exam first.'); return;
+      this.popup.error('Error', 'Please select an exam first.'); return;
     }
     const selectedExam = this.exams.find(e => e.examId === this.selectedGenerateExamId);
-    this.isGeneratingResult = true;
-    this.isProcessing = true;
-
+    this.popup.loading('Calculating grades & generating results...');
     this.examService.generateResults(this.selectedGenerateExamId)
       .pipe(finalize(() => { this.isGeneratingResult = false; this.isProcessing = false; }))
       .subscribe({
-        next: () => { this.triggerSuccess('Success!', 'Results have been generated and grades calculated successfully.'); },
+        next: () => { this.popup.success('Success!', 'Results have been generated and grades calculated successfully.'); },
         error: (err) => {
           console.error('Generation Error:', err);
           const errorMsg = err.error?.message || err.error || 'Check marks entry or grade scale settings.';
-          this.triggerError('Calculation Failed', `Error: ${errorMsg}`);
+          this.popup.error('Calculation Failed', `Error: ${errorMsg}`);
         }
       });
   }
@@ -128,10 +115,10 @@ export class AutoGradeCalculationComponent implements OnInit {
 
   saveGradeScale() {
     if (!this.gradeScaleForm.grade || this.gradeScaleForm.minPercentage === undefined || this.gradeScaleForm.maxPercentage === undefined) {
-      this.triggerError('Validation Error', 'Please fill all required fields'); return;
+      this.popup.error('Validation Error', 'Please fill all required fields'); return;
     }
     if (this.gradeScaleForm.minPercentage > this.gradeScaleForm.maxPercentage) {
-      this.triggerError('Validation Error', 'Min percentage cannot be greater than max percentage'); return;
+      this.popup.error('Validation Error', 'Min percentage cannot be greater than max percentage'); return;
     }
     this.isProcessing = true;
     this.closeDialog();
@@ -144,9 +131,9 @@ export class AutoGradeCalculationComponent implements OnInit {
             const index = this.gradeScales.findIndex(g => g.gradeId === this.gradeScaleForm.gradeId);
             if (index !== -1) this.gradeScales[index] = { ...res };
             this.filteredGradeScales = [...this.gradeScales]; this.updatePagination();
-            this.triggerSuccess('Updated!', 'Grade scale updated successfully.');
+            this.popup.success('Updated!', 'Grade scale updated successfully.');
           },
-          error: (err) => { console.error(err); this.triggerError('Error', err.error?.message || 'Failed to update grade scale.'); }
+          error: (err) => { console.error(err); this.popup.error('Error', err.error?.message || 'Failed to update grade scale.'); }
         });
     } else {
       this.examService.addGradeScale(this.gradeScaleForm)
@@ -154,30 +141,33 @@ export class AutoGradeCalculationComponent implements OnInit {
         .subscribe({
           next: (res) => {
             this.gradeScales.push(res); this.filteredGradeScales = [...this.gradeScales]; this.updatePagination();
-            this.triggerSuccess('Added!', 'Grade scale added successfully.');
+            this.popup.success('Added!', 'Grade scale added successfully.');
           },
-          error: (err) => { console.error(err); this.triggerError('Error', err.error?.message || 'Failed to add grade scale.'); }
+          error: (err) => { console.error(err); this.popup.error('Error', err.error?.message || 'Failed to add grade scale.'); }
         });
     }
   }
 
-  deleteGradeScale(g: GradeScale) { this.gradeScaleToDelete = g; this.showDeleteDialog = true; }
-
-  confirmDeleteGradeScale() {
-    if (this.gradeScaleToDelete?.gradeId) {
-      this.showDeleteDialog = false;
-      this.isProcessing = true;
-      this.examService.deleteGradeScale(this.gradeScaleToDelete.gradeId)
-        .pipe(finalize(() => this.isProcessing = false))
-        .subscribe({
-          next: () => {
-            this.gradeScales = this.gradeScales.filter(g => g.gradeId !== this.gradeScaleToDelete!.gradeId);
-            this.filteredGradeScales = [...this.gradeScales]; this.updatePagination(); this.gradeScaleToDelete = null;
-            this.triggerSuccess('Deleted!', 'Grade scale has been deleted.');
-          },
-          error: (err) => { console.error(err); this.triggerError('Error', err.error?.message || 'Failed to delete grade scale.'); }
-        });
-    }
+  deleteGradeScale(g: GradeScale) {
+    if (!g.gradeId) return;
+    this.popup.confirm('Delete Grade?', `Are you sure you want to delete grade "${g.grade}"?`).then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Deleting grade...');
+        this.examService.deleteGradeScale(g.gradeId!)
+          .subscribe({
+            next: () => {
+              this.gradeScales = this.gradeScales.filter(x => x.gradeId !== g.gradeId);
+              this.filteredGradeScales = [...this.gradeScales];
+              this.updatePagination();
+              this.popup.deleted('Grade scale');
+            },
+            error: (err) => {
+              console.error(err);
+              this.popup.error('Error', err.error?.message || 'Failed to delete grade scale.');
+            }
+          });
+      }
+    });
   }
 
   refreshData() { this.loadGradeScales(); }

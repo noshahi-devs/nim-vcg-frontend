@@ -14,6 +14,7 @@ import { ExamScheduleStandardService } from '../../../services/exam-schedule-sta
 import { BreadcrumbComponent } from "../../ui-elements/breadcrumb/breadcrumb.component";
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-exam-schedule-standards-create',
@@ -32,12 +33,7 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
   examTypeList: Examtype[] = [];
   model: CreateExamScheduleStandardVM = new CreateExamScheduleStandardVM();
 
-  // ── Premium Modal State ──
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
 
   constructor(
     private examScheduleService: ExamScheduleService,
@@ -45,7 +41,8 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
     private standardService: StandardService,
     private subjectService: SubjectService,
     private examScheduleStandardsService: ExamScheduleStandardService,
-    private router: Router
+    private router: Router,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -56,14 +53,7 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
     this.addExamSubject();
   }
 
-  // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  // Modals handled by PopupService
 
   loadExamSchedules() {
     this.examScheduleService.GetExamScheduleOptions().subscribe({
@@ -99,13 +89,12 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('Final payload being sent:', this.model);
-    this.isProcessing = true;
+    this.popup.loading('Saving exam schedule...');
     this.examScheduleStandardsService.SaveExamScheduleStandards(this.model)
       .pipe(finalize(() => this.isProcessing = false))
       .subscribe({
         next: () => {
-          this.triggerSuccess('Schedule Saved!', 'Exam schedule has been added successfully.');
+          this.popup.success('Schedule Saved!', 'Exam schedule has been added successfully.');
           setTimeout(() => this.router.navigate(['/exam-schedule-standards-list']), 1800);
         },
         error: err => {
@@ -116,7 +105,7 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
           } else if (err.message) {
             errorMsg = err.message;
           }
-          this.triggerError('Save Failed', errorMsg);
+          this.popup.error('Save Failed', errorMsg);
         }
       });
   }

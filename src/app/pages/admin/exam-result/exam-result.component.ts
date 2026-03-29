@@ -11,6 +11,7 @@ import { Section } from '../../../Models/section';
 import { Student } from '../../../Models/student';
 import { finalize, forkJoin } from 'rxjs';
 import { AuthService } from '../../../SecurityModels/auth.service';
+import { PopupService } from '../../../services/popup.service';
 import { StaffService } from '../../../services/staff.service';
 import { SubjectAssignmentService, SubjectAssignment } from '../../../core/services/subject-assignment.service';
 import { Staff } from '../../../Models/staff';
@@ -36,15 +37,9 @@ export class ExamResultComponent implements OnInit {
   loading = false;
   noResultsFound = false;
   hasSearched = false;
-
-  // ── Premium Modal State ──
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'warning';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  triggerWarning(title: string, msg: string) { this.feedbackType = 'warning'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true; }
-  closeFeedback() { this.showFeedbackModal = false; }
+
+  // Modals handled by PopupService
 
   // Filters
   selectedExamId: number = 0;
@@ -85,7 +80,8 @@ export class ExamResultComponent implements OnInit {
     private staffService: StaffService,
     private assignmentService: SubjectAssignmentService,
     private sessionService: SessionService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private popup: PopupService
   ) { }
 
   ngOnInit() {
@@ -340,12 +336,12 @@ export class ExamResultComponent implements OnInit {
 
   loadResults() {
     if (!this.selectedExamId) {
-      this.triggerWarning('Selection Required', 'Please select an Exam.');
+      this.popup.warning('Please select an Exam.', 'Selection Required');
       return;
     }
 
     this.loading = true;
-    this.isProcessing = true;
+    this.popup.loading('Loading results...');
     this.hasSearched = true;
     this.noResultsFound = false;
     this.examResults = [];
@@ -372,11 +368,13 @@ export class ExamResultComponent implements OnInit {
             this.mapSingleResultToDisplay(res);
             this.examResults = [res];
             this.calculateSummary();
+            this.popup.closeLoading();
           } else {
             this.noResultsFound = true;
+            this.popup.closeLoading();
           }
         },
-        error: () => this.noResultsFound = true
+        error: () => { this.noResultsFound = true; this.popup.closeLoading(); }
       });
   }
 
@@ -390,11 +388,13 @@ export class ExamResultComponent implements OnInit {
             this.examResults = res;
             this.noResultsFound = false;
             this.updateFilteredBulkResults();
+            this.popup.closeLoading();
           } else {
             this.noResultsFound = true;
+            this.popup.closeLoading();
           }
         },
-        error: () => this.noResultsFound = true
+        error: () => { this.noResultsFound = true; this.popup.closeLoading(); }
       });
   }
 

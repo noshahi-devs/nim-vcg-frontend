@@ -7,6 +7,7 @@ import { ExamScheduleVm } from '../../../Models/exam-schedule-vm';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { finalize } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { DatePipe } from '@angular/common';
@@ -48,15 +49,7 @@ export class ExamScheduleComponent implements OnInit {
   apiBaseUrl = environment.apiBaseUrl;
 
 
-  // ── Premium Modal State ──
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  showConfirmModal = false;
-  confirmTitle = '';
-  confirmMessage = '';
   scheduleToDelete: ExamScheduleVm | null = null;
 
   constructor(
@@ -64,19 +57,13 @@ export class ExamScheduleComponent implements OnInit {
     public authService: AuthService,
     private cdr: ChangeDetectorRef,
     private datePipe: DatePipe,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void { this.initForm(); this.loadExamSchedules(); this.loadSchoolInfo(); }
 
-  // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  // Modals handled by PopupService
 
   initForm() {
     this.form = new FormGroup({
@@ -181,7 +168,7 @@ export class ExamScheduleComponent implements OnInit {
   openViewDialog(schedule: ExamScheduleVm) { this.selectedSchedule = schedule; this.showViewDialog = true; }
 
   saveExamSchedule() {
-    if (this.form.invalid) { this.triggerError('Error', 'Please fill all required fields'); return; }
+    if (this.form.invalid) { this.popup.error('Error', 'Please fill all required fields'); return; }
     const payload = this.form.value;
     const request = this.isEditMode ? this.service.UpdateExamSchedule(payload) : this.service.SaveExamSchedule(payload);
     this.isProcessing = true;
@@ -189,32 +176,30 @@ export class ExamScheduleComponent implements OnInit {
 
     request.pipe(finalize(() => this.isProcessing = false)).subscribe({
       next: () => {
-        this.triggerSuccess('Success', `Schedule ${this.isEditMode ? 'updated' : 'saved'} successfully`);
+        this.popup.success('Success', `Schedule ${this.isEditMode ? 'updated' : 'saved'} successfully`);
         this.loadExamSchedules();
       },
-      error: (err) => { console.error(err); this.triggerError('Error', 'Failed to save schedule'); }
+      error: (err) => { console.error(err); this.popup.error('Error', 'Failed to save schedule'); }
     });
   }
 
   confirmDelete(schedule: ExamScheduleVm) {
-    this.scheduleToDelete = schedule;
-    this.confirmTitle = 'Delete Schedule';
-    this.confirmMessage = `Are you sure you want to delete "${schedule.examScheduleName}"?`;
-    this.showConfirmModal = true;
-  }
-
-  cancelConfirm() { this.showConfirmModal = false; this.scheduleToDelete = null; }
-
-  executeDelete() {
-    if (!this.scheduleToDelete) return;
-    this.showConfirmModal = false;
-    this.isProcessing = true;
-    this.service.DeleteExamSchedule(this.scheduleToDelete.examScheduleId)
-      .pipe(finalize(() => this.isProcessing = false))
-      .subscribe({
-        next: () => { this.triggerSuccess('Deleted!', 'Schedule has been deleted.'); this.loadExamSchedules(); },
-        error: (err) => { console.error(err); this.triggerError('Error', 'Failed to delete schedule.'); }
-      });
+    this.popup.confirm('Delete Schedule?', `Are you sure you want to delete "${schedule.examScheduleName}"?`).then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Deleting schedule...');
+        this.service.DeleteExamSchedule(schedule.examScheduleId)
+          .subscribe({
+            next: () => {
+              this.popup.deleted('Schedule');
+              this.loadExamSchedules();
+            },
+            error: (err) => {
+              console.error(err);
+              this.popup.error('Error', 'Failed to delete schedule.');
+            }
+          });
+      }
+    });
   }
 
   getDaysDifference(startDate: any, endDate: any): number {
@@ -224,9 +209,9 @@ export class ExamScheduleComponent implements OnInit {
   }
 
   printSchedule(schedule: ExamScheduleVm) {
-    this.isProcessing = true;
+    this.popup.loading('Preparing print view...');
     this.service.GetExamScheduleById(schedule.examScheduleId)
-      .pipe(finalize(() => this.isProcessing = false))
+      .pipe(finalize(() => this.popup.closeLoading()))
       .subscribe({
         next: (fullSchedule) => {
           this.executeIframePrint(fullSchedule || schedule);
@@ -341,9 +326,9 @@ export class ExamScheduleComponent implements OnInit {
   }
 
   downloadPDF(schedule: ExamScheduleVm) {
-    this.isProcessing = true;
+    this.popup.loading('Generating PDF...');
     this.service.GetExamScheduleById(schedule.examScheduleId)
-      .pipe(finalize(() => this.isProcessing = false))
+      .pipe(finalize(() => this.popup.closeLoading()))
       .subscribe({
         next: (fullSchedule) => {
           this.executeManualPDF(fullSchedule || schedule);
@@ -461,10 +446,10 @@ export class ExamScheduleComponent implements OnInit {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       
-      this.triggerSuccess('Exported!', 'PDF has been downloaded.');
+      this.popup.success('Exported!', 'PDF has been downloaded.');
     } catch (err) {
       console.error(err);
-      this.triggerError('Error', 'PDF generation failed.');
+      this.popup.error('Error', 'PDF generation failed.');
     }
   }
 

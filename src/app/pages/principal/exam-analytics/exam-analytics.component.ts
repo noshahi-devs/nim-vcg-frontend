@@ -8,6 +8,7 @@ import { Section } from '../../../Models/section';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { finalize } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-exam-analytics',
@@ -31,18 +32,14 @@ export class ExamAnalyticsComponent implements OnInit {
   allSections: any[] = [];
   isLoading: boolean = false;
 
-  // Premium Modal State (for loading overlay)
+  // Modals handled by PopupService
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  closeFeedback() { this.showFeedbackModal = false; }
 
   constructor(
     private examService: ExamService,
     private standardService: StandardService,
-    private sectionService: SectionService
+    private sectionService: SectionService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -106,30 +103,38 @@ export class ExamAnalyticsComponent implements OnInit {
 
   loadAnalytics(): void {
     if (!this.selectedExamId) return;
+    
+    this.popup.loading('Analyzing exam performance...');
     this.isLoading = true;
-    this.isProcessing = true; // Added
+    this.isProcessing = true;
 
-    const classId = this.selectedClassId ? this.selectedClassId : undefined;
-    const sectionId = this.selectedSectionId ? this.selectedSectionId : undefined;
+    const classId = this.selectedClassId ? (this.selectedClassId as any) : undefined;
+    const sectionId = this.selectedSectionId ? (this.selectedSectionId as any) : undefined;
 
     this.examService.getExamAnalytics(this.selectedExamId, classId, sectionId)
       .pipe(
         finalize(() => {
           this.isLoading = false;
           this.isProcessing = false;
+          this.popup.closeLoading();
         })
       )
       .subscribe({
         next: (data: any) => {
-          if (data.success === false) {
+          if (data && data.success === false) {
             this.analytics = null;
+            this.popup.warning('Could not generate analytics for the selected criteria.', 'No Data');
             return;
           }
           this.analytics = data;
+          if (!data || data.totalStudents === 0) {
+            this.popup.warning('No records found to analyze for this selection.', 'Empty Results');
+          }
         },
         error: (err) => {
           console.error('Failed to load analytics', err);
           this.analytics = null;
+          this.popup.error('Error', 'Failed to calculate analytics data.');
         }
       });
   }

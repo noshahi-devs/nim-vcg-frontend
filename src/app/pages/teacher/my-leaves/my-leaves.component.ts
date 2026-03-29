@@ -34,7 +34,7 @@ export class MyLeavesComponent implements OnInit {
   // All leaves
   allLeaves: Leave[] = [];
   filteredLeaves: Leave[] = [];
-  loading = false;
+  loading = true;
 
   // Filters
   statusFilter = 'All';
@@ -62,7 +62,6 @@ export class MyLeavesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCurrentUser();
-    this.loadMyLeaves();
   }
 
   loadCurrentUser(): void {
@@ -73,6 +72,7 @@ export class MyLeavesComponent implements OnInit {
         finalize(() => this.loadingProfile = false),
         catchError(err => {
           console.error("Error loading staff profile:", err);
+          this.loading = false; // Stop loading if profile fetch fails
           return of(null);
         })
       ).subscribe(staff => {
@@ -80,13 +80,20 @@ export class MyLeavesComponent implements OnInit {
           this.staffId = staff.staffId;
           this.currentUserName = staff.staffName || '';
           this.loadMyLeaves();
+        } else {
+          this.loading = false; // No staff found for this email
         }
       });
+    } else {
+      this.loading = false; // No current user or email found
     }
   }
 
   loadMyLeaves(): void {
-    if (this.staffId === null) return;
+    if (this.staffId === null) {
+      this.loading = false;
+      return;
+    }
     this.loading = true;
     this.leaveService.getStaffLeaves(this.staffId)
       .pipe(finalize(() => this.loading = false))

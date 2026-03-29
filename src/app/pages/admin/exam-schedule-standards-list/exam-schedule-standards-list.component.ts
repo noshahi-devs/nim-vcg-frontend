@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { ExamScheduleStandardService } from '../../../services/exam-schedule-standard.service';
 import { finalize } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-exam-schedule-standards-list',
@@ -37,25 +38,16 @@ export class ExamScheduleStandardsListComponent implements OnInit {
   itemToDeleteId: number | null = null;
   itemToDeleteName = '';
 
-  // ── Premium Modal State ──
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
 
-  constructor(private service: ExamScheduleStandardService) { }
+  constructor(
+    private service: ExamScheduleStandardService,
+    private popup: PopupService
+  ) { }
 
   ngOnInit(): void { this.loadData(); }
 
-  // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  // Modals handled by PopupService
 
   loadData() {
     this.loading = true;
@@ -123,24 +115,27 @@ export class ExamScheduleStandardsListComponent implements OnInit {
     this.service.updateExamScheduleStandards(this.editModel)
       .pipe(finalize(() => this.isProcessing = false))
       .subscribe({
-        next: () => { this.triggerSuccess('Updated Successfully!', 'Exam schedule standard has been updated.'); this.loadData(); },
-        error: (err) => { console.error(err); this.triggerError('Error', 'Failed to update schedule standard'); }
+        next: () => { this.popup.success('Updated!', 'Schedule standard updated successfully.'); this.loadData(); },
+        error: (err) => { console.error(err); this.popup.error('Error', 'Failed to update schedule standard'); }
       });
   }
 
   confirmDelete(id: number, name: string) {
-    this.itemToDeleteId = id; this.itemToDeleteName = name; this.showDeleteDialog = true;
-  }
-
-  executeDelete() {
-    if (this.itemToDeleteId === null) return;
-    this.showDeleteDialog = false;
-    this.isProcessing = true;
-    this.service.DeleteExamScheduleStandard(this.itemToDeleteId)
-      .pipe(finalize(() => this.isProcessing = false))
-      .subscribe({
-        next: () => { this.triggerSuccess('Deleted!', 'Entry has been deleted successfully.'); this.itemToDeleteId = null; this.loadData(); },
-        error: (err) => { console.error(err); this.triggerError('Error', 'Failed to delete entry.'); }
-      });
+    this.popup.confirm('Delete Entry?', `Are you sure you want to delete the entry for "${name}"?`).then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Deleting entry...');
+        this.service.DeleteExamScheduleStandard(id)
+          .subscribe({
+            next: () => {
+              this.popup.deleted('Entry');
+              this.loadData();
+            },
+            error: (err) => {
+              console.error(err);
+              this.popup.error('Error', 'Failed to delete entry.');
+            }
+          });
+      }
+    });
   }
 }

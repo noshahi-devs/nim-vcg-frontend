@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { finalize } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-exam',
@@ -35,33 +36,20 @@ export class ExamComponent implements OnInit {
   showViewDialog = false;
   isEditMode = false;
   selectedExamType!: Examtype;
-
-  // ── Premium Modal State ──
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  showConfirmModal = false;
-  confirmTitle = '';
-  confirmMessage = '';
   examTypeToDelete!: Examtype;
-  showDeleteDialog = false; // legacy HTML reference
 
-  constructor(private examTypeService: ExamtypeService, private authService: AuthService) { }
+  constructor(
+    private examTypeService: ExamtypeService,
+    private authService: AuthService,
+    private popup: PopupService
+  ) { }
 
   ngOnInit(): void { this.initForm(); this.loadExamTypes(); }
 
   hasRole(role: string): boolean { return this.authService.hasRole(role); }
 
-  // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  // Modals are now handled by PopupService
 
   initForm() {
     this.form = new FormGroup({
@@ -114,32 +102,27 @@ export class ExamComponent implements OnInit {
 
     request.pipe(finalize(() => this.isProcessing = false)).subscribe({
       next: () => {
-        this.triggerSuccess(this.isEditMode ? 'Updated!' : 'Saved!', `Exam type ${this.isEditMode ? 'updated' : 'saved'} successfully.`);
+        this.popup.success(this.isEditMode ? 'Updated!' : 'Saved!', `Exam type ${this.isEditMode ? 'updated' : 'saved'} successfully.`);
         this.loadExamTypes();
       },
-      error: () => this.triggerError('Error', `Failed to ${this.isEditMode ? 'update' : 'save'} exam type.`)
+      error: () => this.popup.error('Error', `Failed to ${this.isEditMode ? 'update' : 'save'} exam type.`)
     });
   }
 
   confirmDelete(et: Examtype) {
-    this.examTypeToDelete = et;
-    this.confirmTitle = 'Delete Exam Type';
-    this.confirmMessage = `Are you sure you want to delete "${et.examTypeName}"? This cannot be undone.`;
-    this.showConfirmModal = true;
-  }
-
-  cancelConfirm() { this.showConfirmModal = false; }
-
-  deleteExamType() {
-    if (!this.examTypeToDelete) return;
-    this.showConfirmModal = false;
-    this.isProcessing = true;
-    this.examTypeService.DeleteExamType(this.examTypeToDelete.examTypeId)
-      .pipe(finalize(() => this.isProcessing = false))
-      .subscribe({
-        next: () => { this.triggerSuccess('Deleted!', 'Exam type deleted successfully.'); this.loadExamTypes(); },
-        error: () => this.triggerError('Error', 'Failed to delete exam type.')
-      });
+    this.popup.confirm('Delete Exam Type?', `Are you sure you want to delete "${et.examTypeName}"?`).then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Deleting exam type...');
+        this.examTypeService.DeleteExamType(et.examTypeId)
+          .subscribe({
+            next: () => {
+              this.popup.deleted('Exam type');
+              this.loadExamTypes();
+            },
+            error: () => this.popup.error('Error', 'Failed to delete exam type.')
+          });
+      }
+    });
   }
 
   closeDialog() { this.showAddEditDialog = false; this.showViewDialog = false; this.form.reset(); }

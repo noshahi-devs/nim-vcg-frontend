@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, CUSTOM_ELEMENTS_SCHEMA } from '@angular/c
 import { FormBuilder, NgForm, FormsModule } from '@angular/forms';
 import Swal from '../../../swal';
 import { finalize } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 
 import { Router } from '@angular/router';
@@ -63,12 +64,7 @@ export class MarksEntryComponent implements OnInit {
   passFailStatusValues = Object.values(PassFailStatus);
 
   loading: boolean = false;
-  
-  // Feedback Modal
-  showFeedbackModal: boolean = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle: string = '';
-  feedbackMessage: string = '';
+  isProcessing: boolean = false;
 
 
   constructor(
@@ -82,7 +78,8 @@ export class MarksEntryComponent implements OnInit {
     private standardService: StandardService,
     private assignmentService: SubjectAssignmentService,
     private router: Router,
-    public authService: AuthService) { }
+    public authService: AuthService,
+    private popup: PopupService) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -158,36 +155,34 @@ export class MarksEntryComponent implements OnInit {
 
   onSubmit(): void {
     if (this.entryForm.valid) {
+      this.popup.loading('Saving student marks...');
       this.loading = true;
+      this.isProcessing = true;
 
       this.markEntryService.createMarkEntry(this.markEntry).pipe(
         finalize(() => {
           this.loading = false;
+          this.isProcessing = false;
+          this.popup.closeLoading();
         })
       ).subscribe({
         next: (response) => {
-          this.feedbackType = 'success';
-          this.feedbackTitle = 'Success!';
-          this.feedbackMessage = 'Student grades have been successfully recorded.';
-          this.showFeedbackModal = true;
+          this.popup.success('Success!', 'Student grades have been successfully recorded.');
+          this.entryForm.resetForm();
+          setTimeout(() => this.router.navigate(['/marksentrynewList']), 1500);
         },
         error: (error) => {
           console.error('Error creating Mark Entry:', error);
-          this.feedbackType = 'error';
-          this.feedbackTitle = 'Update Failed';
-          this.feedbackMessage = 'Failed to save student grades. Please check your connection and try again.';
-          this.showFeedbackModal = true;
+          this.popup.error('Update Failed', 'Failed to save student grades. Please check your connection and try again.');
         }
       });
     }
   }
 
-  closeFeedback(): void {
-    this.showFeedbackModal = false;
-    if (this.feedbackType === 'success') {
-      this.entryForm.resetForm();
-      this.router.navigate(['/marksentrynewList']);
-    }
+  // Feedback handled by PopupService
+
+  onFilterChange(): void {
+    this.markEntry.studentMarksDetails = [];
   }
 
   initializeForm(): void {
@@ -197,15 +192,28 @@ export class MarksEntryComponent implements OnInit {
 
 
   loadStudentsMark(): void {
-    this.markEntryService.GetStudents(this.markEntry).subscribe(
-      (students) => {
-        this.markEntry.studentMarksDetails.length = 0;
-        this.markEntry.studentMarksDetails = students;
+    if (!this.markEntry.standardId || !this.markEntry.subjectId) return;
+
+    this.popup.loading('Fetching enrollment list...');
+    this.loading = true;
+
+    this.markEntryService.GetStudents(this.markEntry).pipe(
+      finalize(() => {
+        this.loading = false;
+        this.popup.closeLoading();
+      })
+    ).subscribe({
+      next: (students) => {
+        this.markEntry.studentMarksDetails = students || [];
+        if (!students || students.length === 0) {
+          this.popup.warning('No Records Found', 'No students were found matching the selected criteria. Please check your filters.');
+        }
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching students:', error);
+        this.popup.error('Fetch Failed', 'Could not retrieve the student list. Please try again.');
       }
-    );
+    });
   }
 
   formatStandardName(name: string): string {
