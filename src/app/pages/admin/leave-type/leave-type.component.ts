@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { LeaveTypeMaster, LeaveTypeService } from '../../../services/leave-type.service';
 import { finalize } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-leave-type',
@@ -27,19 +28,12 @@ export class LeaveTypeComponent implements OnInit {
 
   rowsPerPage = 10;
   currentPage = 1;
-
-  // ── Premium Modal State ──
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  showConfirmModal = false;
-  confirmTitle = '';
-  confirmMessage = '';
-  pendingDeleteType: LeaveTypeMaster | null = null;
 
-  constructor(private leaveTypeService: LeaveTypeService) { }
+  constructor(
+    private leaveTypeService: LeaveTypeService,
+    private popup: PopupService
+  ) { }
 
   ngOnInit(): void { this.loadLeaveTypes(); }
 
@@ -47,17 +41,7 @@ export class LeaveTypeComponent implements OnInit {
     return { leaveTypeMasterId: 0, leaveTypeName: '', description: '', maxDaysAllowed: 0, isPaid: true, isActive: true };
   }
 
-  // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerWarning(title: string, msg: string) {
-    this.feedbackType = 'warning'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  // Modals are now handled by PopupService
 
   loadLeaveTypes(): void {
     this.loading = true;
@@ -67,7 +51,7 @@ export class LeaveTypeComponent implements OnInit {
         next: (data) => { this.leaveTypes = data; this.filteredTypes = [...this.leaveTypes]; },
         error: (err) => {
           console.error('Error loading leave types:', err);
-          this.triggerError('Error', 'Failed to load leave types.');
+          this.popup.error('Error', 'Failed to load leave types.');
         }
       });
   }
@@ -79,10 +63,10 @@ export class LeaveTypeComponent implements OnInit {
 
   validateForm(): boolean {
     if (!this.leaveTypeForm.leaveTypeName.trim()) {
-      this.triggerWarning('Missing Information', 'Please enter leave type name.'); return false;
+      this.popup.warning('Missing Information', 'Please enter leave type name.'); return false;
     }
     if (this.leaveTypeForm.maxDaysAllowed <= 0) {
-      this.triggerWarning('Invalid Input', 'Maximum days must be greater than 0.'); return false;
+      this.popup.warning('Invalid Input', 'Maximum days must be greater than 0.'); return false;
     }
     return true;
   }
@@ -97,46 +81,44 @@ export class LeaveTypeComponent implements OnInit {
       this.leaveTypeService.updateLeaveType(payload.leaveTypeMasterId, payload)
         .pipe(finalize(() => this.isProcessing = false))
         .subscribe({
-          next: () => { this.triggerSuccess('Updated!', 'Leave type updated successfully.'); this.loadLeaveTypes(); },
-          error: (err) => { console.error('Error updating leave type:', err); this.triggerError('Error', 'Failed to update leave type.'); }
+          next: () => { this.popup.success('Updated!', 'Leave type updated successfully.'); this.loadLeaveTypes(); },
+          error: (err) => { console.error('Error updating leave type:', err); this.popup.error('Error', 'Failed to update leave type.'); }
         });
     } else {
       this.leaveTypeService.createLeaveType(payload)
         .pipe(finalize(() => this.isProcessing = false))
         .subscribe({
-          next: () => { this.triggerSuccess('Added!', 'Leave type added successfully.'); this.loadLeaveTypes(); },
-          error: (err) => { console.error('Error creating leave type:', err); this.triggerError('Error', 'Failed to create leave type.'); }
+          next: () => { this.popup.success('Added!', 'Leave type added successfully.'); this.loadLeaveTypes(); },
+          error: (err) => { console.error('Error creating leave type:', err); this.popup.error('Error', 'Failed to create leave type.'); }
         });
     }
   }
 
   confirmDelete(type: LeaveTypeMaster): void {
-    this.pendingDeleteType = type;
-    this.confirmTitle = 'Delete Leave Type';
-    this.confirmMessage = `Are you sure you want to delete "${type.leaveTypeName}"? This action cannot be undone.`;
-    this.showConfirmModal = true;
-  }
-
-  cancelConfirm(): void { this.showConfirmModal = false; this.pendingDeleteType = null; }
-
-  executeDelete(): void {
-    if (!this.pendingDeleteType) return;
-    this.showConfirmModal = false;
-    this.isProcessing = true;
-    this.leaveTypeService.deleteLeaveType(this.pendingDeleteType.leaveTypeMasterId)
-      .pipe(finalize(() => this.isProcessing = false))
-      .subscribe({
-        next: () => { this.triggerSuccess('Deleted!', 'Leave type deleted successfully.'); this.loadLeaveTypes(); this.pendingDeleteType = null; },
-        error: (err) => { console.error('Error deleting leave type:', err); this.triggerError('Error', 'Failed to delete leave type.'); }
-      });
+    this.popup.confirm('Delete Leave Type?', `Are you sure you want to delete "${type.leaveTypeName}"?`).then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Deleting leave type...');
+        this.leaveTypeService.deleteLeaveType(type.leaveTypeMasterId)
+          .subscribe({
+            next: () => {
+              this.popup.deleted('Leave type');
+              this.loadLeaveTypes();
+            },
+            error: (err) => {
+              console.error('Error deleting leave type:', err);
+              this.popup.error('Error', 'Failed to delete leave type.');
+            }
+          });
+      }
+    });
   }
 
   toggleStatus(type: LeaveTypeMaster): void {
     const previousStatus = type.isActive;
     type.isActive = !type.isActive;
     this.leaveTypeService.updateLeaveType(type.leaveTypeMasterId, type).subscribe({
-      next: () => { this.triggerSuccess('Status Updated!', `Leave type is now ${type.isActive ? 'Active' : 'Inactive'}.`); },
-      error: (err) => { type.isActive = previousStatus; console.error('Error updating status:', err); this.triggerError('Error', 'Failed to update status.'); }
+      next: () => { this.popup.success('Status Updated!', `Leave type is now ${type.isActive ? 'Active' : 'Inactive'}.`); },
+      error: (err) => { type.isActive = previousStatus; console.error('Error updating status:', err); this.popup.error('Error', 'Failed to update status.'); }
     });
   }
 

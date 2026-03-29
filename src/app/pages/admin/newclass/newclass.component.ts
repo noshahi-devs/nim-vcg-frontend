@@ -8,6 +8,7 @@ import { StaffService } from '../../../services/staff.service';
 import { Standard } from '../../../Models/standard';
 import { Staff, Designation } from '../../../Models/staff';
 import { finalize } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-new-class',
@@ -23,20 +24,15 @@ export class NewClassComponent implements OnInit {
   teachers: Staff[] = [];
   standards: Standard[] = [];
 
+  // State
   newClass: Standard = new Standard();
-
-  // Premium Modal State
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
   isProcessing = false;
-  redirectOnClose = false;
 
   constructor(
     private router: Router,
     private standardService: StandardService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -48,45 +44,29 @@ export class NewClassComponent implements OnInit {
   loadTeachers(): void {
     this.staffService.getAllStaffs().subscribe({
       next: (data) => {
-        // Filter staff with 'Teacher' designation or department
         this.teachers = data.filter(s => {
           const d = s.designation?.toString().toLowerCase();
           return d === 'teacher' || s.designation === Designation.Teacher || s.department?.departmentName === 'Teacher';
         });
-        // If no filter works, just show all
-        if (this.teachers.length === 0) {
-          this.teachers = data;
-        }
-
-        if (this.teachers.length === 0) {
-          this.showFeedback('warning', 'No Teachers Found', 'Please add a teacher in the Staff Module before creating a class.');
-        }
+        if (this.teachers.length === 0) this.teachers = data;
       },
-      error: (err) => {
-        console.error('Error loading teachers:', err);
-        this.showFeedback('error', 'Error', 'Failed to load teachers.');
-      }
+      error: () => this.popup.error('Could not load teachers.')
     });
   }
 
   loadStandards() {
     this.standardService.getStandards().subscribe({
-      next: (res) => {
-        this.standards = res;
-      },
-      error: () => {
-        this.showFeedback('error', 'Error', 'Could not load classes from API');
-      }
+      next: (res) => { this.standards = res; },
+      error: () => this.popup.error('Could not load classes.')
     });
   }
 
   onSubmit(form: any): void {
     if (form.invalid) {
-      this.showFeedback('warning', 'Invalid Form', 'Please fill in all required fields.');
+      this.popup.warning('Please fill in all required fields.');
       return;
     }
 
-    // Map to backend Standard model
     const payload: Standard = {
       ...this.newClass,
       standardId: 0,
@@ -95,39 +75,23 @@ export class NewClassComponent implements OnInit {
       status: this.newClass.status || 'Active'
     };
 
-    console.log('Class payload:', payload);
-
     this.isProcessing = true;
+    this.popup.loading('Creating class...');
 
     this.standardService.createStandard(payload).pipe(
-      finalize(() => this.isProcessing = false)
+      finalize(() => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
+      })
     ).subscribe({
       next: () => {
-        this.showFeedback('success', 'Class Created!', 'The new class has been added successfully.', true);
+        this.popup.saved('Class');
+        this.router.navigate(['/class-list']);
       },
       error: (err) => {
         console.error('Error creating class:', err);
-        this.showFeedback('error', 'Error', 'Failed to create class. ' + (err.error?.message || err.message || 'Unknown error'));
+        this.popup.error('Could not create class.', err?.error?.message || 'Please check your inputs and try again.');
       }
     });
-  }
-
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, redirect = false) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-    this.redirectOnClose = redirect;
-
-    if (type === 'success' && redirect) {
-      setTimeout(() => this.closeFeedback(), 2000);
-    }
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
-    if (this.redirectOnClose) {
-      this.router.navigate(['/class-list']);
-    }
   }
 }

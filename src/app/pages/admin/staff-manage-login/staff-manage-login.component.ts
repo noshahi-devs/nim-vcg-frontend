@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserManagementService, User } from '../../../services/user-management.service';
-import Swal from '../../../swal';
+import { PopupService } from '../../../services/popup.service';
 
 interface Login {
   id: string;
@@ -37,15 +37,6 @@ export class StaffManageLoginComponent implements OnInit {
   isEditMode: boolean = false;
 
   // Premium Modal States
-  showDeleteModal = false;
-  showFeedbackModal = false;
-  showStatusModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  deleteTarget: Login | null = null;
-  statusTarget: Login | null = null;
-  pendingStatus = '';
   isSaving = false;
 
   // Form Data
@@ -75,21 +66,11 @@ export class StaffManageLoginComponent implements OnInit {
   get activeLogins(): number { return this.logins.filter(x => x.status?.toLowerCase() === 'active').length; }
   get inactiveLogins(): number { return this.logins.filter(x => x.status?.toLowerCase() === 'inactive').length; }
 
-  constructor(private userService: UserManagementService, private router: Router) { }
+  constructor(private userService: UserManagementService, private router: Router, private popup: PopupService) { }
 
   ngOnInit(): void { this.loadStaffData(); }
 
-  // ── Feedback Modal ──
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-    if (autoClose) {
-      setTimeout(() => { this.showFeedbackModal = false; }, 2200);
-    }
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+
 
   loadStaffData(): void {
     this.loading = true;
@@ -109,7 +90,7 @@ export class StaffManageLoginComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading users:', err);
-        this.showFeedback('error', 'Load Failed', 'Failed to load users. Please try again.');
+        this.popup.error('Failed to load users. Please try again.', 'Load Failed');
         this.loading = false;
         this.logins = [];
         this.filteredLogins = [];
@@ -147,51 +128,47 @@ export class StaffManageLoginComponent implements OnInit {
   // ── Toggle Status with Premium Modal ──
   toggleStatus(login: Login): void {
     const newStatus = login.status?.toLowerCase() === 'active' ? 'Inactive' : 'Active';
-    this.statusTarget = login;
-    this.pendingStatus = newStatus;
-    this.showStatusModal = true;
-  }
-
-  confirmToggleStatus(): void {
-    if (!this.statusTarget) return;
-    const login = this.statusTarget;
-    const newStatus = this.pendingStatus;
-    const action = newStatus === 'Active' ? 'Activated' : 'Deactivated';
-    this.showStatusModal = false;
-
-    this.userService.toggleUserStatus(login.id, newStatus).subscribe({
-      next: () => {
-        login.status = newStatus;
-        this.showFeedback('success', `${action}!`, `${login.name} has been ${action.toLowerCase()} successfully.`, true);
-        this.statusTarget = null;
-      },
-      error: (err) => {
-        console.error('Error toggling status:', err);
-        this.showFeedback('error', 'Action Failed', 'Failed to update user status. Please try again.');
-        this.statusTarget = null;
+    const action = newStatus === 'Active' ? 'Activate' : 'Deactivate';
+    
+    this.popup.confirm(
+      `Confirm ${action}`, 
+      `Are you sure you want to ${action.toLowerCase()} <strong>${login.name}</strong>?`,
+      `Yes, ${action}`,
+      'Cancel',
+      'info'
+    ).then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Updating status...');
+        this.userService.toggleUserStatus(login.id, newStatus).subscribe({
+          next: () => {
+            this.popup.closeLoading();
+            login.status = newStatus;
+            this.popup.success(`${action}d!`, `${login.name} has been ${action.toLowerCase()}d successfully.`);
+          },
+          error: (err) => {
+            this.popup.closeLoading();
+            console.error('Error toggling status:', err);
+            this.popup.error('Action Failed', 'Failed to update user status.');
+          }
+        });
       }
     });
-  }
-
-  cancelToggleStatus(): void {
-    this.showStatusModal = false;
-    this.statusTarget = null;
   }
 
   // ── CRUD ──
   saveLogin(): void {
     if (!this.loginForm.name || !this.loginForm.email || !this.loginForm.role || !this.loginForm.phone) {
-      this.showFeedback('warning', 'Incomplete Form', 'Please fill all required fields before saving.');
+      this.popup.warning('Please fill all required fields before saving.', 'Incomplete Form');
       return;
     }
 
     if (!this.isEditMode) {
       if (!this.loginForm.password || !this.confirmPassword) {
-        this.showFeedback('warning', 'Missing Password', 'Please enter and confirm the password.');
+        this.popup.warning('Please enter and confirm the password.', 'Missing Password');
         return;
       }
       if (this.loginForm.password !== this.confirmPassword) {
-        this.showFeedback('error', 'Password Mismatch', 'The passwords you entered do not match. Please try again.');
+        this.popup.error('The passwords do not match.', 'Password Mismatch');
         return;
       }
 
@@ -202,11 +179,7 @@ export class StaffManageLoginComponent implements OnInit {
           l.status?.toLowerCase() === 'active'
         );
         if (existingPrincipal) {
-          this.showFeedback(
-            'warning',
-            'Principal Already Active!',
-            `"${existingPrincipal.name}" is already an active Principal. Please deactivate the current Principal before assigning a new one.`
-          );
+          this.popup.warning(`"${existingPrincipal.name}" is already an active Principal. Please deactivate first.`, 'Principal Active');
           return;
         }
       }
@@ -219,52 +192,51 @@ export class StaffManageLoginComponent implements OnInit {
       };
 
       this.isSaving = true;
+      this.popup.loading('Creating account...');
       this.userService.registerUser(registerData).subscribe({
         next: () => {
           this.isSaving = false;
+          this.popup.closeLoading();
           this.closeDialog();
-          this.showFeedback('success', 'Login Created!', `Account for ${this.loginForm.name || 'the user'} was created successfully.`, true);
+          this.popup.success('Login Created!', 'Account created successfully.');
           this.loadStaffData();
         },
         error: (err) => {
           this.isSaving = false;
+          this.popup.closeLoading();
           console.error('Error creating user:', err);
-          this.showFeedback('error', 'Creation Failed', err.error?.message || 'Failed to create the user account. Please try again.');
+          this.popup.error('Creation Failed', err.error?.message || 'Failed to create the user account.');
         }
       });
     } else {
       this.closeDialog();
-      this.showFeedback('warning', 'Not Supported', 'User editing is not yet implemented. Please use the Staff Edit Profile page.');
+      this.popup.warning('User editing is not yet implemented. Please use Staff Edit Profile.', 'Not Supported');
     }
   }
 
   // ── Delete with Premium Modal ──
   confirmDelete(login: Login): void {
-    this.deleteTarget = login;
-    this.showDeleteModal = true;
-  }
-
-  cancelDelete(): void {
-    this.deleteTarget = null;
-    this.showDeleteModal = false;
-  }
-
-  executeDelete(): void {
-    if (!this.deleteTarget) return;
-    const login = this.deleteTarget;
-    this.showDeleteModal = false;
-
-    this.userService.deleteUser(login.id).subscribe({
-      next: () => {
-        this.deleteTarget = null;
-        this.showFeedback('success', 'Deleted!', `Login account for "${login.name}" has been permanently deleted.`, true);
-        this.loadStaffData();
-      },
-      error: (err) => {
-        console.error('Error deleting user:', err);
-        const errorMsg = err.error?.message || 'This staff account cannot be deleted because it may have linked data (such as assigned subjects, classes, or student records). To maintain data integrity, please remove these links before deleting the account.';
-        this.deleteTarget = null;
-        this.showFeedback('error', 'Cannot Delete', errorMsg);
+    this.popup.confirm(
+      'Confirm Deletion',
+      `Are you sure you want to delete the login for <strong>${login.name}</strong>?`,
+      'Yes, Delete',
+      'Cancel'
+    ).then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Deleting account...');
+        this.userService.deleteUser(login.id).subscribe({
+          next: () => {
+            this.popup.closeLoading();
+            this.popup.deleted('Login Account');
+            this.loadStaffData();
+          },
+          error: (err) => {
+            this.popup.closeLoading();
+            console.error('Error deleting user:', err);
+            const errorMsg = err.error?.message || 'Could not delete staff. Ensure they do not have linked data.';
+            this.popup.deleteError('Account', errorMsg);
+          }
+        });
       }
     });
   }

@@ -10,7 +10,7 @@ import { Subject } from '../../../Models/subject';
 import { StandardService } from '../../../services/standard.service';
 import { Standard } from '../../../Models/standard';
 import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-subject-add',
@@ -35,18 +35,14 @@ export class SubjectAddComponent implements OnInit {
   ];
 
   // Premium Modal State
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
   isProcessing = false;
-  redirectOnClose = false;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private subjectService: SubjectService,
-    private standardService: StandardService
+    private standardService: StandardService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -62,7 +58,7 @@ export class SubjectAddComponent implements OnInit {
   loadClasses() {
     this.standardService.getStandards().subscribe({
       next: (res) => this.classes = res,
-      error: () => this.showFeedback('error', 'Sync Failed', 'Could not load academic classes.')
+      error: () => this.popup.error('Sync Failed', 'Could not load academic classes.')
     });
   }
 
@@ -78,24 +74,25 @@ export class SubjectAddComponent implements OnInit {
     if (this.subjects.length > 1) {
       this.subjects.splice(index, 1);
     } else {
-      this.showFeedback('warning', 'Action Restricted', 'At least one subject is required for registration.');
+      this.popup.warning('At least one subject is required for registration.', 'Action Restricted');
     }
   }
 
   async onSubmit(form: NgForm) {
     if (!this.selectedClassId) {
-      this.showFeedback('warning', 'Class Required', 'Please select an academic class for these subjects.');
+      this.popup.warning('Please select an academic class for these subjects.', 'Class Required');
       return;
     }
 
     // Validate all subjects
     const invalidSubject = this.subjects.find(s => !s.subjectName);
     if (invalidSubject) {
-      this.showFeedback('warning', 'Form Incomplete', 'Please provide names for all subject entries.');
+      this.popup.warning('Please provide names for all subject entries.', 'Form Incomplete');
       return;
     }
 
     this.isProcessing = true;
+    this.popup.loading('Registering Subjects...');
 
     // Save subjects to API
     const saveObservables = this.subjects.map(sub => {
@@ -104,13 +101,18 @@ export class SubjectAddComponent implements OnInit {
     });
 
     // Execute all API calls
-    forkJoin(saveObservables).pipe(
-      finalize(() => this.isProcessing = false)
-    ).subscribe({
+    forkJoin(saveObservables).subscribe({
       next: (res) => {
-        this.showFeedback('success', 'Subjects Saved', `${res.length} academic subjects have been successfully registered.`, true);
+        this.isProcessing = false;
+        this.popup.closeLoading();
+        this.popup.success('Subjects Saved', `${res.length} academic subjects have been successfully registered.`);
+        setTimeout(() => {
+          this.router.navigate(['/subject-list']);
+        }, 1500);
       },
       error: (err) => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
         console.error('Error creating subjects:', err);
         let msg = 'Unable to save the subject information.';
         
@@ -126,28 +128,9 @@ export class SubjectAddComponent implements OnInit {
           msg = err.message;
         }
         
-        this.showFeedback('error', 'Registration Failed', msg);
+        this.popup.error('Registration Failed', msg);
       }
     });
-  }
-
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, redirect = false) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-    this.redirectOnClose = redirect;
-
-    if (type === 'success' && redirect) {
-      setTimeout(() => this.closeFeedback(), 2000);
-    }
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
-    if (this.redirectOnClose) {
-      this.router.navigate(['/subject-list']);
-    }
   }
 }
 

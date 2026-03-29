@@ -11,8 +11,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SessionService } from '../../../services/session.service';
 import { finalize } from 'rxjs';
-import Swal from '../../../swal';
 import { environment } from '../../../../environments/environment';
+import { PopupService } from '../../../services/popup.service';
 
 declare var $: any;
 
@@ -37,12 +37,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
   studentDOBStr: string = '';
   admissionDateStr: string = '';
 
-  // Premium Modal Visibility State
-  showConfirmModal = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
+
 
   constructor(
     private route: ActivatedRoute,
@@ -50,7 +45,8 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
     private studentService: StudentService,
     private standardService: StandardService,
     private sectionService: SectionService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private popup: PopupService
   ) { }
 
   ngOnInit() {
@@ -108,7 +104,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error("Error loading student:", err);
-        this.showFeedback('error', 'Load Failed', 'Could not load student data. Please try again.');
+        this.popup.error('Could not load student data. Please try again.', 'Load Failed');
         this.loading = false;
       }
     });
@@ -219,44 +215,32 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
   }
 
   // ── Premium Feedback ──
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-    if (autoClose) {
-      setTimeout(() => {
-        this.showFeedbackModal = false;
-        if (type === 'success') {
-          this.router.navigate(['/student-list']);
-        }
-      }, 2200);
-    }
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
-  }
 
   saveStudent() {
     if (this.studentData) {
       // Basic validation for dates to avoid JSON conversion errors (500)
       if (!this.studentDOBStr || !this.admissionDateStr) {
-        this.showFeedback('warning', 'Dates Required', 'Please provide both Date of Birth and Admission Date.');
+        this.popup.warning('Please provide both Date of Birth and Admission Date.', 'Dates Required');
         return;
       }
-      this.showConfirmModal = true;
+      this.popup.confirm(
+        'Save Changes?',
+        'Are you sure you want to update this student record?',
+        'Yes, Save',
+        'Cancel',
+        'success'
+      ).then((confirmed) => {
+        if (confirmed) {
+          this.confirmUpdate();
+        }
+      });
     }
-  }
-
-  cancelUpdate() {
-    this.showConfirmModal = false;
   }
 
   confirmUpdate(): void {
     if (this.studentData) {
       this.isSaving = true;
-      this.showConfirmModal = false;
+      this.popup.loading('Saving Details...');
 
       // Construct a clean payload
       const updatePayload: any = {
@@ -309,10 +293,15 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
         finalize(() => this.isSaving = false)
       ).subscribe({
         next: () => {
-          this.showFeedback('success', 'Profile Updated', 'Student records have been successfully updated. Redirecting...', true);
+          this.popup.closeLoading();
+          this.popup.success('Student records have been successfully updated. Redirecting...', 'Profile Updated');
+          setTimeout(() => {
+            this.router.navigate(['/student-list']);
+          }, 1500);
         },
         error: (err) => {
           console.error("Update error detailed:", err);
+          this.popup.closeLoading();
           let errorMessage = 'Failed to update student information. Please check all fields.';
           if (err.error && typeof err.error === 'object') {
             if (err.error.errors) {
@@ -321,7 +310,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
               errorMessage = err.error.message;
             }
           }
-          this.showFeedback('error', 'Update Failed', errorMessage);
+          this.popup.error(errorMessage, 'Update Failed');
         }
       });
     }
@@ -380,7 +369,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
   saveNotificationSettings() {
     // Example: Save to localStorage or API
     localStorage.setItem('studentNotificationSettings', JSON.stringify(this.notificationSettings));
-    this.showFeedback('success', 'Settings Saved', 'Notification preferences updated.', true);
+    this.popup.success('Notification preferences updated.', 'Settings Saved');
   }
 
 }

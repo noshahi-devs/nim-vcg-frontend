@@ -3,43 +3,69 @@
 
   <!-- ══════ Stats ══════ -->
   <div class="stats-row">
+    <!-- Stat Card 1 -->
     <div class="stat-card-glass">
-      <div class="stat-icon-circle primary">
-        <iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon>
-      </div>
-      <div>
-        <div class="stat-label">Total Applications</div>
-        <div class="stat-value">{{ totalLeaves }}</div>
-      </div>
+      <ng-container *ngIf="!loading; else statSkeleton">
+        <div class="stat-icon-circle primary">
+          <iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon>
+        </div>
+        <div>
+          <div class="stat-label">Total Applications</div>
+          <div class="stat-value">{{ totalLeaves }}</div>
+        </div>
+      </ng-container>
     </div>
+
+    <!-- Stat Card 2 -->
     <div class="stat-card-glass">
-      <div class="stat-icon-circle warning">
-        <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
-      </div>
-      <div>
-        <div class="stat-label">Pending Review</div>
-        <div class="stat-value text-warning" style="color:#d97706">{{ getpendingLeaves() }}</div>
-      </div>
+      <ng-container *ngIf="!loading; else statSkeleton">
+        <div class="stat-icon-circle warning">
+          <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
+        </div>
+        <div>
+          <div class="stat-label">Pending Review</div>
+          <div class="stat-value text-warning" style="color:#d97706">{{ getpendingLeaves() }}</div>
+        </div>
+      </ng-container>
     </div>
+
+    <!-- Stat Card 3 -->
     <div class="stat-card-glass">
-      <div class="stat-icon-circle success">
-        <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
-      </div>
-      <div>
-        <div class="stat-label">Approved</div>
-        <div class="stat-value text-success" style="color:#16a34a">{{ getapprovedLeaves() }}</div>
-      </div>
+      <ng-container *ngIf="!loading; else statSkeleton">
+        <div class="stat-icon-circle success">
+          <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
+        </div>
+        <div>
+          <div class="stat-label">Approved</div>
+          <div class="stat-value text-success" style="color:#16a34a">{{ getapprovedLeaves() }}</div>
+        </div>
+      </ng-container>
     </div>
+
+    <!-- Stat Card 4 -->
     <div class="stat-card-glass">
-      <div class="stat-icon-circle danger">
-        <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
-      </div>
-      <div>
-        <div class="stat-label">Rejected</div>
-        <div class="stat-value text-danger" style="color:#dc2626">{{ getrejectedLeaves() }}</div>
-      </div>
+      <ng-container *ngIf="!loading; else statSkeleton">
+        <div class="stat-icon-circle danger">
+          <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
+        </div>
+        <div>
+          <div class="stat-label">Rejected</div>
+          <div class="stat-value text-danger" style="color:#dc2626">{{ getrejectedLeaves() }}</div>
+        </div>
+      </ng-container>
     </div>
   </div>
+
+  <!-- Shared Stat Skeleton Template -->
+  <ng-template #statSkeleton>
+    <div class="sk-stat-row w-100 d-flex align-items-center gap-3">
+      <div class="sk-circle sk-shimmer" style="width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;"></div>
+      <div class="flex-grow-1">
+        <div class="sk-text sk-shimmer mb-2" style="width: 60%; height: 12px; border-radius: 4px;"></div>
+        <div class="sk-text sk-shimmer" style="width: 40%; height: 20px; border-radius: 4px;"></div>
+      </div>
+    </div>
+  </ng-template>
 
   <!-- ══════ Table ══════ -->
   <div class="table-glass-container">
@@ -95,8 +121,17 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let leave of paginatedLeaves; let i = index" style="animation: fadeInUp 0.4s ease-out both"
-            [style.animation-delay]="i * 0.05 + 's'">
+          <!-- Premium Skeleton Loading -->
+          <tr *ngIf="loading">
+            <td colspan="7" class="p-0 border-0">
+              <div class="sk-table-container animate-fade-in border-0 p-24 mb-0">
+                <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngFor="let leave of paginatedLeaves; let i = index" [hidden]="loading"
+            style="animation: fadeInUp 0.4s ease-out both" [style.animation-delay]="i * 0.05 + 's'">
             <td class="ps-4">
               <span style="color:#94a3b8; font-weight:700">{{ (currentPage - 1) * rowsPerPage + i + 1 }}</span>
             </td>
@@ -195,39 +230,7 @@
   </div>
 </div>
 
-<!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
-<div class="premium-overlay" *ngIf="showFeedbackModal">
-  <div class="premium-modal feedback-modal">
-    <div class="pm-sparkles">
-      <div class="pm-sparkle sp1"></div>
-      <div class="pm-sparkle sp2"></div>
-      <div class="pm-sparkle sp3"></div>
-    </div>
 
-    <div class="pm-icon-ring" [ngClass]="{
-           'success-ring': feedbackType === 'success',
-           'danger-ring': feedbackType === 'error',
-           'warning-ring': feedbackType === 'warning'
-         }">
-      <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
-                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
-        style="font-size: 38px; color: #fff;"></iconify-icon>
-    </div>
-
-    <h3 class="pm-title">{{ feedbackTitle }}</h3>
-    <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
-
-    <div class="pm-actions">
-      <button class="pm-btn pm-Ok" [ngClass]="{
-                'pm-success-btn': feedbackType === 'success',
-                'pm-error-btn': feedbackType === 'error',
-                'pm-warning-btn': feedbackType === 'warning'
-              }" (click)="closeFeedback()">
-        Ok
-      </button>
-    </div>
-  </div>
-</div>
 
 <!-- ══ Leave Detail Modal ══ -->
 <div class="premium-overlay" *ngIf="showDetailModal && selectedLeave" (click.self)="closeDetailModal()">

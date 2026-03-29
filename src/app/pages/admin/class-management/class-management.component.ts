@@ -10,6 +10,7 @@ import { Section } from '../../../Models/section';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { finalize, forkJoin } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-class-management',
@@ -38,14 +39,7 @@ export class ClassManagementComponent implements OnInit {
   // Modals Visibility
   selectedClass: Standard | null = null;
   showViewDialog = false;
-  showDeleteModal = false;
-  showFeedbackModal = false;
   isProcessing = false;
-
-  // Feedback State
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
 
   Math = Math;
 
@@ -54,7 +48,8 @@ export class ClassManagementComponent implements OnInit {
     private standardService: StandardService,
     private sectionService: SectionService,
     public authService: AuthService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private popup: PopupService
   ) { }
 
   ngOnInit() {
@@ -96,7 +91,7 @@ export class ClassManagementComponent implements OnInit {
         }));
         this.applyFilter();
       },
-      error: () => this.showFeedback('error', 'Load Error', "We couldn't get the records from the server. Please try again.")
+      error: () => console.error("Load Error")
     });
   }
 
@@ -121,7 +116,7 @@ export class ClassManagementComponent implements OnInit {
 
         this.applyFilter();
       },
-      error: () => this.showFeedback('error', 'Load Error', "We couldn't get the records from the server. Please try again.")
+      error: () => console.error("Load Error")
     });
   }
 
@@ -191,27 +186,36 @@ export class ClassManagementComponent implements OnInit {
   }
 
   openDeleteModal(cls: Standard) {
-    this.selectedClass = cls;
-    this.showDeleteModal = true;
+    this.popup.confirm(
+      'Delete Class?',
+      `"${cls.standardName}" will be permanently removed.`
+    ).then(confirmed => {
+      if (confirmed) {
+        this.selectedClass = cls;
+        this.deleteClass();
+      }
+    });
   }
 
   deleteClass() {
     if (!this.selectedClass) return;
 
-    this.isProcessing = true;
+    this.popup.loading('Deleting...');
+    this.selectedClass = this.selectedClass;
     this.standardService.deleteStandard(this.selectedClass.standardId).pipe(
       finalize(() => {
         this.isProcessing = false;
-        this.showDeleteModal = false;
+        this.popup.closeLoading();
       })
     ).subscribe({
       next: () => {
-        this.showFeedback('success', 'Deleted!', 'The class has been deleted successfully.');
+        this.popup.deleted('Class');
         this.loadData();
       },
       error: (err) => {
-        const msg = typeof err.error === 'string' ? err.error : 'This class cannot be deleted because it still has students or subjects.';
-        this.showFeedback('error', 'Deletion Failed', msg);
+        const name = this.selectedClass?.standardName || 'This class';
+        const reason = err?.error?.message || 'It may still have linked students, sections, or subjects. Please remove those first.';
+        this.popup.deleteError(name, reason);
       }
     });
   }
@@ -230,16 +234,5 @@ export class ClassManagementComponent implements OnInit {
 
   getPageNumbers(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
-  }
-
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
   }
 }

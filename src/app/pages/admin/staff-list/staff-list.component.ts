@@ -7,8 +7,8 @@ import { StaffService } from '../../../services/staff.service';
 import { Designation } from '../../../Models/staff';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../SecurityModels/auth.service';
-import Swal from '../../../swal';
 import { environment } from '../../../../environments/environment';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-staff-list',
@@ -31,10 +31,6 @@ export class StaffListComponent implements OnInit, AfterViewInit {
   rowsPerPage = 12;
 
   // Premium Modal State
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
   isProcessing = false;
 
   apiBaseUrl = environment.apiBaseUrl;
@@ -53,9 +49,6 @@ export class StaffListComponent implements OnInit, AfterViewInit {
     return `${base}/${normalizedPath}`;
   }
 
-  // For Deletion Confirmation
-  showDeleteModal = false;
-  staffToDelete: any = null;
   selectedStaff: any = null;
   showViewModal = false;
 
@@ -78,7 +71,8 @@ export class StaffListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private staffService: StaffService,
-    public authService: AuthService
+    public authService: AuthService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -113,14 +107,16 @@ export class StaffListComponent implements OnInit, AfterViewInit {
 
   // Open premium confirmation delete modal
   confirmDelete(staff: any): void {
-    this.staffToDelete = staff;
-    this.showDeleteModal = true;
-  }
-
-  // Cancel delete modal
-  cancelDelete(): void {
-    this.staffToDelete = null;
-    this.showDeleteModal = false;
+    this.popup.confirm(
+      'Delete Staff?',
+      `Are you sure you want to delete <strong>${staff.staffName}</strong>?`,
+      'Yes, Delete',
+      'Cancel'
+    ).then((confirmed) => {
+      if (confirmed) {
+        this.deleteStaff(staff);
+      }
+    });
   }
 
   // Open view modal
@@ -130,39 +126,26 @@ export class StaffListComponent implements OnInit, AfterViewInit {
   }
 
   // Execute deletion
-  deleteStaff(): void {
-    if (!this.staffToDelete) return;
-    const id = this.staffToDelete.staffId;
+  deleteStaff(staffDetails: any): void {
+    const id = staffDetails.staffId;
 
     this.isProcessing = true;
+    this.popup.loading('Deleting staff account...');
     this.staffService.deleteStaff(id).subscribe({
       next: () => {
         this.isProcessing = false;
+        this.popup.closeLoading();
         this.staffList = this.staffList.filter(s => s.staffId !== id);
-        this.staffToDelete = null;
-        this.showDeleteModal = false;
-        this.showFeedback('success', 'Deleted!', 'Staff member has been deleted permanently.');
+        this.popup.deleted('Staff Member');
       },
       error: (err) => {
         this.isProcessing = false;
+        this.popup.closeLoading();
         console.error('Delete failed:', err);
-        this.showDeleteModal = false;
-        const errorMsg = err.error?.message || 'Failed to delete staff member. They may have linked records (Sections, Assignments, or Leaves).';
-        this.showFeedback('error', 'Cannot Delete Staff', errorMsg);
-        this.staffToDelete = null;
+        const errorMsg = err.error?.message || 'Could not delete staff. They may have linked classes or subjects.';
+        this.popup.deleteError('Staff Member', errorMsg);
       }
     });
-  }
-
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
   }
 
   // ✅ Filter for search

@@ -12,8 +12,8 @@ import { Student } from '../../../Models/student';
 import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
 import { AcademicYear } from '../../../Models/academic-year';
-import Swal from '../../../swal';
 import { finalize, forkJoin } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-student-promote',
@@ -51,13 +51,7 @@ export class StudentPromoteComponent implements OnInit {
 
   loading = false;
 
-  // Premium Modal Visibility State
-  showConfirmPromote = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  isPromoting = false;
+
 
   constructor(
     private router: Router,
@@ -65,7 +59,8 @@ export class StudentPromoteComponent implements OnInit {
     private standardService: StandardService,
     private sectionService: SectionService,
     private academicYearService: AcademicYearService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -174,22 +169,7 @@ export class StudentPromoteComponent implements OnInit {
     return visibleIds.length > 0 && visibleIds.every(id => this.selectedStudents.includes(id));
   }
 
-  // ── Premium Feedback ──
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-    if (autoClose) {
-      setTimeout(() => {
-        this.showFeedbackModal = false;
-      }, 2200);
-    }
-  }
 
-  closeFeedback() {
-    this.showFeedbackModal = false;
-  }
 
   onNextClassChange(): void {
     const selectedClass = this.classes.find(c => c.standardId === Number(this.nextClassId));
@@ -197,7 +177,7 @@ export class StudentPromoteComponent implements OnInit {
       this.filteredNextSections = this.sections.filter(s => s.className === selectedClass.standardName);
 
       if (this.filteredNextSections.length === 0) {
-        this.showFeedback('warning', 'Section Required', `There are no sections created for <strong>${selectedClass.standardName}</strong>. Please create a section before promoting.`);
+        this.popup.warning(`There are no sections created for <strong>${selectedClass.standardName}</strong>. Please create a section before promoting.`, 'Section Required');
         this.nextSectionId = 0;
       } else {
         // Auto-select first section if available
@@ -211,24 +191,32 @@ export class StudentPromoteComponent implements OnInit {
 
   promoteSelected(): void {
     if (this.selectedStudents.length === 0) {
-      this.showFeedback('warning', 'Selection Required', 'Please select at least one student to promote.');
+      this.popup.warning('Please select at least one student to promote.', 'Selection Required');
       return;
     }
 
     if (!this.nextClassId || !this.nextSectionId || !this.nextAcademicYearId) {
-      this.showFeedback('warning', 'Destination Incomplete', 'Please select destination Class, Section, and Academic Year.');
+      this.popup.warning('Please select destination Class, Section, and Academic Year.', 'Destination Incomplete');
       return;
     }
 
-    this.showConfirmPromote = true;
-  }
+    const count = this.selectedStudents.length;
 
-  cancelPromote() {
-    this.showConfirmPromote = false;
+    this.popup.confirm(
+      'Promote Students?',
+      `Are you sure you want to promote <strong>${count}</strong> selected student${count > 1 ? 's' : ''} to the next academic term?`,
+      'Yes, Promote',
+      'Cancel',
+      'success'
+    ).then(confirmed => {
+      if (confirmed) {
+        this.confirmPromotion();
+      }
+    });
   }
 
   confirmPromotion() {
-    this.isPromoting = true;
+    this.popup.loading('Promoting students...');
     const request = {
       studentIds: this.selectedStudents,
       nextClassId: Number(this.nextClassId),
@@ -236,23 +224,20 @@ export class StudentPromoteComponent implements OnInit {
       nextAcademicYearId: Number(this.nextAcademicYearId)
     };
 
-    this.studentService.bulkPromote(request).pipe(
-      finalize(() => {
-        this.isPromoting = false;
-        this.showConfirmPromote = false;
-      })
-    ).subscribe({
+    this.studentService.bulkPromote(request).subscribe({
       next: (res) => {
-        this.showFeedback('success', 'Promotion Successful', res.message || 'Students have been promoted successfully.', true);
+        this.popup.closeLoading();
+        this.popup.success('Promotion Successful', res.message || 'Students have been promoted successfully.');
         this.selectedStudents = [];
         this.loadInitialData();
       },
       error: (err) => {
         console.error('Promotion error', err);
+        this.popup.closeLoading();
         const errorMsg = err.error && typeof err.error === 'string'
           ? err.error
           : (err.error?.message ? err.error.message : 'Failed to promote students.');
-        this.showFeedback('error', 'Promotion Failed', errorMsg);
+        this.popup.error(errorMsg, 'Promotion Failed');
       }
     });
   }

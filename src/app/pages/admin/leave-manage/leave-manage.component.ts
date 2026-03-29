@@ -7,6 +7,7 @@ import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { finalize } from 'rxjs';
 import * as XLSX from 'xlsx';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-leave-manage',
@@ -37,33 +38,19 @@ export class LeaveManageComponent implements OnInit {
 
   leaveTypes = Object.keys(LeaveType).filter(key => isNaN(Number(key)));
 
-  // ── Premium Modal State ──
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
 
   constructor(
     private leaveService: LeaveService,
-    private authService: AuthService
+    private authService: AuthService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void { this.loadAllLeaves(); }
 
   hasRole(role: string): boolean { return this.authService.hasRole(role); }
 
-  // ── Helpers ──
-  triggerSuccess(title: string, msg: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, msg: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  triggerWarning(title: string, msg: string) {
-    this.feedbackType = 'warning'; this.feedbackTitle = title; this.feedbackMessage = msg; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  // Modals are now handled by PopupService
 
   loadAllLeaves(): void {
     this.loading = true;
@@ -80,7 +67,7 @@ export class LeaveManageComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error loading leaves:', err);
-          this.triggerError('Error', 'Failed to load leave requests');
+          this.popup.error('Error', 'Failed to load leave requests');
         }
       });
   }
@@ -101,12 +88,12 @@ export class LeaveManageComponent implements OnInit {
 
   refreshData(): void {
     this.loadAllLeaves();
-    this.triggerSuccess('Refreshed!', 'Data has been refreshed successfully.');
+    this.popup.success('Refreshed!', 'Data has been refreshed successfully.');
   }
 
   exportData(): void {
     if (this.filteredLeaves.length === 0) {
-      this.triggerWarning('No Data', 'There is no data to export.');
+      this.popup.warning('No Data', 'There is no data to export.');
       return;
     }
 
@@ -130,7 +117,7 @@ export class LeaveManageComponent implements OnInit {
 
     /* generate file and force a download */
     XLSX.writeFile(wb, `Leave_Report_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`);
-    this.triggerSuccess('Exported!', 'Excel file has been downloaded successfully.');
+    this.popup.success('Exported!', 'Excel file has been downloaded successfully.');
   }
 
   openApproveModal(leave: Leave): void {
@@ -148,7 +135,7 @@ export class LeaveManageComponent implements OnInit {
   confirmAction(): void {
     if (!this.selectedLeave || !this.selectedLeave.leaveId) return;
     if (!this.remarks.trim()) {
-      this.triggerWarning('Remarks Required', 'Please provide remarks for this action.');
+      this.popup.warning('Remarks Required', 'Please provide remarks for this action.');
       return;
     }
 
@@ -158,13 +145,14 @@ export class LeaveManageComponent implements OnInit {
     const adminId = 1;
     this.isProcessing = true;
     this.closeModal();
+    this.popup.loading(`${this.modalAction === 'approve' ? 'Approving' : 'Rejecting'} leave...`);
 
     this.leaveService.updateLeaveStatus(leaveId, {
       status: newStatus, adminId, remarks: remarkValue
     }).pipe(finalize(() => this.isProcessing = false))
       .subscribe({
         next: () => {
-          this.triggerSuccess(
+          this.popup.success(
             `Leave ${this.modalAction === 'approve' ? 'Approved' : 'Rejected'}!`,
             `The leave request has been ${this.modalAction === 'approve' ? 'approved' : 'rejected'} successfully.`
           );
@@ -172,10 +160,11 @@ export class LeaveManageComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error updating leave status:', err);
-          this.triggerError('Error', 'Failed to update leave status');
+          this.popup.error('Error', 'Failed to update leave status');
         }
       });
   }
+
 
   getLeaveTypeName(type: number): string { return LeaveType[type]; }
   getLeaveStatusName(status: number): string { return LeaveStatus[status]; }

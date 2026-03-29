@@ -140,27 +140,29 @@
     </div>
   </div>
 
-  <!-- PAGINATION -->
-  <div class="premium-pagination-wrapper mt-5" *ngIf="filteredRecords.length > 0">
-    <div class="pagination-info">
-      Showing <span>{{ paginationStart }} - {{ paginationEnd }}</span> of <span>{{ filteredRecords.length }}</span>
-      Slips
-    </div>
-    <div class="pagination-controls">
-      <button class="nav-btn" [disabled]="currentPage === 1 || isProcessing" (click)="changePage(currentPage - 1)">
-        <iconify-icon icon="mdi:chevron-left"></iconify-icon>
-      </button>
-      <div class="page-numbers">
-        <button class="page-num" *ngFor="let page of totalPagesArray" [class.active]="currentPage === page"
-          (click)="changePage(page)">
-          {{ page }}
-        </button>
-      </div>
-      <button class="nav-btn" [disabled]="currentPage === totalPages || isProcessing"
-        (click)="changePage(currentPage + 1)">
-        <iconify-icon icon="mdi:chevron-right"></iconify-icon>
-      </button>
-    </div>
+  <!-- ── Pagination ── -->
+  <div class="pagination-bar" *ngIf="filteredRecords.length > 0">
+    <p class="pagination-info mb-0">
+      Showing <b>{{ paginationStart }}</b> to <b>{{ paginationEnd }}</b> of <b>{{ filteredRecords.length }}</b> slips
+    </p>
+    <nav>
+      <ul class="pagination-pills">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+            <iconify-icon icon="solar:alt-arrow-left-bold-duotone"></iconify-icon>
+          </a>
+        </li>
+        <li class="page-item" *ngFor="let page of totalPagesArray"
+          [class.active]="currentPage === page">
+          <a class="page-link" (click)="changePage(page)" href="javascript:void(0)">{{ page }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+            <iconify-icon icon="solar:alt-arrow-right-bold-duotone"></iconify-icon>
+          </a>
+        </li>
+      </ul>
+    </nav>
   </div>
 </div>
 
@@ -244,77 +246,3 @@
   </div>
 </div>
 
-<!-- ============================================================
-     PREMIUM MODALS (Feedback, Confirmation, Processing)
-     ============================================================ -->
-
-<!-- Delete Confirmation Modal -->
-<div class="premium-overlay" *ngIf="showDeleteModal">
-  <div class="premium-modal feedback-modal">
-    <div class="pm-icon-ring danger-ring">
-      <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
-    </div>
-
-    <h3 class="pm-title">Confirm Deletion</h3>
-    <p class="pm-subtitle">
-      Are you sure you want to permanently delete this salary slip record?<br>
-      This action cannot be undone.
-    </p>
-
-    <div class="pm-actions">
-      <button class="pm-btn pm-cancel" (click)="showDeleteModal = false" [disabled]="isProcessing">Cancel</button>
-      <button class="pm-btn pm-save" (click)="confirmDelete()" [disabled]="isProcessing"
-        style="background: #ef4444; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
-        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
-        {{ isProcessing ? 'Deleting...' : 'Delete Permanently' }}
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
-<div class="premium-overlay" *ngIf="showFeedbackModal">
-  <div class="premium-modal feedback-modal">
-    <div class="pm-sparkles" *ngIf="feedbackType === 'success'">
-      <div class="pm-sparkle sp1"></div>
-      <div class="pm-sparkle sp2"></div>
-      <div class="pm-sparkle sp3"></div>
-    </div>
-
-    <div class="pm-icon-ring" [ngClass]="{
-           'success-ring': feedbackType === 'success',
-           'danger-ring': feedbackType === 'error',
-           'warning-ring': feedbackType === 'warning'
-         }">
-      <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
-                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
-        style="font-size: 38px; color: #fff;"></iconify-icon>
-    </div>
-
-    <h3 class="pm-title">{{ feedbackTitle }}</h3>
-    <p class="pm-subtitle">{{ feedbackMessage }}</p>
-
-    <div class="pm-actions">
-      <button class="pm-btn pm-Ok" [ngClass]="{
-                'pm-success-btn': feedbackType === 'success',
-                'pm-error-btn': feedbackType === 'error',
-                'pm-warning-btn': feedbackType === 'warning'
-              }" (click)="closeFeedback()">
-        Ok
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- PROCESSING / LOADING OVERLAY -->
-<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
-  <div class="processing-card">
-    <div class="loader-ring">
-      <div class="loader-inner"></div>
-    </div>
-    <div class="processing-content">
-      <h4 class="pc-title">Processing Request</h4>
-      <p class="pc-subtitle">Please wait a moment...</p>
-    </div>
-  </div>
-</div>

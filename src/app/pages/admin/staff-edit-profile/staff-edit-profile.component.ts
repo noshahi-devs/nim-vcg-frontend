@@ -6,8 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { StaffService } from '../../../services/staff.service';
 import { Staff, Designation, Gender } from '../../../Models/staff';
 import { finalize } from 'rxjs';
-import Swal from '../../../swal';
 import { environment } from '../../../../environments/environment';
+import { PopupService } from '../../../services/popup.service';
 
 declare var $: any;
 declare var bootstrap: any;
@@ -28,17 +28,14 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
   loading: boolean = false;
   private readonly STORAGE_KEY = 'staffList';
 
-  modalMessage: string = '';
-  modalType: 'success' | 'error' = 'success';
-  showFeedbackModal = false;
-  isSaveSuccess = false;
   selectedImageBase64: string | null = null;
   selectedImageName: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private popup: PopupService
   ) { }
 
   ngOnInit() {
@@ -48,9 +45,7 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
     });
   }
 
-  closeFeedbackModal() {
-    this.showFeedbackModal = false;
-  }
+
 
   loadStaffData() {
     this.loading = true;
@@ -131,38 +126,22 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
 
       console.log('🚀 Sending updatedStaff to API:', updatedStaff);
 
-      Swal.fire({
-        title: 'Updating Staff...',
-        text: 'Please wait while we process the request.',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        didOpen: () => {
-          Swal.showLoading();
-        }
-      });
+      this.popup.loading('Updating Staff...');
 
       this.staffService.updateStaff(this.staffId, updatedStaff).subscribe({
         next: () => {
-          Swal.close();
           this.loading = false;
-          this.isSaveSuccess = false;
-          this.modalMessage = 'Staff information updated successfully!';
-          this.modalType = 'success';
-          this.showFeedbackModal = true;
+          this.popup.closeLoading();
+          this.popup.success('Success', 'Staff information updated successfully!');
           setTimeout(() => {
-            this.showFeedbackModal = false;
             this.router.navigate(['/staff-list']);
-          }, 2200);
+          }, 1500);
         },
         error: (err) => {
-          Swal.close();
           console.error('Error updating staff:', err);
           this.loading = false;
-          this.isSaveSuccess = false;
-          this.modalMessage = err.error?.message || 'Failed to update staff profile.';
-          this.modalType = 'error';
-          this.showFeedbackModal = true;
+          this.popup.closeLoading();
+          this.popup.error('Error', err.error?.message || 'Failed to update staff profile.');
         }
       });
     }
@@ -188,24 +167,20 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
     if (!currPass || !newPass || !confPass) return;
 
     if (newPass !== confPass) {
-      this.modalMessage = 'Passwords do not match.';
-      this.modalType = 'error';
-      this.showFeedbackModal = true;
+      this.popup.error('Error', 'Passwords do not match.');
       return;
     }
 
     this.loading = true;
+    this.popup.loading('Updating security credentials...');
     setTimeout(() => {
       this.loading = false;
-      this.modalMessage = 'Security credentials updated!';
-      this.modalType = 'success';
-      this.showFeedbackModal = true;
+      this.popup.closeLoading();
+      this.popup.success('Success', 'Security credentials updated!');
     }, 1500);
   }
 
-  ngOnDestroy() {
-    this.showFeedbackModal = false;
-  }
+  ngOnDestroy() { }
 
   ngAfterViewInit() {
     this.initializePasswordToggle('.toggle-password');

@@ -11,9 +11,10 @@ import { StaffService } from '../../../services/staff.service';
 import { SectionService } from '../../../services/section.service';
 import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
 import { forkJoin, of } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { StandardService } from '../../../services/standard.service';
 import { Standard } from '../../../Models/standard';
+import { PopupService } from '../../../services/popup.service';
 
 
 declare var bootstrap: any;
@@ -43,12 +44,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   // Premium Modal Visibility State
   showViewModal = false;
   showEditModal = false;
-  showDeleteModal = false;
 
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
   isProcessing = false;
 
   get totalSubjects(): number { return this.subjectList.length; }
@@ -65,7 +61,8 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
     private staffService: StaffService,
     private sectionService: SectionService,
     private subjectAssignmentService: SubjectAssignmentService,
-    private standardService: StandardService
+    private standardService: StandardService,
+    private popup: PopupService
   ) { }
 
 
@@ -103,7 +100,8 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
             // HARDENED: If teacher but no staff record found, show empty list, not everything
             this.subjectList = [];
             this.classes = [];
-            this.showFeedback('warning', 'Teacher record not found', 'Please contact administrator for staff mapping.');
+            this.loading = false;
+            this.popup.warning('Please contact administrator for staff mapping.', 'Teacher record not found');
           }
         }
       });
@@ -113,15 +111,17 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   }
 
   private fetchAllSubjectsRaw(): void {
-    this.subjectService.getSubjects().pipe(finalize(() => this.loading = false)).subscribe({
+    this.subjectService.getSubjects().subscribe({
       next: (res) => {
+        this.loading = false;
         this.subjectList = res;
         this.classes = [...new Set(res.map(s => s.standard?.standardName || ''))];
         this.currentPage = 1;
       },
       error: (err) => {
+        this.loading = false;
         console.error('Error loading subjects:', err);
-        this.showFeedback('error', 'Sync Failed', 'Unable to retrieve academic subject registry.');
+        this.popup.error('Sync Failed', 'Unable to retrieve academic subject registry.');
       }
     });
   }
@@ -131,7 +131,7 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
       subjects: this.subjectService.getSubjects(),
       sections: this.sectionService.getSections(),
       assignments: this.subjectAssignmentService.getAssignmentsByTeacher(staffId)
-    }).pipe(finalize(() => this.loading = false)).subscribe({
+    }).subscribe({
       next: (res) => {
         // Find sections assigned to this teacher
         const assignedSectionClassNames = (res.sections || [])
@@ -150,10 +150,12 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
         // STRICT FILTERING: Only show subjects specifically assigned to this teacher by ID
         this.subjectList = res.subjects.filter(s => this.assignedSubjectIds.includes(s.subjectId));
         this.classes = allAssignedClassNames;
+        this.loading = false;
       },
       error: (err) => {
+        this.loading = false;
         console.error('Error loading filtered subjects:', err);
-        this.showFeedback('error', 'Filter Failed', 'Could not synchronize curriculum for your assigned classes.');
+        this.popup.error('Filter Failed', 'Could not synchronize curriculum for your assigned classes.');
       }
     });
   }
@@ -187,24 +189,33 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
   }
 
   confirmDelete(subject: Subject): void {
-    this.subjectToDelete = subject;
-    this.showDeleteModal = true;
+    this.popup.confirm(
+      'Confirm Deletion',
+      `Are you sure you want to delete <strong>${subject.subjectName}</strong>?<br>This action cannot be undone.`
+    ).then((confirmed) => {
+      if (confirmed) {
+        this.subjectToDelete = subject;
+        this.deleteSubject();
+      }
+    });
   }
 
   deleteSubject(): void {
     if (!this.subjectToDelete) return;
 
     this.isProcessing = true;
-    this.subjectService.deleteSubject(this.subjectToDelete.subjectId).pipe(
-      finalize(() => this.isProcessing = false)
-    ).subscribe({
+    this.popup.loading('Deleting permanently...');
+    this.subjectService.deleteSubject(this.subjectToDelete.subjectId).subscribe({
       next: () => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
         this.subjectList = this.subjectList.filter(s => s.subjectId !== this.subjectToDelete?.subjectId);
-        this.showFeedback('success', 'Subject Deleted', 'The academic record has been removed permanently.');
         this.subjectToDelete = null;
-        this.showDeleteModal = false;
+        this.popup.deleted('Subject');
       },
       error: (err) => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
         console.error('Error deleting subject:', err);
         let errorMsg = 'Failed to delete record. It may have dependent records (Marks or Assignments).';
 
@@ -216,7 +227,8 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
           }
         }
 
-        this.showFeedback('error', 'Cannot Delete', errorMsg);
+        const name = this.subjectToDelete?.subjectName || 'This subject';
+        this.popup.deleteError(name, errorMsg);
       }
     });
   }
@@ -237,20 +249,23 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
 
   updateSubject(): void {
     if (!this.selectedSubject.subjectName || !this.selectedSubject.standardId) {
-      this.showFeedback('warning', 'Fields Required', 'Please ensure all mandatory academic details are provided.');
+      this.popup.warning('Please ensure all mandatory academic details are provided.', 'Fields Required');
       return;
     }
 
     this.isProcessing = true;
-    this.subjectService.updateSubject(this.selectedSubject).pipe(
-      finalize(() => this.isProcessing = false)
-    ).subscribe({
+    this.popup.loading('Saving subject...');
+    this.subjectService.updateSubject(this.selectedSubject).subscribe({
       next: () => {
-        this.showFeedback('success', 'Subject Updated', 'The academic record has been successfully modified.');
+        this.isProcessing = false;
+        this.popup.closeLoading();
+        this.popup.updated('Subject');
         this.loadSubjects();
         this.showEditModal = false;
       },
       error: (err) => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
         console.error('Error updating subject:', err);
         let errorMsg = 'Failed to save academic changes.';
 
@@ -262,20 +277,9 @@ export class SubjectListComponent implements OnInit, AfterViewInit {
           }
         }
 
-        this.showFeedback('error', 'Update Failed', errorMsg);
+        this.popup.error('Update Failed', errorMsg);
       }
     });
-  }
-
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
   }
 }
 

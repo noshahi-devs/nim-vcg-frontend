@@ -13,6 +13,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-class-wise-report',
@@ -36,19 +37,14 @@ export class ClassWiseReportComponent implements OnInit {
   pageSize = 10;
   pageSizeOptions = [10, 20, 50, 100];
 
-  /** PREMIUM UI STATES */
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-
   constructor(
     private attendanceService: AttendanceService,
     private standardService: StandardService,
     private authService: AuthService,
     private staffService: StaffService,
     private sectionService: SectionService,
-    private subjectAssignmentService: SubjectAssignmentService
+    private subjectAssignmentService: SubjectAssignmentService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -84,7 +80,7 @@ export class ClassWiseReportComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading classes', err);
-        this.triggerError('Error', 'Unable to load classes');
+        this.popup.error('Error', 'Unable to load classes');
       }
     });
   }
@@ -112,7 +108,7 @@ export class ClassWiseReportComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading filtered classes', err);
-        this.triggerError('Error', 'Unable to load filtered classes');
+        this.popup.error('Error', 'Unable to load filtered classes');
         this.loadAllClasses();
       }
     });
@@ -135,7 +131,7 @@ export class ClassWiseReportComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading report', err);
-        this.triggerError('Error', 'Unable to load the attendance report.');
+        this.popup.error('Error', 'Unable to load the attendance report.');
         this.reportData = [];
         this.isLoading = false;
       }
@@ -275,29 +271,7 @@ export class ClassWiseReportComponent implements OnInit {
     return pages;
   }
 
-  // Helper Methods for Modals
-  triggerSuccess(title: string, message: string) {
-    this.feedbackType = 'success';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  triggerError(title: string, message: string) {
-    this.feedbackType = 'error';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  triggerWarning(title: string, message: string) {
-    this.feedbackType = 'warning';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
   closeFeedback() {
-    this.showFeedbackModal = false;
+    // legacy
   }
 }

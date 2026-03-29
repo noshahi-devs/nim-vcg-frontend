@@ -9,6 +9,7 @@ import { SettingsService } from '../../../services/settings.service';
 import { StaffSalary } from '../../../Models/staff-salary';
 import { Staff } from '../../../Models/staff';
 import { environment } from '../../../../environments/environment';
+import { PopupService } from '../../../services/popup.service';
 
 interface SalaryRecord {
   id: number;
@@ -83,20 +84,14 @@ export class SalarySlipComponent implements OnInit {
   // API base URL for images
   private apiBaseUrl = environment.apiBaseUrl;
 
-  // Loading and Modal states
   isProcessing: boolean = false;
-  showFeedbackModal: boolean = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle: string = '';
-  feedbackMessage: string = '';
-
-  showDeleteModal: boolean = false;
-  slipToDeleteId: number | null = null;
+  Math = Math; // For template access
 
   constructor(
     private staffSalaryService: StaffSalaryService,
     private staffService: StaffService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -142,7 +137,7 @@ export class SalarySlipComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading staff:', error);
-        this.showFeedback('error', 'Error', 'Failed to load staff list');
+        this.popup.error('Error', 'Failed to load staff list');
       }
     });
   }
@@ -159,7 +154,7 @@ export class SalarySlipComponent implements OnInit {
         console.error('Error loading salaries:', error);
         this.isProcessing = false;
         // Show error but don't block the UI
-        this.showFeedback('warning', 'Notice', 'Could not load existing salary records. You can still create new ones.');
+        this.popup.warning('Could not load existing salary records. You can still create new ones.', 'Notice');
       }
     });
   }
@@ -251,11 +246,11 @@ export class SalarySlipComponent implements OnInit {
 
   saveSalary(): void {
     if (!this.staffId || !this.salaryMonth || !this.salaryDate) {
-      this.showFeedback('warning', 'Missing Information', 'Please select a staff member and fill all required fields.');
+      this.popup.warning('Please select a staff member and fill all required fields.', 'Missing Information');
       return;
     }
 
-    this.isProcessing = true;
+    this.popup.loading('Saving salary record...');
 
     const newSalary: StaffSalary = {
       staffSalaryId: 0,
@@ -299,14 +294,14 @@ export class SalarySlipComponent implements OnInit {
         this.salaryRecords.unshift(newRecord);
 
         this.isProcessing = false;
-        this.showFeedback('success', 'Salary Saved!', `Salary for ${this.staffName} has been saved successfully.`);
+        this.popup.success('Salary Saved!', `Salary for ${this.staffName} has been saved successfully.`);
 
         this.resetForm();
       },
       error: (error) => {
         this.isProcessing = false;
         console.error('Error saving salary:', error);
-        this.showFeedback('error', 'Error', 'Failed to save salary. Please try again.');
+        this.popup.error('Error', 'Failed to save salary. Please try again.');
       }
     });
   }
@@ -501,42 +496,23 @@ export class SalarySlipComponent implements OnInit {
   }
 
   deleteSalaryRecord(id: number): void {
-    this.slipToDeleteId = id;
-    this.showDeleteModal = true;
-  }
-
-  confirmDelete(): void {
-    if (!this.slipToDeleteId) return;
-
-    this.isProcessing = true;
-    this.staffSalaryService.deleteStaffSalary(this.slipToDeleteId).subscribe({
-      next: () => {
-        this.isProcessing = false;
-        this.salaryRecords = this.salaryRecords.filter(r => r.id !== this.slipToDeleteId);
-        this.showDeleteModal = false;
-        this.slipToDeleteId = null;
-        this.showFeedback('success', 'Deleted!', 'Salary record has been deleted.');
-      },
-      error: (error) => {
-        this.isProcessing = false;
-        console.error('Error deleting salary:', error);
-        this.showDeleteModal = false;
-        this.slipToDeleteId = null;
-        this.showFeedback('error', 'Error', 'Failed to delete salary record.');
+    this.popup.confirm('Delete Salary Slip?', 'This action cannot be undone.').then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Deleting salary record...');
+        this.staffSalaryService.deleteStaffSalary(id).subscribe({
+          next: () => {
+            this.salaryRecords = this.salaryRecords.filter(r => r.id !== id);
+            this.popup.deleted('Salary record');
+          },
+          error: (error) => {
+            console.error('Error deleting salary:', error);
+            this.popup.error('Error', 'Failed to delete salary record.');
+          }
+        });
       }
     });
   }
 
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string): void {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback(): void {
-    this.showFeedbackModal = false;
-  }
 }
 
 

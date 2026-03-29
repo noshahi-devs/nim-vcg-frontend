@@ -245,36 +245,4 @@
   </div>
 </div>
 
-<!-- == Premium Feedback Modal == -->
-<div class="premium-overlay" *ngIf="showFeedbackModal">
-  <div class="premium-modal feedback-modal">
-    <div class="pm-sparkles"><span class="pm-sparkle sp1"></span><span class="pm-sparkle sp2"></span><span
-        class="pm-sparkle sp3"></span></div>
-    <div class="pm-icon-ring"
-      [ngClass]="{'success-ring': feedbackType==='success', 'danger-ring': feedbackType==='error', 'warning-ring': feedbackType==='warning'}">
-      <iconify-icon
-        [icon]="feedbackType==='success' ? 'solar:check-circle-bold' : feedbackType==='error' ? 'solar:close-circle-bold' : 'solar:info-circle-bold'"
-        style="font-size:2.4rem; color:#fff"></iconify-icon>
-    </div>
-    <p class="pm-title">{{ feedbackTitle }}</p>
-    <p class="pm-subtitle">{{ feedbackMessage }}</p>
-    <div class="pm-actions">
-      <button class="pm-btn pm-Ok"
-        [ngClass]="{'pm-success-btn': feedbackType==='success', 'pm-error-btn': feedbackType==='error', 'pm-warning-btn': feedbackType==='warning'}"
-        (click)="closeFeedback()">
-        <iconify-icon icon="solar:check-read-linear"></iconify-icon> Ok
-      </button>
-    </div>
-  </div>
-</div>
 
-<!-- == Processing Overlay == -->
-<div class="premium-overlay processing-overlay" *ngIf="isProcessing">
-  <div class="processing-card">
-    <div class="loader-ring"></div>
-    <div>
-      <p class="pc-title">Processing...</p>
-      <p class="pc-subtitle">Please wait a moment...</p>
-    </div>
-  </div>
-</div>

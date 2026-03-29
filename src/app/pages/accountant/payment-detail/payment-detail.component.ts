@@ -8,6 +8,7 @@ import { OthersPayment } from '../../../Models/other-payment';
 import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { Router } from '@angular/router';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-payment-detail',
@@ -44,20 +45,18 @@ export class PaymentDetailComponent implements OnInit {
   totalPages = 1;
   toEntry = 0;
   searchTerm = '';
+  isProcessing = false;
 
   selectedPayment: any = null;
   paymentToDelete: any = null;
 
-  // Premium Modal States
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  isProcessing = false;
-  showDeleteModal = false;
   showViewDialog = false;
 
-  constructor(private commonService: CommonServices, private router: Router) { }
+  constructor(
+    private commonService: CommonServices,
+    private router: Router,
+    private popup: PopupService
+  ) { }
 
   ngOnInit(): void {
     this.fetchStandards();
@@ -104,7 +103,7 @@ export class PaymentDetailComponent implements OnInit {
       },
       error: () => {
         this.isProcessing = false;
-        this.showFeedback('error', 'Sync Failed', 'Unable to retrieve student directory.');
+        this.popup.error('Sync Failed', 'Unable to retrieve student directory.');
       }
     });
   }
@@ -142,7 +141,7 @@ export class PaymentDetailComponent implements OnInit {
           this.payments = [];
           this.applyFilter();
         } else {
-          this.showFeedback('error', 'Fetch Error', 'Failed to load monthly payment history.');
+          this.popup.error('Fetch Error', 'Failed to load monthly payment history.');
         }
       }
     });
@@ -165,22 +164,13 @@ export class PaymentDetailComponent implements OnInit {
           this.otherPayments = [];
           this.applyFilter();
         } else {
-          this.showFeedback('error', 'Fetch Error', 'Failed to load miscellaneous payment history.');
+          this.popup.error('Fetch Error', 'Failed to load miscellaneous payment history.');
         }
       }
     });
   }
 
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
 
-  closeFeedback() {
-    this.showFeedbackModal = false;
-  }
 
   /* ---------- FILTER & PAGINATION ---------- */
   setTab(tab: 'monthly' | 'other') {

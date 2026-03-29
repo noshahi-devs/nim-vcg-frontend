@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OthersPayment } from '../../../Models/other-payment';
 import { ActivatedRoute } from '@angular/router';
-import Swal from '../../../swal';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-other-payment',
@@ -48,10 +48,7 @@ export class OtherPaymentComponent implements OnInit {
   paymentToDelete: OthersPayment | null = null;
 
   // Premium Modal States
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
+  loading = false;
   isProcessing = false;
   showDeleteModal = false;
   isEditMode = false;
@@ -68,7 +65,8 @@ export class OtherPaymentComponent implements OnInit {
   constructor(
     private commonService: CommonServices,
     private paymentService: OtherPaymentService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private popup: PopupService
   ) { }
 
   autoAddClassId: any = null;
@@ -137,16 +135,16 @@ export class OtherPaymentComponent implements OnInit {
   }
 
   loadPayments() {
-    this.isProcessing = true;
+    this.loading = true;
     this.paymentService.getOtherPayments().subscribe({
       next: r => {
         this.payments = r || [];
-        this.isProcessing = false;
+        this.loading = false;
         this.searchPayments();
       },
       error: () => {
-        this.isProcessing = false;
-        this.showFeedback('error', 'Critical Error', 'Encountered an issue while retrieving payment records. Please try again.');
+        this.loading = false;
+        this.popup.error('Error', 'Failed to load other payments.');
       }
     });
   }
@@ -260,10 +258,6 @@ export class OtherPaymentComponent implements OnInit {
     }
 
     let selectedMonths: AcademicMonth[] = p.academicMonths && p.academicMonths.length > 0 ? p.academicMonths : [];
-    if (!selectedMonths.length && p.otherPaymentDetails?.length) {
-      // For months, we might not have them in OtherPaymentDetail names, 
-      // but let's check if the backend actually returned them now with our fix.
-    }
 
     this.form.patchValue({
       ...p,
@@ -281,9 +275,12 @@ export class OtherPaymentComponent implements OnInit {
   }
 
   savePayment() {
-    if (this.form.invalid || this.isProcessing) return;
+    if (this.form.invalid) {
+      this.popup.warning('Please fill in all required fields.', 'Validation Error');
+      return;
+    }
 
-    this.isProcessing = true;
+    this.popup.loading(this.isEditMode ? 'Updating record...' : 'Creating record...');
     const payload = this.form.getRawValue();
     payload.totalAmount = this.form.get('totalAmount')?.value;
     payload.amountRemaining = payload.totalAmount - (payload.amountPaid || 0);
@@ -291,29 +288,25 @@ export class OtherPaymentComponent implements OnInit {
     if (this.isEditMode) {
       this.paymentService.updateOthersPayment(payload).subscribe({
         next: (res: any) => {
-          this.isProcessing = false;
           this.closeDialog();
           this.loadPayments();
-          this.showFeedback('success', 'Payment Updated', `The record has been successfully revised.`);
+          this.popup.success('Updated!', 'Misc payment updated successfully.');
           this.checkAndAutoPrint(payload, res);
         },
-        error: () => {
-          this.isProcessing = false;
-          this.showFeedback('error', 'Update Failed', 'An error occurred while attempting to update the payment record.');
+        error: (err) => {
+          this.popup.error('Error', 'Failed to update misc payment. ' + (err.error?.title || err.message || ''));
         }
       });
     } else {
       this.paymentService.createOthersPayment(payload).subscribe({
         next: (res: any) => {
-          this.isProcessing = false;
           this.closeDialog();
           this.loadPayments();
-          this.showFeedback('success', 'Payment Recorded', 'The new financial transaction has been securely logged.');
+          this.popup.success('Recorded!', 'The new financial transaction has been securely logged.');
           this.checkAndAutoPrint(payload, res);
         },
-        error: () => {
-          this.isProcessing = false;
-          this.showFeedback('error', 'Submission Failed', 'Failed to log the new payment. Please verify the details and retry.');
+        error: (err) => {
+          this.popup.error('Submission Failed', 'Failed to log the new payment. ' + (err.error?.title || err.message || ''));
         }
       });
     }
@@ -321,37 +314,29 @@ export class OtherPaymentComponent implements OnInit {
 
   /* ---------- DELETE (SweetAlert2) ---------- */
   confirmDelete(p: OthersPayment) {
-    this.paymentToDelete = p;
-    this.showDeleteModal = true;
-  }
-
-  deletePayment() {
-    if (!this.paymentToDelete || this.isProcessing) return;
-
-    this.isProcessing = true;
-    this.paymentService.deleteOthersPayment(this.paymentToDelete.othersPaymentId).subscribe({
-      next: () => {
-        this.isProcessing = false;
-        this.showDeleteModal = false;
-        this.loadPayments();
-        this.showFeedback('success', 'Deletion Complete', 'The payment record has been permanently removed from the system.');
-      },
-      error: () => {
-        this.isProcessing = false;
-        this.showFeedback('error', 'Cleanup Failed', 'A system error prevented the deletion of this record.');
+    this.popup.confirm(
+      'Delete Payment?',
+      `Are you sure you want to delete this other payment for <strong>${p.student?.studentName}</strong>?`,
+      'Yes, Delete',
+      'Cancel'
+    ).then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Deleting payment...');
+        this.paymentService.deleteOthersPayment(p.othersPaymentId).subscribe({
+          next: () => {
+            this.loadPayments();
+            this.popup.deleted('Payment record');
+          },
+          error: (err) => {
+            this.popup.deleteError('Payment record', 'Failed to delete record. ' + (err.error?.title || err.message || ''));
+          }
+        });
       }
     });
   }
 
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
+  deletePayment() {
+    // legacy - unused
   }
 
   closeDialog() {

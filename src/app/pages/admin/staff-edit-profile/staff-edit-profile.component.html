@@ -294,34 +294,4 @@
   </div>
 
 </div>
-
-<!-- ✅ Premium Success / Error Feedback Modal -->
-<div class="premium-modal-overlay" *ngIf="showFeedbackModal" (click)="closeFeedbackModal()">
-  <div class="premium-modal feedback-modal" [ngClass]="{'is-error': modalType === 'error'}"
-    (click)="$event.stopPropagation()">
-
-    <!-- Animated Icon Ring -->
-    <div class="modal-icon-ring" [ngClass]="modalType === 'success' ? 'success-ring' : 'error-ring'">
-      <iconify-icon [icon]="modalType === 'success' ? 'solar:check-circle-bold-duotone' : 'solar:danger-bold-duotone'"
-        style="font-size:2.4rem; color:#fff;">
-      </iconify-icon>
-    </div>
-
-    <!-- Sparkle decoration -->
-    <div class="modal-sparkles">
-      <span class="sparkle s1"></span>
-      <span class="sparkle s2"></span>
-      <span class="sparkle s3"></span>
-    </div>
-
-    <h3 class="modal-title">
-      {{ modalType === 'success' ? (isSaveSuccess ? 'Saved Successfully!' : 'Update Successful') : 'Error Occurred' }}
-    </h3>
-    <p class="modal-subtitle">{{ modalMessage }}</p>
-
-    <button class="modal-Ok-btn" (click)="closeFeedbackModal()">
-      <iconify-icon icon="solar:check-square-bold" style="font-size:1.1rem;"></iconify-icon>
-      Ok
-    </button>
-  </div>
-</div>
+

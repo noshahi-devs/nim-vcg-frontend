@@ -11,6 +11,7 @@ import { SectionService } from '../../../services/section.service';
 import { Student } from '../../../Models/student';
 import { Standard } from '../../../Models/standard';
 import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
+import { PopupService } from '../../../services/popup.service';
 
 import { finalize, forkJoin } from 'rxjs';
 
@@ -41,12 +42,6 @@ export class AttendanceComponent implements OnInit {
 
   /** PREMIUM UI STATES */
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  
-  showConfirmModal = false;
   pendingRecords: any[] = [];
 
   constructor(
@@ -55,7 +50,8 @@ export class AttendanceComponent implements OnInit {
     private authService: AuthService,
     private staffService: StaffService,
     private sectionService: SectionService,
-    private assignmentService: SubjectAssignmentService
+    private assignmentService: SubjectAssignmentService,
+    private popup: PopupService
   ) { }
 
 
@@ -121,7 +117,7 @@ export class AttendanceComponent implements OnInit {
         }
       },
       error: () => {
-        this.triggerError('Load Failed', 'Could not load standards');
+        this.popup.error('Load Failed', 'Could not load standards');
         this.standards = [];
       }
     });
@@ -165,7 +161,7 @@ export class AttendanceComponent implements OnInit {
    * ========================== */
   loadStudents(): void {
     if (!this.selectedClass) {
-      this.triggerWarning('Missing Filter', 'Please select a Standard');
+      this.popup.warning('Missing Filter', 'Please select a Standard');
       return;
     }
 
@@ -233,32 +229,39 @@ export class AttendanceComponent implements OnInit {
     });
 
     if (this.pendingRecords.length === 0) {
-      this.triggerWarning('No Data', 'No students to mark attendance for.');
+      this.popup.warning('No Data', 'No students to mark attendance for.');
       return;
     }
 
     if (unmarked.length) {
-      this.showConfirmModal = true;
+      this.popup.confirm(
+        'Incomplete Attendance',
+        'Some students have not been marked. Do you want to save the current records?',
+        'Save Anyway',
+        'Review'
+      ).then(confirmed => {
+        if (confirmed) this.confirmSave();
+      });
     } else {
       this.confirmSave();
     }
   }
 
   confirmSave(): void {
-    this.showConfirmModal = false;
     this.isProcessing = true;
+    this.popup.loading('Saving attendance...');
 
     import('rxjs').then(({ forkJoin }) => {
       forkJoin(this.pendingRecords).subscribe({
         next: () => {
           this.isProcessing = false;
-          this.triggerSuccess('Saved!', 'Attendance saved successfully');
+          this.popup.success('Saved!', 'Attendance saved successfully');
           this.resetForm();
         },
         error: (err) => {
           console.error('Error saving attendance:', err);
           this.isProcessing = false;
-          this.triggerError('Error', 'Failed to save attendance. Please try again.');
+          this.popup.error('Error', 'Failed to save attendance. Please try again.');
         }
       });
     });
@@ -277,32 +280,6 @@ export class AttendanceComponent implements OnInit {
       absent: this.students.filter(s => s.status === 'Absent').length,
       leave: this.students.filter(s => s.status === 'Leave').length
     };
-  }
-
-  // Helper Methods for Modals
-  triggerSuccess(title: string, message: string) {
-    this.feedbackType = 'success';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  triggerError(title: string, message: string) {
-    this.feedbackType = 'error';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  triggerWarning(title: string, message: string) {
-    this.feedbackType = 'warning';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
   }
 }
 

@@ -275,47 +275,5 @@
     </div>
   </div>
 
-  <!-- ✅ PREMIUM DELETE CONFIRMATION MODAL -->
-  <div class="premium-overlay" *ngIf="showDeleteModal" (click)="cancelDelete()">
-    <div class="premium-modal delete-variant" (click)="$event.stopPropagation()">
-      <div class="pm-icon-ring danger-ring">
-        <iconify-icon icon="solar:trash-bin-minimalistic-bold-duotone"
-          style="font-size:2.2rem;color:#fff;"></iconify-icon>
-      </div>
-      <h3 class="pm-title">Delete Section</h3>
-      <p class="pm-subtitle">Are you sure you want to permanently delete section <strong>{{ deleteTarget?.sectionName
-          }}</strong>? This action cannot be undone.</p>
-      <div class="pm-actions">
-        <button class="pm-btn pm-cancel" (click)="cancelDelete()">Cancel</button>
-        <button class="pm-btn pm-danger" (click)="executeDelete()">
-          <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon> Delete
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <!-- ✅ PREMIUM FEEDBACK MODAL (Success / Error / Warning) -->
-  <div class="premium-overlay" *ngIf="showFeedbackModal" (click)="closeFeedback()">
-    <div class="premium-modal feedback-variant" (click)="$event.stopPropagation()">
-      <div class="pm-sparkles">
-        <span class="pm-sparkle sp1"></span>
-        <span class="pm-sparkle sp2"></span>
-        <span class="pm-sparkle sp3"></span>
-      </div>
-      <div class="pm-icon-ring"
-        [ngClass]="feedbackType === 'success' ? 'success-ring' : feedbackType === 'error' ? 'danger-ring' : 'warning-ring'">
-        <iconify-icon
-          [icon]="feedbackType === 'success' ? 'solar:check-circle-bold-duotone' : feedbackType === 'error' ? 'solar:danger-bold-duotone' : feedbackType === 'warning' ? 'solar:shield-warning-bold-duotone' : 'solar:danger-bold-duotone'"
-          style="font-size:2.4rem;color:#fff;"></iconify-icon>
-      </div>
-      <h3 class="pm-title">{{ feedbackTitle }}</h3>
-      <p class="pm-subtitle">{{ feedbackMessage }}</p>
-      <button class="pm-btn pm-Ok"
-        [ngClass]="feedbackType === 'success' ? 'pm-success-btn' : feedbackType === 'error' ? 'pm-error-btn' : 'pm-warning-btn'"
-        (click)="closeFeedback()">
-        <iconify-icon icon="solar:check-square-bold" style="font-size:1.1rem;"></iconify-icon>
-        Ok
-      </button>
-    </div>
-  </div>
 </div>

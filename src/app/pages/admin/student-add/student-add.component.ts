@@ -13,7 +13,7 @@ import { SessionService } from '../../../services/session.service';
 import { finalize } from 'rxjs';
 import { SectionService } from '../../../services/section.service';
 import { Section } from '../../../Models/section';
-import Swal from '../../../swal';
+import { PopupService } from '../../../services/popup.service';
 
 declare var bootstrap: any;
 
@@ -94,11 +94,6 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
   filteredSections: Section[] = [];
 
   // Premium Modal Visibility State
-  showConfirmModal = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
   isProcessing = false;
 
   constructor(
@@ -107,7 +102,8 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     private studentService: StudentService,
     private standardService: StandardService,
     private sectionService: SectionService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -207,25 +203,7 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     return this.newStudent.imagePath;
   }
 
-  // ── Premium Feedback ──
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-    if (autoClose) {
-      setTimeout(() => {
-        this.showFeedbackModal = false;
-        if (type === 'success') {
-          this.router.navigate(['/student-list']);
-        }
-      }, 2200);
-    }
-  }
 
-  closeFeedback() {
-    this.showFeedbackModal = false;
-  }
 
   // -------------------------------------------------------
   // EMAIL CHECKING LOGIC
@@ -236,7 +214,7 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     this.studentService.CheckEmail(email).subscribe({
       next: (res) => {
         if (res.exists) {
-          this.showFeedback('warning', 'Email Already Exists!', `The email address "${email}" is already registered. Please use a different one.`);
+          this.popup.warning(`The email address "${email}" is already registered. Please use a different one.`, 'Email Already Exists!');
           // Optionally clear the field:
           if (this.newStudent.studentEmail === email) this.newStudent.studentEmail = '';
           if (this.newStudent.parentEmail === email) this.newStudent.parentEmail = '';
@@ -254,12 +232,12 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     form.form.markAllAsTouched();
 
     if (form.invalid) {
-      this.showFeedback('warning', 'Incomplete Form', 'Please fill in all required fields correctly.');
+      this.popup.warning('Please fill in all required fields correctly.', 'Incomplete Form');
       return;
     }
 
     if (!this.studentDOBStr || !this.admissionDateStr) {
-      this.showFeedback('warning', 'Dates Required', 'Please provide both Date of Birth and Admission Date.');
+      this.popup.warning('Please provide both Date of Birth and Admission Date.', 'Dates Required');
       return;
     }
 
@@ -269,13 +247,15 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     this.newStudent.studentPassword = 'Noshahi.000';
 
     this.isProcessing = true;
+    this.popup.loading('Validating details...');
 
     if (this.newStudent.studentEmail) {
       this.studentService.CheckEmail(this.newStudent.studentEmail).subscribe({
         next: (res) => {
           if (res.exists) {
             this.isProcessing = false;
-            this.showFeedback('warning', 'Email Already Exists!', `The email address "${this.newStudent.studentEmail}" is already registered.`);
+            this.popup.closeLoading();
+            this.popup.warning(`The email address "${this.newStudent.studentEmail}" is already registered.`, 'Email Already Exists!');
             this.newStudent.studentEmail = '';
             this.newStudent.studentPassword = '';
           } else {
@@ -285,7 +265,8 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
         error: (err) => {
           console.error('Error checking email', err);
           this.isProcessing = false;
-          this.showFeedback('error', 'Validation Error', 'Unable to validate email at this time.');
+          this.popup.closeLoading();
+          this.popup.error('Unable to validate email at this time.', 'Validation Error');
         }
       });
     } else {
@@ -336,18 +317,25 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
       } : null
     };
 
+    this.popup.loading('Registering Student...');
+
     this.studentService.SaveStudent(studentToSave).pipe(
       finalize(() => this.isProcessing = false)
     ).subscribe({
       next: () => {
-        this.showFeedback('success', 'Enrolled Successfully', 'Student has been registered in the system. Redirecting...', true);
+        this.popup.closeLoading();
+        this.popup.success('Student has been registered in the system.', 'Enrolled Successfully');
+        setTimeout(() => {
+          this.router.navigate(['/student-list']);
+        }, 1500);
       },
       error: err => {
         console.error('Error while saving student', err);
+        this.popup.closeLoading();
         const errorMsg = err.error && typeof err.error === 'string'
           ? err.error
           : (err.error?.message ? err.error.message : 'Failed to save student. Please check all fields.');
-        this.showFeedback('error', 'Enrollment Failed', errorMsg);
+        this.popup.error(errorMsg, 'Enrollment Failed');
       }
     });
   }

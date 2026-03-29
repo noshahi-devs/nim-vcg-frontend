@@ -12,6 +12,7 @@ import { AppConfigService } from '../../../services/app-config.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { PopupService } from '../../../services/popup.service';
 
 
 export interface GroupedAssignment {
@@ -49,17 +50,6 @@ export class SubjectAssignmentComponent implements OnInit {
   loading: boolean = false;
   isProcessing: boolean = false;
   
-  // Premium Modal State
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  redirectOnClose = false;
-
-  // For Deletion Confirmation
-  showDeleteModal = false;
-  assignmentToDelete: number | null = null;
-
   errorMessage: string | null = null;
   searchTerm: string = '';
 
@@ -77,7 +67,8 @@ export class SubjectAssignmentComponent implements OnInit {
     private standardService: StandardService,
     private sectionService: SectionService,
     private subjectService: SubjectService,
-    private router: Router
+    private router: Router,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -123,7 +114,7 @@ export class SubjectAssignmentComponent implements OnInit {
       error: (err) => {
         console.error("Failed to load initial data", err);
         this.errorMessage = "Failed to synchronize with server.";
-        this.showFeedback('error', 'Sync Error', 'Failed to load initial data. Please check your connectivity.');
+        this.popup.error('Sync Error', 'Failed to load initial data. Please check your connectivity.');
       }
     });
   }
@@ -184,7 +175,7 @@ export class SubjectAssignmentComponent implements OnInit {
           },
           error: (err) => {
             console.error("Failed to load sections", err);
-            this.showFeedback('error', 'Error', 'Failed to load sections.');
+            this.popup.error('Error', 'Failed to load sections.');
           }
         });
       }
@@ -248,7 +239,7 @@ export class SubjectAssignmentComponent implements OnInit {
 
   assignSubject(): void {
     if (!this.model.staffId || !this.model.sectionId || this.model.selectedSubjectIds.length === 0) {
-      this.showFeedback('warning', 'Validation Error', 'Please select Teacher, Section, and at least one Subject.');
+      this.popup.warning('Please select Teacher, Section, and at least one Subject.', 'Validation Error');
       return;
     }
 
@@ -266,7 +257,7 @@ export class SubjectAssignmentComponent implements OnInit {
     forkJoin(requests).subscribe({
       next: (res: any[]) => {
         this.isProcessing = false;
-        this.showFeedback('success', 'Assigned!', `${res.length} subjects assigned successfully.`);
+        this.popup.success('Assigned!', `${res.length} subjects assigned successfully.`);
 
         this.loadInitialData();
         this.model.selectedSubjectIds = [];
@@ -274,46 +265,37 @@ export class SubjectAssignmentComponent implements OnInit {
       error: (err) => {
         this.isProcessing = false;
         const msg = err.error?.message || 'Failed to assign subjects.';
-        this.showFeedback('error', 'Error', msg);
+        this.popup.error('Error', msg);
       }
     });
   }
 
   confirmDelete(id: number): void {
-    this.assignmentToDelete = id;
-    this.showDeleteModal = true;
-  }
-
-  removeAssignment(id: number | null): void {
-    const assignmentId = id || this.assignmentToDelete;
-    if (!assignmentId) return;
-
-    this.isProcessing = true;
-    this.assignmentService.deleteAssignment(assignmentId).subscribe({
-      next: () => {
-        this.isProcessing = false;
-        this.showFeedback('success', 'Removed!', 'The assignment has been deleted.');
-        this.loadInitialData();
-        this.showDeleteModal = false;
-        this.assignmentToDelete = null;
-      },
-      error: () => {
-        this.isProcessing = false;
-        this.showFeedback('error', 'Error', 'Could not delete assignment');
-        this.showDeleteModal = false;
+    this.popup.confirm('Delete Assignment?', 'Are you sure you want to delete this subject assignment from the teacher/class?', 'Yes, Delete', 'Cancel').then((confirmed) => {
+      if (confirmed) {
+        this.removeAssignment(id);
       }
     });
   }
 
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
+  removeAssignment(assignmentId: number): void {
+    if (!assignmentId) return;
 
-  closeFeedback() {
-    this.showFeedbackModal = false;
+    this.isProcessing = true;
+    this.popup.loading('Deleting assignment...');
+    this.assignmentService.deleteAssignment(assignmentId).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
+        this.popup.deleted('Assignment');
+        this.loadInitialData();
+      },
+      error: () => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
+        this.popup.deleteError('Assignment', 'Could not delete assignment');
+      }
+    });
   }
 
   // --- Pagination Methods ---

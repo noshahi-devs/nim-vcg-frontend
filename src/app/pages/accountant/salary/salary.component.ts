@@ -10,6 +10,7 @@ import { StaffService } from '../../../services/staff.service';
 
 import { StaffSalary } from '../../../Models/staff-salary';
 import { Staff } from '../../../Models/staff';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-salary',
@@ -37,20 +38,13 @@ export class SalaryComponent implements OnInit {
   itemsPerPage = 10;
   currentPage = 1;
   loading = false;
-
-  /** MULTI-MODAL STATES */
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-
-  showDeleteModal = false;
-  salaryToDeleteId: number | null = null;
+  Math = Math; // For template access
 
   constructor(
     private staffSalaryService: StaffSalaryService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -64,7 +58,7 @@ export class SalaryComponent implements OnInit {
   }
 
   get totalSalaryPaid(): number {
-    return this.salaries.reduce((acc, s) => acc + (s.netSalary || 0), 0);
+    return this.salaries.reduce((acc, s) => acc + (this.getRowNetSalary(s) || 0), 0);
   }
 
   get averageSalary(): number {
@@ -88,7 +82,7 @@ export class SalaryComponent implements OnInit {
         this.staffList = res.staff || [];
         this.salaries = res.salaries || [];
       },
-      error: () => this.showFeedback('error', 'Sync Failed', 'Unable to synchronize salary records.')
+      error: () => this.popup.error('Sync Failed', 'Unable to synchronize salary records.')
     });
   }
 
@@ -99,7 +93,7 @@ export class SalaryComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        Swal.fire('Error', 'Failed to load staff list', 'error');
+        this.popup.error('Error', 'Failed to load staff list');
       }
     });
   }
@@ -110,7 +104,7 @@ export class SalaryComponent implements OnInit {
     this.loading = true;
     this.staffSalaryService.getStaffSalaries().pipe(finalize(() => this.loading = false)).subscribe({
       next: (res) => this.salaries = res,
-      error: () => Swal.fire('Error', 'Failed to load salaries', 'error')
+      error: () => this.popup.error('Error', 'Failed to load salaries')
     });
   }
 
@@ -137,6 +131,33 @@ export class SalaryComponent implements OnInit {
     );
   }
 
+  /**
+   * Calculates net salary for any specific record manually.
+   * This fixes the "PKR 0" or empty display issue if netSalary isn't saved/returned.
+   */
+  getRowNetSalary(s: StaffSalary): number {
+    if (!s) return 0;
+    const basic = s.basicSalary || 0;
+    const bonus = s.festivalBonus || 0;
+    const allowance = s.allowance || 0;
+    const medical = s.medicalAllowance || 0;
+    const house = s.housingAllowance || 0;
+    const transport = s.transportationAllowance || 0;
+    const saving = s.savingFund || 0;
+    const tax = s.taxes || 0;
+
+    return (
+      basic +
+      bonus +
+      allowance +
+      medical +
+      house +
+      transport -
+      saving -
+      tax
+    );
+  }
+
   onStaffSelect(): void {
     const selectedStaff = this.staffList.find(s => s.staffId === Number(this.salary.staffId));
     if (selectedStaff) {
@@ -146,68 +167,49 @@ export class SalaryComponent implements OnInit {
 
   /* ================= SAVE SALARY ================= */
   saveSalary(): void {
-
-    if (!this.salary.staffId || !this.salary.basicSalary) {
-      this.showFeedback('warning', 'Validation Error', 'Staff & Basic Salary are required fields.');
+    if (!this.salary.staffId || !this.salary.basicSalary || !this.salary.paymentMonth || !this.salary.paymentDate) {
+      this.popup.warning('Incomplete form', 'Please fill all required fields (Staff, Month, Date, and Basic Salary).');
       return;
     }
 
+    this.isProcessing = true;
+
     this.salary.netSalary = this.calculatedNetSalary;
 
-    this.isProcessing = true;
+    this.popup.loading('Saving salary record...');
 
     this.staffSalaryService.addStaffSalary(this.salary).subscribe({
       next: () => {
         this.isProcessing = false;
-        this.showFeedback('success', 'Salary Saved!', 'The salary record has been saved successfully.');
+        this.popup.success('Salary Saved!', 'The salary record has been saved successfully.');
         this.resetForm();
         this.loadSalaries();
       },
       error: () => {
         this.isProcessing = false;
-        this.showFeedback('error', 'Processing Failed', 'An error occurred while saving the salary record.');
+        this.popup.error('Processing Failed', 'An error occurred while saving the salary record.');
       }
     });
   }
 
   /* ================= DELETE ================= */
   deleteSalary(id: number): void {
-    this.salaryToDeleteId = id;
-    this.showDeleteModal = true;
-  }
-
-  confirmDelete(): void {
-    if (!this.salaryToDeleteId) return;
-
-    this.isProcessing = true;
-    this.staffSalaryService.deleteStaffSalary(this.salaryToDeleteId).subscribe({
-      next: () => {
-        this.isProcessing = false;
-        this.showDeleteModal = false;
-        this.salaryToDeleteId = null;
-        this.showFeedback('success', 'Deleted Successfully', 'The salary record has been permanently deleted.');
-        this.loadSalaries();
-      },
-      error: () => {
-        this.isProcessing = false;
-        this.showDeleteModal = false;
-        this.salaryToDeleteId = null;
-        this.showFeedback('error', 'Deletion Failed', 'Could not delete the salary record. Please try again.');
+    this.popup.confirm('Delete Salary Record?', 'This action cannot be undone.').then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Deleting salary record...');
+        this.staffSalaryService.deleteStaffSalary(id).subscribe({
+          next: () => {
+            this.popup.deleted('Salary record');
+            this.loadSalaries();
+          },
+          error: () => {
+            this.popup.error('Deletion Failed', 'Could not delete the salary record. Please try again.');
+          }
+        });
       }
     });
   }
 
-  /* ================= FEEDBACK HELPERS ================= */
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string): void {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback(): void {
-    this.showFeedbackModal = false;
-  }
 
   /* ================= RESET ================= */
   resetForm(): void {

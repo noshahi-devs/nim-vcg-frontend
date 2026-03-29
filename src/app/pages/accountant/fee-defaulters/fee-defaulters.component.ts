@@ -4,6 +4,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { FormsModule } from '@angular/forms';
 import { DueBalanceService, DueBalance } from '../../../services/due-balance.service';
 import { SettingsService } from '../../../services/settings.service';
+import { PopupService } from '../../../services/popup.service';
 
 interface FeeDefaulter {
   feeId: number;
@@ -49,13 +50,7 @@ export class FeeDefaultersComponent implements OnInit {
   criticalCount: number = 0;
   warningCount: number = 0;
 
-  // Premium Modal States
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
   isProcessing = false;
-  showReminderModal = false;
   reminderDefaulter: FeeDefaulter | null = null;
   bulkMode = false;
 
@@ -63,7 +58,11 @@ export class FeeDefaultersComponent implements OnInit {
   schoolInfo: any = {};
   selectedDefaulter: FeeDefaulter | null = null;
 
-  constructor(private dueBalanceService: DueBalanceService, private settingsService: SettingsService) { }
+  constructor(
+    private dueBalanceService: DueBalanceService,
+    private settingsService: SettingsService,
+    private popup: PopupService
+  ) { }
 
   ngOnInit(): void {
     this.loadSchoolInfo();
@@ -95,7 +94,7 @@ export class FeeDefaultersComponent implements OnInit {
       error: (error) => {
         console.error('Error loading due balances:', error);
         this.isProcessing = false;
-        this.showFeedback('error', 'Update Failed', 'Synchronizing with the financial database was unsuccessful. Please check your connection.');
+        this.popup.error('Update Failed', 'Synchronizing with the financial database was unsuccessful. Please check your connection.');
       }
     });
   }
@@ -170,29 +169,43 @@ export class FeeDefaultersComponent implements OnInit {
     }
   }
 
+  confirmReminder(): void {
+    const target = this.bulkMode ? `${this.filteredDefaulters.length} students` : `${this.reminderDefaulter?.studentName}`;
+    this.popup.loading('Sending reminders...');
+    
+    // Simulate API call for reminder
+    setTimeout(() => {
+      this.popup.success('Reminders Sent', `The secure payment notification has been dispatched to ${target}.`);
+    }, 1500);
+  }
+
   sendReminder(defaulter: FeeDefaulter): void {
     this.reminderDefaulter = defaulter;
     this.bulkMode = false;
-    this.showReminderModal = true;
-  }
-
-  confirmReminder(): void {
-    if (this.isProcessing) return;
-
-    this.isProcessing = true;
-    // Simulate API call for reminder
-    setTimeout(() => {
-      this.isProcessing = false;
-      this.showReminderModal = false;
-      const target = this.bulkMode ? `${this.filteredDefaulters.length} students` : `<b>${this.reminderDefaulter?.studentName}</b>`;
-      this.showFeedback('success', 'Reminders Sent', `The secure payment notification has been dispatched to ${target}.`);
-    }, 1500);
+    
+    this.popup.confirm(
+      'Send Reminder?',
+      `Are you sure you want to dispatch a payment reminder to <strong>${defaulter.studentName}</strong>?`,
+      'Dispatch Now',
+      'Cancel'
+    ).then(confirmed => {
+      if (confirmed) this.confirmReminder();
+    });
   }
 
   sendBulkReminders(): void {
     if (this.filteredDefaulters.length === 0) return;
     this.bulkMode = true;
-    this.showReminderModal = true;
+    
+    this.popup.confirm(
+      'Bulk Notification?',
+      `Are you sure you want to dispatch payment reminders to all <strong>${this.filteredDefaulters.length}</strong> filtered students?`,
+      'Dispatch Now',
+      'Cancel',
+      'success'
+    ).then(confirmed => {
+      if (confirmed) this.confirmReminder();
+    });
   }
 
   printTable(): void {
@@ -395,17 +408,6 @@ export class FeeDefaultersComponent implements OnInit {
     }
   }
 
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
-  }
-
   exportCSV(): void {
     const headers = ['Student Name', 'Class', 'Section', 'Fee Type', 'Amount', 'Due Date', 'Days Overdue', 'Status'];
     const rows = this.filteredDefaulters.map(d => [
@@ -433,7 +435,7 @@ export class FeeDefaultersComponent implements OnInit {
   }
 
   exportPDF(): void {
-    this.showFeedback('warning', 'Feature Unavailable', 'PDF generation for financial reports is currently being optimized for high-resolution printing.');
+    this.popup.warning('Feature Unavailable', 'PDF generation for financial reports is currently being optimized for high-resolution printing.');
   }
 
   onSearchChange(): void {

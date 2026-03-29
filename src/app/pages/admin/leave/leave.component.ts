@@ -7,6 +7,7 @@ import { LeaveService } from '../../../services/leave.service';
 import { Leave, LeaveStatus, LeaveType } from '../../../Models/leave';
 import { finalize } from 'rxjs';
 import * as XLSX from 'xlsx';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-leave',
@@ -36,34 +37,20 @@ export class LeaveComponent implements OnInit {
   rowsPerPage = 10;
   currentPage = 1;
 
-  // ── Premium Modal State ──
-  isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' | 'info' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-
   // Detail Modal
   showDetailModal = false;
   selectedLeave: Leave | null = null;
 
-  constructor(private leaveService: LeaveService) { }
+  constructor(
+    private leaveService: LeaveService,
+    private popup: PopupService
+  ) { }
 
   ngOnInit(): void {
     this.loadLeaveData();
   }
 
-  // ── Helpers ──
-  triggerSuccess(title: string, message: string) {
-    this.feedbackType = 'success'; this.feedbackTitle = title; this.feedbackMessage = message; this.showFeedbackModal = true;
-  }
-  triggerError(title: string, message: string) {
-    this.feedbackType = 'error'; this.feedbackTitle = title; this.feedbackMessage = message; this.showFeedbackModal = true;
-  }
-  triggerInfo(title: string, message: string) {
-    this.feedbackType = 'info'; this.feedbackTitle = title; this.feedbackMessage = message; this.showFeedbackModal = true;
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  // Modals are now handled by PopupService
 
   loadLeaveData(): void {
     this.loading = true;
@@ -85,7 +72,7 @@ export class LeaveComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error loading leaves:', err);
-          this.triggerError('Error', 'Failed to load leave data');
+          this.popup.error('Error', 'Failed to load leave data');
         }
       });
   }
@@ -111,12 +98,12 @@ export class LeaveComponent implements OnInit {
 
   refreshData(): void {
     this.loadLeaveData();
-    this.triggerSuccess('Refreshed!', 'Data refreshed successfully.');
+    this.popup.success('Refreshed!', 'Data refreshed successfully.');
   }
 
   exportData(): void {
     if (!this.recentApplications.length) {
-      this.triggerInfo('No Data', 'There is no leave data to export.');
+      this.popup.warning('No Data', 'There is no leave data to export.');
       return;
     }
     const rows = this.recentApplications.map((l, i) => ({

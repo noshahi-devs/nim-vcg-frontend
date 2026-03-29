@@ -10,6 +10,7 @@ import { Standard } from '../../../Models/standard';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { SubjectAssignmentService } from '../../../core/services/subject-assignment.service';
+import { PopupService } from '../../../services/popup.service';
 import { forkJoin, finalize } from 'rxjs';
 
 @Component({
@@ -36,14 +37,7 @@ export class SectionListComponent implements OnInit {
   // Premium Modal Visibility State
   showViewModal = false;
   showEditModal = false;
-
-  // Premium delete/feedback modals
-  showDeleteModal = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  deleteTarget: Section | null = null;
+  // Local popup state removed
 
   sectionList: Section[] = [];
   classes: Standard[] = [];
@@ -57,7 +51,8 @@ export class SectionListComponent implements OnInit {
     private standardService: StandardService,
     private authService: AuthService,
     private staffService: StaffService,
-    private assignmentService: SubjectAssignmentService
+    private assignmentService: SubjectAssignmentService,
+    private popup: PopupService
   ) { }
 
   get filteredSectionList() {
@@ -94,15 +89,7 @@ export class SectionListComponent implements OnInit {
     this.loadStaff();
   }
 
-  // ── Premium Feedback ──
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-    if (autoClose) setTimeout(() => { this.showFeedbackModal = false; }, 2200);
-  }
-  closeFeedback() { this.showFeedbackModal = false; }
+  // Local feedback mechanism removed
 
   loadStaff(): void {
     this.staffService.getAllStaffs().subscribe({
@@ -166,30 +153,25 @@ export class SectionListComponent implements OnInit {
 
   // ── Delete ──
   confirmDelete(sectionItem: Section) {
-    this.deleteTarget = sectionItem;
-    this.showDeleteModal = true;
+    this.popup.confirm('Delete Section', `Are you sure you want to permanently delete section <strong>${sectionItem.sectionName}</strong>? This action cannot be undone.`).then(confirmed => {
+      if (confirmed) {
+        this.executeDelete(sectionItem);
+      }
+    });
   }
 
-  cancelDelete() {
-    this.deleteTarget = null;
-    this.showDeleteModal = false;
-  }
-
-  executeDelete() {
-    if (!this.deleteTarget) return;
-    const section = this.deleteTarget;
-    this.showDeleteModal = false;
+  executeDelete(section: Section) {
+    this.popup.loading('Deleting...');
     this.sectionService.deleteSection(section.sectionId).subscribe({
       next: () => {
+        this.popup.closeLoading();
         this.sectionList = this.sectionList.filter(s => s.sectionId !== section.sectionId);
-        this.deleteTarget = null;
-        this.showFeedback('success', 'Deleted!', `Section "${section.sectionName}" has been permanently deleted.`, true);
+        this.popup.success('Deleted!', `Section "${section.sectionName}" has been permanently deleted.`);
       },
       error: (err) => {
         console.error('Error deleting section:', err);
-        const errorMsg = err.error?.message || 'Failed to delete section. It may have dependent records (Students or Assignments).';
-        this.deleteTarget = null;
-        this.showFeedback('error', 'Cannot Delete Section', errorMsg);
+        this.popup.closeLoading();
+        this.popup.deleteError(section.sectionName, err.error?.message);
       }
     });
   }
@@ -209,19 +191,42 @@ export class SectionListComponent implements OnInit {
   updateSection(): void {
     if (!this.selectedSection) return;
     if (!this.selectedSection.sectionName || !this.selectedSection.className) {
-      this.showFeedback('warning', 'Incomplete Form', 'Please fill in all required fields (Section Name and Class).');
+      this.popup.warning('Please fill in all required fields (Section Name and Class).', 'Incomplete Form');
       return;
     }
     this.editLoading = true;
+    this.popup.loading('Updating section...');
     this.sectionService.updateSection(this.selectedSection.sectionId, this.selectedSection).pipe(
       finalize(() => this.editLoading = false)
     ).subscribe({
       next: () => {
+        this.popup.closeLoading();
         this.loadSections();
         this.showEditModal = false;
-        this.showFeedback('success', 'Section Updated!', `Section "${this.selectedSection?.sectionName}" has been updated successfully.`, true);
+        this.popup.success('Section Updated!', `Section "${this.selectedSection?.sectionName}" has been updated successfully.`);
       },
-      error: () => this.showFeedback('error', 'Update Failed', 'Failed to update section. Please try again.')
+      error: () => {
+        this.popup.closeLoading();
+        this.popup.error('Update Failed', 'Failed to update section. Please try again.');
+      }
     });
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -10,6 +10,7 @@ import { AuthService } from '../../../SecurityModels/auth.service';
 import { StaffService } from '../../../services/staff.service';
 import { SectionService } from '../../../services/section.service';
 import { forkJoin, finalize } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-class-list',
@@ -25,20 +26,13 @@ export class ClassListComponent implements OnInit, AfterViewInit {
   searchTerm = '';
   classToDelete: Standard | null = null;
   selectedClassForView: Standard | null = null;
-  selectedClassForEdit: any = {}; // Using any for local edit state
+  selectedClassForEdit: any = {};
   Math = Math;
 
-  // Premium Modal Visibility State
+  // Modal Visibility
   showViewModal = false;
   showEditModal = false;
-  showDeleteModal = false;
-  showFeedbackModal = false;
   isProcessing = false;
-
-  // Feedback State
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
 
   // Pagination
   currentPage = 1;
@@ -62,7 +56,8 @@ export class ClassListComponent implements OnInit, AfterViewInit {
     private authService: AuthService,
     private staffService: StaffService,
     private sectionService: SectionService,
-    private assignmentService: SubjectAssignmentService
+    private assignmentService: SubjectAssignmentService,
+    private popup: PopupService
   ) { }
 
   // Pagination helpers
@@ -164,8 +159,15 @@ export class ClassListComponent implements OnInit, AfterViewInit {
   }
 
   confirmDelete(classItem: Standard) {
-    this.classToDelete = classItem;
-    this.showDeleteModal = true;
+    this.popup.confirm(
+      'Delete Class?',
+      `"${classItem.standardName}" will be permanently deleted.`
+    ).then(confirmed => {
+      if (confirmed) {
+        this.classToDelete = classItem;
+        this.deleteClass();
+      }
+    });
   }
 
   openViewModal(classItem: Standard) {
@@ -184,62 +186,47 @@ export class ClassListComponent implements OnInit, AfterViewInit {
       return;
     }
     
-    this.isProcessing = true;
-    console.log("Starting class update for ID:", this.selectedClassForEdit.standardId);
-
+    this.popup.loading('Saving changes...');
     this.standardService.updateStandard(this.selectedClassForEdit).pipe(
       finalize(() => {
-        this.isProcessing = false;
-        console.log("Class update operation finalized");
+        this.popup.closeLoading();
       })
     ).subscribe({
-      next: (res) => {
-        console.log("Class updated successfully:", res);
+      next: () => {
         this.loadClasses();
         this.showEditModal = false;
-        this.showFeedback('success', 'Class Updated', 'Academic structure has been successfully modified.');
+        this.popup.updated('Class');
       },
-      error: (err) => {
-        console.error("Update API Error:", err);
-        const errorMsg = err.error?.message || 'Unable to save changes to the academic record.';
-        this.showFeedback('error', 'Update Failed', errorMsg);
+      error: () => {
+        this.popup.error('Could not save changes.', 'The class name may already exist or the server is unavailable.');
       }
     });
   }
 
   deleteClass() {
     if (!this.classToDelete) return;
+    this.popup.loading('Deleting...');
     this.isProcessing = true;
-    this.standardService.deleteStandard(this.classToDelete.standardId).pipe(
-      finalize(() => this.isProcessing = false)
-    ).subscribe({
+    this.standardService.deleteStandard(this.classToDelete.standardId).subscribe({
       next: () => {
+        this.isProcessing = false;
+        this.popup.closeLoading();
         this.classList = this.classList.filter(c => c.standardId !== this.classToDelete!.standardId);
-        this.showFeedback('success', 'Class Deleted', 'The academic record has been permanently removed.');
         this.classToDelete = null;
-        this.showDeleteModal = false;
+        this.popup.deleted('Class');
       },
       error: (err) => {
-        console.error("Delete API Error:", err);
-        const errorMsg = err.error?.message || 'Failed to delete class. It may have dependent records (Sections, Subjects, or Students).';
-        this.showFeedback('error', 'Cannot Delete Class', errorMsg);
-        this.showDeleteModal = false;
+        this.isProcessing = false;
+        this.popup.closeLoading();
+        const name = this.classToDelete?.standardName || 'This class';
+        const reason = err?.error?.message || 'It may still have linked students, sections, or subjects. Please remove those first.';
+        this.popup.deleteError(name, reason);
       }
     });
   }
 
   isAdminOrPrincipal(): boolean {
     return this.authService.hasAnyRole(['Admin', 'Principal']);
-  }
-
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-    if (type === 'success') {
-      setTimeout(() => this.showFeedbackModal = false, 2500);
-    }
   }
 
   ngAfterViewInit() { }

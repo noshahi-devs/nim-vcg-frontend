@@ -8,6 +8,7 @@ import { Attendance, AttendanceType } from '../../../Models/attendance';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { finalize, forkJoin } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-staff-attendance',
@@ -33,12 +34,6 @@ export class StaffAttendanceComponent implements OnInit {
 
   /** PREMIUM UI STATES */
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  
-  showConfirmModal = false;
   pendingRecords: any[] = [];
 
   // Pagination & Search
@@ -49,7 +44,8 @@ export class StaffAttendanceComponent implements OnInit {
   constructor(
     private staffService: StaffService,
     private attendanceService: AttendanceService,
-    private authService: AuthService
+    private authService: AuthService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -85,7 +81,7 @@ export class StaffAttendanceComponent implements OnInit {
 
       },
       error: (err) => {
-        this.triggerError('Error', 'Unable to load staff data');
+        this.popup.error('Error', 'Unable to load staff data');
         console.error(err);
       }
     });
@@ -93,12 +89,12 @@ export class StaffAttendanceComponent implements OnInit {
 
   markAllPresent(): void {
     this.staffMembers.forEach(s => s.status = 'Present');
-    this.triggerSuccess('Updated', 'All Marked Present');
+    this.popup.success('Updated', 'All Marked Present');
   }
 
   markAllAbsent(): void {
     this.staffMembers.forEach(s => s.status = 'Absent');
-    this.triggerSuccess('Updated', 'All Marked Absent');
+    this.popup.success('Updated', 'All Marked Absent');
   }
 
   saveAttendance(): void {
@@ -106,7 +102,7 @@ export class StaffAttendanceComponent implements OnInit {
     const unmarked = this.staffMembers.filter(s => !s.status);
 
     if (markedRecords.length === 0) {
-      this.triggerWarning('No Data', 'No staff to mark attendance for.');
+      this.popup.warning('No Data', 'No staff to mark attendance for.');
       return;
     }
 
@@ -123,26 +119,33 @@ export class StaffAttendanceComponent implements OnInit {
     });
 
     if (unmarked.length > 0) {
-      this.showConfirmModal = true;
+      this.popup.confirm(
+        'Incomplete Attendance',
+        'Some staff members are not marked. Do you want to save anyway?',
+        'Yes, Save',
+        'Review'
+      ).then(confirmed => {
+        if (confirmed) this.confirmSave();
+      });
     } else {
       this.confirmSave();
     }
   }
 
   confirmSave(): void {
-    this.showConfirmModal = false;
     this.isProcessing = true;
+    this.popup.loading('Saving staff attendance...');
 
     forkJoin(this.pendingRecords).subscribe({
       next: () => {
         this.isProcessing = false;
-        this.triggerSuccess('Saved!', 'Staff attendance saved successfully');
+        this.popup.success('Saved!', 'Staff attendance saved successfully');
         this.resetForm();
       },
       error: (err) => {
         console.error('Attendance save error', err);
         this.isProcessing = false;
-        this.triggerError('Error', 'Failed to save staff attendance.');
+        this.popup.error('Error', 'Failed to save staff attendance.');
       }
     });
   }
@@ -186,30 +189,8 @@ export class StaffAttendanceComponent implements OnInit {
     return { present, absent, unmarked, total: this.staffMembers.length };
   }
 
-  // Helper Methods for Modals
-  triggerSuccess(title: string, message: string) {
-    this.feedbackType = 'success';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  triggerError(title: string, message: string) {
-    this.feedbackType = 'error';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  triggerWarning(title: string, message: string) {
-    this.feedbackType = 'warning';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
   closeFeedback() {
-    this.showFeedbackModal = false;
+    // legacy
   }
 }
 

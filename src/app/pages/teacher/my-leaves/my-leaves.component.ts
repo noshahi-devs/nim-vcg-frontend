@@ -11,6 +11,7 @@ import { finalize, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { RouterModule } from '@angular/router';
 import * as XLSX from 'xlsx';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-my-leaves',
@@ -48,12 +49,6 @@ export class MyLeavesComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'desc';
   LeaveStatus = LeaveStatus; // For template access
 
-  // Premium Modal States
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-
   // Detail Modal
   showDetailModal = false;
   selectedLeave: Leave | null = null;
@@ -61,7 +56,8 @@ export class MyLeavesComponent implements OnInit {
   constructor(
     private leaveService: LeaveService,
     private authService: AuthService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -101,19 +97,19 @@ export class MyLeavesComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error loading my leaves:', err);
-          this.showFeedback('error', 'Error', 'Failed to load your leave history');
+          this.popup.error('Error', 'Failed to load your leave history');
         }
       });
   }
 
   refreshData(): void {
     this.loadMyLeaves();
-    this.showFeedback('success', 'Refreshed!', 'Your leave history has been updated.');
+    this.popup.success('Refreshed!', 'Your leave history has been updated.');
   }
 
   exportData(): void {
     if (!this.filteredLeaves || this.filteredLeaves.length === 0) {
-      this.showFeedback('warning', 'No Data', 'There is no data to export.');
+      this.popup.warning('No Data', 'There is no data to export.');
       return;
     }
 
@@ -147,10 +143,10 @@ export class MyLeavesComponent implements OnInit {
       const fileName = `My_Leaves_Report_${timestamp}.xlsx`;
       
       XLSX.writeFile(wb, fileName);
-      this.showFeedback('success', 'Exported!', 'Your leave history has been downloaded successfully.');
+      this.popup.success('Exported!', 'Your leave history has been downloaded successfully.');
     } catch (error) {
       console.error('Export failed:', error);
-      this.showFeedback('error', 'Export Failed', 'An error occurred while generating the Excel file.');
+      this.popup.error('Export Failed', 'An error occurred while generating the Excel file.');
     }
   }
 
@@ -303,16 +299,7 @@ export class MyLeavesComponent implements OnInit {
     }
   }
 
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
-  }
+  // Modals are now handled by PopupService
 
   viewDetails(leave: Leave): void {
     this.selectedLeave = leave;

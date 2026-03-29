@@ -12,8 +12,8 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import Swal from '../../../swal';
 import { finalize, forkJoin } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-monthly-payment',
@@ -44,23 +44,12 @@ export class MonthlyPaymentComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   loading = false;
-
+  isProcessing = false;
   showAddEditDialog = false;
   showViewDialog = false;
   isEditMode = false;
   showPaymentDialog = false;
   paymentForm!: FormGroup;
-
-  // Premium Modal State
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  isProcessing = false;
-
-  // For Deletion Confirmation
-  showDeleteModal = false;
-  paymentToDelete: MonthlyPayment | null = null;
 
   selectedPayment!: MonthlyPayment;
 
@@ -81,7 +70,8 @@ export class MonthlyPaymentComponent implements OnInit {
     private commonService: CommonServices,
     private paymentService: MonthlyPaymentService,
     private settingsService: SettingsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private popup: PopupService
   ) { }
 
   autoAddClassId: any = null;
@@ -204,7 +194,7 @@ export class MonthlyPaymentComponent implements OnInit {
         this.applyFilters();
         this.checkAutoAdd();
       },
-      error: () => this.showFeedback('error', 'Sync Failed', 'Unable to synchronize payment records with the server.')
+      error: () => this.popup.error('Sync Failed', 'Unable to synchronize payment records with the server.')
     });
   }
 
@@ -212,7 +202,7 @@ export class MonthlyPaymentComponent implements OnInit {
     this.commonService.getAllStudents().subscribe(r => this.students = r);
     this.commonService.getAllStandards().subscribe({
       next: r => this.standards = r,
-      error: () => this.showFeedback('error', 'Error', 'Failed to load standards.')
+      error: () => this.popup.error('Error', 'Failed to load standards.')
     });
     this.commonService.getAllFees().subscribe(r => {
       this.fees = r;
@@ -225,7 +215,7 @@ export class MonthlyPaymentComponent implements OnInit {
     this.loading = true;
     this.paymentService.getAllMonthlyPayments().pipe(finalize(() => this.loading = false)).subscribe({
       next: res => { this.payments = res || []; this.applyFilters(); },
-      error: () => this.showFeedback('error', 'Error', 'Failed to load payment history.')
+      error: () => this.popup.error('Error', 'Failed to load payment history.')
     });
   }
 
@@ -390,11 +380,11 @@ export class MonthlyPaymentComponent implements OnInit {
 
   savePayment() {
     if (this.form.invalid) {
-      this.showFeedback('warning', 'Validation Error', 'Please fill in all required fields.');
+      this.popup.warning('Please fill in all required fields.', 'Validation Error');
       return;
     }
 
-    this.isProcessing = true;
+    this.popup.loading(this.isEditMode ? 'Updating payment...' : 'Recording payment...');
 
     const payload = this.form.getRawValue();
     payload.totalAmount = this.form.get('totalAmount')?.value;
@@ -404,31 +394,25 @@ export class MonthlyPaymentComponent implements OnInit {
     if (this.isEditMode) {
       this.paymentService.updateMonthlyPayment(payload).subscribe({
         next: (res) => {
-          this.isProcessing = false;
           this.closeDialog();
           this.loadPaymentHistory();
-          this.showFeedback('success', 'Updated!', 'Payment updated successfully.');
+          this.popup.success('Updated!', 'Payment updated successfully.');
           this.checkAndAutoPrint(payload, res);
         },
         error: (err) => {
-          this.isProcessing = false;
-          console.error('Update Error:', err);
-          this.showFeedback('error', 'Error', 'Failed to update payment. ' + (err.error?.title || err.message || ''));
+          this.popup.error('Error', 'Failed to update payment. ' + (err.error?.title || err.message || ''));
         }
       });
     } else {
       this.paymentService.createMonthlyPayment(payload).subscribe({
         next: (res) => {
-          this.isProcessing = false;
           this.closeDialog();
           this.loadPaymentHistory();
-          this.showFeedback('success', 'Created!', 'Payment created successfully.');
+          this.popup.success('Created!', 'Payment created successfully.');
           this.checkAndAutoPrint(payload, res);
         },
         error: (err) => {
-          this.isProcessing = false;
-          console.error('Create Error:', err);
-          this.showFeedback('error', 'Error', 'Failed to create payment. ' + (err.error?.title || err.message || ''));
+          this.popup.error('Error', 'Failed to create payment. ' + (err.error?.title || err.message || ''));
         }
       });
     }
@@ -454,70 +438,57 @@ export class MonthlyPaymentComponent implements OnInit {
 
   /* ---------- DELETE (SweetAlert2) ---------- */
   confirmDelete(p: MonthlyPayment) {
-    this.paymentToDelete = p;
-    this.showDeleteModal = true;
+    this.popup.confirm(
+      'Delete Payment?',
+      `Are you sure you want to delete the payment record for <strong>${p.student?.studentName}</strong>?`,
+      'Yes, Delete',
+      'Cancel'
+    ).then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Deleting payment...');
+        this.paymentService.deleteMonthlyPayment(p.monthlyPaymentId).subscribe({
+          next: () => {
+            this.loadPaymentHistory();
+            this.popup.deleted('Payment record');
+          },
+          error: (err) => {
+            console.error('Delete Error:', err);
+            this.popup.deleteError('Payment record', 'Failed to delete the record. ' + (err.error?.title || err.message || ''));
+          }
+        });
+      }
+    });
   }
 
   deletePayment() {
-    if (!this.paymentToDelete) return;
-
-    this.isProcessing = true;
-    this.paymentService.deleteMonthlyPayment(this.paymentToDelete.monthlyPaymentId).subscribe({
-      next: () => {
-        this.isProcessing = false;
-        this.showDeleteModal = false;
-        this.paymentToDelete = null;
-        this.loadPaymentHistory(); // Changed from loadPayments
-        this.showFeedback('success', 'Deleted!', 'Payment deleted successfully.');
-      },
-      error: (err) => {
-        this.isProcessing = false;
-        this.showDeleteModal = false;
-        console.error('Delete Error:', err);
-        this.showFeedback('error', 'Error', 'Failed to delete payment. ' + (err.error?.title || err.message || ''));
-      }
-    });
+    // legacy - unused
   }
 
   collectPayment() {
     if (this.paymentForm.invalid) {
-      this.showFeedback('warning', 'Validation Error', 'Please fill in all required fields for payment collection.');
+      this.popup.warning('Please fill in all required fields.', 'Validation Error');
       return;
     }
     const payload = this.paymentForm.value;
 
-    this.isProcessing = true;
+    this.popup.loading('Collecting payment...');
 
     this.paymentService.createMonthlyPayment(payload).subscribe({
       next: () => {
-        this.isProcessing = false;
         this.showPaymentDialog = false;
         this.loadPaymentHistory();
-        this.showFeedback('success', 'Success!', 'Payment has been collected successfully.');
+        this.popup.success('Success!', 'Payment has been collected successfully.');
       },
       error: (err) => {
-        this.isProcessing = false;
         const msg = err.error?.message || 'Failed to collect payment.';
-        this.showFeedback('error', 'Error', msg);
+        this.popup.error('Error', msg);
       }
     });
-  }
-
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
   }
 
   closeDialog() {
     this.showAddEditDialog = false;
     this.showViewDialog = false;
-    this.showDeleteModal = false; // Close delete modal
     this.showPaymentDialog = false; // Close payment dialog
     this.feeSearchTerm = '';
     this.monthSearchTerm = '';

@@ -6,6 +6,7 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { SectionService } from '../../../services/section.service';
 import { StaffService } from '../../../services/staff.service';
 import { StandardService } from '../../../services/standard.service';
+import { PopupService } from '../../../services/popup.service';
 import { Staff, Designation } from '../../../Models/staff';
 import { Standard } from '../../../Models/standard';
 import { Section } from '../../../Models/section';
@@ -27,20 +28,14 @@ export class SectionAddComponent implements OnInit {
   sectionForm!: FormGroup;
   isSaving = false;
 
-  // Premium Modal Visibility State
-  showConfirmModal = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private sectionService: SectionService,
     private staffService: StaffService,
     private standardService: StandardService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private popup: PopupService
   ) {
     this.sectionForm = this.fb.group({
       className: ['', Validators.required],
@@ -68,37 +63,18 @@ export class SectionAddComponent implements OnInit {
     });
   }
 
-  // ── Premium Feedback ──
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-    if (autoClose) {
-      setTimeout(() => {
-        this.showFeedbackModal = false;
-        if (type === 'success') {
-          this.router.navigate(['/section-list']);
-        }
-      }, 2200);
-    }
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
-  }
-
   onSubmit(): void {
     if (this.sectionForm.invalid) {
       this.sectionForm.markAllAsTouched();
-      this.showFeedback('error', 'Form Incomplete', 'Please fill in all required fields before saving.');
+      this.popup.warning('Please fill in all required fields before saving.');
       return;
     }
-    this.showConfirmModal = true;
-  }
-
-  cancelSave() {
-    this.showConfirmModal = false;
+    
+    this.popup.confirm('Save Section?', 'Are you sure you want to add this section?', 'Yes, Save', 'Cancel', 'success').then(confirmed => {
+      if (confirmed) {
+        this.confirmSave();
+      }
+    });
   }
 
   confirmSave(): void {
@@ -112,17 +88,20 @@ export class SectionAddComponent implements OnInit {
     };
 
     this.isSaving = true;
-    this.showConfirmModal = false;
+    this.popup.loading('Saving section...');
 
     this.sectionService.createSection(newSection).pipe(
       finalize(() => this.isSaving = false)
     ).subscribe({
       next: () => {
-        this.showFeedback('success', 'Section Added!', 'The new section has been created successfully. Redirecting...', true);
+        this.popup.closeLoading();
+        this.popup.saved('Section');
+        this.router.navigate(['/section-list']);
       },
       error: (err) => {
         console.error(err);
-        this.showFeedback('error', 'Error', 'Failed to add section. Please try again.');
+        this.popup.closeLoading();
+        this.popup.error('Could not save section.', err?.error?.message || 'Please check your inputs and try again.');
       }
     });
   }

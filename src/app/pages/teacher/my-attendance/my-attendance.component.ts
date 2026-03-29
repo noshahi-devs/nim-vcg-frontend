@@ -5,7 +5,7 @@ import { AuthService } from '../../../SecurityModels/auth.service';
 import { AttendanceService } from '../../../services/attendance.service';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { StaffService } from '../../../services/staff.service';
-import Swal from '../../../swal';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
     selector: 'app-my-attendance',
@@ -27,13 +27,6 @@ export class MyAttendanceComponent implements OnInit {
     history: any[] = [];
     isProcessing = false;
 
-    // Premium Modal States
-    showFeedbackModal = false;
-    feedbackType: 'success' | 'error' | 'warning' = 'success';
-    feedbackTitle = '';
-    feedbackMessage = '';
-    onOkFeedback: (() => void) | null = null;
-
     // Pagination
     currentPage = 1;
     pageSize = 10;
@@ -41,16 +34,11 @@ export class MyAttendanceComponent implements OnInit {
     totalPages = 1;
     paginatedHistory: any[] = [];
 
-    // Confirmation Modal States
-    showConfirmModal = false;
-    confirmTitle = '';
-    confirmMessage = '';
-    confirmActionType: 'checkIn' | 'checkOut' = 'checkIn';
-
     constructor(
         private authService: AuthService,
         private attendanceService: AttendanceService,
-        private staffService: StaffService
+        private staffService: StaffService,
+        private popup: PopupService
     ) { }
 
     ngOnInit(): void {
@@ -66,8 +54,8 @@ export class MyAttendanceComponent implements OnInit {
                         this.staffId = staff.staffId;
                         this.loadHistory();
                     } else {
-                        this.showFeedback('warning', 'Profile Warning', 'Staff profile could not be found for this user.');
-                        this.loadHistory(); // Still try to load if there's old data, though unlikely
+                        this.popup.warning('Profile Warning', 'Staff profile could not be found for this user.');
+                        this.loadHistory();
                     }
                 },
                 error: (err) => {
@@ -115,19 +103,23 @@ export class MyAttendanceComponent implements OnInit {
 
     markAttendance() {
         if (!this.staffId) {
-            this.showFeedback('error', 'Profile Error', 'Staff profile not found. Cannot mark attendance.');
+            this.popup.error('Profile Error', 'Staff profile not found. Cannot mark attendance.');
             return;
         }
 
-        this.openConfirmModal(
-            'checkIn',
+        this.popup.confirm(
             'Confirm Check-In',
-            `Record your presence for today, ${this.today.toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' })}?`
-        );
+            `Record your presence for today, ${this.today.toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' })}?`,
+            'Confirm action',
+            'Not now'
+        ).then(confirmed => {
+            if (confirmed) this.processCheckIn();
+        });
     }
 
     processCheckIn() {
         this.isProcessing = true;
+        this.popup.loading('Recording attendance...');
         const payload = {
             attendanceId: 0,
             date: this.getLocalIsoString(new Date()),
@@ -140,33 +132,36 @@ export class MyAttendanceComponent implements OnInit {
         this.attendanceService.addAttendance(payload as any).subscribe({
             next: () => {
                 this.isProcessing = false;
-                this.showFeedback('success', 'Checked In!', 'Your attendance has been recorded.', () => {
-                    this.loadHistory();
-                });
+                this.popup.success('Checked In!', 'Your attendance has been recorded.');
+                this.loadHistory();
             },
             error: (err) => {
                 this.isProcessing = false;
                 console.error(err);
-                this.showFeedback('error', 'Error', 'Database rejected attendance. Please contact admin.');
+                this.popup.error('Error', 'Database rejected attendance. Please contact admin.');
             }
         });
     }
 
     markCheckOut() {
         if (!this.staffId) {
-            this.showFeedback('error', 'Profile Error', 'Staff profile not found. Cannot mark check-out.');
+            this.popup.error('Profile Error', 'Staff profile not found. Cannot mark check-out.');
             return;
         }
 
-        this.openConfirmModal(
-            'checkOut',
+        this.popup.confirm(
             'Confirm Check-Out',
-            `Are you sure you want to clock out for today?`
-        );
+            `Are you sure you want to clock out for today?`,
+            'Confirm action',
+            'Not now'
+        ).then(confirmed => {
+            if (confirmed) this.processCheckOut();
+        });
     }
 
     processCheckOut() {
         this.isProcessing = true;
+        this.popup.loading('Recording check-out time...');
         const payload = {
             attendanceId: 0,
             date: this.getLocalIsoString(new Date()),
@@ -179,14 +174,13 @@ export class MyAttendanceComponent implements OnInit {
         this.attendanceService.checkOutStaff(payload as any).subscribe({
             next: () => {
                 this.isProcessing = false;
-                this.showFeedback('success', 'Checked Out!', 'Your check-out time has been recorded.', () => {
-                    this.loadHistory();
-                });
+                this.popup.success('Checked Out!', 'Your check-out time has been recorded.');
+                this.loadHistory();
             },
             error: (err) => {
                 this.isProcessing = false;
                 console.error(err);
-                this.showFeedback('error', 'Error', err?.error || 'Database rejected check-out. Please contact admin.');
+                this.popup.error('Error', err?.error || 'Database rejected check-out. Please contact admin.');
             }
         });
     }
@@ -222,40 +216,16 @@ export class MyAttendanceComponent implements OnInit {
     }
 
     // Modal Helpers
-    showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, cb?: () => void) {
-        this.feedbackType = type;
-        this.feedbackTitle = title;
-        this.feedbackMessage = message;
-        this.showFeedbackModal = true;
-        this.onOkFeedback = cb || null;
-    }
-
     closeFeedback() {
-        this.showFeedbackModal = false;
-        if (this.onOkFeedback) {
-            this.onOkFeedback();
-            this.onOkFeedback = null;
-        }
-    }
-
-    openConfirmModal(type: 'checkIn' | 'checkOut', title: string, message: string) {
-        this.confirmActionType = type;
-        this.confirmTitle = title;
-        this.confirmMessage = message;
-        this.showConfirmModal = true;
+        // legacy
     }
 
     closeConfirmModal() {
-        this.showConfirmModal = false;
+        // legacy
     }
 
     confirmAction() {
-        this.showConfirmModal = false;
-        if (this.confirmActionType === 'checkIn') {
-            this.processCheckIn();
-        } else {
-            this.processCheckOut();
-        }
+        // legacy
     }
 
     updatePagination() {

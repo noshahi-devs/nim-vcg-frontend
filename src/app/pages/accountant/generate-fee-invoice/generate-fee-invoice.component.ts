@@ -8,8 +8,8 @@ import { StandardService } from '../../../services/standard.service';
 import { Fee } from '../../../Models/fee';
 import { FeeType } from '../../../Models/feetype';
 import { Standard } from '../../../Models/standard';
-import Swal from '../../../swal';
 import { finalize, forkJoin } from 'rxjs';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-generate-fee-invoice',
@@ -41,27 +41,18 @@ export class GenerateFeeInvoiceComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   loading = false;
+  isProcessing = false;
 
   // ===== MODAL =====
   showFeeDialog = false;
   isEditMode = false;
   feeForm!: FormGroup;
 
-  // Premium Modal State
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  isProcessing = false;
-
-  // For Deletion Confirmation
-  showDeleteModal = false;
-  feeToDelete: Fee | null = null;
-
   constructor(
     private feeService: FeeService,
     private feeTypeService: FeeTypeService,
-    private standardService: StandardService
+    private standardService: StandardService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -102,7 +93,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
         this.fees = res.fees || [];
         this.applyFilters();
       },
-      error: () => this.showFeedback('error', 'Error', 'Failed to load fee records.')
+      error: () => this.popup.error('Error', 'Failed to load fee records.')
     });
   }
 
@@ -110,7 +101,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     this.loading = true;
     this.feeService.getAllFees().pipe(finalize(() => this.loading = false)).subscribe({
       next: res => { this.fees = res; this.applyFilters(); },
-      error: () => this.showFeedback('error', 'Error', 'Failed to load fee records.')
+      error: () => this.popup.error('Error', 'Failed to load fee records.')
     });
   }
 
@@ -187,32 +178,28 @@ export class GenerateFeeInvoiceComponent implements OnInit {
     if (this.feeForm.invalid) return;
     const feeData = this.feeForm.value as Fee;
 
-    this.isProcessing = true;
+    this.popup.loading(this.isEditMode ? 'Updating record...' : 'Creating record...');
 
     if (this.isEditMode) {
       this.feeService.updateFee(feeData).subscribe({
         next: () => {
-          this.isProcessing = false;
           this.showFeeDialog = false;
           this.loadFees();
-          this.showFeedback('success', 'Updated!', 'Fee updated successfully.');
+          this.popup.success('Updated!', 'Fee updated successfully.');
         },
         error: () => {
-          this.isProcessing = false;
-          this.showFeedback('error', 'Error', 'Failed to update fee.');
+          this.popup.error('Error', 'Failed to update fee.');
         }
       });
     } else {
       this.feeService.createFee(feeData).subscribe({
         next: () => {
-          this.isProcessing = false;
           this.showFeeDialog = false;
           this.loadFees();
-          this.showFeedback('success', 'Created!', 'Fee created successfully.');
+          this.popup.success('Created!', 'Fee created successfully.');
         },
         error: () => {
-          this.isProcessing = false;
-          this.showFeedback('error', 'Error', 'Failed to create fee.');
+          this.popup.error('Error', 'Failed to create fee.');
         }
       });
     }
@@ -220,42 +207,33 @@ export class GenerateFeeInvoiceComponent implements OnInit {
 
   /* ---------- DELETE ---------- */
   confirmDelete(fee: Fee): void {
-    this.feeToDelete = fee;
-    this.showDeleteModal = true;
-  }
-
-  deleteFee(): void {
-    if (!this.feeToDelete) return;
-    const id = this.feeToDelete.feeId;
-
-    this.isProcessing = true;
-    this.feeService.deleteFee(id).subscribe({
-      next: () => {
-        this.isProcessing = false;
-        this.showDeleteModal = false;
-        this.feeToDelete = null;
-        this.loadFees();
-        this.showFeedback('success', 'Deleted!', 'Fee record has been deleted.');
-      },
-      error: () => {
-        this.isProcessing = false;
-        this.showDeleteModal = false;
-        this.feeToDelete = null;
-        this.showFeedback('error', 'Error', 'Failed to delete fee.');
+    this.popup.confirm(
+      'Delete Fee Setup?',
+      `Are you sure you want to delete the fee setup for <strong>${fee.standard?.standardName}</strong> (${fee.feeType?.typeName})?`,
+      'Yes, Delete',
+      'Cancel'
+    ).then(confirmed => {
+      if (confirmed) {
+        this.popup.loading('Deleting setup...');
+        this.feeService.deleteFee(fee.feeId).subscribe({
+          next: () => {
+            this.loadFees();
+            this.popup.deleted('Fee record');
+          },
+          error: (err) => {
+            console.error('Delete Error:', err);
+            this.popup.deleteError('Fee record', 'Failed to delete record. ' + (err.error?.title || err.message || ''));
+          }
+        });
       }
     });
   }
 
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
+  deleteFee(): void {
+    // legacy - unused
   }
 
-  closeFeedback() {
-    this.showFeedbackModal = false;
-  }
+
 }
 
 

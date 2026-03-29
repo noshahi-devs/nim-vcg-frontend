@@ -10,6 +10,7 @@ import { Designation } from '../../../Models/staff';
 import Swal from '../../../swal';
 import { finalize, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-apply-leaves',
@@ -41,17 +42,11 @@ export class ApplyLeavesComponent implements OnInit {
   isHalfDay = false;
   submitting = false;
 
-  // Premium Modal States
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
-  isProcessing = false;
-
   constructor(
     private leaveService: LeaveService,
     private authService: AuthService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private popup: PopupService
   ) { }
 
   ngOnInit(): void {
@@ -66,7 +61,7 @@ export class ApplyLeavesComponent implements OnInit {
         finalize(() => this.loadingProfile = false),
         catchError(err => {
           console.error("Error loading staff profile:", err);
-          this.showFeedback('error', 'Profile Error', 'Could not load your profile data. Please contact support.');
+          this.popup.error('Profile Error', 'Could not load your profile data.');
           return of(null);
         })
       ).subscribe(staff => {
@@ -120,22 +115,22 @@ export class ApplyLeavesComponent implements OnInit {
 
   validateForm(): boolean {
     if (!this.leaveTypeStr) {
-      this.showFeedback('warning', 'Missing Information', 'Please select a leave type.');
+      this.popup.warning('Missing Information', 'Please select a leave type.');
       return false;
     }
 
     if (!this.fromDate) {
-      this.showFeedback('warning', 'Missing Information', 'Please select from date.');
+      this.popup.warning('Missing Information', 'Please select from date.');
       return false;
     }
 
     if (!this.toDate) {
-      this.showFeedback('warning', 'Missing Information', 'Please select to date.');
+      this.popup.warning('Missing Information', 'Please select to date.');
       return false;
     }
 
     if (!this.reason.trim()) {
-      this.showFeedback('warning', 'Missing Information', 'Please provide a reason for leave.');
+      this.popup.warning('Missing Information', 'Please provide a reason for leave.');
       return false;
     }
 
@@ -143,7 +138,7 @@ export class ApplyLeavesComponent implements OnInit {
     const to = new Date(this.toDate);
 
     if (to < from) {
-      this.showFeedback('error', 'Invalid Dates', 'To date cannot be before from date.');
+      this.popup.error('Invalid Dates', 'To date cannot be before from date.');
       return false;
     }
 
@@ -154,7 +149,7 @@ export class ApplyLeavesComponent implements OnInit {
     if (!this.validateForm()) return;
 
     this.submitting = true;
-    this.isProcessing = true;
+    this.popup.loading('Submitting leave request...');
 
     const leaveData: Leave = {
       staffId: this.staffId!,
@@ -168,16 +163,15 @@ export class ApplyLeavesComponent implements OnInit {
     this.leaveService.createLeave(leaveData)
       .pipe(finalize(() => {
         this.submitting = false;
-        this.isProcessing = false;
       }))
       .subscribe({
         next: (resp) => {
-          this.showFeedback('success', 'Leave Applied Successfully!', 'Your leave request has been submitted for approval.');
+          this.popup.success('Leave Applied Successfully!', 'Your leave request has been submitted for approval.');
           this.resetForm();
         },
         error: (err) => {
           console.error('Error submitting leave:', err);
-          this.showFeedback('error', 'Error', 'Failed to submit leave request');
+          this.popup.error('Error', 'Failed to submit leave request');
         }
       });
   }
@@ -191,16 +185,7 @@ export class ApplyLeavesComponent implements OnInit {
     this.isHalfDay = false;
   }
 
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
-  }
+  // Modals are now handled by PopupService
 }
 
 

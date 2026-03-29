@@ -10,6 +10,7 @@ import { SessionService } from '../../../services/session.service';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-student-attendance-report',
@@ -30,16 +31,13 @@ export class StudentAttendanceReportComponent implements OnInit {
 
   /** PREMIUM UI STATES */
   isProcessing = false;
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
 
   constructor(
     private attendanceService: AttendanceService,
     private studentService: StudentService,
     private sessionService: SessionService,
-    private eRef: ElementRef
+    private eRef: ElementRef,
+    private popup: PopupService
   ) { }
 
   @HostListener('document:click', ['$event'])
@@ -71,7 +69,7 @@ export class StudentAttendanceReportComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading students:', err);
-        this.triggerError('Error', 'Unable to load students.');
+        this.popup.error('Error', 'Unable to load students.');
       }
     });
   }
@@ -90,6 +88,7 @@ export class StudentAttendanceReportComponent implements OnInit {
   getReport() {
     if (!this.studentId || !this.startDate || !this.endDate) return;
     this.isProcessing = true;
+    this.popup.loading('Fetching analytic report...');
     this.attendanceService.getStudentAttendanceReport(this.studentId, this.startDate, this.endDate).subscribe({
       next: (res) => {
         this.report = res;
@@ -98,7 +97,7 @@ export class StudentAttendanceReportComponent implements OnInit {
       error: () => {
         this.isProcessing = false;
         this.report = [];
-        this.triggerError('Error', 'Failed to fetch attendance records.');
+        this.popup.error('Error', 'Failed to fetch attendance records.');
       }
     });
   }
@@ -176,29 +175,7 @@ export class StudentAttendanceReportComponent implements OnInit {
     if (win) { win.document.write(html); win.document.close(); win.focus(); win.print(); }
   }
 
-  // Helper Methods for Modals
-  triggerSuccess(title: string, message: string) {
-    this.feedbackType = 'success';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  triggerError(title: string, message: string) {
-    this.feedbackType = 'error';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
-  triggerWarning(title: string, message: string) {
-    this.feedbackType = 'warning';
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-  }
-
   closeFeedback() {
-    this.showFeedbackModal = false;
+    // legacy
   }
 }

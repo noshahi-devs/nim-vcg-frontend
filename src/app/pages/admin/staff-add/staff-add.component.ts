@@ -8,6 +8,7 @@ import Swal from '../../../swal';
 import { Designation, Gender, Staff } from '../../../Models/staff';
 import { ImageUpload } from '../../../Models/StaticImageModel/imageUpload';
 import { AuthService } from '../../../SecurityModels/auth.service';
+import { PopupService } from '../../../services/popup.service';
 
 declare var bootstrap: any;
 
@@ -75,7 +76,12 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
     imageUpload: new ImageUpload()
   };
 
-  constructor(private staffService: StaffService, private router: Router, private authService: AuthService) {
+  constructor(
+    private staffService: StaffService, 
+    private router: Router, 
+    private authService: AuthService,
+    private popup: PopupService
+  ) {
     this.setDefaultValues();
   }
 
@@ -123,53 +129,33 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
   }
 
   // ── Premium Feedback & Processing ──
-  showFeedbackModal = false;
-  feedbackType: 'success' | 'error' | 'warning' = 'success';
-  feedbackTitle = '';
-  feedbackMessage = '';
   isProcessing = false;
-
-  showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string, autoClose = false) {
-    this.feedbackType = type;
-    this.feedbackTitle = title;
-    this.feedbackMessage = message;
-    this.showFeedbackModal = true;
-    if (autoClose) {
-      setTimeout(() => {
-        this.showFeedbackModal = false;
-        if (type === 'success') {
-          this.router.navigate(['/staff-list']);
-        }
-      }, 2200);
-    }
-  }
-
-  closeFeedback() {
-    this.showFeedbackModal = false;
-  }
 
   async onSubmit(form: NgForm) {
     if (form.invalid) {
       Object.keys(form.controls).forEach(key => form.controls[key].markAsTouched());
-      this.showFeedback('warning', 'Form Incomplete', 'Please fill in all required fields marked with *');
+      this.popup.warning('Please fill in all required fields marked with *', 'Form Incomplete');
       return;
     }
 
     // Email check before proceeding
     if (this.newStaff.email) {
       this.isProcessing = true;
+      this.popup.loading('Validating...');
 
       this.staffService.getStaffByEmail(this.newStaff.email).subscribe({
         next: (exists) => {
           this.isProcessing = false;
+          this.popup.closeLoading();
           if (exists && exists.staffId) {
-            this.showFeedback('warning', 'Email Already Exists', 'This email is already registered to a staff member. Please use a different email.');
+            this.popup.warning('This email is already in use.', 'Email Exists');
             return;
           }
           this.proceedWithStaffCreation();
         },
         error: () => {
           this.isProcessing = false;
+          this.popup.closeLoading();
           this.proceedWithStaffCreation();
         }
       });
@@ -218,6 +204,7 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
     console.log('🚀 Sending staffData to API:', staffData);
 
     this.isProcessing = true;
+    this.popup.loading('Creating staff profile...');
 
     const loginPayload = {
       email: this.newStaff.email,
@@ -244,7 +231,8 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
           this.createStaffProfile(staffData);
         } else {
           this.isProcessing = false;
-          this.showFeedback('error', 'Login Creation Failed', 'Security credentials could not be created or verified.');
+          this.popup.closeLoading();
+          this.popup.error('Error', 'Could not create login credentials.');
         }
       }
     });
@@ -254,12 +242,17 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
     this.staffService.addStaff(staffData).subscribe({
       next: () => {
         this.isProcessing = false;
-        this.showFeedback('success', 'Onboarding Successful!', 'Staff profile and login account have been processed securely.', true);
+        this.popup.closeLoading();
+        this.popup.success('Success', 'Staff added successfully.');
+        setTimeout(() => {
+          this.router.navigate(['/staff-list']);
+        }, 1500);
       },
       error: (err) => {
         this.isProcessing = false;
+        this.popup.closeLoading();
         console.error('❌ Profile creation error:', err);
-        this.showFeedback('error', 'Profile Sync Failed', 'The account is ready but the profile details could not be saved.');
+        this.popup.error('Error', 'Could not save staff profile.');
       }
     });
   }
