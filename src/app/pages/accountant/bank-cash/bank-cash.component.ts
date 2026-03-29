@@ -97,18 +97,17 @@ export class BankCashComponent implements OnInit {
     account.accountType = 'Bank';
 
     this.isProcessing = true;
-    this.popup.loading('Saving account details...');
+    this.closeBankModal();
+    this.popup.loading(this.isEditBankMode ? 'Updating bank account...' : 'Adding new bank account...');
     if (this.isEditBankMode) {
       this.bankAccountService.updateBankAccount(account.bankAccountId, account)
         .pipe(finalize(() => {
           this.isProcessing = false;
-          this.popup.closeLoading();
         }))
         .subscribe({
           next: () => {
             this.popup.success('Updated!', 'Bank account details updated.');
             this.loadData();
-            this.closeBankModal();
           },
           error: () => this.popup.error('Update Failed', 'Could not update bank account.')
         });
@@ -116,13 +115,11 @@ export class BankCashComponent implements OnInit {
       this.bankAccountService.createBankAccount(account)
         .pipe(finalize(() => {
           this.isProcessing = false;
-          this.popup.closeLoading();
         }))
         .subscribe({
           next: () => {
             this.popup.success('Added!', 'New bank account registered.');
             this.loadData();
-            this.closeBankModal();
           },
           error: () => this.popup.error('Save Failed', 'Could not register bank account.')
         });
@@ -147,7 +144,6 @@ export class BankCashComponent implements OnInit {
     this.bankAccountService.deleteBankAccount(id)
       .pipe(finalize(() => {
         this.isProcessing = false;
-        this.popup.closeLoading();
       }))
       .subscribe({
         next: () => {
@@ -183,18 +179,17 @@ export class BankCashComponent implements OnInit {
     account.accountType = 'Cash';
 
     this.isProcessing = true;
-    this.popup.loading('Saving cash account...');
+    this.closeCashModal();
+    this.popup.loading(this.isEditCashMode ? 'Updating cash vault...' : 'Creating new cash vault...');
     if (this.isEditCashMode) {
       this.bankAccountService.updateBankAccount(account.bankAccountId, account)
         .pipe(finalize(() => {
           this.isProcessing = false;
-          this.popup.closeLoading();
         }))
         .subscribe({
           next: () => {
             this.popup.success('Updated!', 'Cash account updated.');
             this.loadData();
-            this.closeCashModal();
           },
           error: () => this.popup.error('Update Failed', 'Could not update cash account.')
         });
@@ -202,13 +197,11 @@ export class BankCashComponent implements OnInit {
       this.bankAccountService.createBankAccount(account)
         .pipe(finalize(() => {
           this.isProcessing = false;
-          this.popup.closeLoading();
         }))
         .subscribe({
           next: () => {
             this.popup.success('Added!', 'New cash account registered.');
             this.loadData();
-            this.closeCashModal();
           },
           error: () => this.popup.error('Save Failed', 'Could not register cash account.')
         });
@@ -243,18 +236,17 @@ export class BankCashComponent implements OnInit {
     }
 
     this.isProcessing = true;
-    this.popup.loading('Saving gateway settings...');
+    this.closeGatewayModal();
+    this.popup.loading(this.isEditGatewayMode ? 'Updating gateway configuration...' : 'Setting up new gateway...');
     if (this.isEditGatewayMode) {
       this.gatewayService.updateGateway(gw.id, gw)
         .pipe(finalize(() => {
           this.isProcessing = false;
-          this.popup.closeLoading();
         }))
         .subscribe({
           next: () => {
             this.popup.success('Updated!', 'Gateway settings optimized.');
             this.loadData();
-            this.closeGatewayModal();
           },
           error: () => this.popup.error('Update Failed', 'Could not update gateway configuration.')
         });
@@ -262,13 +254,11 @@ export class BankCashComponent implements OnInit {
       this.gatewayService.createGateway(gw)
         .pipe(finalize(() => {
           this.isProcessing = false;
-          this.popup.closeLoading();
         }))
         .subscribe({
           next: () => {
             this.popup.success('Added!', 'New payment gateway integrated.');
             this.loadData();
-            this.closeGatewayModal();
           },
           error: () => this.popup.error('Integration Failed', 'Could not add the payment gateway.')
         });
@@ -292,7 +282,6 @@ export class BankCashComponent implements OnInit {
     this.gatewayService.deleteGateway(id)
       .pipe(finalize(() => {
         this.isProcessing = false;
-        this.popup.closeLoading();
       }))
       .subscribe({
         next: () => {

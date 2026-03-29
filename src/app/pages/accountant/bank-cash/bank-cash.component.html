@@ -327,7 +327,7 @@
       <button class="pm-btn pm-cancel" (click)="closeBankModal()" [disabled]="isProcessing">Cancel</button>
       <button class="glass-pill-btn" (click)="saveBankAccount()" [disabled]="isProcessing">
         <iconify-icon icon="solar:check-read-bold"></iconify-icon>
-        Save
+        {{ isEditBankMode ? 'Update' : 'Save' }}
       </button>
     </div>
   </div>
@@ -379,7 +379,7 @@
       <button class="pm-btn pm-cancel" (click)="closeCashModal()" [disabled]="isProcessing">Cancel</button>
       <button class="glass-pill-btn" (click)="saveCashAccount()" [disabled]="isProcessing">
         <iconify-icon icon="solar:check-read-bold"></iconify-icon>
-        Save
+        {{ isEditCashMode ? 'Update' : 'Save' }}
       </button>
     </div>
   </div>
@@ -448,7 +448,7 @@
       <button class="pm-btn pm-cancel" (click)="closeGatewayModal()" [disabled]="isProcessing">Cancel</button>
       <button class="glass-pill-btn" (click)="saveGateway()" [disabled]="isProcessing">
         <iconify-icon icon="solar:plug-circle-bold"></iconify-icon>
-        Save
+        {{ isEditGatewayMode ? 'Update' : 'Save' }}
       </button>
     </div>
   </div>
