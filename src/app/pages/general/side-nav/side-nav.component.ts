@@ -337,6 +337,43 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
           this.closeMobileSidebar();
         }
       });
+
+    // ✅ Global Premium Tooltip breakout logic
+    const $tooltip = $('#sideNavTooltip');
+    const $tooltipContent = $tooltip.find('.tooltip-content');
+
+    $(document).off(`mouseenter${ns} mouseleave${ns}`, '.sidebar-menu li a[data-desc], .sidebar-logout-btn[data-desc]')
+      .on(`mouseenter${ns}`, '.sidebar-menu li a[data-desc], .sidebar-logout-btn[data-desc]', (e) => {
+        const $el = $(e.currentTarget);
+        const $parentLi = $el.closest('li');
+
+        // Hide if the dropdown is currently open (it's expanded, no need for tooltip)
+        if ($parentLi.hasClass('open') || $parentLi.hasClass('dropdown-open')) {
+          return;
+        }
+
+        const desc = $el.data('desc');
+        if (!desc) return;
+
+        $tooltipContent.text('MENU: ' + desc);
+        $tooltip.show();
+
+        const rect = e.currentTarget.getBoundingClientRect();
+        // Position to the right (aligned with the icon)
+        $tooltip.css({
+          top: rect.top + (rect.height / 2),
+          left: rect.right + 15,
+          transform: 'translateY(-50%)'
+        });
+      })
+      .on(`mouseleave${ns}`, '.sidebar-menu li a[data-desc], .sidebar-logout-btn[data-desc]', () => {
+        $tooltip.hide();
+      });
+
+    // Hide tooltip on any click or sidebar interaction
+    $(document).on(`click${ns} scroll${ns}`, () => {
+      $tooltip.hide();
+    });
   }
 
   ngOnDestroy(): void {

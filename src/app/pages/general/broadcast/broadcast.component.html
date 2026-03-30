@@ -136,14 +136,14 @@
         <div class="broadcast-log-container">
 
           <!-- Log List -->
-          <div class="log-scroll-area">
+          <div class="log-scroll-area" #logScrollArea>
             <div *ngIf="logs.length === 0" class="empty-state">
               <iconify-icon icon="solar:bell-bing-bold-duotone"></iconify-icon>
               <h5>No Broadcasts Sent</h5>
               <p>Your notification history will appear here.</p>
             </div>
 
-            <div *ngFor="let log of logs" class="premium-log-item">
+            <div *ngFor="let log of displayedLogs" class="premium-log-item">
               <div class="type-icon-ring" [ngClass]="log.notificationType?.toLowerCase() || 'broadcast'">
                 <iconify-icon
                   [icon]="log.notificationType === 'Urgent' ? 'mdi:alert-circle' : 'mdi:bullhorn'"></iconify-icon>
@@ -167,6 +167,8 @@
                 </div>
               </div>
             </div>
+            <div *ngIf="hasMoreLogs" class="text-center text-xs text-secondary-light mt-10">Scrolling loads more history...</div>
+            <div *ngIf="!hasMoreLogs && displayedLogs.length === logs.length && logs.length > 0" class="text-center text-xs text-secondary-light mt-10">You’ve reached the end of the archive.</div>
           </div>
         </div>
       </div>

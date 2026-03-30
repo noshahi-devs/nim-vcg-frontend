@@ -64,7 +64,7 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
   ];
 
   adminQuickActions = [
-    { label: '1. General Settings', icon: 'solar:settings-bold-duotone', route: '/settings', color: '#800000', description: 'Set up institute basics first' },
+    { label: '1. New Admission', icon: 'solar:user-plus-bold', route: '/student-add', color: '#800000', description: 'Enroll new students into classes' },
     { label: '2. Add Classes', icon: 'solar:buildings-bold-duotone', route: '/class-list', color: '#F4C430', description: 'Set up class structure' },
     { label: '3. Add Sections', icon: 'solar:diploma-bold-duotone', route: '/section-add', color: '#800000', description: 'Create sections within classes' },
     { label: '4. Add Subjects', icon: 'solar:book-2-bold-duotone', route: '/subject-add', color: '#F4C430', description: 'Define subjects to be taught' },

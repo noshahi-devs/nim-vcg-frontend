@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NotificationService, NotificationLog } from '../../../services/notification.service';
@@ -14,16 +14,22 @@ import { finalize } from 'rxjs';
     templateUrl: './broadcast.component.html',
     styleUrl: './broadcast.component.css'
 })
-export class BroadcastComponent implements OnInit {
+export class BroadcastComponent implements OnInit, AfterViewInit, OnDestroy {
 
     availableRoles = ['Admin', 'Principal', 'Teacher', 'Accountant', 'Student'];
     selectedRoles: string[] = [];
     successMsg = '';
     logs: NotificationLog[] = [];
+    displayedLogs: NotificationLog[] = [];
     assignedSections: any[] = [];
     selectedSectionIds: number[] = [];
     selectedSubjectIds: number[] = [];
     isTeacher = false;
+    readonly logPageSize = 5;
+    hasMoreLogs = false;
+
+    @ViewChild('logScrollArea') logScrollArea!: ElementRef<HTMLDivElement>;
+    private logScrollListener?: () => void;
 
     broadcastData = {
         title: '',
@@ -147,6 +153,9 @@ export class BroadcastComponent implements OnInit {
             .subscribe({
                 next: (data) => {
                     this.logs = data;
+                    this.displayedLogs = [];
+                    this.hasMoreLogs = false;
+                    this.appendLogs();
                 },
                 error: () => this.popup.error('Load Failed', 'Could not retrieve broadcast logs.')
             });
@@ -161,5 +170,43 @@ export class BroadcastComponent implements OnInit {
             'Student': 'mdi:account-group'
         };
         return icons[role] || 'mdi:account';
+    }
+
+    ngAfterViewInit(): void {
+        this.logScrollListener = this.onLogScroll.bind(this);
+        this.logScrollArea?.nativeElement?.addEventListener('scroll', this.logScrollListener);
+    }
+
+    ngOnDestroy(): void {
+        if (this.logScrollListener && this.logScrollArea) {
+            this.logScrollArea.nativeElement.removeEventListener('scroll', this.logScrollListener);
+        }
+    }
+
+    private appendLogs(): void {
+        if (!this.logs.length) {
+            return;
+        }
+
+        const start = this.displayedLogs.length;
+        const nextBatch = this.logs.slice(start, start + this.logPageSize);
+        if (!nextBatch.length) {
+            this.hasMoreLogs = false;
+            return;
+        }
+
+        this.displayedLogs = [...this.displayedLogs, ...nextBatch];
+        this.hasMoreLogs = this.displayedLogs.length < this.logs.length;
+    }
+
+    private onLogScroll(): void {
+        if (!this.logScrollArea) {
+            return;
+        }
+
+        const el = this.logScrollArea.nativeElement;
+        if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120 && this.hasMoreLogs) {
+            this.appendLogs();
+        }
     }
 }
