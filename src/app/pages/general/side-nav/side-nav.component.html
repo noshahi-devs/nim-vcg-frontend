@@ -275,7 +275,7 @@
                 class="ri-circle-fill circle-icon text-danger-main"></i> Exam Results</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-analytics"
               routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-secondary-light"></i> Exam Analytics</a></li>
+                class="ri-circle-fill circle-icon text-secondary-light"></i> Exam Reports</a></li>
         </ul>
       </li>
 
@@ -304,14 +304,14 @@
 
       <!-- 13. Reports System -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Accountant'])">
-        <a href="javascript:void(0)" data-desc="Analytics insights and report center"
-          title="Analytics insights and report center">
+        <a href="javascript:void(0)" data-desc="Reports and data insights"
+          title="Reports and data insights">
           <iconify-icon icon="mdi:file-chart" class="menu-icon"></iconify-icon>
           <span>Reports</span>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/report" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-primary-600"></i> Analytics</a></li>
+                class="ri-circle-fill circle-icon text-primary-600"></i> Insights</a></li>
         </ul>
       </li>
 

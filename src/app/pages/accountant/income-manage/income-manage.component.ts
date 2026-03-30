@@ -410,7 +410,7 @@ export class IncomeManageComponent implements OnInit {
         console.error('Error loading income records:', err);
         this.incomeList = [];
         this.applyFilters();
-        this.popup.error('Load Error', 'Failed to synchronize income records.');
+        this.popup.error('Load Error', 'Failed to load income records.');
       }
     });
   }
@@ -570,7 +570,7 @@ export class IncomeManageComponent implements OnInit {
     }
 
     this.isProcessing = true;
-    this.popup.loading('Extracting income report...');
+    this.popup.loading('Preparing income report...');
     setTimeout(() => {
       try {
         const headers = ['ID', 'Date', 'Source', 'Description', 'Campus', 'Payment Method', 'Received By', 'Amount (PKR)'];

@@ -19,7 +19,7 @@ import { PopupService } from '../../../services/popup.service';
   styleUrl: './exam-analytics.component.css'
 })
 export class ExamAnalyticsComponent implements OnInit {
-  title = 'Exam Analytics';
+  title = 'Exam Reports';
   analytics: ExamAnalytics | null = null;
   exams: Exam[] = [];
   classes: Standard[] = [];
@@ -104,7 +104,7 @@ export class ExamAnalyticsComponent implements OnInit {
   loadAnalytics(): void {
     if (!this.selectedExamId) return;
     
-    this.popup.loading('Analyzing exam performance...');
+    this.popup.loading('Checking exam performance...');
     this.isLoading = true;
     this.isProcessing = true;
 
@@ -123,18 +123,18 @@ export class ExamAnalyticsComponent implements OnInit {
         next: (data: any) => {
           if (data && data.success === false) {
             this.analytics = null;
-            this.popup.warning('Could not generate analytics for the selected criteria.', 'No Data');
+            this.popup.warning('Could not generate report for the selected criteria.', 'No Data');
             return;
           }
           this.analytics = data;
           if (!data || data.totalStudents === 0) {
-            this.popup.warning('No records found to analyze for this selection.', 'Empty Results');
+            this.popup.warning('No records found to check for this selection.', 'Empty Results');
           }
         },
         error: (err) => {
           console.error('Failed to load analytics', err);
           this.analytics = null;
-          this.popup.error('Error', 'Failed to calculate analytics data.');
+          this.popup.error('Error', 'Failed to calculate report data.');
         }
       });
   }

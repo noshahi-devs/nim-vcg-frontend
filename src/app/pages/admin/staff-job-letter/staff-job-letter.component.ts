@@ -82,8 +82,8 @@ export class StaffJobLetterComponent implements AfterViewInit {
     this.filteredStaffList = [];
   }
 
-  // Scan CNIC functionality
-  scanCNIC(): void {
+  // Search CNIC functionality
+  searchCNIC(): void {
     const cnic = prompt('Enter CNIC to search (e.g., 35202-1234567-8):');
     if (cnic) {
       this.searchTerm = cnic;

@@ -109,7 +109,7 @@ export class BroadcastComponent implements OnInit {
             return;
         }
 
-        this.popup.loading('Transmitting system broadcast...');
+        this.popup.loading('Sending broadcast...');
 
         const payload = {
             title: this.broadcastData.title,
@@ -134,14 +134,14 @@ export class BroadcastComponent implements OnInit {
                     this.loadLogs();
                 },
                 error: (err) => {
-                    this.popup.error('Transmission Failed', 'Could not deliver the broadcast message.');
+                    this.popup.error('Delivery Failed', 'Could not deliver the broadcast message.');
                     console.error('Broadcast error:', err);
                 }
             });
     }
 
     loadLogs() {
-        this.popup.loading('Retrieving broadcast history...');
+        this.popup.loading('Loading broadcast history...');
         this.notificationService.getLogs()
             .pipe(finalize(() => this.popup.closeLoading()))
             .subscribe({

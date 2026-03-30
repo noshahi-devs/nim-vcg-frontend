@@ -63,7 +63,7 @@ export class EmailComponent implements OnInit {
 
   loadMessages() {
     this.loading = true;
-    this.popup.loading('Synchronizing inbox...');
+    this.popup.loading('Loading inbox...');
     let messagesObs$;
 
     if (this.activeFolder === 'starred') {
@@ -238,7 +238,7 @@ export class EmailComponent implements OnInit {
 
   onSubmitCompose() {
     if (!this.newMessage.receiverId || !this.newMessage.subject || !this.newMessage.content) return;
-    this.popup.loading('Transmitting message...');
+    this.popup.loading('Sending message...');
     this.messageService.sendMessage(this.newMessage).pipe(
       finalize(() => this.popup.closeLoading())
     ).subscribe({

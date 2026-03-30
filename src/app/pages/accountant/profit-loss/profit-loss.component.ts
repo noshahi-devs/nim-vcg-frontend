@@ -51,19 +51,19 @@ export class ProfitLossComponent implements OnInit {
       return;
     }
 
-    this.popup.loading('Analyzing financial data...');
+    this.popup.loading('Checking financial data...');
     this.accountsService.getProfitLossReport(this.startDate, this.endDate).subscribe({
       next: (data) => {
         this.report = data;
         this.generatedAt = new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
         this.initializeChart();
         this.popup.closeLoading();
-        this.popup.success('Report Ready!', 'Financial analysis has been refreshed.');
+        this.popup.success('Report Ready!', 'Financial report has been refreshed.');
       },
       error: (err) => {
         console.error('Error generating report:', err);
         this.popup.closeLoading();
-        this.popup.error('Analysis Failed', 'Could not retrieve profit/loss data.');
+        this.popup.error('Report Failed', 'Could not retrieve profit/loss data.');
       }
     });
   }
@@ -110,7 +110,7 @@ export class ProfitLossComponent implements OnInit {
       return;
     }
 
-    this.popup.loading('Extracting P&L report...');
+    this.popup.loading('Preparing P&L report...');
     setTimeout(() => {
       try {
         const _r = this.report!;

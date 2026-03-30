@@ -6,7 +6,7 @@
       <div class="hero-content">
           <div>
               <span class="hero-badge">Principal Intelligence</span>
-              <h2 class="hero-heading">Exam Analytics Center</h2>
+              <h2 class="hero-heading">Exam Reports Center</h2>
               <p class="hero-subtitle">Track pass trends, subject performance, and top outcomes with one clean dashboard.</p>
               <div class="hero-tags mt-16">
                   <span class="glass-tag">
@@ -56,7 +56,7 @@
   <!-- Loading View -->
   <div *ngIf="isLoading" class="loading-spinner fade-in-up">
     <div class="spinner-border" role="status"></div>
-    <p>Crunching analytics data...</p>
+    <p>Preparing exam reports...</p>
   </div>
 
   <!-- Analytics Content -->
@@ -109,10 +109,10 @@
     <div class="table-glass-container fade-in-up" style="animation-delay: 0.3s;">
       <div class="panel-sub-header">
         <div>
-          <h5 class="panel-title m-0">Subject Performance Analysis</h5>
+          <h5 class="panel-title m-0">Subject Performance Details</h5>
         </div>
         <div>
-          <span class="glass-tag">{{ analytics.subjectWiseAnalytics?.length || 0 }} subjects analyzed</span>
+          <span class="glass-tag">{{ analytics.subjectWiseAnalytics?.length || 0 }} subjects checked</span>
         </div>
       </div>
 
@@ -152,8 +152,8 @@
   <!-- Empty State -->
   <div class="empty-glass-state fade-in-up mt-24" *ngIf="!analytics && selectedExamId && !isLoading" style="animation-delay: 0.2s;">
     <iconify-icon class="empty-icon" icon="solar:chart-square-bold-duotone"></iconify-icon>
-    <h5>No analytics found</h5>
-    <p>No exam analytics data is available for the selected filters.</p>
+    <h5>No reports found</h5>
+    <p>No exam report data is available for the selected filters.</p>
   </div>
 </div>
 

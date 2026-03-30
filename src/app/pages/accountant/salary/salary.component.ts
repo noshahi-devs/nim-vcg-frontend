@@ -82,7 +82,7 @@ export class SalaryComponent implements OnInit {
         this.staffList = res.staff || [];
         this.salaries = res.salaries || [];
       },
-      error: () => this.popup.error('Sync Failed', 'Unable to synchronize salary records.')
+      error: () => this.popup.error('Load Error', 'Unable to load salary records.')
     });
   }
 

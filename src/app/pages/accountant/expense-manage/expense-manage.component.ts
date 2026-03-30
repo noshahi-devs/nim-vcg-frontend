@@ -68,7 +68,7 @@ export class ExpenseManageComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading expenses:', err);
-        this.popup.error('Load Error', 'Failed to synchronize expense records.');
+        this.popup.error('Load Error', 'Failed to load expense records.');
       }
     });
   }
@@ -237,7 +237,7 @@ export class ExpenseManageComponent implements OnInit {
     }
 
     this.isProcessing = true;
-    this.popup.loading('Extracting expense report...');
+    this.popup.loading('Preparing expense report...');
     setTimeout(() => {
       try {
         const headers = ['ID', 'Date', 'Type', 'Description', 'Approved By', 'Payment Method', 'Amount (PKR)'];

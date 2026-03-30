@@ -19,7 +19,7 @@ import { PopupService } from '../../../services/popup.service';
   styleUrl: './report.component.css'
 })
 export class ReportComponent implements OnInit {
-  title = 'Analytics Report';
+  title = 'Insights Report';
   purchaseSaleChart;
   incomeExpense;
   userOverviewDonutChart;
@@ -58,7 +58,7 @@ export class ReportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.popup.loading('Synthesizing report data...');
+    this.popup.loading('Preparing report data...');
     this.accountsService.getDashboardData().subscribe({
       next: data => {
         this.accountData = data;
@@ -69,7 +69,7 @@ export class ReportComponent implements OnInit {
       },
       error: () => {
         this.popup.closeLoading();
-        this.popup.error('Generation Failed', 'Could not synthesize analytics data.');
+        this.popup.error('Load Failed', 'Could not load report data.');
       }
     });
 

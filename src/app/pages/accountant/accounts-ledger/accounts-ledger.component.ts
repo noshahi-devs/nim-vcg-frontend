@@ -51,18 +51,18 @@ export class AccountsLedgerComponent implements OnInit {
   }
 
   loadLedger(): void {
-    this.popup.loading('Scanning account ledger...');
+    this.popup.loading('Checking ledger records...');
     this.accountsService.getLedger().subscribe({
       next: (data) => {
         this.transactions = data;
         this.applyFilters();
         this.popup.closeLoading();
-        this.popup.success('Ledger Loaded', 'Transaction history synchronized.');
+        this.popup.success('Ledger Loaded', 'Transaction history updated.');
       },
       error: (err) => {
         console.error('Error loading ledger:', err);
         this.popup.closeLoading();
-        this.popup.error('Load Error', 'Failed to synchronize ledger records.');
+        this.popup.error('Load Error', 'Failed to load ledger records.');
       }
     });
   }
