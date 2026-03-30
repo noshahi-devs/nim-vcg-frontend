@@ -74,7 +74,7 @@ export class PopupService {
     text = 'This action cannot be undone.',
     confirmText = 'Delete',
     cancelText = 'Cancel',
-    type: 'danger' | 'success' | 'warning' | 'info' | 'primary' = 'danger'
+    type: 'danger' | 'success' | 'warning' | 'info' | 'primary' | 'reminder' = 'danger'
   ): Promise<boolean> {
     
     // Default to danger (delete)
@@ -87,6 +87,11 @@ export class PopupService {
       ringClass = 'danger-ring'; // Maroon theme
       mainIcon = 'solar:question-square-bold-duotone';
       btnIcon = 'solar:check-circle-bold';
+      confirmBtnClass = 'pm-btn pm-danger'; // Maroon button
+    } else if (type === 'reminder') {
+      ringClass = 'danger-ring'; // Maroon theme
+      mainIcon = 'solar:bell-bing-bold-duotone';
+      btnIcon = 'solar:send-twice-square-bold-duotone';
       confirmBtnClass = 'pm-btn pm-danger'; // Maroon button
     } else if (type === 'success') {
       ringClass = 'success-ring';

@@ -92,7 +92,7 @@ export class AccountsComponent implements OnInit {
 
   loadDashboardData(): void {
     this.loading = true;
-    this.popup.loading('Synchronizing dashboard data...');
+    this.popup.loading('Loading dashboard data...');
     this.loadLedgerSummary();
     this.accountsService.getDashboardData().subscribe({
       next: (data) => {
@@ -113,7 +113,7 @@ export class AccountsComponent implements OnInit {
         this.setDashboardData(this.emptyDashboardData());
         this.loading = false;
         this.popup.closeLoading();
-        this.popup.error('Update Failed', 'Could not synchronize accounts data.');
+        this.popup.error('Failed to Load', 'Could not load accounts data. Please check your connection and try again.');
       }
     });
   }

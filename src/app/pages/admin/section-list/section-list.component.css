@@ -454,6 +454,7 @@
     flex-direction: column;
     box-shadow: 0 0 0 1px rgba(128, 0, 0, 0.08), 0 25px 65px rgba(15, 23, 42, 0.22);
     animation: modalPop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
 }
 
 @keyframes modalPop {
@@ -702,13 +703,25 @@
     padding: 12px 16px;
     font-size: 14px;
     color: #1e293b;
-    background: #f8fafc;
+    background-color: #f8fafc;
     transition: all 0.2s;
+}
+
+select.premium-input {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23800000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 14px center !important;
+    background-size: 16px !important;
+    padding-right: 40px !important;
+    cursor: pointer;
 }
 
 .premium-input:focus {
     border-color: #800000;
-    background: #fff;
+    background-color: #fff;
     box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
 }
 

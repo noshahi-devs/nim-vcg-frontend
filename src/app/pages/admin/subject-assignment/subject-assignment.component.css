@@ -3,7 +3,7 @@
    ======================== */
 .fee-card {
     background: #ffffff;
-    border-radius: 16px;
+    border-radius: 22px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
     overflow: hidden;
     border: 1px solid #f1f5f9;
@@ -154,19 +154,20 @@
 
 /* Dropdown arrow: remove browser default, add custom SVG chevron */
 select.field-input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    padding-right: 38px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2364748b' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 20px 20px;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    padding-right: 38px !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23800000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 14px center !important;
+    background-size: 16px !important;
     cursor: pointer;
 }
 
 .field-input:focus {
     border-color: #800000;
+    background-color: #ffffff;
     box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
 }
 

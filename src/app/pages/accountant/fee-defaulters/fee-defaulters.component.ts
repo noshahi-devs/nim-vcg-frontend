@@ -94,7 +94,7 @@ export class FeeDefaultersComponent implements OnInit {
       error: (error) => {
         console.error('Error loading due balances:', error);
         this.isProcessing = false;
-        this.popup.error('Update Failed', 'Synchronizing with the financial database was unsuccessful. Please check your connection.');
+        this.popup.error('Failed to Load', 'Could not load data from the server. Please check your connection and try again.');
       }
     });
   }
@@ -175,7 +175,7 @@ export class FeeDefaultersComponent implements OnInit {
     
     // Simulate API call for reminder
     setTimeout(() => {
-      this.popup.success('Reminders Sent', `The secure payment notification has been dispatched to ${target}.`);
+      this.popup.success('Reminders Sent', `The payment reminder has been sent successfully to ${target}.`);
     }, 1500);
   }
 
@@ -185,9 +185,10 @@ export class FeeDefaultersComponent implements OnInit {
     
     this.popup.confirm(
       'Send Reminder?',
-      `Are you sure you want to dispatch a payment reminder to <strong>${defaulter.studentName}</strong>?`,
-      'Dispatch Now',
-      'Cancel'
+      `Are you sure you want to send a payment reminder to <strong>${defaulter.studentName}</strong>?`,
+      'Send Now',
+      'Cancel',
+      'reminder'
     ).then(confirmed => {
       if (confirmed) this.confirmReminder();
     });
@@ -199,10 +200,10 @@ export class FeeDefaultersComponent implements OnInit {
     
     this.popup.confirm(
       'Bulk Notification?',
-      `Are you sure you want to dispatch payment reminders to all <strong>${this.filteredDefaulters.length}</strong> filtered students?`,
-      'Dispatch Now',
+      `Are you sure you want to send payment reminders to all <strong>${this.filteredDefaulters.length}</strong> filtered students?`,
+      'Send Now',
       'Cancel',
-      'success'
+      'reminder'
     ).then(confirmed => {
       if (confirmed) this.confirmReminder();
     });

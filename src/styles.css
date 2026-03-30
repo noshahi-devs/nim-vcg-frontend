@@ -2284,3 +2284,14 @@ body .btn-add.mt-16 iconify-icon {
     cursor: not-allowed;
     pointer-events: none;
 }
+
+/* ── Global Text Selection (Highlight) Premium Theme ── */
+::selection {
+    background-color: #800000; /* Primary Maroon */
+    color: #F4C430; /* Secondary Yellow */
+}
+
+::-moz-selection {
+    background-color: #800000;
+    color: #F4C430;
+}
