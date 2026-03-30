@@ -744,22 +744,18 @@
     box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5), 0 0 25px rgba(128, 0, 0, 0.2);
     white-space: nowrap;
     backdrop-filter: blur(14px);
+    position: relative;
 }
 
-:host ::ng-deep .side-nav-premium-tooltip .tooltip-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: rgba(244, 196, 48, 0.2);
-    border: 1px solid rgba(244, 196, 48, 0.5);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-:host ::ng-deep .side-nav-premium-tooltip .tooltip-arrow-icon {
-    color: #F4C430;
-    font-size: 18px;
+:host ::ng-deep .side-nav-premium-tooltip .tooltip-content::after {
+    content: "";
+    position: absolute;
+    left: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 8px solid transparent;
+    border-right-color: #F4C430;
+    border-left: 0;
 }
 
 :host ::ng-deep .navbar-header .has-indicator:hover {

@@ -355,13 +355,7 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
         const desc = $el.data('desc');
         if (!desc) return;
 
-        $tooltipContent.html(`
-          <span class="tooltip-icon">
-            <iconify-icon icon="mdi:arrow-right-bold" class="tooltip-arrow-icon"></iconify-icon>
-          </span>
-          <span class="tooltip-text"></span>
-        `);
-        $tooltipContent.find('.tooltip-text').text('MENU: ' + desc);
+        $tooltipContent.text(desc);
         $tooltip.show();
 
         const rect = e.currentTarget.getBoundingClientRect();
