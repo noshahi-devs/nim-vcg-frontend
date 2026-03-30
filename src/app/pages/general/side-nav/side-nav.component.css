@@ -129,21 +129,36 @@
 :host ::ng-deep .sidebar-menu-area {
     flex: 1 1 auto;
     min-height: 0;
-    height: auto;
+    height: auto !important;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
     border-inline-end: 0;
-    padding: 0.55rem 0.75rem 1.2rem;
+    padding: 0.5rem 0.75rem 0.5rem;
     overflow-y: auto;
     overflow-x: hidden;
+    background: transparent;
 }
 
 :host ::ng-deep .sidebar-menu-area::-webkit-scrollbar {
-    width: 0.4rem;
+    width: 0.35rem;
+    background: transparent;
+}
+
+:host ::ng-deep .sidebar-menu-area::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 :host ::ng-deep .sidebar-menu-area::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.35);
     border-radius: 999px;
 }
+
+:host ::ng-deep .sidebar-menu-area::-webkit-scrollbar-thumb:hover {
+    background: rgba(244, 196, 48, 0.6);
+}
+
+
 
 :host ::ng-deep .sidebar-menu li {
     margin-bottom: 0.2rem;
@@ -284,6 +299,84 @@
     opacity: 1 !important;
     visibility: visible !important;
     color: #F4C430 !important;
+}
+
+
+:host ::ng-deep .sidebar-logout-wrapper {
+    margin-top: auto;
+    padding: 0.75rem 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+:host ::ng-deep .sidebar-logout-divider {
+    height: 2px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.35);
+    width: 100%;
+}
+
+:host ::ng-deep .sidebar-logout-btn {
+    width: 100%;
+    background: #ffe38a !important;
+    border: 1px solid rgba(128, 0, 0, 0.3) !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 10px 18px rgba(0, 0, 0, 0.2);
+    color: #7f0000 !important;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    padding: 0.65rem 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+:host ::ng-deep .sidebar-logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35);
+}
+
+:host ::ng-deep .sidebar-logout-btn .logout-icon-wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:host ::ng-deep .sidebar-logout-btn .logout-icon,
+:host ::ng-deep .sidebar-logout-btn .logout-text {
+    color: #310505 !important;
+}
+
+:host ::ng-deep .sidebar-logout-btn .logout-icon {
+    font-size: 20px;
+}
+
+:host ::ng-deep .logout-text {
+    transition: opacity 0.2s ease;
+}
+
+:host ::ng-deep .sidebar.active .sidebar-logout-btn {
+    justify-content: center;
+}
+
+:host ::ng-deep .sidebar.active .logout-text {
+    display: none;
+}
+
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .logout-text {
+    display: inline-block;
+    opacity: 1;
+}
+
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .sidebar-logout-btn {
+    justify-content: flex-start;
 }
 
 :host ::ng-deep .sidebar.active .sidebar-menu li a {

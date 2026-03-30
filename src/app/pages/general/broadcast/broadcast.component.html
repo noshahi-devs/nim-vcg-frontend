@@ -167,8 +167,18 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="hasMoreLogs" class="text-center text-xs text-secondary-light mt-10">Scrolling loads more history...</div>
-            <div *ngIf="!hasMoreLogs && displayedLogs.length === logs.length && logs.length > 0" class="text-center text-xs text-secondary-light mt-10">You’ve reached the end of the archive.</div>
+            <div *ngIf="hasMoreLogs" class="text-center text-xs text-secondary-light mt-10">
+              Showing {{ displayedLogs.length }} of {{ logs.length }} broadcasts ({{ logPageSize }} per batch). Scroll near the bottom to load more history.
+            </div>
+            <div *ngIf="!hasMoreLogs && displayedLogs.length === logs.length && logs.length > 0" class="text-center text-xs text-secondary-light mt-10">
+              You’ve reached the end of the archive.
+            </div>
+          </div>
+          <div class="log-summary" *ngIf="logs.length > 0">
+            <span class="summary-count">
+              Only {{ logPageSize }} records show up at first so the panel stays speedy even if the log runs into the thousands.
+            </span>
+            <span class="summary-hint" *ngIf="hasMoreLogs">Keep scrolling—the next five load automatically when you reach the bottom.</span>
           </div>
         </div>
       </div>
