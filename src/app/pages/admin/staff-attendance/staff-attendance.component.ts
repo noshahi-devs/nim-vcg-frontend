@@ -192,6 +192,73 @@ export class StaffAttendanceComponent implements OnInit {
   closeFeedback() {
     // legacy
   }
+
+  showFetchedAttendance = false;
+  isFetchingFromMachine = false;
+
+  machineConfig = {
+    machineId: 1005,
+    machineNo: 106,
+    machineName: 'ALFATAH SIALKOT',
+    ip: '119.153.103.71',
+    port: 4370,
+    commKey: 0
+  };
+
+  fetchedAttendanceRows: Array<{
+    srNo: number;
+    employeeId: string;
+    name: string;
+    attendance: string;
+    leaveCategory: string;
+    date: string;
+    inTime: string;
+    outTime: string;
+    remarks: string;
+  }> = [];
+
+  fetchAttendancePreview(): void {
+    if (this.isFetchingFromMachine) return;
+
+    this.isFetchingFromMachine = true;
+    this.popup.loading('Fetching attendance from biometric machine...');
+
+    const payload = {
+      ...this.machineConfig,
+      date: this.selectedDate
+    };
+
+    this.attendanceService.fetchStaffAttendanceFromMachine(payload).subscribe({
+      next: (response: any) => {
+        const rows = Array.isArray(response?.rows) ? response.rows : [];
+        this.fetchedAttendanceRows = rows.map((row: any, idx: number) => ({
+          srNo: row.srNo ?? idx + 1,
+          employeeId: row.employeeId ?? '',
+          name: row.name ?? '',
+          attendance: row.attendance ?? '',
+          leaveCategory: row.leaveCategory ?? '',
+          date: row.date ?? '',
+          inTime: row.inTime ?? '',
+          outTime: row.outTime ?? '',
+          remarks: row.remarks ?? ''
+        }));
+
+        this.showFetchedAttendance = true;
+        this.popup.closeLoading();
+        this.popup.success('Fetched', `Attendance fetched: ${this.fetchedAttendanceRows.length} row(s).`);
+      },
+      error: (err) => {
+        this.isFetchingFromMachine = false;
+        this.popup.closeLoading();
+        const message = err?.error?.message || 'Unable to fetch attendance from biometric machine.';
+        this.popup.error('Fetch Failed', message);
+        console.error(err);
+      },
+      complete: () => {
+        this.isFetchingFromMachine = false;
+      }
+    });
+  }
 }
 
 

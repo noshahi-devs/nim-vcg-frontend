@@ -88,10 +88,16 @@
   <div class="table-glass-container">
     <div class="table-glass-header">
       <h5>Staff Attendance Sheet</h5>
-      <button class="btn-save-grad" (click)="saveAttendance()" *ngIf="canMarkAttendance" [disabled]="isProcessing">
-        <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon>
-        Push Attendance to Server
-      </button>
+      <div class="header-actions">
+        <button class="btn-fetch" (click)="fetchAttendancePreview()" type="button" [disabled]="isFetchingFromMachine">
+          <iconify-icon icon="solar:download-minimalistic-bold-duotone"></iconify-icon>
+          Fetch Attendance
+        </button>
+        <button class="btn-save-grad" (click)="saveAttendance()" *ngIf="canMarkAttendance" [disabled]="isProcessing">
+          <iconify-icon icon="solar:diskette-bold-duotone"></iconify-icon>
+          Push Attendance to Server
+        </button>
+      </div>
     </div>
 
     <div class="table-responsive">
@@ -180,6 +186,45 @@
           </li>
         </ul>
       </nav>
+    </div>
+  </div>
+
+  <div class="table-glass-container fetched-preview" *ngIf="showFetchedAttendance">
+    <div class="table-glass-header">
+      <h5>Fetched Attendance (Hardcoded Preview)</h5>
+    </div>
+
+    <div class="table-responsive">
+      <table class="premium-table fetched-table">
+        <thead>
+          <tr>
+            <th class="ps-4">Save Attendance</th>
+            <th>Sr#</th>
+            <th>Employee Id</th>
+            <th>Name</th>
+            <th>Attendance</th>
+            <th>Leave Category</th>
+            <th>Date</th>
+            <th>In-Time</th>
+            <th>Out-Time</th>
+            <th class="pe-4">Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of fetchedAttendanceRows">
+            <td class="ps-4"></td>
+            <td>{{ row.srNo }}</td>
+            <td>{{ row.employeeId }}</td>
+            <td>{{ row.name }}</td>
+            <td>{{ row.attendance }}</td>
+            <td>{{ row.leaveCategory }}</td>
+            <td>{{ row.date }}</td>
+            <td>{{ row.inTime }}</td>
+            <td>{{ row.outTime }}</td>
+            <td class="pe-4">{{ row.remarks }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

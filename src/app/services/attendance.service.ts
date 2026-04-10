@@ -58,4 +58,8 @@ export class AttendanceService {
   getStaffAttendanceReport(staffId: number, startDate: string, endDate: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/Report/Staff/${staffId}?startDate=${startDate}&endDate=${endDate}`, this.getAuthHeaders());
   }
+
+  fetchStaffAttendanceFromMachine(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/FetchFromMachine`, payload, this.getAuthHeaders());
+  }
 }

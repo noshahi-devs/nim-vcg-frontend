@@ -324,6 +324,46 @@
     letter-spacing: -0.01em;
 }
 
+.header-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-fetch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+    color: #fff;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 14px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(13, 148, 136, 0.3);
+    transition: all 0.3s cubic-bezier(.4, 0, .2, 1);
+    letter-spacing: 0.01em;
+}
+
+.btn-fetch:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(13, 148, 136, 0.38);
+}
+
+.btn-fetch:active {
+    transform: translateY(0);
+}
+
+.btn-fetch:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 6px 16px rgba(13, 148, 136, 0.2);
+}
+
 /* Save Button */
 .btn-save-grad {
     display: inline-flex;
@@ -355,6 +395,14 @@
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+}
+
+.fetched-preview {
+    margin-top: 22px;
+}
+
+.fetched-table td {
+    white-space: normal;
 }
 
 .premium-table {
