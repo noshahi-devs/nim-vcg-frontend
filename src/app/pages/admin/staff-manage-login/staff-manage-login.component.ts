@@ -76,15 +76,20 @@ export class StaffManageLoginComponent implements OnInit {
     this.loading = true;
     this.userService.getAllUsers().subscribe({
       next: (users: User[]) => {
-        this.logins = users.map(u => ({
+        console.warn("==== API RESPONSE (GetUsers) ====", users);
+        this.logins = users.map(u => {
+          const apiRole = u.role || (u as any).Role;
+          const apiPhone = u.phoneNumber || (u as any).PhoneNumber;
+          return {
           id: u.id,
-          name: u.userName,
-          email: u.email,
-          role: Array.isArray(u.role) ? u.role.join(', ') : (u.role || 'Teacher'),
-          phone: u.phoneNumber || 'N/A',
+          name: u.userName || (u as any).UserName,
+          email: u.email || (u as any).Email,
+          role: Array.isArray(apiRole) && apiRole.length > 0 ? apiRole.join(', ') : (typeof apiRole === 'string' && apiRole ? apiRole : 'Unassigned'),
+          phone: apiPhone || 'Unassigned',
           status: u.status || 'Active',
           createdOn: u.createdOn || new Date().toISOString().split('T')[0]
-        }));
+          };
+        });
         this.filteredLogins = [...this.logins];
         this.loading = false;
       },
@@ -157,7 +162,7 @@ export class StaffManageLoginComponent implements OnInit {
 
   // ── CRUD ──
   saveLogin(): void {
-    if (!this.loginForm.name || !this.loginForm.email || !this.loginForm.role || !this.loginForm.phone) {
+    if (!this.loginForm.name || !this.loginForm.email || !this.loginForm.role) {
       this.popup.warning('Please fill all required fields before saving.', 'Incomplete Form');
       return;
     }
@@ -188,8 +193,11 @@ export class StaffManageLoginComponent implements OnInit {
         Username: this.loginForm.name,
         Email: this.loginForm.email,
         Password: this.loginForm.password,
-        Role: [this.loginForm.role]
+        Role: [this.loginForm.role],
+        PhoneNumber: this.loginForm.phone
       };
+
+      console.warn("==== FRONTEND PAYLOAD BEING SENT TO BACKEND ====", registerData);
 
       this.isSaving = true;
       this.popup.loading('Creating account...');

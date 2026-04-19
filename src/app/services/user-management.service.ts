@@ -18,6 +18,7 @@ export interface RegisterRequest {
     Email: string;
     Password: string;
     Role: string[];
+    PhoneNumber?: string;
 }
 
 @Injectable({

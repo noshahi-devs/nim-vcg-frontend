@@ -81,7 +81,7 @@
             <th>Full Name</th>
             <th>Email</th>
             <th>Role</th>
-            <th>Phone</th>
+            <!-- <th>Phone</th> -->
             <th class="text-center">Status</th>
             <th>Created On</th>
             <th class="text-center">Actions</th>
@@ -96,7 +96,7 @@
             <td>
               <span class="role-pill">{{ login.role }}</span>
             </td>
-            <td>{{ login.phone }}</td>
+            <!-- <td>{{ login.phone }}</td> -->
             <td class="text-center">
               <span *ngIf="login.status?.toLowerCase() === 'active'" class="status-pill active">Active</span>
               <span *ngIf="login.status?.toLowerCase() !== 'active'" class="status-pill inactive">Inactive</span>
@@ -125,7 +125,7 @@
           </tr>
 
           <tr *ngIf="loading">
-            <td colspan="8" class="empty-state">
+            <td colspan="7" class="empty-state">
               <div class="empty-content">
                 <div class="spinner-border text-primary" role="status"></div>
                 <p>Loading logins...</p>
@@ -134,7 +134,7 @@
           </tr>
 
           <tr *ngIf="!loading && paginatedLogins.length === 0">
-            <td colspan="8" class="p-0 border-0">
+            <td colspan="7" class="p-0 border-0">
               <div class="empty-state">
                 <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
                 <h5>No Logins Found</h5>
@@ -213,7 +213,7 @@
           </div>
         </div>
 
-        <div class="pvm-detail-item">
+        <div class="pvm-detail-item" style="display: none;">
           <div class="pvm-detail-icon phone-icon">
             <iconify-icon icon="solar:phone-bold-duotone"></iconify-icon>
           </div>
@@ -318,10 +318,10 @@
               </div>
             </div>
 
-            <div class="sml-field">
+            <div class="sml-field" style="display: none;">
               <label class="field-label">Phone <span class="text-danger-600">*</span></label>
               <input type="text" class="field-input" [(ngModel)]="loginForm.phone" name="phone"
-                placeholder="Enter phone number" required />
+                placeholder="Enter phone number" />
             </div>
           </div>
 
