@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AcademicMonth } from '../Models/academicmonth';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Fee } from '../Models/fee';
 import { FeeType } from '../Models/feetype';
 import { DueBalance } from '../Models/due-balance';
@@ -26,10 +26,23 @@ export class CommonServices {
     };
   }
 
-  // GET all academic months
+  // GET all academic months (Hardcoded locally since backend table is empty)
   getAllAcademicMonths(): Observable<AcademicMonth[]> {
-    const url = `${this.apiUrl}AcademicMonths`;
-    return this.http.get<AcademicMonth[]>(url, this.getAuthHeaders());
+    const standardMonths: AcademicMonth[] = [
+      { monthId: 1, monthName: 'January' },
+      { monthId: 2, monthName: 'February' },
+      { monthId: 3, monthName: 'March' },
+      { monthId: 4, monthName: 'April' },
+      { monthId: 5, monthName: 'May' },
+      { monthId: 6, monthName: 'June' },
+      { monthId: 7, monthName: 'July' },
+      { monthId: 8, monthName: 'August' },
+      { monthId: 9, monthName: 'September' },
+      { monthId: 10, monthName: 'October' },
+      { monthId: 11, monthName: 'November' },
+      { monthId: 12, monthName: 'December' }
+    ];
+    return of(standardMonths);
   }
   getAllFees(): Observable<Fee[]> {
     const url = `${this.apiUrl}Fees`;
