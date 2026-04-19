@@ -199,30 +199,41 @@
               <div class="form-group-premium">
                 <label class="field-label">Current Password</label>
                 <div class="position-relative">
-                  <input type="password" class="field-input" id="curr-pass" placeholder="Enter current password">
-                  <span
-                    class="toggle-password ri-eye-line position-absolute end-0 top-50 translate-middle-y me-3 text-slate-400 cursor-pointer"
-                    data-toggle="#curr-pass"></span>
+                  <input [type]="showCurrPass ? 'text' : 'password'" class="field-input" id="curr-pass"
+                    name="currentPassword" [(ngModel)]="currentPassword" placeholder="Enter current password"
+                    autocomplete="current-password">
+                  <span class="position-absolute end-0 top-50 translate-middle-y me-3 cursor-pointer"
+                    (click)="togglePasswordVisibility('curr')" style="font-size: 20px; line-height: 1; display: flex;">
+                    <iconify-icon [icon]="showCurrPass ? 'solar:eye-broken' : 'solar:eye-closed-bold-duotone'"
+                      class="text-slate-400"></iconify-icon>
+                  </span>
                 </div>
               </div>
 
               <div class="form-group-premium">
                 <label class="field-label">New Password</label>
                 <div class="position-relative">
-                  <input type="password" class="field-input" id="new-pass" placeholder="Enter new strong password">
-                  <span
-                    class="toggle-password ri-eye-line position-absolute end-0 top-50 translate-middle-y me-3 text-slate-400 cursor-pointer"
-                    data-toggle="#new-pass"></span>
+                  <input [type]="showNewPass ? 'text' : 'password'" class="field-input" id="new-pass" name="newPassword"
+                    [(ngModel)]="newPassword" placeholder="Enter new strong password" autocomplete="new-password">
+                  <span class="position-absolute end-0 top-50 translate-middle-y me-3 cursor-pointer"
+                    (click)="togglePasswordVisibility('new')" style="font-size: 20px; line-height: 1; display: flex;">
+                    <iconify-icon [icon]="showNewPass ? 'solar:eye-broken' : 'solar:eye-closed-bold-duotone'"
+                      class="text-slate-400"></iconify-icon>
+                  </span>
                 </div>
               </div>
 
               <div class="form-group-premium">
                 <label class="field-label">Confirm Password</label>
                 <div class="position-relative">
-                  <input type="password" class="field-input" id="conf-pass" placeholder="Re-type new password">
-                  <span
-                    class="toggle-password ri-eye-line position-absolute end-0 top-50 translate-middle-y me-3 text-slate-400 cursor-pointer"
-                    data-toggle="#conf-pass"></span>
+                  <input [type]="showConfPass ? 'text' : 'password'" class="field-input" id="conf-pass"
+                    name="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Re-type new password"
+                    autocomplete="new-password">
+                  <span class="position-absolute end-0 top-50 translate-middle-y me-3 cursor-pointer"
+                    (click)="togglePasswordVisibility('conf')" style="font-size: 20px; line-height: 1; display: flex;">
+                    <iconify-icon [icon]="showConfPass ? 'solar:eye-broken' : 'solar:eye-closed-bold-duotone'"
+                      class="text-slate-400"></iconify-icon>
+                  </span>
                 </div>
               </div>
 
@@ -245,7 +256,7 @@
                   <div class="text-slate-500 small">Notify on suspicious login attempts</div>
                 </div>
                 <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" checked>
+                  <input class="form-check-input" type="checkbox" name="securityAlerts" [(ngModel)]="securityAlerts">
                 </div>
               </div>
 
@@ -255,7 +266,8 @@
                   <div class="text-slate-500 small">Weekly news and circulars</div>
                 </div>
                 <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox">
+                  <input class="form-check-input" type="checkbox" name="instituteUpdates"
+                    [(ngModel)]="instituteUpdates">
                 </div>
               </div>
 
@@ -265,7 +277,8 @@
                   <div class="text-slate-500 small">Monthly efficiency and task logs</div>
                 </div>
                 <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" checked>
+                  <input class="form-check-input" type="checkbox" name="performanceReports"
+                    [(ngModel)]="performanceReports">
                 </div>
               </div>
             </div>

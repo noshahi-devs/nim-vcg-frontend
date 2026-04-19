@@ -8,6 +8,7 @@ import { Staff, Designation, Gender } from '../../../Models/staff';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { PopupService } from '../../../services/popup.service';
+import { UserManagementService } from '../../../services/user-management.service';
 
 declare var $: any;
 declare var bootstrap: any;
@@ -31,10 +32,26 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
   selectedImageBase64: string | null = null;
   selectedImageName: string | null = null;
 
+  // Notification Switches
+  securityAlerts = true;
+  instituteUpdates = false;
+  performanceReports = true;
+
+  // Password Fields
+  currentPassword = '';
+  newPassword = '';
+  confirmPassword = '';
+
+  // Visibility Flags
+  showCurrPass = false;
+  showNewPass = false;
+  showConfPass = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private staffService: StaffService,
+    private userService: UserManagementService,
     private popup: PopupService
   ) { }
 
@@ -91,12 +108,27 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   getStaffImage(imagePath: string | undefined): string {
-    const defaultImg = 'assets/images/user-grid/user-grid-img2.png';
+    const defaultImg = '/assets/images/user-grid/user-grid-img2.png';
     if (!imagePath) return defaultImg;
-    if (imagePath.startsWith('http') || imagePath.startsWith('data:') || imagePath.startsWith('assets/')) return imagePath;
-    const normalizedPath = imagePath.replace(/\\/g, '/').replace(/^\//, '');
     
-    // ⭐ Fix for live server where /images/ is intercepted by frontend
+    // Clean potential double slashes and whitespaces
+    let path = imagePath.toString().replace(/\/+/g, '/').trim();
+    
+    if (path.startsWith('http') || path.startsWith('data:')) return path;
+    
+    // If it's already an absolute asset path
+    if (path.startsWith('/assets/') || path.startsWith('assets/')) {
+        return path.startsWith('/') ? path : '/' + path;
+    }
+    
+    // Normalize relative paths
+    let normalizedPath = path.replace(/\\/g, '/').replace(/^\//, '');
+    
+    // Ensure /images/ prefix is present for backend images
+    if (!normalizedPath.startsWith('images/')) {
+      normalizedPath = 'images/' + normalizedPath;
+    }
+    
     const base = environment.apiBaseUrl || '/api';
     return `${base}/${normalizedPath}`;
   }
@@ -160,24 +192,88 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   updatePassword() {
-    const currPass = (document.getElementById('curr-pass') as HTMLInputElement)?.value;
-    const newPass = (document.getElementById('new-pass') as HTMLInputElement)?.value;
-    const confPass = (document.getElementById('conf-pass') as HTMLInputElement)?.value;
+    if (!this.currentPassword || !this.newPassword || !this.confirmPassword) {
+      this.popup.warning('Warning', 'Please fill all password fields.');
+      return;
+    }
 
-    if (!currPass || !newPass || !confPass) return;
+    if (this.newPassword !== this.confirmPassword) {
+      this.popup.error('Error', 'New passwords do not match.');
+      return;
+    }
 
-    if (newPass !== confPass) {
-      this.popup.error('Error', 'Passwords do not match.');
+    if (this.newPassword.length < 6) {
+      this.popup.warning('Security Tip', 'Password must be at least 6 characters long.');
       return;
     }
 
     this.loading = true;
     this.popup.loading('Updating security credentials...');
-    setTimeout(() => {
-      this.loading = false;
-      this.popup.closeLoading();
-      this.popup.success('Success', 'Security credentials updated!');
-    }, 1500);
+
+    const payload = {
+      Email: this.staffData.email,
+      CurrentPassword: this.currentPassword,
+      NewPassword: this.newPassword
+    };
+
+    this.userService.changePassword(payload).subscribe({
+      next: (res) => {
+        this.loading = false;
+        this.popup.closeLoading();
+        this.popup.success('Success', 'Password has been updated successfully!');
+        
+        // Clear fields
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+      },
+      error: (err) => {
+        this.loading = false;
+        this.popup.closeLoading();
+        console.error('Password Update Error:', err);
+        const errorMsg = err.error?.message || err.error?.error || 'Update failed. Check your current password and password requirements.';
+        this.popup.error('Update Failed', errorMsg);
+      }
+    });
+  }
+
+  forceReset() {
+    if (!this.newPassword || !this.confirmPassword) {
+      this.popup.warning('Warning', 'Please enter and confirm the new password.');
+      return;
+    }
+
+    if (this.newPassword !== this.confirmPassword) {
+      this.popup.error('Error', 'Passwords do not match.');
+      return;
+    }
+
+    this.loading = true;
+    this.popup.loading('Force resetting password (Admin)...');
+
+    const payload = {
+      Email: this.staffData.email,
+      NewPassword: this.newPassword
+    };
+
+    this.userService.forceResetPassword(payload).subscribe({
+      next: (res) => {
+        this.loading = false;
+        this.popup.closeLoading();
+        this.popup.success('Success', 'Password has been force-reset successfully!');
+        
+        // Clear fields
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+      },
+      error: (err) => {
+        this.loading = false;
+        this.popup.closeLoading();
+        console.error('Force Reset Error:', err);
+        this.popup.error('Reset Failed', err.error?.message || 'Access denied or server error.');
+      }
+    });
   }
 
   ngOnDestroy() { }
@@ -187,11 +283,13 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   initializePasswordToggle(toggleSelector: string) {
-    $(toggleSelector).on('click', function (this: any) {
-      $(this).toggleClass("ri-eye-off-line");
-      const input = $($(this).attr("data-toggle"));
-      input.attr("type", input.attr("type") === "password" ? "text" : "password");
-    });
+    // Legacy JQuery removed in favor of Angular state
+  }
+
+  togglePasswordVisibility(field: 'curr' | 'new' | 'conf') {
+    if (field === 'curr') this.showCurrPass = !this.showCurrPass;
+    if (field === 'new') this.showNewPass = !this.showNewPass;
+    if (field === 'conf') this.showConfPass = !this.showConfPass;
   }
 
   onImageSelected(event: any) {
@@ -199,7 +297,7 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
     if (input.files && input.files[0]) {
       const file = input.files[0];
       this.selectedImageName = file.name;
-      
+
       const reader = new FileReader();
       reader.onload = (e: any) => {
         const base64Content = e.target.result;

@@ -59,4 +59,12 @@ export class UserManagementService {
     toggleUserStatus(userId: string, status: string): Observable<any> {
         return this.http.put(`${this.apiUrl}/toggle-status/${userId}`, { status }, this.getAuthHeaders());
     }
+
+    changePassword(model: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}/change-password`, model, this.getAuthHeaders());
+    }
+
+    forceResetPassword(model: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}/force-reset-password`, model, this.getAuthHeaders());
+    }
 }
