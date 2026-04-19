@@ -29,97 +29,115 @@ export const ToastSwal = SweetAlert.mixin({
 });
 
 /**
- * Premium Wavy Alert (e.g. Task Fail) - Enhanced Outstanding Version
+ * Premium Wavy Alert — buttons live inside the custom HTML.
+ * Returns Promise<{ isConfirmed: boolean }> resolved when popup is dismissed.
  */
-export const WavyAlert = (title: string, message: string, type: 'error' | 'success' | 'warning' = 'error') => {
-  const icon = type === 'error' ? 'solar:danger-bold' : (type === 'success' ? 'solar:check-circle-bold' : 'solar:notification-lines-bold');
-  const color = type === 'error' ? '#800000' : (type === 'success' ? '#10b981' : '#f59e0b');
-  const lightColor = type === 'error' ? '#a52a2a' : (type === 'success' ? '#34d399' : '#fbbf24');
+export const WavyAlert = (
+  title: string,
+  message: string,
+  type: 'error' | 'success' | 'warning' = 'error'
+): Promise<{ isConfirmed: boolean }> => {
+  const icon =
+    type === 'error'
+      ? 'solar:danger-bold'
+      : type === 'success'
+      ? 'solar:check-circle-bold'
+      : 'solar:notification-lines-bold';
+  const color =
+    type === 'error' ? '#800000' : type === 'success' ? '#10b981' : '#f59e0b';
+  const lightColor =
+    type === 'error' ? '#a52a2a' : type === 'success' ? '#34d399' : '#fbbf24';
 
-  return SweetAlert.fire({
-    html: `
-      <div class="nim-wavy-container-enhanced">
-        <div class="nim-wavy-header-enhanced" style="background: linear-gradient(135deg, ${color} 0%, ${lightColor} 100%)">
-          <div class="nim-wavy-particles"></div>
-          <div class="nim-wavy-icon-circle-enhanced" style="box-shadow: 0 15px 35px ${color}40, 0 0 0 3px ${color}20">
-            <iconify-icon icon="${icon}" style="color: ${color}"></iconify-icon>
-          </div>
-          <div class="nim-wavy-shimmer"></div>
-        </div>
-        <div class="nim-wavy-content-enhanced">
-          <h2 class="nim-wavy-title-enhanced">${title}</h2>
-          <p class="nim-wavy-message-enhanced">${message}</p>
-          <div class="nim-wavy-status-indicator">
-            <div class="status-dot" style="background: ${color}"></div>
-            <span style="color: ${color}">Authentication Required</span>
-          </div>
-        </div>
-      </div>
-    `,
-    customClass: {
-      popup: 'nim-swal-wavy-enhanced',
-      actions: 'nim-wavy-actions-enhanced',
-      confirmButton: 'nim-wavy-btn nim-wavy-btn-primary-enhanced',
-      cancelButton: 'nim-wavy-btn nim-wavy-btn-secondary-enhanced'
-    },
-    buttonsStyling: false,
-    showConfirmButton: true,
-    showCancelButton: true,
-    confirmButtonText: '🔄 Retry',
-    cancelButtonText: '✖ Close',
-    reverseButtons: true, // Puts Retry on the right, Close on the left in some environments, but flex order determines it.
-    allowOutsideClick: false,
-    allowEscapeKey: true,
-    timer: 5000,
-    timerProgressBar: true,
-    didOpen: (popup) => {
-      // Apply dynamic colors to native confirm button
-      const retryBtn = SweetAlert.getConfirmButton();
-      if (retryBtn) {
-        const btnBgFrom = type === 'error' ? '#F4C430' : color;
-        const btnBgTo = type === 'error' ? '#FDE68A' : lightColor;
-        const btnShadow = type === 'error' ? 'rgba(244, 196, 48, 0.4)' : `${color}40`;
-
-        retryBtn.style.background = `linear-gradient(135deg, ${btnBgFrom} 0%, ${btnBgTo} 100%)`;
-        retryBtn.style.color = type === 'error' ? '#800000' : '#fff';
-        retryBtn.style.textShadow = type === 'error' ? 'none' : '0 1px 2px rgba(0,0,0,0.2)';
-        retryBtn.style.boxShadow = `0 8px 25px ${btnShadow}`;
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (confirmed: boolean) => {
+      if (!settled) {
+        settled = true;
+        resolve({ isConfirmed: confirmed });
       }
+    };
 
-      // Apply dynamic colors to native cancel button
-      const closeBtn = SweetAlert.getCancelButton();
-      if (closeBtn) {
-        closeBtn.style.color = '#800000';
-        closeBtn.style.borderColor = '#800000';
+    Swal.fire({
+      html: `
+        <div class="nim-wavy-container-enhanced">
+          <div class="nim-wavy-header-enhanced"
+               style="background: linear-gradient(135deg, ${color} 0%, ${lightColor} 100%)">
+            <div class="nim-wavy-particles"></div>
+            <div class="nim-wavy-icon-circle-enhanced"
+                 style="box-shadow: 0 15px 35px ${color}40, 0 0 0 3px ${color}20">
+              <iconify-icon icon="${icon}" style="color:${color}"></iconify-icon>
+            </div>
+            <div class="nim-wavy-shimmer"></div>
+          </div>
+          <div class="nim-wavy-content-enhanced">
+            <h2 class="nim-wavy-title-enhanced">${title}</h2>
+            <p class="nim-wavy-message-enhanced">${message}</p>
+            <div class="nim-wavy-status-indicator">
+              <div class="status-dot" style="background:${color}"></div>
+              <span style="color:${color}">Authentication Required</span>
+            </div>
+            <div class="nim-wavy-actions-enhanced">
+              <button type="button" class="nim-wavy-btn nim-wavy-btn-secondary-enhanced"
+                      id="nim-close-btn">&#10006; Close</button>
+              <button type="button" class="nim-wavy-btn nim-wavy-btn-primary-enhanced"
+                      id="nim-retry-btn">&#x1F504; Retry</button>
+            </div>
+          </div>
+        </div>
+      `,
+      customClass: {
+        popup: 'nim-swal-wavy-enhanced',
+        htmlContainer: 'nim-wavy-html-no-pad'
+      },
+      buttonsStyling: false,
+      showConfirmButton: false,
+      showCancelButton: false,
+      allowOutsideClick: true,
+      allowEscapeKey: true,
+      didOpen: (popup) => {
+        popup.querySelector('#nim-close-btn')?.addEventListener('click', () => {
+          Swal.close();
+          finish(false);
+        });
+        popup.querySelector('#nim-retry-btn')?.addEventListener('click', () => {
+          Swal.close();
+          finish(true);
+        });
+      },
+      didDestroy: () => {
+        // Catches ESC / outside-click dismissals
+        finish(false);
       }
-
-      // Add entrance animations
-      popup.classList.add('nim-wavy-entrance');
-    }
+    });
   });
 };
 
 /**
- * Premium Welcome Access Popup (V3)
+ * Premium Welcome Access Popup — shown on the dashboard after successful login.
  */
 export const WelcomeAccessPopup = (userName: string, role: string) => {
   return SweetAlert.fire({
     html: `
       <div class="nim-welcome-header">
         <div class="nim-welcome-logo">
-          <img src="assets/images/Vision College emblem design.png" alt="Vision College" style="width:100%;height:100%;object-fit:contain;">
+          <img src="assets/images/Vision College emblem design.png"
+               alt="Vision College"
+               style="width:100%;height:100%;object-fit:contain;">
         </div>
       </div>
       <div class="nim-welcome-body">
         <div class="nim-welcome-role">
-          <iconify-icon icon="solar:shield-user-bold-duotone" style="font-size:14px;"></iconify-icon>
+          <iconify-icon icon="solar:shield-user-bold-duotone"
+                        style="font-size:14px;"></iconify-icon>
           ${role} Access Granted
         </div>
         <div class="nim-welcome-title">Welcome Back!</div>
         <p class="nim-welcome-subtitle">${userName}</p>
         <div class="nim-welcome-card">
           <p style="color:#6b7280;font-size:13px;margin:0;line-height:1.5;">
-            Authenticated to the <strong style="color:#800000;">Vision College System</strong>. Your portal is ready.
+            Authenticated to the
+            <strong style="color:#800000;">Vision College System</strong>.
+            Your portal is ready.
           </p>
         </div>
       </div>
@@ -130,13 +148,13 @@ export const WelcomeAccessPopup = (userName: string, role: string) => {
       actions: 'nim-welcome-actions'
     },
     showConfirmButton: true,
-    confirmButtonText: '🚀 Launch Dashboard',
+    confirmButtonText: '&#x1F680; Go to Dashboard',
     showCloseButton: true,
     buttonsStyling: false,
-    allowOutsideClick: false,
+    allowOutsideClick: true,
     returnFocus: false,
     focusConfirm: false,
-    timer: 6000,
+    timer: 5000,
     timerProgressBar: true
   });
 };

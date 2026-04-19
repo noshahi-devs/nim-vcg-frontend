@@ -911,14 +911,33 @@ html body .modal-box select {
 .swal2-popup.nim-swal-wavy-enhanced {
   padding: 0 !important;
   border-radius: 32px !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   border: none !important;
   box-shadow: 0 35px 70px -15px rgba(128, 0, 0, 0.35), 0 15px 35px rgba(0, 0, 0, 0.15) !important;
   backdrop-filter: blur(20px);
   transform: scale(0.9);
   opacity: 0;
-  animation: nimWavyEnhancedEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: nimWavyEnhancedEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Ensure the popup actually hides — overrides the forwards fill-mode of entrance animation */
+.swal2-popup.nim-swal-wavy-enhanced.swal2-hide {
+  animation: nimWavyEnhancedExit 0.2s ease-in forwards !important;
+  pointer-events: none !important;
+}
+
+@keyframes nimWavyEnhancedExit {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to   { opacity: 0; transform: scale(0.92) translateY(8px); }
+}
+
+/* Remove default SweetAlert html-container padding for wavy popup */
+.nim-wavy-html-no-pad {
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
 
 @keyframes nimWavyEnhancedEntrance {
   0% {
@@ -942,6 +961,8 @@ html body .modal-box select {
   flex-direction: column;
   align-items: center;
   position: relative;
+  border-radius: 32px;
+  overflow: hidden;
 }
 
 .nim-wavy-header-enhanced {
@@ -1039,9 +1060,11 @@ html body .modal-box select {
 }
 
 .nim-wavy-content-enhanced {
-  padding: 28px 36px 50px;
+  padding: 28px 36px 24px;
   text-align: center;
   background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  position: relative;
+  z-index: 2;
 }
 
 .nim-wavy-title-enhanced {
@@ -1100,6 +1123,9 @@ html body .modal-box select {
   animation: nimSlideInUp 0.6s ease-out 0.5s both;
   margin-top: 0;
   margin-bottom: 16px;
+  position: relative;
+  z-index: 100;
+  pointer-events: auto;
 }
 
 .nim-wavy-btn {
@@ -1113,7 +1139,8 @@ html body .modal-box select {
   position: relative;
   overflow: hidden;
   min-width: 120px;
-  z-index: 1;
+  z-index: 100;
+  pointer-events: auto !important;
 }
 
 .nim-wavy-btn::before {

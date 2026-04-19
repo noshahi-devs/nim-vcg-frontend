@@ -194,19 +194,22 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
     this.authService.login(payload).subscribe({
       next: (res: AuthResponse) => {
         console.log('Login success:', res);
-        
+
         const displayName = res.fullName || res.username || 'User';
         const role = res.roles?.[0] || 'Member';
 
-        WelcomeAccessPopup(displayName, role).then((result) => {
-          this.router.navigateByUrl(this.returnUrl);
-        }).finally(() => {
-          this.isSubmitting = false;
+        // Navigate immediately — don't wait for the popup
+        this.router.navigateByUrl(this.returnUrl).then(() => {
+          // Show welcome popup after navigation completes (on dashboard)
+          WelcomeAccessPopup(displayName, role);
         });
+
+        this.isSubmitting = false;
       },
 
       error: (err) => {
         console.error('Login failed:', err);
+        this.isSubmitting = false;
 
         let errMsg = '';
         if (err.status === 401) {
@@ -223,23 +226,16 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
           errMsg = err.error?.message || 'An unexpected error occurred during login.';
         }
 
-        WavyAlert('Sign In Failed', errMsg, 'error').then((result) => {
-           if (result.isConfirmed) {
-             this.isSubmitting = false;
-             this.errorMessage = '';
-             this.signInForm.enable();
-             setTimeout(() => {
-               const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
-               if (emailInput) {
-                 emailInput.focus();
-                 emailInput.select();
-               }
-             }, 300);
-           } else if (result.isDismissed) {
-             this.isSubmitting = false;
-             this.errorMessage = '';
-             this.signInForm.enable();
-           }
+        WavyAlert('Sign In Failed', errMsg, 'error').then(() => {
+          // Re-enable the form regardless of how the popup was closed
+          this.errorMessage = '';
+          this.signInForm.enable();
+          setTimeout(() => {
+            const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
+            if (emailInput) {
+              emailInput.focus();
+            }
+          }, 150);
         });
       }
     });
