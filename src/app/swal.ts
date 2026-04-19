@@ -77,10 +77,14 @@ export const WavyAlert = (
               <span style="color:${color}">Authentication Required</span>
             </div>
             <div class="nim-wavy-actions-enhanced">
-              <button type="button" class="nim-wavy-btn nim-wavy-btn-secondary-enhanced"
-                      id="nim-close-btn">&#10006; Close</button>
-              <button type="button" class="nim-wavy-btn nim-wavy-btn-primary-enhanced"
-                      id="nim-retry-btn">&#x1F504; Retry</button>
+              <button type="button" class="nim-wavy-btn nim-wavy-btn-secondary-enhanced" id="nim-close-btn">
+                <iconify-icon icon="solar:close-circle-bold" style="font-size:18px;"></iconify-icon>
+                Close
+              </button>
+              <button type="button" class="nim-wavy-btn nim-wavy-btn-primary-enhanced" id="nim-retry-btn">
+                <iconify-icon icon="solar:restart-bold" style="font-size:18px;"></iconify-icon>
+                Retry
+              </button>
             </div>
           </div>
         </div>
