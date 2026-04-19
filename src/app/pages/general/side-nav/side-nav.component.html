@@ -91,6 +91,22 @@
         </ul>
       </li> -->
 
+      <!-- 5. Employees -->
+      <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
+        <a href="javascript:void(0)" data-desc="Staff records, profiles and login control">
+          <iconify-icon icon="mdi:account-tie" class="menu-icon"></iconify-icon>
+          <span>Staff</span>
+        </a>
+        <ul class="sidebar-submenu">
+          <li><a routerLink="/staff-list" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Staff List</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-add" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Add Staff</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-manage-login"
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger-main"></i> Staff
+              Logins</a></li>
+        </ul>
+      </li>
       <!-- 2. Manage Classes -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])">
         <a href="javascript:void(0)" data-desc="Class setup and class management">
@@ -138,22 +154,6 @@
         </ul>
       </li>
 
-      <!-- 5. Employees -->
-      <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
-        <a href="javascript:void(0)" data-desc="Staff records, profiles and login control">
-          <iconify-icon icon="mdi:account-tie" class="menu-icon"></iconify-icon>
-          <span>Staff</span>
-        </a>
-        <ul class="sidebar-submenu">
-          <li><a routerLink="/staff-list" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-primary-600"></i> Staff List</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-add" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-warning-main"></i> Add Staff</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-manage-login"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger-main"></i> Staff
-              Logins</a></li>
-        </ul>
-      </li>
 
       <!-- 6. Manage Students -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">

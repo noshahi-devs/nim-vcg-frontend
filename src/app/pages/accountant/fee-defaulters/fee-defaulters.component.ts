@@ -85,14 +85,22 @@ export class FeeDefaultersComponent implements OnInit {
 
   loadDefaulters(): void {
     this.isProcessing = true;
+    console.log('🚀 FeeDefaultersComponent: loadDefaulters started');
     this.dueBalanceService.getDueBalances().subscribe({
       next: (balances) => {
-        this.processDefaulters(balances);
-        this.applyFilters();
+        console.log('📦 FeeDefaultersComponent: Received balances:', balances);
+        try {
+          this.processDefaulters(balances || []);
+          this.applyFilters();
+          console.log('✨ FeeDefaultersComponent: Data processed successfully');
+        } catch (err) {
+          console.error('🔥 FeeDefaultersComponent: Error processing data:', err);
+          this.popup.error('Processing Error', 'There was an error organizing the data for display.');
+        }
         this.isProcessing = false;
       },
       error: (error) => {
-        console.error('Error loading due balances:', error);
+        console.error('❌ FeeDefaultersComponent: API Error:', error);
         this.isProcessing = false;
         this.popup.error('Failed to Load', 'Could not load data from the server. Please check your connection and try again.');
       }
@@ -100,31 +108,48 @@ export class FeeDefaultersComponent implements OnInit {
   }
 
   processDefaulters(balances: DueBalance[]): void {
+    if (!balances || !Array.isArray(balances)) {
+      console.warn('⚠️ FeeDefaultersComponent: balances is not an array', balances);
+      this.defaulters = [];
+      return;
+    }
+
     const today = new Date();
     this.defaulters = balances
-      .filter(b => b.dueBalanceAmount > 0)
+      .filter(b => b && b.dueBalanceAmount > 0)
       .map(b => {
-        const lastUpdate = new Date(b.lastUpdate);
-        const daysOverdue = Math.floor((today.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24));
+        try {
+          const lastUpdateDate = b.lastUpdate ? new Date(b.lastUpdate) : new Date();
+          const daysOverdue = isNaN(lastUpdateDate.getTime())
+            ? 0
+            : Math.floor((today.getTime() - lastUpdateDate.getTime()) / (1000 * 60 * 60 * 24));
 
-        let status: 'Critical' | 'Warning' | 'Overdue';
-        if (daysOverdue > 30) status = 'Critical';
-        else if (daysOverdue > 15) status = 'Warning';
-        else status = 'Overdue';
+          let status: 'Critical' | 'Warning' | 'Overdue';
+          if (daysOverdue > 30) status = 'Critical';
+          else if (daysOverdue > 15) status = 'Warning';
+          else status = 'Overdue';
 
-        return {
-          feeId: b.dueBalanceId,
-          studentName: b.student ? b.student.studentName : 'Unknown Student',
-          className: b.student?.standard?.standardName || 'N/A',
-          section: 'A', // Defaulting
-          feeType: 'Tuition Fee',
-          amount: b.dueBalanceAmount,
-          dueDate: b.lastUpdate as any,
-          daysOverdue,
-          status
-        };
-      });
+          return {
+            feeId: b.dueBalanceId,
+            studentName: b.student ? b.student.studentName : 'Unknown Student',
+            className: b.student?.standard?.standardName || 'N/A',
+            section: 'A', // Defaulting
+            feeType: 'Tuition Fee',
+            amount: b.dueBalanceAmount,
+            dueDate: (b.lastUpdate || today.toISOString()) as any,
+            daysOverdue: daysOverdue < 0 ? 0 : daysOverdue,
+            status
+          };
+        } catch (mapError) {
+          console.error('💀 Error mapping individual balance record:', b, mapError);
+          return null;
+        }
+      })
+      .filter(d => d !== null) as FeeDefaulter[];
+
+    console.log('✅ Final Mapped Defaulters:', this.defaulters.length);
   }
+
 
   applyFilters(): void {
     this.filteredDefaulters = this.defaulters.filter(d => {
@@ -172,7 +197,7 @@ export class FeeDefaultersComponent implements OnInit {
   confirmReminder(): void {
     const target = this.bulkMode ? `${this.filteredDefaulters.length} students` : `${this.reminderDefaulter?.studentName}`;
     this.popup.loading('Sending reminders...');
-    
+
     // Simulate API call for reminder
     setTimeout(() => {
       this.popup.success('Reminders Sent', `The payment reminder has been sent successfully to ${target}.`);
@@ -182,7 +207,7 @@ export class FeeDefaultersComponent implements OnInit {
   sendReminder(defaulter: FeeDefaulter): void {
     this.reminderDefaulter = defaulter;
     this.bulkMode = false;
-    
+
     this.popup.confirm(
       'Send Reminder?',
       `Are you sure you want to send a payment reminder to <strong>${defaulter.studentName}</strong>?`,
@@ -197,7 +222,7 @@ export class FeeDefaultersComponent implements OnInit {
   sendBulkReminders(): void {
     if (this.filteredDefaulters.length === 0) return;
     this.bulkMode = true;
-    
+
     this.popup.confirm(
       'Bulk Notification?',
       `Are you sure you want to send payment reminders to all <strong>${this.filteredDefaulters.length}</strong> filtered students?`,
@@ -258,6 +283,12 @@ export class FeeDefaultersComponent implements OnInit {
     <div>
       <h1>${schoolName}</h1>
       <p class="campus">GOJRA CAMPUS</p>
+      <!-- Action Buttons -->
+      <div class="col-lg-3 col-md-12 d-flex gap-2">
+        <button class="btn-primary-premium w-100" (click)="syncData()">
+          <iconify-icon icon="solar:refresh-circle-bold" class="me-2"></iconify-icon> Sync All Balances
+        </button>
+      </div>
     </div>
   </div>
   <div class="report-meta">

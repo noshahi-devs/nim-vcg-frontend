@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 export interface DueBalance {
@@ -34,6 +35,25 @@ export class DueBalanceService {
     }
 
     getDueBalances(): Observable<DueBalance[]> {
-        return this.http.get<DueBalance[]>(this.apiUrl, this.getAuthHeaders());
+        console.log('📡 DueBalanceService: API URL =', this.apiUrl);
+        return this.http.get<DueBalance[]>(this.apiUrl, this.getAuthHeaders()).pipe(
+            tap(data => console.log('✅ DueBalanceService: Data Received:', data)),
+            catchError(error => {
+                console.error('❌ DueBalanceService: Fetch Error:', error);
+                return of([]);
+            })
+        );
+    }
+
+    syncDueBalances(): Observable<any> {
+        return this.http.post(`${this.apiUrl}/sync`, {}, this.getAuthHeaders()).pipe(
+            tap(res => console.log('🔄 DueBalanceService: Sync successful', res)),
+            catchError(error => {
+                console.error('❌ DueBalanceService: Sync Error', error);
+                throw error;
+            })
+        );
     }
 }
+
+
