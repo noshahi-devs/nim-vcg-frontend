@@ -116,6 +116,7 @@ export const routes: Routes = [
       { path: 'assign-role', loadComponent: () => import('./pages/admin/assign-role/assign-role.component').then(m => m.AssignRoleComponent), data: { roles: ['Admin'] } },
 
       // Settings & Others
+      { path: 'academic-session', loadComponent: () => import('./pages/admin/academic-session/academic-session.component').then(m => m.AcademicSessionComponent), data: { roles: ['Admin'] } },
       { path: 'language', loadComponent: () => import('./pages/admin/language/language.component').then(m => m.LanguageComponent), data: { roles: ['Admin'] } },
       { path: 'theme', loadComponent: () => import('./theme/theme.component').then(m => m.ThemeComponent), data: { roles: ['Admin'] } },
       { path: 'settings', loadComponent: () => import('./pages/admin/general-settings/general-settings.component').then(m => m.GeneralSettingsComponent), data: { roles: ['Admin'] } },

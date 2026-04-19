@@ -20,40 +20,56 @@
     <ul class="sidebar-menu" id="sidebar-menu">
       <!-- Dashboard -->
       <li *ngIf="hasAnyRole(['Admin','Accountant','Principal','Teacher'])">
-        <a routerLink="/dashboard" routerLinkActive="active-page" data-desc="Main control center and real-time overview">
+        <a routerLink="/dashboard" routerLinkActive="active-page"
+          data-desc="Main control center and real-time overview">
           <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
           <span>Dashboard</span>
+        </a>
+      </li>
+
+      <!-- ★ Academic Session — Admin must set this first ★ -->
+      <li *ngIf="hasAnyRole(['Admin'])" class="sidebar-menu-group-title"></li>
+      <li *ngIf="hasAnyRole(['Admin'])">
+        <a routerLink="/academic-session" routerLinkActive="active-page"
+           data-desc="Create and manage academic years / sessions">
+          <iconify-icon icon="solar:calendar-mark-bold-duotone" class="menu-icon"></iconify-icon>
+          <span>Academic Session</span>
         </a>
       </li>
 
       <!-- Student Menu -->
       <li *ngIf="authService.hasAnyRole(['Student'])" class="sidebar-menu-group-title">STUDENT</li>
       <li *ngIf="authService.hasAnyRole(['Student'])">
-        <a routerLink="/student-dashboard" routerLinkActive="active-page" data-desc="Overview of your grades and attendance">
+        <a routerLink="/student-dashboard" routerLinkActive="active-page"
+          data-desc="Overview of your grades and attendance">
           <iconify-icon icon="solar:widget-bold-duotone" class="menu-icon"></iconify-icon>
           <span>My Dashboard</span>
         </a>
       </li>
       <li *ngIf="authService.hasAnyRole(['Student'])">
-        <a routerLink="/student-profile" routerLinkActive="active-page" data-desc="View and update your personal information">
+        <a routerLink="/student-profile" routerLinkActive="active-page"
+          data-desc="View and update your personal information">
           <iconify-icon icon="solar:user-bold-duotone" class="menu-icon"></iconify-icon>
           <span>My Profile</span>
         </a>
       </li>
       <li *ngIf="authService.hasAnyRole(['Student'])">
-        <a routerLink="/student-attendance-view" routerLinkActive="active-page" data-desc="Track your daily presence and records">
+        <a routerLink="/student-attendance-view" routerLinkActive="active-page"
+          data-desc="Track your daily presence and records">
           <iconify-icon icon="solar:user-check-bold-duotone" class="menu-icon"></iconify-icon>
           <span>My Attendance</span>
         </a>
       </li>
       <li *ngIf="authService.hasAnyRole(['Student'])">
-        <a routerLink="/student-fee-view" routerLinkActive="active-page" data-desc="Check payment history and due invoices">
+        <a routerLink="/student-fee-view" routerLinkActive="active-page"
+          data-desc="Check payment history and due invoices">
           <iconify-icon icon="solar:wallet-money-bold-duotone" class="menu-icon"></iconify-icon>
           <span>My Fees</span>
         </a>
       </li>
       <li *ngIf="authService.hasAnyRole(['Student'])">
-        <a routerLink="/student-exam-results" routerLinkActive="active-page" data-desc="View your detailed academic performance">
+        <a routerLink="/student-exam-results" routerLinkActive="active-page"
+          data-desc="View your detailed academic performance">
           <iconify-icon icon="solar:chart-bold-duotone" class="menu-icon"></iconify-icon>
           <span>My Exam Results</span>
         </a>
@@ -114,12 +130,11 @@
         <ul class="sidebar-submenu">
           <li><a routerLink="/subject-list" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Subject List</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/subject-add"
-              routerLinkActive="active-page"><i
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/subject-add" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-warning-main"></i> Add Subject</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/subject-assignment"
-              routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-danger-main"></i> Assign Subject</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger-main"></i> Assign
+              Subject</a></li>
         </ul>
       </li>
 
@@ -132,10 +147,11 @@
         <ul class="sidebar-submenu">
           <li><a routerLink="/staff-list" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Staff List</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-add"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Add Staff</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-add" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Add Staff</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-manage-login"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger-main"></i> Staff Logins</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger-main"></i> Staff
+              Logins</a></li>
         </ul>
       </li>
 
@@ -148,11 +164,11 @@
         <ul class="sidebar-submenu">
           <li><a routerLink="/student-list" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Student List</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/student-add"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Add Student</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/student-add" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Add Student</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/student-promote"
-              routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-danger-main"></i> Promote Student</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger-main"></i> Promote
+              Student</a></li>
         </ul>
       </li>
 
@@ -204,17 +220,23 @@
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/attendance"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Student Attendance</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Student
+              Attendance</a></li>
           <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/my-attendance"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-success-main"></i> My Attendance</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-success-main"></i> My
+              Attendance</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-attendance"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Staff Attendance</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Staff
+              Attendance</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/class-wise-report"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger"></i> Class Report</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger"></i> Class Report</a>
+          </li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/student-attendance-report"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Student Report</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Student
+              Report</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-attendance-report"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Staff Report</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Staff
+              Report</a></li>
         </ul>
       </li>
 
@@ -228,15 +250,14 @@
           <li><a routerLink="/leave" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Leave Dashboard</a></li>
           <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/apply-leave"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Apply Leave</a></li>
-          <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/my-leaves"
-              routerLinkActive="active-page"><i
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-warning-main"></i> Apply
+              Leave</a></li>
+          <li *ngIf="hasAnyRole(['Teacher', 'Accountant'])"><a routerLink="/my-leaves" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-success-main"></i> My Leaves</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/manage-leaves"
-              routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-danger-main"></i> Manage Leaves</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/leave-type"
-              routerLinkActive="active-page"><i
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger-main"></i> Manage
+              Leaves</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/leave-type" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-neutral-600"></i> Leave Types</a></li>
         </ul>
       </li>
@@ -253,19 +274,21 @@
           <li><a routerLink="/exam-schedule" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-warning-main"></i> Exam Schedule</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-schedule-standards-list"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-info-main"></i> Exam Classes List</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-info-main"></i> Exam Classes
+              List</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-schedule-standards-create"
-              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Add Exam Classes</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-primary-600"></i> Add Exam
+              Classes</a></li>
           <li *ngIf="hasAnyRole(['Teacher'])"><a routerLink="/marks-entry" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-success-main"></i> Marks Entry</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/auto-grade-calculation"
-              routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-info-main"></i> Auto Grade</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-info-main"></i> Auto Grade</a>
+          </li>
           <li><a routerLink="/exam-result" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-danger-main"></i> Exam Results</a></li>
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam-analytics"
-              routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-secondary-light"></i> Exam Reports</a></li>
+              routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-secondary-light"></i> Exam
+              Reports</a></li>
         </ul>
       </li>
 
@@ -305,7 +328,8 @@
 
       <!-- 14. Notifications -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher', 'Accountant'])">
-        <a href="javascript:void(0)" routerLinkActive="active-page" data-desc="Review system-wide alerts and broadcasts">
+        <a href="javascript:void(0)" routerLinkActive="active-page"
+          data-desc="Review system-wide alerts and broadcasts">
           <iconify-icon icon="mdi:message-outline" class="menu-icon"></iconify-icon>
           <span>Notifications</span>
           <span *ngIf="unreadMessageCount > 0" class="badge bg-danger ms-auto">{{ unreadMessageCount }}</span>
@@ -313,8 +337,7 @@
         <ul class="sidebar-submenu">
           <li><a routerLink="/email" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-primary-600"></i> Inbox</a></li>
-          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/broadcast"
-              routerLinkActive="active-page"><i
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/broadcast" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-warning-main"></i> Broadcast</a></li>
         </ul>
       </li>
@@ -662,16 +685,7 @@
   </footer>
 </main>
 <!-- Global Premium Tooltip -->
-<div id="sideNavTooltip" class="side-nav-premium-tooltip" style="display: none; position: fixed; z-index: 9999999; pointer-events: none;">
+<div id="sideNavTooltip" class="side-nav-premium-tooltip"
+  style="display: none; position: fixed; z-index: 9999999; pointer-events: none;">
   <div class="tooltip-content"></div>
 </div>
-
-
-
-
-
-
-
-
-
-

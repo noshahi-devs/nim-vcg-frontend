@@ -1,0 +1,154 @@
+<div class="as-page">
+
+  <!-- ══ Page Header ══ -->
+  <div class="as-page-header">
+    <div class="as-header-left">
+      <div class="as-header-icon">
+        <iconify-icon icon="solar:calendar-mark-bold-duotone"></iconify-icon>
+      </div>
+      <div>
+        <h2 class="as-page-title">Academic Sessions</h2>
+        <p class="as-page-subtitle">Manage academic years for your institute</p>
+      </div>
+    </div>
+    <button class="as-btn-add" (click)="showAddForm = !showAddForm" [class.active]="showAddForm">
+      <iconify-icon [icon]="showAddForm ? 'solar:close-circle-bold' : 'solar:add-circle-bold'"></iconify-icon>
+      {{ showAddForm ? 'Cancel' : 'New Session' }}
+    </button>
+  </div>
+
+  <!-- ══ Add Session Form (Expandable) ══ -->
+  <div class="as-add-panel" [class.open]="showAddForm">
+    <div class="as-add-panel-inner">
+      <div class="as-add-header">
+        <iconify-icon icon="solar:calendar-add-bold-duotone" class="as-add-icon"></iconify-icon>
+        <div>
+          <h3>Add New Academic Session</h3>
+          <p>Enter the academic year name, e.g. <strong>2024-25</strong> or <strong>2025-2026</strong></p>
+        </div>
+      </div>
+      <div class="as-form-row">
+        <div class="as-input-group">
+          <iconify-icon icon="solar:calendar-linear" class="as-input-icon"></iconify-icon>
+          <input
+            type="text"
+            class="as-input"
+            placeholder="e.g. 2024-25"
+            [(ngModel)]="newSessionName"
+            (keyup.enter)="addSession()"
+            maxlength="20"
+            id="newSessionInput"
+          />
+        </div>
+        <button class="as-btn-save" (click)="addSession()" [disabled]="isSaving">
+          <iconify-icon [icon]="isSaving ? 'svg-spinners:ring-resize' : 'solar:check-circle-bold'"></iconify-icon>
+          {{ isSaving ? 'Saving...' : 'Create Session' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Stats Bar ══ -->
+  <div class="as-stats-bar">
+    <div class="as-stat">
+      <iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>
+      <span class="as-stat-num">{{ sessions.length }}</span>
+      <span class="as-stat-label">Total Sessions</span>
+    </div>
+    <div class="as-stat-divider"></div>
+    <div class="as-stat">
+      <iconify-icon icon="solar:stars-bold-duotone"></iconify-icon>
+      <span class="as-stat-num" style="color:#F4C430;">{{ sessions.length > 0 ? sessions[sessions.length - 1].name : '—' }}</span>
+      <span class="as-stat-label">Latest Session</span>
+    </div>
+  </div>
+
+  <!-- ══ Loading ══ -->
+  <div *ngIf="isLoading" class="as-loading">
+    <div class="as-spinner">
+      <div class="as-spin-ring r1"></div>
+      <div class="as-spin-ring r2"></div>
+      <div class="as-spin-ring r3"></div>
+    </div>
+    <p>Loading sessions…</p>
+  </div>
+
+  <!-- ══ Empty State ══ -->
+  <div *ngIf="!isLoading && sessions.length === 0" class="as-empty">
+    <div class="as-empty-icon">
+      <iconify-icon icon="solar:calendar-mark-bold-duotone"></iconify-icon>
+    </div>
+    <h3>No Academic Sessions Yet</h3>
+    <p>Create your first session to get started with the institute management system.</p>
+    <button class="as-btn-add" (click)="showAddForm = true">
+      <iconify-icon icon="solar:add-circle-bold"></iconify-icon>
+      Create First Session
+    </button>
+  </div>
+
+  <!-- ══ Sessions Grid ══ -->
+  <div *ngIf="!isLoading && sessions.length > 0" class="as-grid">
+    <div class="as-card" *ngFor="let session of sessions; let i = index">
+
+      <!-- Card top accent -->
+      <div class="as-card-accent"></div>
+
+      <!-- Index badge -->
+      <div class="as-card-badge">#{{ i + 1 }}</div>
+
+      <!-- Normal View -->
+      <div class="as-card-body" *ngIf="editingId !== session.academicYearId">
+        <div class="as-card-icon">
+          <iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>
+        </div>
+        <div class="as-card-info">
+          <span class="as-card-label">Academic Year</span>
+          <h2 class="as-card-name">{{ session.name }}</h2>
+          <span class="as-card-id">ID: {{ session.academicYearId }}</span>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <div class="as-card-edit" *ngIf="editingId === session.academicYearId">
+        <div class="as-edit-input-group">
+          <iconify-icon icon="solar:pen-bold" class="as-edit-icon"></iconify-icon>
+          <input
+            type="text"
+            class="as-edit-input"
+            [(ngModel)]="editingName"
+            (keyup.enter)="saveEdit(session)"
+            (keyup.escape)="cancelEdit()"
+            maxlength="20"
+            autofocus
+          />
+        </div>
+      </div>
+
+      <!-- Card Actions -->
+      <div class="as-card-actions" *ngIf="editingId !== session.academicYearId">
+        <button class="as-action-btn as-edit" (click)="startEdit(session)" title="Edit">
+          <iconify-icon icon="solar:pen-bold-duotone"></iconify-icon>
+          Edit
+        </button>
+        <button class="as-action-btn as-delete" (click)="deleteSession(session)" title="Delete">
+          <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+          Delete
+        </button>
+      </div>
+
+      <!-- Edit Actions -->
+      <div class="as-card-actions" *ngIf="editingId === session.academicYearId">
+        <button class="as-action-btn as-save" (click)="saveEdit(session)" [disabled]="isSaving">
+          <iconify-icon [icon]="isSaving ? 'svg-spinners:ring-resize' : 'solar:check-circle-bold'"></iconify-icon>
+          {{ isSaving ? 'Saving…' : 'Save' }}
+        </button>
+        <button class="as-action-btn as-cancel" (click)="cancelEdit()">
+          <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
