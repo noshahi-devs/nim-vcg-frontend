@@ -14,7 +14,9 @@ export class MonthlyPayment {
   totalAmount!: number;
   amountPaid!: number;
   amountRemaining!: number;
+  ledgerBalance?: number;
   paymentDate: Date = new Date();
+
   student!: Student;
   paymentMethod?: string;
   transactionId?: string;

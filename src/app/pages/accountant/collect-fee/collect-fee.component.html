@@ -238,23 +238,32 @@
             </thead>
             <tbody>
               <tr *ngFor="let p of paginatedPayments">
-                <td><span class="badge bg-neutral-100 text-neutral-800 border-0 radius-8 px-8 py-4">#{{
-                    p.monthlyPaymentId }}</span></td>
-                <td><span class="fw-bold text-neutral-800 text-sm">{{ p.paymentDate | date:'mediumDate' }}</span></td>
+                <td>
+                  <span class="badge bg-neutral-100 text-neutral-800 border-0 radius-8 px-8 py-4 fw-bold">
+                    #{{ p.monthlyPaymentId }}
+                  </span>
+                </td>
+                <td>
+                  <span class="text-neutral-800 text-sm fw-medium">{{ p.paymentDate | date:'dd MMM, yyyy' }}</span>
+                </td>
                 <td>
                   <span class="badge px-12 py-6 radius-pill text-xs d-inline-flex align-items-center gap-4"
-                    style="background: rgba(128, 0, 0, 0.1); color: #800000;">
-                    <iconify-icon icon="solar:wallet-2-bold"></iconify-icon>
-                    Manual Collection
+                    style="background: rgba(128, 0, 0, 0.08); color: #800000; font-weight: 600;">
+                    <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
+                    Fee Collection
                   </span>
                 </td>
                 <td class="text-end">
-                  <span class="fw-bold text-success text-sm">+Rs. {{ p.amountPaid | number:'1.0-0' }}</span>
+                  <span class="fw-bold text-success text-sm">Rs. {{ p.amountPaid | number:'1.0-0' }}</span>
                 </td>
                 <td class="text-end">
-                  <span class="fw-bold text-neutral-800 text-sm">Rs. {{ p.amountRemaining | number:'1.0-0' }}</span>
+                  <span class="fw-bold text-sm" 
+                    [ngClass]="(p.ledgerBalance ?? 0) > 0 ? 'text-danger' : 'text-success'">
+                    Rs. {{ (p.ledgerBalance ?? 0) | number:'1.0-0' }}
+                  </span>
                 </td>
               </tr>
+
               <tr *ngIf="previousPayments.length === 0">
                 <td colspan="5" class="text-center py-60">
                   <div class="empty-state-premium">

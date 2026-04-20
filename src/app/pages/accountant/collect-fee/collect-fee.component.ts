@@ -4,7 +4,9 @@ import { CommonServices } from '../../../services/common.service';
 import { SettingsService } from '../../../services/settings.service';
 import { Student } from '../../../Models/student';
 import { Standard } from '../../../Models/standard';
+import { Fee } from '../../../Models/fee';
 import { MonthlyPayment } from '../../../Models/monthly-payment';
+
 import { CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { AuthService } from '../../../SecurityModels/auth.service';
@@ -30,6 +32,8 @@ export class CollectFeeComponent implements OnInit {
   selectedStandardId: any;
   studentId: any;
   selectedStudent: Student | null = null;
+  allFees: Fee[] = [];
+
 
   totalFee = 0;
   paidAmount = 0;
@@ -67,7 +71,16 @@ export class CollectFeeComponent implements OnInit {
     this.loadStandards();
     this.loadStudents();
     this.loadSchoolInfo();
+    this.loadAllFees();
   }
+
+  loadAllFees() {
+    this.commonService.getAllFees().subscribe({
+      next: fees => this.allFees = fees || [],
+      error: err => console.error('Error loading fees:', err)
+    });
+  }
+
 
   loadSchoolInfo() {
     this.settingsService.getSchoolInfo().subscribe(info => {
@@ -112,16 +125,52 @@ export class CollectFeeComponent implements OnInit {
     this.commonService.getAllPaymentsByStudentId(this.studentId).subscribe({
       next: payments => {
         this.previousPayments = payments || [];
-        this.totalFee = 5000; // replace this.selectedStudent.totalFee
+        
+        // Dynamic Fee Calculation
+        const studentStandardId = this.selectedStudent?.standardId;
+        if (studentStandardId) {
+          this.totalFee = this.allFees
+            .filter(f => f.standardId == studentStandardId)
+            .reduce((sum, f) => sum + f.amount, 0);
+        } else {
+          this.totalFee = 0;
+        }
+
         this.paidAmount = this.previousPayments.reduce((sum, p) => sum + p.amountPaid, 0);
         this.remainingAmount = this.totalFee - this.paidAmount;
+
+        // Calculate Running Balance for History (Ledger Logic)
+        let currentRunning = this.totalFee;
+        // Sort by date ascending to calculate ledger
+        const sortedHistory = [...this.previousPayments].sort((a, b) => 
+          new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime()
+        );
+        
+        sortedHistory.forEach(p => {
+          currentRunning -= p.amountPaid;
+          (p as any).ledgerBalance = currentRunning;
+        });
+
+        // Current display should be descending (latest first)
+        this.previousPayments = sortedHistory.reverse();
+
         this.currentPage = 1;
         this.updatePagination();
       },
       error: err => {
+
         if (err.status === 404) {
           this.previousPayments = [];
-          this.totalFee = 5000;
+          
+          const studentStandardId = this.selectedStudent?.standardId;
+          if (studentStandardId) {
+            this.totalFee = this.allFees
+              .filter(f => f.standardId == studentStandardId)
+              .reduce((sum, f) => sum + f.amount, 0);
+          } else {
+            this.totalFee = 0;
+          }
+
           this.paidAmount = 0;
           this.remainingAmount = this.totalFee;
           this.currentPage = 1;
@@ -130,6 +179,7 @@ export class CollectFeeComponent implements OnInit {
       }
     });
   }
+
 
   submitPayment() {
     if (!this.selectedStudent || !this.studentId || this.paymentForm.invalid) return;
@@ -143,18 +193,22 @@ export class CollectFeeComponent implements OnInit {
     this.popup.loading('Collecting fee from student...');
 
     const val = this.paymentForm.value;
+    const studentStandardId = this.selectedStudent?.standardId;
+    const currentFees = this.allFees.filter(f => f.standardId == studentStandardId);
 
     const newPayment: Partial<MonthlyPayment> = {
       studentId: this.selectedStudent.studentId,
       amountPaid: val.amountPaid,
       paymentDate: val.paymentDate,
-      // The backend will calculate totals, dues, remaining based on StudentId and AmountPaid
-      fees: [],
+      paymentMethod: val.paymentType,
+      transactionId: val.notes,
+      fees: currentFees, // Shamil kar rahe hain taake backend sahi TotalAmount calculate kare
       academicMonths: [],
       paymentMonths: [],
       paymentDetails: [],
       dueBalances: []
     };
+
 
     this.commonService.createMonthlyPayment(newPayment as MonthlyPayment).subscribe({
       next: (savedPayment) => {
