@@ -84,7 +84,7 @@
             <select class="field-select-premium" [(ngModel)]="selectedClass" (change)="onFilterChange()"
               [disabled]="isProcessing">
               <option value="all">All Classes</option>
-              <option *ngFor="let cls of uniqueClasses" [value]="cls">{{ cls }}</option>
+              <option *ngFor="let cls of classes" [value]="cls.standardName">{{ cls.standardName }}</option>
             </select>
             <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="6 9 12 15 18 9" />
@@ -128,6 +128,12 @@
           </svg>
           Refresh
         </button>
+        <button class="btn-primary-premium" (click)="syncData()" title="Sync Balances" [disabled]="isProcessing" style="background: var(--success-gradient);">
+          <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+          <iconify-icon *ngIf="!isProcessing" icon="solar:refresh-circle-bold" class="me-2" style="font-size: 20px;"></iconify-icon>
+          Sync All Balances
+        </button>
+
         <button class="btn-success-premium" (click)="sendBulkReminders()"
           [disabled]="filteredDefaulters.length === 0 || isProcessing" title="Send Bulk Reminders">
           <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>

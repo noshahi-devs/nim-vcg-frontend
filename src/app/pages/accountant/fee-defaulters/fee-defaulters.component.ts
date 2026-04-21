@@ -4,7 +4,10 @@ import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.com
 import { FormsModule } from '@angular/forms';
 import { DueBalanceService, DueBalance } from '../../../services/due-balance.service';
 import { SettingsService } from '../../../services/settings.service';
+import { StandardService } from '../../../services/standard.service';
 import { PopupService } from '../../../services/popup.service';
+import { Standard } from '../../../Models/standard';
+
 
 interface FeeDefaulter {
   feeId: number;
@@ -33,6 +36,8 @@ export class FeeDefaultersComponent implements OnInit {
   // Data
   defaulters: FeeDefaulter[] = [];
   filteredDefaulters: FeeDefaulter[] = [];
+  classes: Standard[] = [];
+
 
   // Filters
   searchQuery: string = '';
@@ -61,13 +66,17 @@ export class FeeDefaultersComponent implements OnInit {
   constructor(
     private dueBalanceService: DueBalanceService,
     private settingsService: SettingsService,
+    private standardService: StandardService,
     private popup: PopupService
   ) { }
 
+
   ngOnInit(): void {
     this.loadSchoolInfo();
+    this.loadClasses();
     this.loadDefaulters();
   }
+
 
   @HostListener('document:keydown', ['$event'])
   handleKeydown(event: KeyboardEvent) {
@@ -83,7 +92,37 @@ export class FeeDefaultersComponent implements OnInit {
     });
   }
 
+  loadClasses() {
+    this.standardService.getStandards().subscribe({
+      next: (data) => {
+        this.classes = data || [];
+        console.log('📚 FeeDefaultersComponent: Classes loaded:', this.classes.length);
+      },
+      error: (err) => {
+        console.error('❌ FeeDefaultersComponent: Failed to load classes', err);
+      }
+    });
+  }
+
+
+  syncData() {
+    this.isProcessing = true;
+    this.popup.loading('Synchronizing financial records...');
+    this.dueBalanceService.syncDueBalances().subscribe({
+      next: (res: any) => {
+        this.popup.success('Sync Complete', res.message || 'Balances updated successfully.');
+        this.loadDefaulters(); // Reload list after sync
+      },
+      error: (err) => {
+        console.error('❌ Sync failed', err);
+        this.isProcessing = false;
+        this.popup.error('Sync Failed', 'Could not synchronize balances. Please try again.');
+      }
+    });
+  }
+
   loadDefaulters(): void {
+
     this.isProcessing = true;
     console.log('🚀 FeeDefaultersComponent: loadDefaulters started');
     this.dueBalanceService.getDueBalances().subscribe({
@@ -184,9 +223,6 @@ export class FeeDefaultersComponent implements OnInit {
     return Math.max(1, Math.ceil(this.filteredDefaulters.length / this.itemsPerPage));
   }
 
-  get uniqueClasses(): string[] {
-    return [...new Set(this.defaulters.map(d => d.className))];
-  }
 
   changePage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
@@ -283,14 +319,9 @@ export class FeeDefaultersComponent implements OnInit {
     <div>
       <h1>${schoolName}</h1>
       <p class="campus">GOJRA CAMPUS</p>
-      <!-- Action Buttons -->
-      <div class="col-lg-3 col-md-12 d-flex gap-2">
-        <button class="btn-primary-premium w-100" (click)="syncData()">
-          <iconify-icon icon="solar:refresh-circle-bold" class="me-2"></iconify-icon> Sync All Balances
-        </button>
-      </div>
     </div>
   </div>
+
   <div class="report-meta">
     <span><strong>Report:</strong> Fee Defaulters List</span>
     <span><strong>Total Records:</strong> ${this.filteredDefaulters.length}</span>
