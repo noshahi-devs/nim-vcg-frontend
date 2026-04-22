@@ -85,7 +85,7 @@
         <table class="fee-table">
           <thead>
             <tr>
-              <th>ID</th>
+              <th>STD ID</th>
               <th>Student</th>
               <th>Total Fee</th>
               <th>Discount</th>
@@ -98,7 +98,7 @@
           </thead>
           <tbody>
             <tr class="table-row" *ngFor="let p of paginatedPayments; let i = index">
-              <td><span class="row-num">#{{ p.monthlyPaymentId }}</span></td>
+              <td><span class="row-num">S-{{ p.studentId }}</span></td>
               <td>
                 <div class="student-info">
                   <span class="student-name">{{ p.student?.studentName }}</span>
