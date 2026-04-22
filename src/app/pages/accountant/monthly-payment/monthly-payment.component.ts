@@ -111,6 +111,7 @@ export class MonthlyPaymentComponent implements OnInit {
       amountPaid: new FormControl(0),
       paymentDate: new FormControl(this.todayDate, Validators.required),
       totalAmount: new FormControl({ value: 0, disabled: true }),
+      previousDue: new FormControl({ value: 0, disabled: true }),
       dueBalance: new FormControl({ value: 0, disabled: true }),
       paymentMethod: new FormControl('Cash'),
       transactionId: new FormControl(''),
@@ -143,26 +144,57 @@ export class MonthlyPaymentComponent implements OnInit {
 
   onStudentSelect(studentId: any) {
     const student = this.students.find(s => s.studentId == studentId);
-    if (student && student.standardId) {
-      this.availableFees = this.fees.filter(f => f.standardId == student.standardId);
+    if (student) {
+      // 1. Filter for Monthly Fees (Include Global fees and handle string/index)
+      this.availableFees = this.fees.filter(f => 
+        (f.standardId == student.standardId || !f.standardId) && 
+        ((f.paymentFrequency as any) == 0 || (f.paymentFrequency as any) == 'Monthly' || !f.paymentFrequency)
+      );
+
+      // 2. Auto-fill Discount
+      if (!this.isEditMode) {
+        this.form.get('waver')!.setValue(student.defaultDiscount || 0);
+      }
+
+      // 3. Calculate Previous Dues (Sum of amountRemaining from past records)
+      const prevDues = this.payments
+        .filter(p => p.studentId == studentId && p.monthlyPaymentId !== this.form.get('monthlyPaymentId')?.value)
+        .reduce((sum, p) => sum + (p.amountRemaining || 0), 0);
+      
+      this.form.patchValue({ previousDue: prevDues }, { emitEvent: false });
     } else {
-      this.availableFees = [...this.fees];
+      this.availableFees = [];
+      this.form.patchValue({ previousDue: 0 }, { emitEvent: false });
     }
-    // Clear selected fees if they are no longer available?
-    // Usually better to just keep them if editing, but for new records we filter.
+    this.calculateAmounts();
   }
 
   calculateAmounts() {
     const fees = this.form.get('fees')!.value || [];
-    const waver = this.form.get('waver')!.value || 0;
+    const waverPercent = this.form.get('waver')!.value || 0;
     const amountPaid = this.form.get('amountPaid')!.value || 0;
+    const prevDue = this.form.get('previousDue')?.value || 0;
 
-    const total = fees.reduce((sum: any, f: any) => sum + (f.amount || 0), 0);
-    const discountedTotal = total - (total * waver / 100);
-    const due = discountedTotal - amountPaid;
+    // Gross Total for selected fees
+    const grossTotal = fees.reduce((sum: any, f: any) => sum + (f.amount || 0), 0);
+    
+    // Discount amount
+    const discountAmt = (grossTotal * waverPercent / 100);
+    
+    // Total for this month
+    const netCurrent = grossTotal - discountAmt;
+    
+    // Total payable (Current Net + Arrears)
+    const totalPayable = netCurrent + prevDue;
+    
+    // Final balance after this payment
+    const due = totalPayable - amountPaid;
 
-    this.form.get('totalAmount')!.setValue(discountedTotal, { emitEvent: false });
-    this.form.get('dueBalance')!.setValue(due, { emitEvent: false });
+    this.form.patchValue({
+      totalFeeAmount: grossTotal,
+      totalAmount: totalPayable,
+      dueBalance: due
+    }, { emitEvent: false });
   }
 
 // ----- Helper Methods -----

@@ -157,6 +157,11 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
       status: normalizedStatus,
       section: this.findMatchingSection(data.section ?? data.Section),
       standardId: data.standardId ?? data.StandardId,
+      sectionId: data.sectionId ?? data.SectionId,
+      academicYearId: data.academicYearId ?? data.AcademicYearId,
+      campusId: data.campusId ?? data.CampusId,
+      parentId: data.parentId ?? data.ParentId,
+      userId: data.userId ?? data.UserId,
       defaultDiscount: data.defaultDiscount ?? data.DefaultDiscount ?? 0,
       imagePath: data.imagePath ?? data.ImagePath,
       imageUpload: data.imageUpload ?? data.ImageUpload
@@ -276,10 +281,14 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
         admissionDate: this.admissionDateStr ? new Date(this.admissionDateStr).toISOString() : null, // Use full ISO string
         previousSchool: this.studentData.previousSchool || null,
         status: this.studentData.status || null,
+        sectionId: this.studentData.sectionId || null,
         section: this.studentData.section || null,
         standardId: this.studentData.standardId || null,
         defaultDiscount: this.studentData.defaultDiscount || 0,
         academicYearId: this.studentData.academicYearId || this.sessionService.getCurrentYearId(),
+        campusId: this.studentData.campusId || null,
+        parentId: this.studentData.parentId || null,
+        userId: this.studentData.userId || null,
         imagePath: this.studentData.imagePath || null,
         imageUpload: null
       };
