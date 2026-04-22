@@ -105,83 +105,85 @@
             </div>
           </div>
 
-          <table class="voucher-table">
-            <thead>
-              <tr>
-                <th style="width: 60px;">Sr.</th>
-                <th>Particulars / Fee Description</th>
-                <th class="text-end" style="width: 200px;">Amount (Rs.)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Dynamic Fee Rows -->
-              <tr *ngFor="let row of voucherRows">
-                <td class="sr-col">{{ row.sr }}</td>
-                <td class="particulars-col">
-                  {{ row.particulars }}
-                  <span *ngIf="row.isPaid" class="paid-stamp">PAID</span>
-                  <span *ngIf="row.isCustom" class="badge bg-info-focus text-info ms-8" style="font-size: 10px;">CUSTOM RATE</span>
-                </td>
-                <td class="amount-col text-end">
-                  <span [class.text-muted]="row.isPaid" [class.fw-bold]="row.isCustom">{{ (row.amount || 0) | number }}</span>
-                </td>
-              </tr>
+          <div class="table-responsive">
+            <table class="voucher-table">
+              <thead>
+                <tr>
+                  <th style="width: 60px;">Sr.</th>
+                  <th>Particulars / Fee Description</th>
+                  <th class="text-end" style="width: 200px;">Amount (Rs.)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Dynamic Fee Rows -->
+                <tr *ngFor="let row of voucherRows">
+                  <td class="sr-col">{{ row.sr }}</td>
+                  <td class="particulars-col">
+                    {{ row.particulars }}
+                    <span *ngIf="row.isPaid" class="paid-stamp">PAID</span>
+                    <span *ngIf="row.isCustom" class="badge bg-info-focus text-info ms-8" style="font-size: 10px;">CUSTOM RATE</span>
+                  </td>
+                  <td class="amount-col text-end">
+                    <span [class.text-muted]="row.isPaid" [class.fw-bold]="row.isCustom">{{ (row.amount || 0) | number }}</span>
+                  </td>
+                </tr>
 
-              <!-- Separator Row -->
-              <tr class="separator-row">
-                <td colspan="3"></td>
-              </tr>
+                <!-- Separator Row -->
+                <tr class="separator-row">
+                  <td colspan="3"></td>
+                </tr>
 
-              <!-- Breakdown Rows -->
-              <tr class="summary-row">
-                <td colspan="2" class="summary-label">Total Monthly Fees</td>
-                <td class="summary-value text-end">{{ totalFee | number }}</td>
-              </tr>
+                <!-- Breakdown Rows -->
+                <tr class="summary-row">
+                  <td colspan="2" class="summary-label">Total Monthly Fees</td>
+                  <td class="summary-value text-end">{{ totalFee | number }}</td>
+                </tr>
 
-              <tr class="summary-row discount" *ngIf="discountAmount > 0">
-                <td colspan="2" class="summary-label">Student Discount</td>
-                <td class="summary-value text-end text-success">- {{ discountAmount | number }}</td>
-              </tr>
+                <tr class="summary-row discount" *ngIf="discountAmount > 0">
+                  <td colspan="2" class="summary-label">Student Discount</td>
+                  <td class="summary-value text-end text-success">- {{ discountAmount | number }}</td>
+                </tr>
 
-              <tr class="summary-row deposit-history" *ngIf="paidThisMonth > 0">
-                <td colspan="2" class="summary-label">Already Paid (This Month)</td>
-                <td class="summary-value text-end text-success">- {{ paidThisMonth | number }}</td>
-              </tr>
+                <tr class="summary-row deposit-history" *ngIf="paidThisMonth > 0">
+                  <td colspan="2" class="summary-label">Already Paid (This Month)</td>
+                  <td class="summary-value text-end text-success">- {{ paidThisMonth | number }}</td>
+                </tr>
 
-              <tr class="summary-row arrears" *ngIf="previousBalance > 0">
-                <td colspan="2" class="summary-label">Previous Dues / Arrears</td>
-                <td class="summary-value text-end text-danger">{{ previousBalance | number }}</td>
-              </tr>
+                <tr class="summary-row arrears" *ngIf="previousBalance > 0">
+                  <td colspan="2" class="summary-label">Previous Dues / Arrears</td>
+                  <td class="summary-value text-end text-danger">{{ previousBalance | number }}</td>
+                </tr>
 
-              <!-- Grand Total Row -->
-              <tr class="summary-row total">
-                <td colspan="2" class="summary-label">TOTAL PAYABLE (Incl. Arrears)</td>
-                <td class="summary-value text-end" [class.text-success]="grandTotal <= 0">
-                  Rs. {{ grandTotal | number }}
-                  <span *ngIf="grandTotal < 0" class="badge ms-8" style="background:#dcfce7; color:#166534; font-size:10px;">CREDIT</span>
-                </td>
-              </tr>
+                <!-- Grand Total Row -->
+                <tr class="summary-row total">
+                  <td colspan="2" class="summary-label">TOTAL PAYABLE (Incl. Arrears)</td>
+                  <td class="summary-value text-end" [class.text-success]="grandTotal <= 0">
+                    Rs. {{ grandTotal | number }}
+                    <span *ngIf="grandTotal < 0" class="badge ms-8" style="background:#dcfce7; color:#166534; font-size:10px;">CREDIT</span>
+                  </td>
+                </tr>
 
-              <!-- Deposit / Amount Paid Input -->
-              <tr class="summary-row deposit">
-                <td colspan="2" class="summary-label">CURRENT DEPOSIT / PAYMENT</td>
-                <td class="summary-value text-end">
-                  <div class="deposit-input-wrap">
-                    <span class="currency">Rs.</span>
-                    <input type="number" [formControl]="$any(paymentForm.get('amountPaid'))" placeholder="0">
-                  </div>
-                </td>
-              </tr>
+                <!-- Deposit / Amount Paid Input -->
+                <tr class="summary-row deposit">
+                  <td colspan="2" class="summary-label">CURRENT DEPOSIT / PAYMENT</td>
+                  <td class="summary-value text-end">
+                    <div class="deposit-input-wrap">
+                      <span class="currency">Rs.</span>
+                      <input type="number" [formControl]="$any(paymentForm.get('amountPaid'))" placeholder="0">
+                    </div>
+                  </td>
+                </tr>
 
-              <!-- Final Due Balance -->
-              <tr class="summary-row final-due">
-                <td colspan="2" class="summary-label">DUE-ABLE BALANCE</td>
-                <td class="summary-value text-end" [class.paid-up]="dueableBalance <= 0">
-                  Rs. {{ (dueableBalance < 0 ? 0 : dueableBalance) | number }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                <!-- Final Due Balance -->
+                <tr class="summary-row final-due">
+                  <td colspan="2" class="summary-label">DUE-ABLE BALANCE</td>
+                  <td class="summary-value text-end" [class.paid-up]="dueableBalance <= 0">
+                    Rs. {{ (dueableBalance < 0 ? 0 : dueableBalance) | number }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <!-- Voucher Footer / Payment Meta -->
           <div class="voucher-footer">

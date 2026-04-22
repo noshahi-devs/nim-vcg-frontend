@@ -174,7 +174,11 @@ export class CollectFeeComponent implements OnInit {
     if (!this.selectedStudent) return;
     
     const stdId = this.selectedStudent.standardId;
-    const currentFees = this.allFees.filter(f => f.standardId == stdId);
+    // Strictly filter for MONTHLY fees in this "Collect Fee" form
+    const currentFees = this.allFees.filter(f => 
+      f.standardId == stdId && 
+      (f.paymentFrequency === 'Monthly' || (f.paymentFrequency as any) === 0)
+    );
     
     // Filter ALL history for selected month to see total deposited so far
     const monthPayments = this.previousPayments.filter(p => 
@@ -324,7 +328,10 @@ export class CollectFeeComponent implements OnInit {
     };
 
     const stdId = this.selectedStudent!.standardId;
-    const unpaidFees = this.allFees.filter(f => f.standardId == stdId);
+    const unpaidFees = this.allFees.filter(f => 
+      f.standardId == stdId && 
+      (f.paymentFrequency === 'Monthly' || (f.paymentFrequency as any) === 0)
+    );
 
     const discountPercent = (this.selectedStudent as any).defaultDiscount || 0;
 

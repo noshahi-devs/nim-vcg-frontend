@@ -661,10 +661,154 @@
   cursor: not-allowed;
 }
 
-/* Responsive */
+/* ===================== RESPONSIVE DESIGN ===================== */
+
+/* Smaller Laptops & Tablets */
+@media (max-width: 991px) {
+  .dashboard-main-body {
+    padding: 1rem !important;
+  }
+  
+  .glass-filters {
+    padding: 12px;
+  }
+  
+  .filter-item {
+    max-width: none !important;
+    width: calc(50% - 8px);
+  }
+  
+  .filter-item:last-child {
+    width: 100%;
+  }
+
+  .fee-card-body {
+    padding: 16px;
+  }
+}
+
+/* Mobile Devices */
 @media (max-width: 768px) {
+  .profile-header-premium .d-flex.justify-content-between {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  
+  .profile-header-premium .d-flex.gap-12 {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .profile-header-premium .btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .glass-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-item {
+    width: 100% !important;
+  }
+
+  .glass-form-card .d-flex.justify-content-between {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start !important;
+  }
+
+  .voucher-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .voucher-table th, .voucher-table td {
+    padding: 12px 14px;
+  }
+
+  .amount-col {
+    min-width: 100px;
+  }
+
   .footer-grid {
     flex-direction: column;
     align-items: stretch;
+    gap: 16px;
+  }
+
+  .v-submit-btn {
+    width: 100%;
+  }
+
+  .pagination-bar {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .pagination-info {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  /* Empty State Scaling */
+  .empty-state-premium-large {
+    padding: 24px;
+  }
+  
+  .empty-state-premium-large h4 {
+    font-size: 1.25rem;
+  }
+  
+  .empty-state-premium-large p {
+    font-size: 1rem;
+  }
+
+  .empty-state-premium-large .d-flex.gap-16 {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Extra Small Screens */
+@media (max-width: 480px) {
+  .dashboard-main-body {
+    padding: 10px !important;
+  }
+
+  .voucher-card {
+    border-radius: 8px;
+  }
+
+  .voucher-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .voucher-table th, .voucher-table td {
+    font-size: 12px;
+  }
+
+  .summary-label {
+    font-size: 10px;
+  }
+
+  .summary-value {
+    font-size: 13px;
+  }
+
+  .summary-row.total .summary-value {
+    font-size: 16px;
+  }
+
+  .summary-row.final-due .summary-value {
+    font-size: 18px;
+  }
+
+  .deposit-input-wrap {
+    max-width: 150px;
   }
 }
