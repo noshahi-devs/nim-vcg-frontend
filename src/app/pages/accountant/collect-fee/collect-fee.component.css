@@ -346,6 +346,40 @@
   cursor: not-allowed;
 }
 
+.btn-white {
+  background: #ffffff !important;
+  color: #800000 !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-weight: 700 !important;
+}
+
+.btn-white:hover {
+  background: #f8fafc !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.btn-outline-white {
+  background: rgba(255,255,255,0.1) !important;
+  color: #ffffff !important;
+  border: 1.5px solid rgba(255,255,255,0.4) !important;
+  backdrop-filter: blur(4px);
+  font-weight: 600 !important;
+}
+
+.btn-outline-white:hover {
+  background: rgba(255,255,255,0.2) !important;
+  border-color: #ffffff !important;
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  transform: none !important;
+  cursor: not-allowed;
+}
+
 /* ===================== VOUCHER FORM STYLES ===================== */
 .voucher-wrapper {
   margin-top: 10px;

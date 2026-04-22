@@ -302,7 +302,9 @@
                       <input type="checkbox" class="sr-check" [checked]="isFeeSelected(f)"
                         (change)="toggleFee(f, $event)" />
                       <span class="styled-check"></span>
-                      <span class="check-text">{{ f.feeType?.typeName }} - Rs. {{ f.amount }}</span>
+                      <span class="check-text">{{ f.feeType?.typeName }} - Rs. {{ f.amount }}
+                        <span *ngIf="f.isCustom" class="badge bg-info-focus text-info ms-4" style="font-size: 9px; padding: 2px 4px;">Custom</span>
+                      </span>
                     </label>
                     <div *ngIf="filteredAvailableFees.length === 0" class="empty-drop">No fees found</div>
                   </div>

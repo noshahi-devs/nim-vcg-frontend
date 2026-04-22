@@ -120,9 +120,10 @@
                 <td class="particulars-col">
                   {{ row.particulars }}
                   <span *ngIf="row.isPaid" class="paid-stamp">PAID</span>
+                  <span *ngIf="row.isCustom" class="badge bg-info-focus text-info ms-8" style="font-size: 10px;">CUSTOM RATE</span>
                 </td>
                 <td class="amount-col text-end">
-                  <span [class.text-muted]="row.isPaid">{{ (row.amount || 0) | number }}</span>
+                  <span [class.text-muted]="row.isPaid" [class.fw-bold]="row.isCustom">{{ (row.amount || 0) | number }}</span>
                 </td>
               </tr>
 

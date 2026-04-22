@@ -19,6 +19,7 @@ export class Fee {
   dueDate!: Date;
   standard!: Standard;
   feeType!: FeeType;
+  isCustom?: boolean;
   //monthlyPayment!: MonthlyPayment;
   //othersPayment!: OthersPayment;
 }

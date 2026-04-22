@@ -145,11 +145,19 @@ export class MonthlyPaymentComponent implements OnInit {
   onStudentSelect(studentId: any) {
     const student = this.students.find(s => s.studentId == studentId);
     if (student) {
-      // 1. Filter for Monthly Fees (Include Global fees and handle string/index)
-      this.availableFees = this.fees.filter(f => 
+      // 1. Filter and Map for Monthly Fees (Respect Student-Specific Overrides)
+      const baseFees = this.fees.filter(f => 
         (f.standardId == student.standardId || !f.standardId) && 
         ((f.paymentFrequency as any) == 0 || (f.paymentFrequency as any) == 'Monthly' || !f.paymentFrequency)
       );
+
+      this.availableFees = baseFees.map(f => {
+        const studentOverride = student.studentFees?.find(sf => sf.feeId === f.feeId);
+        if (studentOverride) {
+          return { ...f, amount: studentOverride.assignedAmount, isCustom: true };
+        }
+        return f;
+      });
 
       // 2. Auto-fill Discount
       if (!this.isEditMode) {

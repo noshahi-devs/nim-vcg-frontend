@@ -191,6 +191,11 @@ export class CollectFeeComponent implements OnInit {
     let currentMonthBaseTotal = 0;
 
     currentFees.forEach((fee, index) => {
+      // Check for Custom Override
+      const studentFeeOverride = (this.selectedStudent as any).studentFees?.find((sf: any) => sf.feeId === fee.feeId);
+      const effectiveAmount = studentFeeOverride ? studentFeeOverride.assignedAmount : fee.amount;
+      const isCustom = studentFeeOverride != null;
+
       // Check if this specific fee was already touched this month
       const isPaid = monthPayments.some(p => 
         p.fees?.some((f: any) => f.feeId == fee.feeId)
@@ -198,13 +203,14 @@ export class CollectFeeComponent implements OnInit {
         p.fees?.some((f: any) => f.feeId == fee.feeId)
       );
 
-      currentMonthBaseTotal += fee.amount;
+      currentMonthBaseTotal += effectiveAmount;
 
       this.voucherRows.push({
         sr: index + 1,
-        particulars: `${fee.feeType?.typeName || 'Fee'} (${fee.paymentFrequency || 'Monthly'})`,
-        amount: fee.amount,
-        isPaid: isPaid
+        particulars: `${fee.feeType?.typeName || 'Fee'} (${fee.paymentFrequency || 'Monthly'})${isCustom ? ' [Custom Rate]' : ''}`,
+        amount: effectiveAmount,
+        isPaid: isPaid,
+        isCustom: isCustom
       });
     });
 
@@ -272,13 +278,12 @@ export class CollectFeeComponent implements OnInit {
   submitPayment() {
     if (!this.selectedStudent || !this.studentId || this.paymentForm.invalid) return;
 
-    if (this.paymentForm.value.amountPaid > this.grandTotal) {
+    if (this.paymentForm.value.amountPaid > this.grandTotal && this.grandTotal > 0) {
       this.popup.warning('Irregular Amount', 'Payment cannot exceed the total outstanding balance (Rs. ' + this.grandTotal + ').');
       return;
     }
 
     const val = this.paymentForm.value;
-    const stdId = this.selectedStudent.standardId;
     const selectedMonth = this.academicMonths.find(m => m.monthId == this.selectedMonthId);
     
     // Check if payment already exists for this student and month
@@ -287,44 +292,51 @@ export class CollectFeeComponent implements OnInit {
     );
 
     if (monthAlreadyPaid) {
-      this.popup.confirm(
-        'Duplicate Month detected', 
-        `This student has already made a payment for ${selectedMonth?.monthName}. Do you want to process another payment for the same month?`,
-        'Yes, Add Again',
-        'Cancel',
-        'warning'
-      ).then(confirmed => {
-        if (confirmed) {
-          this.executePaymentSubmit(val, selectedMonth);
-        }
-      });
-    } else {
-      this.executePaymentSubmit(val, selectedMonth);
+      this.popup.warning(
+        `Monthly Fee Of This Student is Already Added for ${selectedMonth?.monthName || 'this month'}! So System will Not Add it Again.`,
+        'Alert'
+      );
+      return;
     }
+
+    this.executePaymentSubmit(val, selectedMonth);
   }
+
+  lastPaidAmountForPrint: number = 0; // Cache for printing after reset
+  lastVoucherState: any = null; // Full snapshot for post-payment printing
 
   executePaymentSubmit(val: any, selectedMonth: any) {
     this.isProcessing = true;
     this.popup.loading('Collecting fee from student...');
+    
+    // Capture state for print logic before we reset/refresh
+    this.lastPaidAmountForPrint = val.amountPaid;
+    this.lastVoucherState = {
+      totalFee: this.totalFee,
+      discountAmount: this.discountAmount,
+      grandTotal: this.grandTotal,
+      academicMonth: selectedMonth?.monthName,
+      academicYear: this.currentYear,
+      voucherRows: [...this.voucherRows]
+    };
 
-    const stdId = this.selectedStudent.standardId;
+    const stdId = this.selectedStudent!.standardId;
     const unpaidFees = this.allFees.filter(f => f.standardId == stdId);
 
     const discountPercent = (this.selectedStudent as any).defaultDiscount || 0;
 
     const newPayment: Partial<MonthlyPayment> = {
-      studentId: this.selectedStudent.studentId,
+      studentId: this.selectedStudent!.studentId,
       amountPaid: val.amountPaid,
       paymentDate: val.paymentDate,
       paymentMethod: val.paymentType,
       transactionId: val.notes,
       
-      // Fix for "Remaining why are 0"
-      totalFeeAmount: this.totalFee, // Original Fees for this month
-      waver: discountPercent,    // Sends discount PERCENTAGE because backend expects percentage
-      previousDue: this.previousBalance, // Just context info 
-      totalAmount: this.grandTotal,   // Final amount student was asked for (just this month)
-      amountRemaining: this.dueableBalance, // What is left after this deposit
+      totalFeeAmount: this.totalFee,
+      waver: discountPercent,
+      previousDue: this.previousBalance,
+      totalAmount: this.grandTotal,
+      amountRemaining: this.dueableBalance,
       
       fees: unpaidFees, 
       academicMonths: selectedMonth ? [selectedMonth] : [],
@@ -339,7 +351,17 @@ export class CollectFeeComponent implements OnInit {
         this.isProcessing = false;
         this.popup.closeLoading();
         this.popup.success('Payment Logged', 'Fee collection has been recorded.');
-        this.paymentForm.reset({ paymentDate: new Date().toISOString().substring(0, 10), paymentType: 'Cash' });
+        
+        // RE-STORE exactly what was saved so print is perfect
+        if(savedPayment) {
+          this.lastPaidAmountForPrint = savedPayment.amountPaid;
+        }
+
+        this.paymentForm.reset({ 
+          amountPaid: 0,
+          paymentDate: new Date().toISOString().substring(0, 10), 
+          paymentType: 'Cash' 
+        });
         this.loadFeeInfo();
       },
       error: (err) => {
@@ -359,29 +381,40 @@ export class CollectFeeComponent implements OnInit {
     const student = this.selectedStudent;
     const className = this.standards.find(s => s.standardId == student.standardId)?.standardName || 'N/A';
     
-    // Rows logic - showing particulars from the voucherRows
-    let rowsHtml = this.voucherRows
-      .map(r => `<tr><td>${r.particulars} ${r.isPaid ? '<span style="color:#166534">(Paid)</span>' : ''}</td><td class="text-right">${r.amount.toLocaleString()}</td></tr>`).join('');
+    // 1. Determine which data to use (Current draft OR Last successful transaction)
+    const isPrintingLastTransaction = !this.depositAmount && this.lastVoucherState;
     
-    // Summary logic for print
-    let summaryHtml = `<tr><td class="text-right">Total Monthly Fees:</td><td class="text-right">${this.totalFee.toLocaleString()}</td></tr>`;
+    const sourceRows = isPrintingLastTransaction ? this.lastVoucherState.voucherRows : this.voucherRows;
+    const sourceTotalFee = isPrintingLastTransaction ? this.lastVoucherState.totalFee : this.totalFee;
+    const sourceDiscount = isPrintingLastTransaction ? this.lastVoucherState.discountAmount : this.discountAmount;
+    const sourceGrandTotal = isPrintingLastTransaction ? this.lastVoucherState.grandTotal : this.grandTotal;
+    const sourcePaidNow = isPrintingLastTransaction ? this.lastPaidAmountForPrint : this.depositAmount;
+    const sourceMonth = isPrintingLastTransaction ? this.lastVoucherState.academicMonth : this.academicMonths[this.selectedMonthId-1]?.monthName;
+    const sourceYear = isPrintingLastTransaction ? this.lastVoucherState.academicYear : this.currentYear;
     
-    if (this.discountAmount > 0) {
-      summaryHtml += `<tr><td class="text-right" style="color:#166534;">Student Discount:</td><td class="text-right" style="color:#166534;">- ${this.discountAmount.toLocaleString()}</td></tr>`;
+    const printRemaining = Math.max(0, sourceGrandTotal - sourcePaidNow);
+
+    // 2. Build rows HTML
+    let rowsHtml = sourceRows
+      .map((r: any) => `<tr><td>${r.particulars} ${r.isPaid ? '<span style="color:#166534">(Paid)</span>' : ''}</td><td class="text-right">${r.amount.toLocaleString()}</td></tr>`).join('');
+    
+    // 3. Summary logic
+    let summaryHtml = `<tr><td class="text-right">Total Monthly Fees:</td><td class="text-right">${sourceTotalFee.toLocaleString()}</td></tr>`;
+    
+    if (sourceDiscount > 0) {
+      summaryHtml += `<tr><td class="text-right" style="color:#166534;">Student Discount:</td><td class="text-right" style="color:#166534;">- ${sourceDiscount.toLocaleString()}</td></tr>`;
     }
 
-    if (this.paidThisMonth > 0) {
+    if (this.paidThisMonth > 0 && !isPrintingLastTransaction) {
       summaryHtml += `<tr><td class="text-right" style="color:#166534;">Already Paid (This Month):</td><td class="text-right" style="color:#166534;">- ${this.paidThisMonth.toLocaleString()}</td></tr>`;
     }
 
-    // Previous Balance removed from monthly calculation as requested
-
-    // Footer
-    let tfootHtml = `<tr><td class="text-right"><strong>TOTAL MONTHLY PAYABLE:</strong></td><td class="text-right"><strong>Rs. ${this.grandTotal.toLocaleString()}</strong></td></tr>`;
-    tfootHtml += `<tr><td class="text-right"><strong>Paid Now:</strong></td><td class="text-right"><strong>Rs. ${this.depositAmount.toLocaleString()}</strong></td></tr>`;
+    // 4. Footer
+    let tfootHtml = `<tr><td class="text-right"><strong>TOTAL MONTHLY PAYABLE:</strong></td><td class="text-right"><strong>Rs. ${sourceGrandTotal.toLocaleString()}</strong></td></tr>`;
+    tfootHtml += `<tr><td class="text-right"><strong>Paid Now:</strong></td><td class="text-right"><strong>Rs. ${sourcePaidNow.toLocaleString()}</strong></td></tr>`;
     
-    if (this.dueableBalance > 0) {
-      tfootHtml += `<tr><td class="text-right" style="color:#d32f2f;"><strong>Remaining Balance:</strong></td><td class="text-right" style="color:#d32f2f;"><strong>Rs. ${this.dueableBalance.toLocaleString()}</strong></td></tr>`;
+    if (printRemaining > 0) {
+      tfootHtml += `<tr><td class="text-right" style="color:#d32f2f;"><strong>Remaining Balance:</strong></td><td class="text-right" style="color:#d32f2f;"><strong>Rs. ${printRemaining.toLocaleString()}</strong></td></tr>`;
     } else {
       tfootHtml += `<tr><td class="text-right" style="color:#166534;"><strong>Balance Status:</strong></td><td class="text-right" style="color:#166534;"><strong>PAID / CLEARED</strong></td></tr>`;
     }
@@ -401,7 +434,7 @@ export class CollectFeeComponent implements OnInit {
         </div>
         <div class="v-student-panel">
           <div class="v-row"><strong>Receipt #:</strong> <span style="color:#800000; font-weight:bold;">${Date.now().toString().slice(-6)}</span></div>
-          <div class="v-row"><strong>Month:</strong> <span style="text-transform:uppercase; font-weight:bold;">${this.academicMonths[this.selectedMonthId-1]?.monthName} - ${this.currentYear}</span></div>
+          <div class="v-row"><strong>Month:</strong> <span style="text-transform:uppercase; font-weight:bold;">${sourceMonth} - ${sourceYear}</span></div>
           <div class="v-row"><strong>Name:</strong> <span>${student.studentName || '-'}</span></div>
           <div class="v-row"><strong>Class:</strong> <span>${className}</span></div>
         </div>
