@@ -45,7 +45,16 @@ export class Student {
   parentId?: number | null;
   userId?: string | null;
   defaultDiscount?: number = 0;
-  // totalFee: number;
+  studentFees?: StudentFeeDto[];
+}
+
+export interface StudentFeeDto {
+  studentFeeId?: number;
+  studentId?: number;
+  feeId: number;
+  assignedAmount: number;
+  feeName?: string;
+  paymentFrequency?: string;
 }
 
 export enum GenderList {

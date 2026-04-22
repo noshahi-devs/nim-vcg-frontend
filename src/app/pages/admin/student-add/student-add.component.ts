@@ -14,6 +14,8 @@ import { finalize } from 'rxjs';
 import { SectionService } from '../../../services/section.service';
 import { Section } from '../../../Models/section';
 import { PopupService } from '../../../services/popup.service';
+import { FeeService } from '../../../services/fee.service';
+import { Fee } from '../../../Models/fee';
 
 declare var bootstrap: any;
 
@@ -93,6 +95,10 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
   classes: Standard[] = [];
   sections: Section[] = [];
   filteredSections: Section[] = [];
+  
+  // Fee Management
+  allFees: Fee[] = [];
+  assignedFees: { fee: Fee; checked: boolean; amount: number }[] = [];
 
   // Premium Modal Visibility State
   isProcessing = false;
@@ -104,6 +110,7 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     private standardService: StandardService,
     private sectionService: SectionService,
     private sessionService: SessionService,
+    private feeService: FeeService,
     private popup: PopupService
   ) { }
 
@@ -162,13 +169,29 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     if (this.newStudent.standardId) {
       const selectedClassName = this.getClassName(this.newStudent.standardId);
       this.filteredSections = this.sections.filter(s => s.className === selectedClassName);
+      this.loadFeesForClass(this.newStudent.standardId);
     } else {
       this.filteredSections = [];
+      this.assignedFees = [];
     }
     // Reset section if current one isn't in filtered list
     if (this.newStudent.section && !this.filteredSections.some(s => s.sectionName === this.newStudent.section)) {
       this.newStudent.section = '';
     }
+  }
+
+  loadFeesForClass(classId: number) {
+    this.feeService.getAllFees().subscribe({
+      next: (res) => {
+        this.allFees = res.filter(f => f.standardId === classId);
+        this.assignedFees = this.allFees.map(f => ({
+          fee: f,
+          checked: false,
+          amount: f.amount // Default amount fetched from assigned Fee
+        }));
+      },
+      error: (err) => console.error('Failed to load fees', err)
+    });
   }
 
   getClassName(id: number | null | undefined): string {
@@ -313,6 +336,10 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
       standardId: this.newStudent.standardId || null,
       defaultDiscount: this.newStudent.defaultDiscount || 0,
       academicYearId: this.sessionService.getCurrentYearId(),
+      studentFees: this.assignedFees.filter(af => af.checked).map(af => ({
+        feeId: af.fee.feeId,
+        assignedAmount: af.amount
+      })),
       imageUpload: this.newStudent.imageUpload.getBase64 ? {
         imageData: this.newStudent.imageUpload.getBase64,
         imageName: this.newStudent.imageUpload.file?.name || 'student_photo.png'

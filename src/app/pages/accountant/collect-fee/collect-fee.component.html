@@ -44,6 +44,12 @@
             <option *ngFor="let s of standards" [value]="s.standardId">{{ s.standardName }}</option>
           </select>
         </div>
+        <div class="filter-item flex-grow-1" style="max-width: 300px;">
+          <label class="text-white text-opacity-80 text-xs fw-bold uppercase mb-8 d-block ls-1">Academic Month</label>
+          <select class="form-select premium-select" [(ngModel)]="selectedMonthId" (change)="onMonthChange()">
+            <option *ngFor="let m of academicMonths" [value]="m.monthId">{{ m.monthName }}</option>
+          </select>
+        </div>
         <div class="filter-item flex-grow-1" style="max-width: 400px;">
           <label class="text-white text-opacity-80 text-xs fw-bold uppercase mb-8 d-block ls-1">Select Student</label>
           <select class="form-select premium-select" [(ngModel)]="studentId" (change)="loadFeeInfo()">
@@ -83,122 +89,118 @@
         </div>
       </div>
 
-      <!-- PREMIUM STATS ROW -->
-      <div class="row row-cols-1 row-cols-md-3 g-4 mb-32">
-        <div class="col">
-          <div class="stat-card-premium">
-            <div class="stat-icon-wrap indigo">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                <line x1="2" y1="10" x2="22" y2="10"></line>
-              </svg>
+      <!-- ===================== VOUCHER FORM ===================== -->
+      <div class="voucher-wrapper animate__animated animate__fadeInUp">
+        <div class="voucher-card">
+          
+          <!-- Voucher Header -->
+          <div class="voucher-header">
+            <div class="v-title-main">
+              FEE COLLECTION SLIP
+              <span class="v-badge">{{ academicMonths[selectedMonthId-1]?.monthName }} - {{ currentYear }}</span>
             </div>
-            <div class="stat-info">
-              <div class="label">Total Fee Target</div>
-              <div class="value">Rs. {{ totalFee | number:'1.0-0' }}</div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="stat-card-premium">
-            <div class="stat-icon-wrap green">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-              </svg>
-            </div>
-            <div class="stat-info">
-              <div class="label">Amount Paid</div>
-              <div class="value text-success">Rs. {{ paidAmount | number:'1.0-0' }}</div>
+            <div class="v-date-picker">
+              <label>Processing Date:</label>
+              <input type="date" [formControl]="$any(paymentForm.get('paymentDate'))">
             </div>
           </div>
-        </div>
-        <div class="col">
-          <div class="stat-card-premium" [class.warning-border]="remainingAmount > 0">
-            <div class="stat-icon-wrap" [ngClass]="remainingAmount > 0 ? 'orange' : 'neutral'">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
-                </path>
-                <line x1="12" y1="9" x2="12" y2="13"></line>
-                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-              </svg>
-            </div>
-            <div class="stat-info">
-              <div class="label">Remaining Dues</div>
-              <div class="value" [class.text-danger]="remainingAmount > 0">Rs. {{ remainingAmount | number:'1.0-0' }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- PAYMENT FORM CARD -->
-      <div class="glass-form-card p-24 mb-32 radius-16 shadow-sm border" *ngIf="hasRole('Accountant')">
-        <div class="d-flex align-items-center gap-12 mb-20">
-          <div class="icon-circle bg-maroon-focus">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round" class="text-maroon">
-              <line x1="12" y1="1" x2="12" y2="23"></line>
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
-          </div>
-          <h6 class="mb-0 fw-bold text-neutral-800">Process New Payment</h6>
-        </div>
+          <table class="voucher-table">
+            <thead>
+              <tr>
+                <th style="width: 60px;">Sr.</th>
+                <th>Particulars / Fee Description</th>
+                <th class="text-end" style="width: 200px;">Amount (Rs.)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic Fee Rows -->
+              <tr *ngFor="let row of voucherRows">
+                <td class="sr-col">{{ row.sr }}</td>
+                <td class="particulars-col">
+                  {{ row.particulars }}
+                  <span *ngIf="row.isPaid" class="paid-stamp">PAID</span>
+                </td>
+                <td class="amount-col text-end">
+                  <span [class.text-muted]="row.isPaid">{{ (row.amount || 0) | number }}</span>
+                </td>
+              </tr>
 
-        <form [formGroup]="paymentForm" (ngSubmit)="submitPayment()">
-          <div class="row g-4 align-items-end">
-            <div class="col-md-3">
-              <label class="form-label text-secondary-light fw-medium text-xs uppercase ls-1 mb-8">Amount Paid <span
-                  class="text-danger">*</span></label>
-              <div class="input-group-premium">
-                <span class="prefix pe-2" style="color:#800000; font-weight:700;">Rs.</span>
-                <input type="number" formControlName="amountPaid" class="form-control premium-input" placeholder="0">
+              <!-- Separator Row -->
+              <tr class="separator-row">
+                <td colspan="3"></td>
+              </tr>
+
+              <!-- Breakdown Rows -->
+              <tr class="summary-row">
+                <td colspan="2" class="summary-label">Total Monthly Fees</td>
+                <td class="summary-value text-end">{{ totalFee | number }}</td>
+              </tr>
+
+              <tr class="summary-row discount" *ngIf="discountAmount > 0">
+                <td colspan="2" class="summary-label">Student Discount</td>
+                <td class="summary-value text-end text-success">- {{ discountAmount | number }}</td>
+              </tr>
+
+              <tr class="summary-row deposit-history" *ngIf="paidThisMonth > 0">
+                <td colspan="2" class="summary-label">Already Paid (This Month)</td>
+                <td class="summary-value text-end text-success">- {{ paidThisMonth | number }}</td>
+              </tr>
+
+              <!-- Grand Total Row -->
+              <tr class="summary-row total">
+                <td colspan="2" class="summary-label">TOTAL MONTHLY PAYABLE</td>
+                <td class="summary-value text-end" [class.text-success]="grandTotal <= 0">
+                  Rs. {{ grandTotal | number }}
+                  <span *ngIf="grandTotal < 0" class="badge ms-8" style="background:#dcfce7; color:#166534; font-size:10px;">CREDIT</span>
+                </td>
+              </tr>
+
+              <!-- Deposit / Amount Paid Input -->
+              <tr class="summary-row deposit">
+                <td colspan="2" class="summary-label">CURRENT DEPOSIT / PAYMENT</td>
+                <td class="summary-value text-end">
+                  <div class="deposit-input-wrap">
+                    <span class="currency">Rs.</span>
+                    <input type="number" [formControl]="$any(paymentForm.get('amountPaid'))" placeholder="0">
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Final Due Balance -->
+              <tr class="summary-row final-due">
+                <td colspan="2" class="summary-label">DUE-ABLE BALANCE</td>
+                <td class="summary-value text-end" [class.paid-up]="dueableBalance <= 0">
+                  Rs. {{ (dueableBalance < 0 ? 0 : dueableBalance) | number }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Voucher Footer / Payment Meta -->
+          <div class="voucher-footer">
+            <div class="footer-grid">
+              <div class="footer-item">
+                <label>Payment Method</label>
+                <select [formControl]="$any(paymentForm.get('paymentType'))">
+                  <option value="Cash">Cash</option>
+                  <option value="Bank">Bank Deposit</option>
+                  <option value="Online">Online / Card</option>
+                </select>
               </div>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label text-secondary-light fw-medium text-xs uppercase ls-1 mb-8">Payment Type</label>
-              <select formControlName="paymentType" class="form-select premium-select-dark">
-                <option value="Cash">Cash</option>
-                <option value="Bank">Bank Deposit</option>
-                <option value="Online">Online / Card</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label text-secondary-light fw-medium text-xs uppercase ls-1 mb-8">Date Collected <span
-                  class="text-danger">*</span></label>
-              <div class="input-group-premium">
-                <input type="date" formControlName="paymentDate" class="form-control premium-input"
-                  style="border:none; padding: 10px 0;">
+              <div class="footer-item flex-grow-1">
+                <label>Remarks / Notes</label>
+                <input type="text" [formControl]="$any(paymentForm.get('notes'))" placeholder="e.g. Received via Bank Transfer...">
               </div>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label text-secondary-light fw-medium text-xs uppercase ls-1 mb-8">Notes
-                (Optional)</label>
-              <div class="input-group-premium">
-                <input type="text" formControlName="notes" class="form-control premium-input"
-                  style="border:none; padding: 10px 0;" placeholder="Transaction ID...">
+              <div class="footer-action">
+                <button class="v-submit-btn" [disabled]="isProcessing || paymentForm.invalid" (click)="submitPayment()">
+                  <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+                  {{ isProcessing ? 'PROCESSING...' : 'CONFIRM & SAVE' }}
+                </button>
               </div>
-            </div>
-            <div class="col-12 text-end mt-12">
-              <button type="submit"
-                class="btn btn-primary-gradient px-32 py-16 radius-16 d-inline-flex align-items-center gap-12 shadow-lg animate__animated animate__pulse animate__infinite"
-                [disabled]="isProcessing || paymentForm.invalid || paymentForm.value.amountPaid > remainingAmount || remainingAmount === 0">
-                <iconify-icon icon="solar:verified-check-bold" class="text-2xl"></iconify-icon>
-                <span class="fw-bold ls-1 uppercase">Save</span>
-              </button>
             </div>
           </div>
-        </form>
 
-        <div
-          class="mt-16 alert alert-danger d-flex align-items-center gap-8 border-0 radius-12 p-12 text-sm animate-shake"
-          *ngIf="paymentForm.value.amountPaid > remainingAmount">
-          <iconify-icon icon="solar:danger-bold-duotone" class="text-xl"></iconify-icon>
-          Amount exceeds the student's remaining dues!
         </div>
       </div>
 
@@ -258,8 +260,8 @@
                 </td>
                 <td class="text-end">
                   <span class="fw-bold text-sm" 
-                    [ngClass]="(p.ledgerBalance ?? 0) > 0 ? 'text-danger' : 'text-success'">
-                    Rs. {{ (p.ledgerBalance ?? 0) | number:'1.0-0' }}
+                    [ngClass]="(p.amountRemaining ?? 0) > 0 ? 'text-danger' : 'text-success'">
+                    Rs. {{ (p.amountRemaining ?? 0) | number:'1.0-0' }}
                   </span>
                 </td>
               </tr>

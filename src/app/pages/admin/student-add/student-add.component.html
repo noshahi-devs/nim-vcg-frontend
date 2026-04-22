@@ -202,10 +202,50 @@
           </div>
         </div>
 
-        <!-- Section 3: Contact & Guardian -->
-        <div class="form-section">
+        <!-- Section 3: Assigned Fees -->
+        <div class="form-section mb-40">
           <div class="form-section-header">
             <span class="section-number">3</span>
+            <h6 class="section-title-premium">Assign Custom Fees</h6>
+          </div>
+          
+          <div class="row g-4" *ngIf="assignedFees.length > 0; else noFeesSelected">
+            <div class="col-md-4" *ngFor="let af of assignedFees; let i = index">
+              <div class="card bg-light border-0 radius-8 p-3 shadow-sm d-flex flex-column gap-2 h-100">
+                <div class="form-check d-flex align-items-center mb-0">
+                  <input class="form-check-input me-2 mt-0" type="checkbox" [id]="'feeCheck' + i" 
+                         name="feeCheck{{i}}" [(ngModel)]="af.checked" style="width: 20px; height: 20px;">
+                  <label class="form-check-label fw-bold text-dark w-100 mb-0" [for]="'feeCheck' + i" style="cursor: pointer;">
+                    {{ af.fee.feeType?.typeName || 'Unknown Fee' }}
+                    <span class="badge bg-primary-100 text-primary-600 rounded-pill ms-2" style="font-size: 11px;">
+                      {{ af.fee.paymentFrequency }}
+                    </span>
+                  </label>
+                </div>
+                
+                <div class="input-wrapper-premium mt-1" [class.opacity-50]="!af.checked">
+                  <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted">Rs</span>
+                    <input type="number" class="form-control border-start-0" 
+                           [name]="'feeAmount' + i" [(ngModel)]="af.amount" 
+                           [disabled]="!af.checked" required min="0">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ng-template #noFeesSelected>
+            <div class="alert alert-soft-warning border-0 radius-8 d-flex align-items-center gap-2 mb-0">
+              <i class="ri-information-line fs-5"></i>
+              <span>No fees automatically load until an Academic Class is selected, or this class currently has no assigned standard fees.</span>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Section 4: Contact & Guardian -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <span class="section-number">4</span>
             <h6 class="section-title-premium">Contact Details & Guardian Info</h6>
           </div>
 

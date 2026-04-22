@@ -99,7 +99,8 @@ export class StudentViewComponent implements OnInit, AfterViewInit {
       section: data.section ?? data.Section,
       standardId: data.standardId ?? data.StandardId,
       imagePath: data.imagePath ?? data.ImagePath,
-      imageUpload: data.imageUpload ?? data.ImageUpload
+      imageUpload: data.imageUpload ?? data.ImageUpload,
+      studentFees: data.studentFees ?? data.StudentFees ?? []
     } as Student;
   }
 

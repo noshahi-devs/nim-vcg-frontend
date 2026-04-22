@@ -33,20 +33,36 @@ export class CollectFeeComponent implements OnInit {
   studentId: any;
   selectedStudent: Student | null = null;
   allFees: Fee[] = [];
-
+  currentYear: number = new Date().getFullYear();
 
   totalFee = 0;
   paidAmount = 0;
   remainingAmount = 0;
 
   previousPayments: MonthlyPayment[] = [];
-
-  // Pagination State
+  otherPayments: any[] = [];
+  
+  // Pagination State (for Payment History)
   paginatedPayments: MonthlyPayment[] = [];
   currentPage = 1;
   rowsPerPage = 10;
   totalPages = 1;
   toEntry = 0;
+
+  // Super Fee Form State
+  academicMonths: any[] = [];
+  selectedMonthId: number = new Date().getMonth() + 1; // Default to current month
+  voucherRows: any[] = [];
+  previousBalance: number = 0;
+  discountAmount: number = 0;
+  paidThisMonth: number = 0;
+  grandTotal: number = 0;
+  depositAmount: number = 0;
+  dueableBalance: number = 0;
+
+  arrearsBreakdown: any[] = [];
+  showArrearsBreakdown: boolean = false;
+
   isProcessing = false;
 
 
@@ -60,10 +76,16 @@ export class CollectFeeComponent implements OnInit {
     private popup: PopupService
   ) {
     this.paymentForm = this.fb.group({
-      amountPaid: ['', [Validators.required, Validators.min(1)]],
+      amountPaid: [0, [Validators.required, Validators.min(0)]],
       paymentType: ['Cash', Validators.required],
       paymentDate: [new Date().toISOString().substring(0, 10), Validators.required],
       notes: ['']
+    });
+
+    // Watch deposit amount to update final balance
+    this.paymentForm.get('amountPaid')?.valueChanges.subscribe(val => {
+      this.depositAmount = val || 0;
+      this.calculateFinalTotals();
     });
   }
 
@@ -72,6 +94,11 @@ export class CollectFeeComponent implements OnInit {
     this.loadStudents();
     this.loadSchoolInfo();
     this.loadAllFees();
+    this.commonService.getAllAcademicMonths().subscribe(m => this.academicMonths = m);
+  }
+
+  onMonthChange() {
+    this.generateVoucherRows();
   }
 
   loadAllFees() {
@@ -121,80 +148,169 @@ export class CollectFeeComponent implements OnInit {
     this.selectedStudent = this.students.find(s => s.studentId == this.studentId) || null;
     if (!this.selectedStudent) return;
 
-    // Fetch existing payments
-    this.commonService.getAllPaymentsByStudentId(this.studentId).subscribe({
-      next: payments => {
-        this.previousPayments = payments || [];
+    this.isProcessing = true;
+    
+    // Fetch all context in parallel for the Super Form
+    const sId = parseInt(this.studentId);
+    
+    this.commonService.getAllPaymentsByStudentId(sId).subscribe(mp => {
+      this.previousPayments = mp || [];
+      this.updatePagination();
+      
+      this.commonService.getAllOtherPaymentsByStudentId(sId).subscribe(op => {
+        this.otherPayments = op || [];
         
-        // Dynamic Fee Calculation
-        const studentStandardId = this.selectedStudent?.standardId;
-        if (studentStandardId) {
-          this.totalFee = this.allFees
-            .filter(f => f.standardId == studentStandardId)
-            .reduce((sum, f) => sum + f.amount, 0);
-        } else {
-          this.totalFee = 0;
-        }
-
-        this.paidAmount = this.previousPayments.reduce((sum, p) => sum + p.amountPaid, 0);
-        this.remainingAmount = this.totalFee - this.paidAmount;
-
-        // Calculate Running Balance for History (Ledger Logic)
-        let currentRunning = this.totalFee;
-        // Sort by date ascending to calculate ledger
-        const sortedHistory = [...this.previousPayments].sort((a, b) => 
-          new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime()
-        );
-        
-        sortedHistory.forEach(p => {
-          currentRunning -= p.amountPaid;
-          (p as any).ledgerBalance = currentRunning;
+        this.commonService.getDueBalance(sId).subscribe(db => {
+          this.previousBalance = db?.dueBalanceAmount || 0;
+          this.calculateArrearsBreakdown();
+          this.generateVoucherRows();
+          this.isProcessing = false;
         });
+      });
+    });
+  }
 
-        // Current display should be descending (latest first)
-        this.previousPayments = sortedHistory.reverse();
+  generateVoucherRows() {
+    if (!this.selectedStudent) return;
+    
+    const stdId = this.selectedStudent.standardId;
+    const currentFees = this.allFees.filter(f => f.standardId == stdId);
+    
+    // Filter ALL history for selected month to see total deposited so far
+    const monthPayments = this.previousPayments.filter(p => 
+      p.academicMonths?.some((m: any) => m.monthId == this.selectedMonthId)
+    );
+    const monthOtherPayments = this.otherPayments.filter(p => 
+      p.academicMonths?.some((m: any) => m.monthId == this.selectedMonthId)
+    );
 
-        this.currentPage = 1;
-        this.updatePagination();
-      },
-      error: err => {
+    this.paidThisMonth = monthPayments.reduce((s, p) => s + p.amountPaid, 0) + 
+                        monthOtherPayments.reduce((s, p) => s + p.amountPaid, 0);
 
-        if (err.status === 404) {
-          this.previousPayments = [];
-          
-          const studentStandardId = this.selectedStudent?.standardId;
-          if (studentStandardId) {
-            this.totalFee = this.allFees
-              .filter(f => f.standardId == studentStandardId)
-              .reduce((sum, f) => sum + f.amount, 0);
-          } else {
-            this.totalFee = 0;
-          }
+    this.voucherRows = [];
+    let currentMonthBaseTotal = 0;
 
-          this.paidAmount = 0;
-          this.remainingAmount = this.totalFee;
-          this.currentPage = 1;
-          this.updatePagination();
-        }
+    currentFees.forEach((fee, index) => {
+      // Check if this specific fee was already touched this month
+      const isPaid = monthPayments.some(p => 
+        p.fees?.some((f: any) => f.feeId == fee.feeId)
+      ) || monthOtherPayments.some(p => 
+        p.fees?.some((f: any) => f.feeId == fee.feeId)
+      );
+
+      currentMonthBaseTotal += fee.amount;
+
+      this.voucherRows.push({
+        sr: index + 1,
+        particulars: `${fee.feeType?.typeName || 'Fee'} (${fee.paymentFrequency || 'Monthly'})`,
+        amount: fee.amount,
+        isPaid: isPaid
+      });
+    });
+
+    this.totalFee = currentMonthBaseTotal;
+    
+    const discountPercent = (this.selectedStudent as any).defaultDiscount || 0;
+    this.discountAmount = (currentMonthBaseTotal * discountPercent / 100);
+
+    this.calculateFinalTotals();
+  }
+
+  calculateArrearsBreakdown() {
+    this.arrearsBreakdown = [];
+    let trackedArrears = 0;
+
+    // 1. Scan previous payments for individual unpaid amounts
+    this.previousPayments.forEach(p => {
+      if ((p.amountRemaining || 0) > 0) {
+        this.arrearsBreakdown.push({
+          date: p.paymentDate,
+          id: `#${p.monthlyPaymentId}`,
+          description: 'Payment Balance',
+          amount: p.amountRemaining
+        });
+        trackedArrears += (p.amountRemaining || 0);
       }
     });
+
+    // 2. Scan other payments
+    this.otherPayments.forEach(p => {
+      if ((p.amountRemaining || 0) > 0) {
+        this.arrearsBreakdown.push({
+          date: p.paymentDate,
+          id: `#${p.othersPaymentId}`,
+          description: 'Other Fee Balance',
+          amount: p.amountRemaining
+        });
+        trackedArrears += (p.amountRemaining || 0);
+      }
+    });
+
+    // 3. Handle Legacy Balance (Mismatches between transactions and DueBalance table)
+    const discrepancy = this.previousBalance - trackedArrears;
+    if (Math.abs(discrepancy) > 1) {
+      this.arrearsBreakdown.push({
+        date: null,
+        id: 'SYSTEM',
+        description: discrepancy > 0 ? 'Carried Forward / Legacy Arrears' : 'Unallocated Credit',
+        amount: discrepancy
+      });
+    }
+  }
+
+  calculateFinalTotals() {
+    // Current Month Pending = (Fees - Discount) - Already Paid This Month
+    const thisMonthNet = Math.max(0, (this.totalFee - this.discountAmount) - this.paidThisMonth);
+    
+    // As explicitly requested: Calculate ONLY the monthly amount, ignoring past arrears
+    this.grandTotal = thisMonthNet;
+    
+    this.dueableBalance = this.grandTotal - this.depositAmount;
   }
 
 
   submitPayment() {
     if (!this.selectedStudent || !this.studentId || this.paymentForm.invalid) return;
 
-    if (this.paymentForm.value.amountPaid > this.remainingAmount) {
-      this.popup.warning('Irregular Amount', 'Payment cannot exceed the outstanding balance.');
+    if (this.paymentForm.value.amountPaid > this.grandTotal) {
+      this.popup.warning('Irregular Amount', 'Payment cannot exceed the total outstanding balance (Rs. ' + this.grandTotal + ').');
       return;
     }
 
+    const val = this.paymentForm.value;
+    const stdId = this.selectedStudent.standardId;
+    const selectedMonth = this.academicMonths.find(m => m.monthId == this.selectedMonthId);
+    
+    // Check if payment already exists for this student and month
+    const monthAlreadyPaid = this.previousPayments.some(p => 
+      p.academicMonths?.some((m: any) => m.monthId == this.selectedMonthId)
+    );
+
+    if (monthAlreadyPaid) {
+      this.popup.confirm(
+        'Duplicate Month detected', 
+        `This student has already made a payment for ${selectedMonth?.monthName}. Do you want to process another payment for the same month?`,
+        'Yes, Add Again',
+        'Cancel',
+        'warning'
+      ).then(confirmed => {
+        if (confirmed) {
+          this.executePaymentSubmit(val, selectedMonth);
+        }
+      });
+    } else {
+      this.executePaymentSubmit(val, selectedMonth);
+    }
+  }
+
+  executePaymentSubmit(val: any, selectedMonth: any) {
     this.isProcessing = true;
     this.popup.loading('Collecting fee from student...');
 
-    const val = this.paymentForm.value;
-    const studentStandardId = this.selectedStudent?.standardId;
-    const currentFees = this.allFees.filter(f => f.standardId == studentStandardId);
+    const stdId = this.selectedStudent.standardId;
+    const unpaidFees = this.allFees.filter(f => f.standardId == stdId);
+
+    const discountPercent = (this.selectedStudent as any).defaultDiscount || 0;
 
     const newPayment: Partial<MonthlyPayment> = {
       studentId: this.selectedStudent.studentId,
@@ -202,8 +318,16 @@ export class CollectFeeComponent implements OnInit {
       paymentDate: val.paymentDate,
       paymentMethod: val.paymentType,
       transactionId: val.notes,
-      fees: currentFees, // Shamil kar rahe hain taake backend sahi TotalAmount calculate kare
-      academicMonths: [],
+      
+      // Fix for "Remaining why are 0"
+      totalFeeAmount: this.totalFee, // Original Fees for this month
+      waver: discountPercent,    // Sends discount PERCENTAGE because backend expects percentage
+      previousDue: this.previousBalance, // Just context info 
+      totalAmount: this.grandTotal,   // Final amount student was asked for (just this month)
+      amountRemaining: this.dueableBalance, // What is left after this deposit
+      
+      fees: unpaidFees, 
+      academicMonths: selectedMonth ? [selectedMonth] : [],
       paymentMonths: [],
       paymentDetails: [],
       dueBalances: []
@@ -235,14 +359,31 @@ export class CollectFeeComponent implements OnInit {
     const student = this.selectedStudent;
     const className = this.standards.find(s => s.standardId == student.standardId)?.standardName || 'N/A';
     
-    // Rows logic - showing summary for the collection
-    let rowsHtml = `<tr><td>Student Fee Collection (Due Clearance)</td><td class="text-right">${this.paidAmount.toLocaleString()}</td></tr>`;
-    rowsHtml += `<tr><td>&nbsp;</td><td>&nbsp;</td></tr>`;
+    // Rows logic - showing particulars from the voucherRows
+    let rowsHtml = this.voucherRows
+      .map(r => `<tr><td>${r.particulars} ${r.isPaid ? '<span style="color:#166534">(Paid)</span>' : ''}</td><td class="text-right">${r.amount.toLocaleString()}</td></tr>`).join('');
+    
+    // Summary logic for print
+    let summaryHtml = `<tr><td class="text-right">Total Monthly Fees:</td><td class="text-right">${this.totalFee.toLocaleString()}</td></tr>`;
+    
+    if (this.discountAmount > 0) {
+      summaryHtml += `<tr><td class="text-right" style="color:#166534;">Student Discount:</td><td class="text-right" style="color:#166534;">- ${this.discountAmount.toLocaleString()}</td></tr>`;
+    }
+
+    if (this.paidThisMonth > 0) {
+      summaryHtml += `<tr><td class="text-right" style="color:#166534;">Already Paid (This Month):</td><td class="text-right" style="color:#166534;">- ${this.paidThisMonth.toLocaleString()}</td></tr>`;
+    }
+
+    // Previous Balance removed from monthly calculation as requested
 
     // Footer
-    let tfootHtml = `<tr><td class="text-right"><strong>Total Paid:</strong></td><td class="text-right"><strong>Rs. ${this.paidAmount.toLocaleString()}</strong></td></tr>`;
-    if (this.remainingAmount > 0) {
-      tfootHtml += `<tr><td class="text-right" style="color:#d32f2f;"><strong>Remaining Dues:</strong></td><td class="text-right" style="color:#d32f2f;"><strong>Rs. ${this.remainingAmount.toLocaleString()}</strong></td></tr>`;
+    let tfootHtml = `<tr><td class="text-right"><strong>TOTAL MONTHLY PAYABLE:</strong></td><td class="text-right"><strong>Rs. ${this.grandTotal.toLocaleString()}</strong></td></tr>`;
+    tfootHtml += `<tr><td class="text-right"><strong>Paid Now:</strong></td><td class="text-right"><strong>Rs. ${this.depositAmount.toLocaleString()}</strong></td></tr>`;
+    
+    if (this.dueableBalance > 0) {
+      tfootHtml += `<tr><td class="text-right" style="color:#d32f2f;"><strong>Remaining Balance:</strong></td><td class="text-right" style="color:#d32f2f;"><strong>Rs. ${this.dueableBalance.toLocaleString()}</strong></td></tr>`;
+    } else {
+      tfootHtml += `<tr><td class="text-right" style="color:#166534;"><strong>Balance Status:</strong></td><td class="text-right" style="color:#166534;"><strong>PAID / CLEARED</strong></td></tr>`;
     }
 
     const voucherParts = ['Bank Copy', 'Office Copy', 'Student Copy'].map(copyName => `
@@ -260,13 +401,13 @@ export class CollectFeeComponent implements OnInit {
         </div>
         <div class="v-student-panel">
           <div class="v-row"><strong>Receipt #:</strong> <span style="color:#800000; font-weight:bold;">${Date.now().toString().slice(-6)}</span></div>
+          <div class="v-row"><strong>Month:</strong> <span style="text-transform:uppercase; font-weight:bold;">${this.academicMonths[this.selectedMonthId-1]?.monthName} - ${this.currentYear}</span></div>
           <div class="v-row"><strong>Name:</strong> <span>${student.studentName || '-'}</span></div>
           <div class="v-row"><strong>Class:</strong> <span>${className}</span></div>
-          <div class="v-row"><strong>Enrollment:</strong> <span>${student.enrollmentNo || '-'}</span></div>
         </div>
         <table class="v-table">
           <thead><tr><th>Description</th><th class="text-right">Amount (Rs.)</th></tr></thead>
-          <tbody>${rowsHtml}</tbody>
+          <tbody>${rowsHtml}${summaryHtml}</tbody>
           <tfoot>${tfootHtml}</tfoot>
         </table>
         <div class="v-bank-footer">
