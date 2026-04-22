@@ -19,7 +19,7 @@ import { PopupService } from '../../../services/popup.service';
   templateUrl: './other-payment.component.html',
   styleUrls: ['./other-payment.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, BreadcrumbComponent]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule]
 })
 export class OtherPaymentComponent implements OnInit {
   title = "Other Payments";
@@ -99,10 +99,15 @@ export class OtherPaymentComponent implements OnInit {
       waver: new FormControl(0),
       amountPaid: new FormControl(0),
       paymentDate: new FormControl(this.todayDate, Validators.required),
+      previousDue: new FormControl({ value: 0, disabled: true }),
+      totalFeeAmount: new FormControl(0),
       totalAmount: new FormControl({ value: 0, disabled: true }),
       dueBalance: new FormControl({ value: 0, disabled: true }),
       printReceipt: new FormControl(true)
     });
+
+    // Student selection logic
+    this.form.get('studentId')!.valueChanges.subscribe(sid => this.onStudentSelect(sid));
 
     // Recalculate amounts when relevant fields change
     this.form.get('fees')!.valueChanges.subscribe(_ => this.calculateAmounts());
@@ -110,17 +115,41 @@ export class OtherPaymentComponent implements OnInit {
     this.form.get('waver')!.valueChanges.subscribe(_ => this.calculateAmounts());
   }
 
+  onStudentSelect(studentId: any) {
+    const student = this.students.find(s => s.studentId == studentId);
+    if (student) {
+      // Fetch latest Due Balance from history or student record
+      const lastPayment = this.payments
+        .filter(p => p.studentId == studentId && p.othersPaymentId !== this.form.get('othersPaymentId')?.value)
+        .sort((a, b) => (b.othersPaymentId || 0) - (a.othersPaymentId || 0))[0];
+      
+      this.form.patchValue({ previousDue: lastPayment?.amountRemaining || 0 }, { emitEvent: false });
+    } else {
+      this.form.patchValue({ previousDue: 0 }, { emitEvent: false });
+    }
+    this.calculateAmounts();
+  }
+
   calculateAmounts() {
     const fees = this.form.get('fees')!.value || [];
-    const waver = this.form.get('waver')!.value || 0;
+    const waverPercent = this.form.get('waver')!.value || 0;
     const amountPaid = this.form.get('amountPaid')!.value || 0;
+    const prevDue = this.form.get('previousDue')?.value || 0;
 
-    const total = fees.reduce((sum: any, f: any) => sum + (f.amount || 0), 0);
-    const discountedTotal = total - (total * waver / 100);
-    const due = discountedTotal - amountPaid;
+    const grossTotal = fees.reduce((sum: any, f: any) => sum + (f.amount || 0), 0);
+    const months = (this.form.get('academicMonths')?.value || []).length || 1;
+    const calculatedGross = grossTotal * months;
 
-    this.form.get('totalAmount')!.setValue(discountedTotal, { emitEvent: false });
-    this.form.get('dueBalance')!.setValue(due, { emitEvent: false });
+    const discountAmt = (calculatedGross * waverPercent / 100);
+    const netCurrent = calculatedGross - discountAmt;
+    const totalPayable = netCurrent + prevDue;
+    const due = totalPayable - amountPaid;
+
+    this.form.patchValue({
+      totalFeeAmount: calculatedGross,
+      totalAmount: totalPayable,
+      dueBalance: due
+    }, { emitEvent: false });
   }
 
   /* ---------- LOADERS ---------- */
@@ -166,11 +195,21 @@ export class OtherPaymentComponent implements OnInit {
   }
 
   get filteredFees() {
+    const studentId = this.form.get('studentId')?.value;
+    const student = this.students.find(s => s.studentId == studentId);
+    const standardId = student?.standardId;
+
     const term = this.feeSearchTerm.toLowerCase();
-    return this.fees.filter(f =>
-      f.feeType?.typeName?.toLowerCase().includes(term) ||
-      f.amount?.toString().includes(term)
-    );
+    return this.fees.filter(f => {
+      // 1. Exclude Monthly status
+      const isNotMonthly = (f.paymentFrequency as any) != 'Monthly' && (f.paymentFrequency as any) != 0;
+      // 2. Class match
+      const classMatch = !standardId || f.standardId == standardId;
+      // 3. Search term
+      const searchMatch = !term || f.feeType?.typeName?.toLowerCase().includes(term) || f.amount?.toString().includes(term);
+      
+      return isNotMonthly && classMatch && searchMatch;
+    });
   }
 
   get filteredMonths() {
@@ -299,12 +338,21 @@ export class OtherPaymentComponent implements OnInit {
       });
     } else {
       this.paymentService.createOthersPayment(payload).subscribe({
-        next: (res: any) => {
-          this.closeDialog();
-          this.loadPayments();
-          this.popup.success('Recorded!', 'The new financial transaction has been securely logged.');
-          this.checkAndAutoPrint(payload, res);
-        },
+          next: (res: any) => {
+            this.closeDialog();
+            this.loadPayments();
+            
+            // Detailed message for user
+            const gross = res.totalFeeAmount || 0;
+            const discounted = res.totalAmount || 0;
+            const paid = res.amountPaid || 0;
+            const remaining = res.amountRemaining || 0;
+            
+            const detailedMsg = `Total Fee: Rs. ${gross.toLocaleString()}\nAfter Discount: Rs. ${discounted.toLocaleString()}\nPaid: Rs. ${paid.toLocaleString()}\nRemaining Dues: Rs. ${remaining.toLocaleString()}`;
+            
+            this.popup.success('Payment Recorded!', detailedMsg);
+            this.checkAndAutoPrint(payload, res);
+          },
         error: (err) => {
           this.popup.error('Submission Failed', 'Failed to log the new payment. ' + (err.error?.title || err.message || ''));
         }

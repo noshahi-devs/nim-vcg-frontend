@@ -89,10 +89,11 @@
         <table class="fee-table">
           <thead>
             <tr>
-              <th>#</th>
+              <th>STD ID</th>
               <th>Student</th>
-              <th>Enrollment #</th>
-              <th>Total Amount</th>
+              <th>Total Fee</th>
+              <th>Discount</th>
+              <th>Applicable Fee</th>
               <th>Paid</th>
               <th>Remaining</th>
               <th>Date</th>
@@ -101,22 +102,24 @@
           </thead>
           <tbody>
             <tr class="table-row" *ngFor="let p of paginatedPayments; let i = index">
-              <td><span class="row-num">{{ (currentPage-1)*rowsPerPage + i + 1 }}</span></td>
+              <td><span class="row-num">S-{{ p.studentId }}</span></td>
               <td>
                 <div class="student-info">
                   <span class="student-name">{{ p.student?.studentName }}</span>
+                  <span class="enrollment-tiny">#{{ p.student?.enrollmentNo }}</span>
                 </div>
               </td>
-              <td><span class="enrollment-badge">{{ p.student?.enrollmentNo }}</span></td>
-              <td><span class="amount-val">Rs. {{ p.totalAmount | number }}</span></td>
+              <td><span class="amount-val">Rs. {{ p.totalFeeAmount | number }}</span></td>
+              <td><span class="discount-badge">{{ p.waver }}% Off</span></td>
+              <td><span class="amount-val total">Rs. {{ p.totalAmount | number }}</span></td>
               <td><span class="amount-paid">Rs. {{ p.amountPaid | number }}</span></td>
               <td>
-                <span class="amount-chip" [class.paid]="p.amountRemaining === 0"
+                <span class="amount-chip" [class.paid]="p.amountRemaining <= 0"
                   [class.pending]="p.amountRemaining > 0">
                   Rs. {{ p.amountRemaining | number }}
                 </span>
               </td>
-              <td><span class="date-val">{{ p.paymentDate | date:'mediumDate' }}</span></td>
+              <td><span class="date-val">{{ p.paymentDate | date:'dd-MMM' }}</span></td>
               <td class="text-center">
                 <div class="action-group">
                   <button class="icon-btn view-btn" (click)="openViewDialog(p)" title="View">
@@ -212,6 +215,8 @@
     <!-- Modal Body -->
     <div class="modal-body-premium">
       <form [formGroup]="form">
+
+
 
         <!-- Section: Student -->
         <div class="form-card">
@@ -374,14 +379,34 @@
           </div>
         </div>
 
-        <!-- Summary Cards -->
+        <!-- ─── Financial Breakdown ─── -->
+        <div class="financial-breakdown">
+          <div class="breakdown-item">
+            <span class="br-label">Current Fees (Total):</span>
+            <span class="br-value">Rs. {{ form.get('totalFeeAmount')?.value | number }}</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="br-label">Discount ({{ form.get('waver')?.value }}%):</span>
+            <span class="br-value text-success">- Rs. {{ (form.get('totalFeeAmount')?.value * form.get('waver')?.value / 100) | number }}</span>
+          </div>
+          <div class="breakdown-item border-top">
+            <span class="br-label">Net Current Month:</span>
+            <span class="br-value">Rs. {{ (form.get('totalFeeAmount')?.value - (form.get('totalFeeAmount')?.value * form.get('waver')?.value / 100)) | number }}</span>
+          </div>
+          <div class="breakdown-item" *ngIf="form.get('previousDue')?.value > 0">
+            <span class="br-label" style="color: #d32f2f;">Arrears (Previous Dues):</span>
+            <span class="br-value" style="color: #d32f2f;">+ Rs. {{ form.get('previousDue')?.value | number }}</span>
+          </div>
+        </div>
+
+        <!-- ─── Summary Cards ─── -->
         <div class="summary-row">
           <div class="summary-card total">
-            <span class="summary-label">Total Amount</span>
+            <span class="summary-label">Total Payable</span>
             <span class="summary-value">Rs. {{ form.get('totalAmount')?.value | number:'1.0-0' }}</span>
           </div>
           <div class="summary-card due" [class.paid-up]="form.get('dueBalance')?.value <= 0">
-            <span class="summary-label">Due Balance</span>
+            <span class="summary-label">Balance Left</span>
             <span class="summary-value">Rs. {{ form.get('dueBalance')?.value | number:'1.0-0' }}</span>
           </div>
         </div>

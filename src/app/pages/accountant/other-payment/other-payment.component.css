@@ -857,6 +857,44 @@
   color: #94a3b8;
 }
 
+/* ── Financial Breakdown ── */
+.financial-breakdown {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}
+
+.br-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.br-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.text-success {
+  color: #16a34a !important;
+}
+
+.border-top {
+  border-top: 1px solid #e2e8f0;
+  margin-top: 8px;
+  padding-top: 10px;
+}
+
 /* ── Summary Cards ── */
 .summary-row {
   display: grid;
