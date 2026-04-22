@@ -268,8 +268,8 @@ export class CollectFeeComponent implements OnInit {
     // Current Month Pending = (Fees - Discount) - Already Paid This Month
     const thisMonthNet = Math.max(0, (this.totalFee - this.discountAmount) - this.paidThisMonth);
     
-    // As explicitly requested: Calculate ONLY the monthly amount, ignoring past arrears
-    this.grandTotal = thisMonthNet;
+    // Feature Request: Include previous arrears into the currently payable total
+    this.grandTotal = thisMonthNet + this.previousBalance;
     
     this.dueableBalance = this.grandTotal - this.depositAmount;
   }
@@ -315,6 +315,7 @@ export class CollectFeeComponent implements OnInit {
       totalFee: this.totalFee,
       discountAmount: this.discountAmount,
       grandTotal: this.grandTotal,
+      previousBalance: this.previousBalance, // Added this
       academicMonth: selectedMonth?.monthName,
       academicYear: this.currentYear,
       voucherRows: [...this.voucherRows]
@@ -388,6 +389,7 @@ export class CollectFeeComponent implements OnInit {
     const sourceTotalFee = isPrintingLastTransaction ? this.lastVoucherState.totalFee : this.totalFee;
     const sourceDiscount = isPrintingLastTransaction ? this.lastVoucherState.discountAmount : this.discountAmount;
     const sourceGrandTotal = isPrintingLastTransaction ? this.lastVoucherState.grandTotal : this.grandTotal;
+    const sourcePreviousDue = isPrintingLastTransaction ? this.lastVoucherState.previousBalance : this.previousBalance;
     const sourcePaidNow = isPrintingLastTransaction ? this.lastPaidAmountForPrint : this.depositAmount;
     const sourceMonth = isPrintingLastTransaction ? this.lastVoucherState.academicMonth : this.academicMonths[this.selectedMonthId-1]?.monthName;
     const sourceYear = isPrintingLastTransaction ? this.lastVoucherState.academicYear : this.currentYear;
@@ -409,8 +411,12 @@ export class CollectFeeComponent implements OnInit {
       summaryHtml += `<tr><td class="text-right" style="color:#166534;">Already Paid (This Month):</td><td class="text-right" style="color:#166534;">- ${this.paidThisMonth.toLocaleString()}</td></tr>`;
     }
 
+    if (sourcePreviousDue > 0) {
+      summaryHtml += `<tr><td class="text-right" style="color:#d32f2f;">Previous Dues / Arrears:</td><td class="text-right" style="color:#d32f2f;">+ ${sourcePreviousDue.toLocaleString()}</td></tr>`;
+    }
+
     // 4. Footer
-    let tfootHtml = `<tr><td class="text-right"><strong>TOTAL MONTHLY PAYABLE:</strong></td><td class="text-right"><strong>Rs. ${sourceGrandTotal.toLocaleString()}</strong></td></tr>`;
+    let tfootHtml = `<tr><td class="text-right"><strong>TOTAL PAYABLE (Incl. Arrears):</strong></td><td class="text-right"><strong>Rs. ${sourceGrandTotal.toLocaleString()}</strong></td></tr>`;
     tfootHtml += `<tr><td class="text-right"><strong>Paid Now:</strong></td><td class="text-right"><strong>Rs. ${sourcePaidNow.toLocaleString()}</strong></td></tr>`;
     
     if (printRemaining > 0) {
