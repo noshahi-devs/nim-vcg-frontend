@@ -41,6 +41,7 @@ export class Student {
   section: string = '';
   sectionId?: number | null;
   academicYearId?: number | null;
+  defaultDiscount?: number = 0;
   // totalFee: number;
 }
 

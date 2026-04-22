@@ -67,8 +67,7 @@ export class GenerateFeeInvoiceComponent implements OnInit {
       standardId: new FormControl('', Validators.required),
       feeTypeId: new FormControl('', Validators.required),
       paymentFrequency: new FormControl('', Validators.required),
-      amount: new FormControl('', Validators.required),
-      dueDate: new FormControl('', Validators.required)
+      amount: new FormControl('', Validators.required)
     });
 
     this.loadData();
@@ -162,14 +161,12 @@ export class GenerateFeeInvoiceComponent implements OnInit {
 
   openEditFee(fee: Fee) {
     this.isEditMode = true;
-    const dueDate = fee.dueDate ? new Date(fee.dueDate).toISOString().split('T')[0] : '';
     this.feeForm.patchValue({
       feeId: fee.feeId,
       standardId: fee.standardId,
       feeTypeId: fee.feeTypeId,
       paymentFrequency: fee.paymentFrequency,
-      amount: fee.amount,
-      dueDate: dueDate
+      amount: fee.amount
     });
     this.showFeeDialog = true;
   }

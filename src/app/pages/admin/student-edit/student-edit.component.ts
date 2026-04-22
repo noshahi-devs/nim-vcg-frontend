@@ -157,6 +157,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
       status: normalizedStatus,
       section: this.findMatchingSection(data.section ?? data.Section),
       standardId: data.standardId ?? data.StandardId,
+      defaultDiscount: data.defaultDiscount ?? data.DefaultDiscount ?? 0,
       imagePath: data.imagePath ?? data.ImagePath,
       imageUpload: data.imageUpload ?? data.ImageUpload
     } as Student;
@@ -277,6 +278,7 @@ export class StudentEditComponent implements OnInit, AfterViewInit {
         status: this.studentData.status || null,
         section: this.studentData.section || null,
         standardId: this.studentData.standardId || null,
+        defaultDiscount: this.studentData.defaultDiscount || 0,
         academicYearId: this.studentData.academicYearId || this.sessionService.getCurrentYearId(),
         imagePath: this.studentData.imagePath || null,
         imageUpload: null

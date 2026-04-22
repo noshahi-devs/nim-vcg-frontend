@@ -82,7 +82,8 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     admissionDate: new Date(),
     previousSchool: '',
     status: '',
-    section: ''
+    section: '',
+    defaultDiscount: 0
   };
 
   // String properties for date input binding
@@ -310,6 +311,7 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
       status: this.newStudent.status || null,
       section: this.newStudent.section || null,
       standardId: this.newStudent.standardId || null,
+      defaultDiscount: this.newStudent.defaultDiscount || 0,
       academicYearId: this.sessionService.getCurrentYearId(),
       imageUpload: this.newStudent.imageUpload.getBase64 ? {
         imageData: this.newStudent.imageUpload.getBase64,

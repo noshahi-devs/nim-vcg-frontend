@@ -144,7 +144,7 @@
 
           <div class="row g-4">
             <!-- Admission Date -->
-            <div class="col-md-4">
+            <div class="col-md-3">
               <div class="form-group-premium">
                 <label class="form-label-premium">
                   <i class="ri-calendar-check-line me-2 text-primary-500"></i>Admission Date
@@ -158,7 +158,7 @@
             </div>
 
             <!-- Previous School -->
-            <div class="col-md-4">
+            <div class="col-md-3">
               <div class="form-group-premium">
                 <label class="form-label-premium">
                   <i class="ri-building-line me-2 text-primary-500"></i>Previous Institution
@@ -171,7 +171,7 @@
             </div>
 
             <!-- Status -->
-            <div class="col-md-4">
+            <div class="col-md-3">
               <div class="form-group-premium">
                 <label class="form-label-premium">
                   <i class="ri-toggle-line me-2 text-primary-500"></i>Enrollment Status
@@ -183,6 +183,19 @@
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
                   </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Default Discount -->
+            <div class="col-md-3">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-percent-line me-2 text-primary-500"></i>Default Discount (%)
+                </label>
+                <div class="input-wrapper-premium">
+                  <input type="number" class="form-control-premium" name="defaultDiscount" placeholder="e.g. 20"
+                    [(ngModel)]="newStudent.defaultDiscount" #defaultDiscount="ngModel" min="0" max="100" />
                 </div>
               </div>
             </div>

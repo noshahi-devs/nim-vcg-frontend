@@ -179,22 +179,22 @@
           <span>Finance</span>
         </a>
         <ul class="sidebar-submenu">
-          <li *ngIf="hasAnyRole(['Accountant'])"><a routerLink="/collect-fee" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-success-main"></i> Collect Fee</a></li>
-          <li><a routerLink="/monthly-payment" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-danger-main"></i> Monthly Payment</a></li>
-          <li><a routerLink="/other-payment" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-info-main"></i> Other Payment</a></li>
-          <li><a routerLink="/fee-defaulters" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-danger-main"></i> Fee Defaulters</a></li>
-          <li><a routerLink="/generate-fee-invoice" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-primary-600"></i> Generate Invoice</a></li>
-          <!-- <li><a routerLink="/invoice-list" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-warning-main"></i> Invoice List</a></li> -->
-          <li><a routerLink="/payment-detail" routerLinkActive="active-page"><i
-                class="ri-circle-fill circle-icon text-primary-600"></i> Payment History</a></li>
           <li><a routerLink="/fee" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-info-main"></i> Fee Types</a></li>
+          <li><a routerLink="/fee-particulars" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-warning-main"></i> Fee Particulars</a></li>
+          <li><a routerLink="/generate-fee-invoice" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Generate Invoice</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Accountant'])"><a routerLink="/collect-fee" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-success-main"></i> Collect Fee</a></li>
+          <!-- <li><a routerLink="/monthly-payment" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-danger-main"></i> Monthly Payment</a></li>
+          <li><a routerLink="/other-payment" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-info-main"></i> Other Payment</a></li> -->
+          <li><a routerLink="/payment-detail" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-primary-600"></i> Payment History</a></li>
+          <li><a routerLink="/fee-defaulters" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-danger-main"></i> Fee Defaulters</a></li>
         </ul>
       </li>
 

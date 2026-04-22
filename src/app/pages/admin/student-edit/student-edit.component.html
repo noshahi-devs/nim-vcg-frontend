@@ -197,8 +197,14 @@
               </select>
             </div>
 
+            <!-- Default Discount -->
+            <div class="col-md-4 form-group-premium">
+              <label class="field-label">Default Discount (%)</label>
+              <input type="number" class="field-input" [(ngModel)]="studentData.defaultDiscount" placeholder="e.g. 20" min="0" max="100">
+            </div>
+
             <!-- Previous School -->
-            <div class="col-8 form-group-premium">
+            <div class="col-md-4 form-group-premium">
               <label class="field-label">Previous Institution</label>
               <input type="text" class="field-input" [(ngModel)]="studentData.previousSchool"
                 placeholder="Enter previous school name">
