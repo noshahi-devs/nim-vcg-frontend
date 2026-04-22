@@ -287,9 +287,11 @@ export class CollectFeeComponent implements OnInit {
     const selectedMonth = this.academicMonths.find(m => m.monthId == this.selectedMonthId);
     
     // Check if payment already exists for this student and month
-    const monthAlreadyPaid = this.previousPayments.some(p => 
-      p.academicMonths?.some((m: any) => m.monthId == this.selectedMonthId)
-    );
+    const monthAlreadyPaid = this.previousPayments.some(p => {
+      const byId = p.academicMonths?.some((m: any) => Number(m.monthId) === Number(this.selectedMonthId));
+      const byName = p.paymentMonths?.some((m: any) => m.monthName === selectedMonth?.monthName);
+      return byId || byName;
+    });
 
     if (monthAlreadyPaid) {
       this.popup.warning(
