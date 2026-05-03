@@ -374,45 +374,152 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
   // BULK IMPORT LOGIC (EXCEL)
   // -------------------------------------------------------
   downloadTemplate(): void {
+    // ── Column Headers (26 fields matching the student form) ──
     const headers = [
-      'Student Name*', 'DOB (DD-MM-YYYY)*', 'Gender (Male/Female)*', 'Class Name*', 'Section*', 
-      'Father Name', 'Father Contact', 'Guardian Phone', 'Admission Date (DD-MM-YYYY)', 
-      'Address', 'Religion', 'Blood Group', 'Nationality', 'NID Number', 'Previous School', 'Default Discount'
+      'Student Name*',
+      'Date of Birth (DD-MM-YYYY)*',
+      'Gender*',
+      'Class Name*',
+      'Section Name*',
+      'Enrollment Status',
+      'Admission Date (DD-MM-YYYY)',
+      'Student Contact Number',
+      'Student Contact Number 2',
+      'Father Name',
+      'Father NID',
+      'Father Contact Number',
+      'Mother Name',
+      'Mother NID',
+      'Mother Contact Number',
+      'Guardian Phone',
+      'Local Guardian Name',
+      'Local Guardian Contact',
+      'Permanent Address',
+      'Temporary Address',
+      'Religion',
+      'Blood Group',
+      'Nationality',
+      'Student NID Number',
+      'Previous School',
+      'Default Discount (Rs)'
     ];
 
-    const dataSheet = [headers];
-    
-    // Add 2 example rows
-    dataSheet.push(['Adeel Noshaahi', '15-05-2010', 'Male', '9th', 'A', 'Noshahi', '03001234567', '03001234567', '01-04-2026', 'Gojra', 'Islam', 'O+', 'Pakistani', '33101-1234567-1', 'Vision School', '0']);
-    dataSheet.push(['Ali Hassan', '20-10-2012', 'Male', '10th', 'B', 'Hassan', '03007654321', '03007654321', '01-04-2026', 'Gojra', 'Islam', 'A+', 'Pakistani', '33101-7654321-1', 'City School', '500']);
+    // ── Example data rows ──
+    const dataSheet = [
+      headers,
+      [
+        'Ali Hassan', '15-05-2010', 'Male',
+        this.classes[0]?.standardName || '9th',
+        this.sections[0]?.sectionName || 'A',
+        'Active', '01-04-2026',
+        '03001234567', '',
+        'Ahmad Hassan', '33101-1234567-1', '03001234567',
+        'Fatima Bibi', '33101-9876543-8', '03009876543',
+        '03001234567',
+        '', '',
+        'House No 12, Street 4, Gojra', '',
+        'Islam', 'O+', 'Pakistani', '33101-1234567-1',
+        'City Model School', '0'
+      ],
+      [
+        'Ayesha Noor', '20-10-2012', 'Female',
+        this.classes[1]?.standardName || '10th',
+        this.sections[1]?.sectionName || 'B',
+        'Active', '01-04-2026',
+        '03007654321', '',
+        'Noor Ahmad', '33101-7654321-1', '03007654321',
+        'Zainab Bibi', '', '',
+        '03007654321',
+        '', '',
+        'House No 5, Model Town, Gojra', '',
+        'Islam', 'A+', 'Pakistani', '',
+        'Vision Public School', '500'
+      ]
+    ];
 
     const wsData = XLSX.utils.aoa_to_sheet(dataSheet);
 
-    // Sheet 2: Instructions & References
-    const instructionHeaders = ['Class Name', 'Class ID (Reference)', '', 'Section Name', '', 'Gender Options'];
-    const instructionData = [instructionHeaders];
-    
-    const maxRows = Math.max(this.classes.length, this.sections.length, 3);
-    for (let i = 0; i < maxRows; i++) {
-      instructionData.push([
-        this.classes[i]?.standardName || '',
-        this.classes[i]?.standardId?.toString() || '',
-        '',
-        this.sections[i]?.sectionName || '',
-        '',
-        i === 0 ? 'Male' : (i === 1 ? 'Female' : (i === 2 ? 'Other' : ''))
-      ]);
-    }
+    // Column widths for Data sheet
+    wsData['!cols'] = [
+      { wch: 22 }, { wch: 22 }, { wch: 12 }, { wch: 18 }, { wch: 14 },
+      { wch: 18 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 20 },
+      { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 },
+      { wch: 20 }, { wch: 22 }, { wch: 22 }, { wch: 35 }, { wch: 30 },
+      { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 22 }, { wch: 25 }, { wch: 20 }
+    ];
 
-    const wsInstructions = XLSX.utils.aoa_to_sheet(instructionData);
+    // ── Instruction Sheet ──
+    const instData: any[][] = [
+      ['=== STUDENT BULK IMPORT INSTRUCTIONS ===', '', '', ''],
+      ['Please read every row carefully before filling your data sheet.', '', '', ''],
+      [''],
+      ['COLUMN NAME', 'REQUIRED?', 'FORMAT / VALID VALUES', 'EXAMPLE'],
+      ['Student Name', 'YES', 'Full legal name of the student', 'Ali Hassan'],
+      ['Date of Birth', 'YES', 'DD-MM-YYYY — day first, then month, then 4-digit year', '15-05-2010'],
+      ['Gender', 'YES', 'Exact spelling: Male  OR  Female  OR  Other', 'Male'],
+      ['Class Name', 'YES', 'Must match exactly one of the Class Names listed below (Section A)', this.classes[0]?.standardName || '9th'],
+      ['Section Name', 'YES', 'Must match exactly one of the Section Names listed below (Section B)', this.sections[0]?.sectionName || 'A'],
+      ['Enrollment Status', 'NO', 'Active  OR  Inactive   (leave blank = Active)', 'Active'],
+      ['Admission Date', 'NO', 'DD-MM-YYYY format — date the student joined', '01-04-2026'],
+      ['Student Contact Number', 'NO', 'Pakistani mobile format: 03XXXXXXXXX (11 digits, no dashes)', '03001234567'],
+      ['Student Contact Number 2', 'NO', 'Second number if available, same format as above', ''],
+      ['Father Name', 'NO', 'Full name of father or primary male guardian', 'Ahmad Hassan'],
+      ['Father NID', 'NO', 'Pakistani NID format: XXXXX-XXXXXXX-X (15 characters)', '33101-1234567-1'],
+      ['Father Contact Number', 'NO', 'Pakistani mobile format: 03XXXXXXXXX', '03001234567'],
+      ['Mother Name', 'NO', 'Full name of mother or primary female guardian', 'Fatima Bibi'],
+      ['Mother NID', 'NO', 'Pakistani NID format: XXXXX-XXXXXXX-X', '33101-9876543-8'],
+      ['Mother Contact Number', 'NO', 'Pakistani mobile format: 03XXXXXXXXX', '03009876543'],
+      ['Guardian Phone', 'NO', 'Primary contact number to reach guardian', '03001234567'],
+      ['Local Guardian Name', 'NO', 'Name of local guardian if parents are not in city', ''],
+      ['Local Guardian Contact', 'NO', 'Pakistani mobile format: 03XXXXXXXXX', ''],
+      ['Permanent Address', 'NO', 'Full home address including house no, street, city', 'House 12, Street 4, Gojra'],
+      ['Temporary Address', 'NO', 'Current residence if different from permanent address', ''],
+      ['Religion', 'NO', 'e.g. Islam, Christianity, Hinduism', 'Islam'],
+      ['Blood Group', 'NO', 'Valid values: A+  A-  B+  B-  AB+  AB-  O+  O-', 'O+'],
+      ['Nationality', 'NO', 'e.g. Pakistani, British, American', 'Pakistani'],
+      ['Student NID Number', 'NO', 'If student has NID: XXXXX-XXXXXXX-X format', ''],
+      ['Previous School', 'NO', 'Name of school student attended before this institution', 'City Model School'],
+      ['Default Discount (Rs)', 'NO', 'Monthly fee discount in Rupees (number only, no Rs symbol). 0 if none.', '500'],
+      [''],
+      ['IMPORTANT NOTES:', '', '', ''],
+      ['1. Do NOT edit the column headers in the Student Data sheet.', '', '', ''],
+      ['2. Do NOT add extra columns — only fill the provided ones.', '', '', ''],
+      ['3. Leave optional fields BLANK (empty) if not available. Do NOT write "N/A" or "-".', '', '', ''],
+      ['4. Dates MUST be in DD-MM-YYYY format (e.g. 25-12-2010, NOT 2010-12-25).', '', '', ''],
+      ['5. Class Name and Section Name must match EXACTLY as listed below — check spelling carefully.', '', '', ''],
+      ['6. Phone numbers must be 11 digits starting with 03 (e.g. 03001234567). No dashes.', '', '', ''],
+      ['7. The system auto-generates Admission Number, Enrollment Number, and Attendance ID.', '', '', ''],
+      ['8. Default password for student login will be: Noshahi.000', '', '', ''],
+      [''],
+      ['─── SECTION A: VALID CLASS NAMES (copy exactly) ───', '', '', ''],
+      ['Class Name', 'Class ID', '', ''],
+      ...this.classes.map(c => [c.standardName, c.standardId, '', '']),
+      [''],
+      ['─── SECTION B: VALID SECTIONS PER CLASS (use ONLY these) ───', '', '', ''],
+      ['Class Name', 'Section Name', 'Section Code', ''],
+      ...this.classes.flatMap(c => {
+        const classSections = this.sections.filter(s => s.className === c.standardName);
+        if (classSections.length === 0) return [[c.standardName, '(no sections added yet)', '', '']];
+        return classSections.map(s => [c.standardName, s.sectionName, s.sectionCode || '', '']);
+      }),
+      [''],
+      ['─── SECTION C: GENDER OPTIONS ───', '', '', ''],
+      ['Male', '', '', ''],
+      ['Female', '', '', ''],
+      ['Other', '', '', ''],
+    ];
+
+    const wsInst = XLSX.utils.aoa_to_sheet(instData);
+    wsInst['!cols'] = [{ wch: 35 }, { wch: 14 }, { wch: 60 }, { wch: 30 }];
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, wsData, 'Student Data');
-    XLSX.utils.book_append_sheet(wb, wsInstructions, 'Instructions');
+    XLSX.utils.book_append_sheet(wb, wsInst, 'Instructions');
 
     XLSX.writeFile(wb, 'Student_Import_Template.xlsx');
-    this.popup.success('Template downloaded successfully. Please fill the "Student Data" sheet.', 'Template Ready');
+    this.popup.success('Template downloaded. Read the "Instructions" sheet before filling data.', 'Template Ready');
   }
+
 
   triggerImport(): void {
     const fileInput = document.getElementById('excelImport') as HTMLInputElement;
@@ -449,8 +556,7 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
     }
 
     const students: any[] = [];
-    const headers: any = data[0];
-    const rows = data.slice(1);
+    const rows = data.slice(1); // Skip header row
 
     for (const row of rows) {
       if (!row[0]) continue; // Skip empty rows
@@ -470,40 +576,87 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
             date = new Date(dateStr);
           }
         }
-        
         if (isNaN(date.getTime())) {
           return isRequired ? new Date().toISOString() : null;
         }
         return date.toISOString();
       };
 
+      // Column mapping (0-indexed, matches 26-column template):
+      // 0: Student Name       1: DOB              2: Gender
+      // 3: Class Name         4: Section Name      5: Status
+      // 6: Admission Date     7: Contact 1         8: Contact 2
+      // 9: Father Name        10: Father NID       11: Father Contact
+      // 12: Mother Name       13: Mother NID       14: Mother Contact
+      // 15: Guardian Phone    16: Local Guard Name 17: Local Guard Contact
+      // 18: Permanent Addr    19: Temporary Addr   20: Religion
+      // 21: Blood Group       22: Nationality      23: Student NID
+      // 24: Previous School   25: Discount
+
       const className = row[3]?.toString().trim();
       const standard = this.classes.find(c => c.standardName.toLowerCase() === className?.toLowerCase());
 
+      const genderRaw = row[2]?.toString().trim().toLowerCase();
+      const gender = genderRaw === 'female' ? 1 : (genderRaw === 'other' ? 2 : 0);
+
+      const statusRaw = row[5]?.toString().trim().toLowerCase();
+      const status = statusRaw === 'inactive' ? 'Inactive' : 'Active';
+
+
+      const sectionInput = row[4]?.toString().trim() || null;
+
+      // Match section by name AND by class — 10th student gets only 10th class section
+      let matchedSection = null;
+      if (sectionInput && standard) {
+        // Try exact sectionName match for the same class
+        matchedSection = this.sections.find(s =>
+          s.className?.toLowerCase() === standard.standardName.toLowerCase() &&
+          s.sectionName.toLowerCase() === sectionInput.toLowerCase()
+        );
+        // Fallback: match by section code letter (e.g., "A") for the same class
+        if (!matchedSection) {
+          matchedSection = this.sections.find(s =>
+            s.className?.toLowerCase() === standard.standardName.toLowerCase() &&
+            (s.sectionCode?.toLowerCase() === sectionInput.toLowerCase() ||
+             s.sectionName.toLowerCase().includes(sectionInput.toLowerCase()))
+          );
+        }
+      }
+
       const student = {
         studentId: 0,
-        studentName: row[0],
-        studentDOB: parseDate(row[1], true), // Required
-        studentGender: row[2] === 'Female' ? 1 : (row[2] === 'Other' ? 2 : 0),
+        studentName: row[0]?.toString().trim() || null,
+        studentDOB: parseDate(row[1], true),
+        studentGender: gender,
         standardId: standard ? standard.standardId : null,
-        section: row[4] || null,
-        fatherName: row[5] || null,
-        fatherContactNumber: row[6] || null,
-        guardianPhone: row[7] || null,
-        admissionDate: parseDate(row[8]), // Optional
-        permanentAddress: row[9] || null,
-        studentReligion: row[10] || null,
-        studentBloodGroup: row[11] || null,
-        studentNationality: row[12] || null,
-        studentNIDNumber: row[13]?.toString() || null,
-        previousSchool: row[14] || null,
-        defaultDiscount: parseFloat(row[15]) || 0,
-        status: 'Active',
-        studentEmail: null, 
+        sectionId: matchedSection ? matchedSection.sectionId : null,
+        section: matchedSection ? matchedSection.sectionName : null,  // null if section not in DB
+        status: status,
+        admissionDate: parseDate(row[6]),
+        studentContactNumber1: row[7]?.toString().trim() || null,
+        studentContactNumber2: row[8]?.toString().trim() || null,
+        fatherName: row[9]?.toString().trim() || null,
+        fatherNID: row[10]?.toString().trim() || null,
+        fatherContactNumber: row[11]?.toString().trim() || null,
+        motherName: row[12]?.toString().trim() || null,
+        motherNID: row[13]?.toString().trim() || null,
+        motherContactNumber: row[14]?.toString().trim() || null,
+        guardianPhone: row[15]?.toString().trim() || null,
+        localGuardianName: row[16]?.toString().trim() || null,
+        localGuardianContactNumber: row[17]?.toString().trim() || null,
+        permanentAddress: row[18]?.toString().trim() || null,
+        temporaryAddress: row[19]?.toString().trim() || null,
+        studentReligion: row[20]?.toString().trim() || null,
+        studentBloodGroup: row[21]?.toString().trim() || null,
+        studentNationality: row[22]?.toString().trim() || null,
+        studentNIDNumber: row[23]?.toString().trim() || null,
+        previousSchool: row[24]?.toString().trim() || null,
+        defaultDiscount: parseFloat(row[25]) || 0,
+        studentEmail: null,
         studentPassword: 'Noshahi.000',
         campusId: null,
         academicYearId: this.sessionService.getCurrentYearId(),
-        studentFees: [] 
+        studentFees: []
       };
 
       students.push(student);
@@ -515,7 +668,6 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    console.log('Sending Bulk Import Data:', students); // DEBUG LOG
     this.popup.loading(`Importing ${students.length} students...`);
 
     this.studentService.SaveStudentsBulk(students, this.sessionService.getCurrentYearId()).subscribe({
@@ -526,23 +678,21 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         this.isProcessing = false;
-        console.error('SERVER ERROR (400):', err); // DEBUG LOG
-        
-        // Try to extract detailed validation errors if they exist
+        console.error('SERVER ERROR (400):', err);
         let errorMsg = 'Failed to import students. Please check your data.';
         if (err.error && typeof err.error === 'object') {
           if (err.error.errors) {
             const firstError = Object.values(err.error.errors)[0];
-            if (Array.isArray(firstError)) errorMsg = firstError[0];
+            if (Array.isArray(firstError)) errorMsg = firstError[0] as string;
           } else if (err.error.message) {
             errorMsg = err.error.message;
           }
         }
-        
         this.popup.error(errorMsg, 'Import Failed');
       }
     });
   }
+
 
 
 
