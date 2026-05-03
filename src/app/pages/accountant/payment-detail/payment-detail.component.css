@@ -215,16 +215,13 @@ select.field-select-premium {
   padding-right: 36px;
 }
 
-.field-select-premium:focus,
-.field-select-premium:hover {
+.field-select-premium:focus {
   border-color: #800000;
-  background-color: #f8fafc; /* Light gray hover */
-  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.05);
 }
 
 /* Fix for Date Input blue focus and accent */
 input[type="date"] {
-  accent-color: #800000; /* Use maroon for the picker highlights if supported */
+  accent-color: #800000;
 }
 
 input[type="date"]:focus {

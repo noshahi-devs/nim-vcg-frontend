@@ -1,12 +1,30 @@
 <div class="dashboard-main-body">
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
     <app-breadcrumb [title]="title"></app-breadcrumb>
+
+    <!-- Bulk Actions Row -->
+    <div class="d-flex align-items-center gap-3 no-print">
+      <button type="button" class="btn-3d-yellow" (click)="downloadTemplate()">
+        <iconify-icon icon="solar:file-download-bold-duotone" class="fs-4"></iconify-icon>
+        Download Template
+      </button>
+
+      <button type="button" class="btn-3d-maroon" (click)="triggerImport()" [disabled]="isProcessing">
+        <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="fs-4"></iconify-icon>
+        <iconify-icon *ngIf="!isProcessing" icon="solar:import-bold-duotone" class="fs-4"></iconify-icon>
+        Bulk Import Students
+      </button>
+
+      <!-- Hidden File Input -->
+      <input type="file" id="excelImport" style="display: none;" (change)="onImportExcel($event)"
+        accept=".xlsx, .xls">
+    </div>
   </div>
 
   <div class="card basic-data-table radius-12 border-0 shadow-sm overflow-hidden">
     <div class="card-header bg-gradient-primary py-20 px-24 border-bottom-0 d-flex align-items-center gap-2">
       <div class="header-icon-box bg-white-20 radius-8">
-        <i class="ri-user-add-line text-white fs-4"></i>
+        <i class="ri-user-add-line text-yellow fs-4" style="color: #F4C430;"></i>
       </div>
       <h5 class="fw-bold mb-0 text-white">Enroll New Student</h5>
     </div>
@@ -331,14 +349,14 @@
         </div>
 
         <div class="form-actions-premium mt-40">
-          <button type="button" (click)="cancel()" class="btn-premium-danger">
+          <button type="button" (click)="cancel()" class="btn-3d-yellow">
             <i class="ri-close-line me-2"></i>Dismiss
           </button>
-          <button type="submit" class="btn-premium-primary" [disabled]="isProcessing">
+          <button type="submit" class="btn-3d-maroon" [disabled]="isProcessing">
             <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" style="font-size: 20px;"
               class="me-2"></iconify-icon>
             <i *ngIf="!isProcessing" class="ri-save-3-line me-2"></i>
-            {{ isProcessing ? 'Processing...' : 'Save' }}
+            {{ isProcessing ? 'Processing...' : 'Save Student' }}
           </button>
         </div>
       </form>

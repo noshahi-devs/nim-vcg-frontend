@@ -20,6 +20,7 @@ import { Fee } from '../../../Models/fee';
 declare var bootstrap: any;
 
 import { NgxMaskDirective } from 'ngx-mask';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-student-add',
@@ -365,6 +366,180 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
           ? err.error
           : (err.error?.message ? err.error.message : 'Failed to save student. Please check all fields.');
         this.popup.error(errorMsg, 'Enrollment Failed');
+      }
+    });
+  }
+
+  // -------------------------------------------------------
+  // BULK IMPORT LOGIC (EXCEL)
+  // -------------------------------------------------------
+  downloadTemplate(): void {
+    const headers = [
+      'Student Name*', 'DOB (DD-MM-YYYY)*', 'Gender (Male/Female)*', 'Class Name*', 'Section*', 
+      'Father Name', 'Father Contact', 'Guardian Phone', 'Admission Date (DD-MM-YYYY)', 
+      'Address', 'Religion', 'Blood Group', 'Nationality', 'NID Number', 'Previous School', 'Default Discount'
+    ];
+
+    const dataSheet = [headers];
+    
+    // Add 2 example rows
+    dataSheet.push(['Adeel Noshaahi', '15-05-2010', 'Male', '9th', 'A', 'Noshahi', '03001234567', '03001234567', '01-04-2026', 'Gojra', 'Islam', 'O+', 'Pakistani', '33101-1234567-1', 'Vision School', '0']);
+    dataSheet.push(['Ali Hassan', '20-10-2012', 'Male', '10th', 'B', 'Hassan', '03007654321', '03007654321', '01-04-2026', 'Gojra', 'Islam', 'A+', 'Pakistani', '33101-7654321-1', 'City School', '500']);
+
+    const wsData = XLSX.utils.aoa_to_sheet(dataSheet);
+
+    // Sheet 2: Instructions & References
+    const instructionHeaders = ['Class Name', 'Class ID (Reference)', '', 'Section Name', '', 'Gender Options'];
+    const instructionData = [instructionHeaders];
+    
+    const maxRows = Math.max(this.classes.length, this.sections.length, 3);
+    for (let i = 0; i < maxRows; i++) {
+      instructionData.push([
+        this.classes[i]?.standardName || '',
+        this.classes[i]?.standardId?.toString() || '',
+        '',
+        this.sections[i]?.sectionName || '',
+        '',
+        i === 0 ? 'Male' : (i === 1 ? 'Female' : (i === 2 ? 'Other' : ''))
+      ]);
+    }
+
+    const wsInstructions = XLSX.utils.aoa_to_sheet(instructionData);
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, wsData, 'Student Data');
+    XLSX.utils.book_append_sheet(wb, wsInstructions, 'Instructions');
+
+    XLSX.writeFile(wb, 'Student_Import_Template.xlsx');
+    this.popup.success('Template downloaded successfully. Please fill the "Student Data" sheet.', 'Template Ready');
+  }
+
+  triggerImport(): void {
+    const fileInput = document.getElementById('excelImport') as HTMLInputElement;
+    if (fileInput) fileInput.click();
+  }
+
+  onImportExcel(event: any): void {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    this.isProcessing = true;
+    this.popup.loading('Reading Excel file...');
+
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+      this.processImportedData(jsonData);
+      // Clear input
+      event.target.value = '';
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  private processImportedData(data: any[]): void {
+    if (data.length <= 1) {
+      this.isProcessing = false;
+      this.popup.error('The Excel sheet appears to be empty.', 'Import Error');
+      return;
+    }
+
+    const students: any[] = [];
+    const headers: any = data[0];
+    const rows = data.slice(1);
+
+    for (const row of rows) {
+      if (!row[0]) continue; // Skip empty rows
+
+      // Helper to parse DD-MM-YYYY to ISO String
+      const parseDate = (dateStr: any, isRequired = false) => {
+        let date: Date;
+        if (!dateStr) {
+          date = new Date();
+        } else if (typeof dateStr === 'number') {
+          date = new Date((dateStr - 25569) * 86400 * 1000);
+        } else {
+          const parts = dateStr.toString().split('-');
+          if (parts.length === 3) {
+            date = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+          } else {
+            date = new Date(dateStr);
+          }
+        }
+        
+        if (isNaN(date.getTime())) {
+          return isRequired ? new Date().toISOString() : null;
+        }
+        return date.toISOString();
+      };
+
+      const className = row[3]?.toString().trim();
+      const standard = this.classes.find(c => c.standardName.toLowerCase() === className?.toLowerCase());
+
+      const student = {
+        studentId: 0,
+        studentName: row[0],
+        studentDOB: parseDate(row[1], true), // Required
+        studentGender: row[2] === 'Female' ? 1 : (row[2] === 'Other' ? 2 : 0),
+        standardId: standard ? standard.standardId : null,
+        section: row[4] || null,
+        fatherName: row[5] || null,
+        fatherContactNumber: row[6] || null,
+        guardianPhone: row[7] || null,
+        admissionDate: parseDate(row[8]), // Optional
+        permanentAddress: row[9] || null,
+        studentReligion: row[10] || null,
+        studentBloodGroup: row[11] || null,
+        studentNationality: row[12] || null,
+        studentNIDNumber: row[13]?.toString() || null,
+        previousSchool: row[14] || null,
+        defaultDiscount: parseFloat(row[15]) || 0,
+        status: 'Active',
+        studentEmail: null, 
+        studentPassword: 'Noshahi.000',
+        campusId: null,
+        academicYearId: this.sessionService.getCurrentYearId(),
+        studentFees: [] 
+      };
+
+      students.push(student);
+    }
+
+    if (students.length === 0) {
+      this.isProcessing = false;
+      this.popup.error('No valid student records found in the sheet.', 'Import Error');
+      return;
+    }
+
+    console.log('Sending Bulk Import Data:', students); // DEBUG LOG
+    this.popup.loading(`Importing ${students.length} students...`);
+
+    this.studentService.SaveStudentsBulk(students, this.sessionService.getCurrentYearId()).subscribe({
+      next: (res) => {
+        this.isProcessing = false;
+        this.popup.success(`${students.length} students have been imported successfully.`, 'Bulk Import Success');
+        setTimeout(() => this.router.navigate(['/student-list']), 2000);
+      },
+      error: (err) => {
+        this.isProcessing = false;
+        console.error('SERVER ERROR (400):', err); // DEBUG LOG
+        
+        // Try to extract detailed validation errors if they exist
+        let errorMsg = 'Failed to import students. Please check your data.';
+        if (err.error && typeof err.error === 'object') {
+          if (err.error.errors) {
+            const firstError = Object.values(err.error.errors)[0];
+            if (Array.isArray(firstError)) errorMsg = firstError[0];
+          } else if (err.error.message) {
+            errorMsg = err.error.message;
+          }
+        }
+        
+        this.popup.error(errorMsg, 'Import Failed');
       }
     });
   }

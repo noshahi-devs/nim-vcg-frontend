@@ -45,6 +45,11 @@ export class StudentService {
     return this.http.post<Student>(this.apiUrl, student, this.getAuthHeaders());
   }
 
+  public SaveStudentsBulk(students: any[], yearId?: number | null): Observable<any> {
+    const url = yearId ? `${this.apiUrl}/bulk?academicYearId=${yearId}` : `${this.apiUrl}/bulk`;
+    return this.http.post(url, students, this.getAuthHeaders());
+  }
+
   public UpdateStudent(student: Student): Observable<Student> {
     return this.http.put<Student>(`${this.apiUrl}/${student.studentId}`, student, this.getAuthHeaders());
   }
