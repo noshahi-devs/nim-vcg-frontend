@@ -80,6 +80,14 @@ export class CommonServices {
     return this.http.get<OthersPayment[]>(`${this.apiUrl3}/GetAllOtherPaymentByStudentId/${studentId}`, this.getAuthHeaders());
   }
 
+  getAllMonthlyPayments(): Observable<MonthlyPayment[]> {
+    return this.http.get<MonthlyPayment[]>(`${this.apiUrl}MonthlyPayments`, this.getAuthHeaders());
+  }
+
+  getAllOthersPayments(): Observable<OthersPayment[]> {
+    return this.http.get<OthersPayment[]>(`${this.apiUrl}OthersPayments`, this.getAuthHeaders());
+  }
+
   createMonthlyPayment(payment: MonthlyPayment): Observable<MonthlyPayment> {
     return this.http.post<MonthlyPayment>(`${this.apiUrl}MonthlyPayments`, payment, this.getAuthHeaders());
   }

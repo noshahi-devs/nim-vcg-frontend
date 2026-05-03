@@ -94,8 +94,24 @@
           <div class="select-wrapper-premium">
             <select class="field-select-premium" [(ngModel)]="studentId" (change)="onSubmit()"
               [disabled]="isProcessing">
-              <option value="">Select Student</option>
+              <option value="">All Students</option>
               <option *ngFor="let s of filteredStudents" [value]="s.studentId">{{ s.studentName }}</option>
+            </select>
+            <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Status Dropdown -->
+        <div class="filter-group">
+          <label class="filter-label">Status</label>
+          <div class="select-wrapper-premium">
+            <select class="field-select-premium" [(ngModel)]="statusFilter" (ngModelChange)="applyFilter()"
+              [disabled]="isProcessing">
+              <option value="all">All Status</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Pending</option>
             </select>
             <svg class="field-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="6 9 12 15 18 9" />
@@ -200,7 +216,7 @@
                 <div class="empty-state">
                   <iconify-icon icon="solar:folder-error-bold-duotone" class="empty-icon-large"></iconify-icon>
                   <h5>No Payments Found</h5>
-                  <p>{{ studentId ? 'No payment records found for this student.' : 'Please select a student to view payments.' }}</p>
+                  <p>{{ (selectedStandardId || studentId || searchTerm || statusFilter !== 'all') ? 'No payment records found matching your current filters.' : 'No payment records available.' }}</p>
                   <button *ngIf="studentId && selectedStandardId" class="btn-add-payment-empty mx-auto"
                     (click)="goToAddPayment()">
                     Add {{ activeTab === 'monthly' ? 'Monthly' : 'Other' }} Payment

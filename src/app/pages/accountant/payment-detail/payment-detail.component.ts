@@ -45,6 +45,7 @@ export class PaymentDetailComponent implements OnInit {
   totalPages = 1;
   toEntry = 0;
   searchTerm = '';
+  statusFilter: 'all' | 'paid' | 'pending' = 'all';
   isProcessing = false;
 
   selectedPayment: any = null;
@@ -60,7 +61,19 @@ export class PaymentDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchStandards();
-    this.fetchStudents();
+    this.isProcessing = true;
+    this.commonService.getAllStudents().subscribe({
+      next: r => {
+        this.students = r;
+        this.filteredStudents = r;
+        this.getPayments();
+        this.getOtherPayments();
+      },
+      error: () => {
+        this.isProcessing = false;
+        this.popup.error('Sync Failed', 'Unable to retrieve student directory.');
+      }
+    });
   }
 
   goToAddPayment() {
@@ -74,18 +87,18 @@ export class PaymentDetailComponent implements OnInit {
 
   /* ---------- GETTERS (STATS) ---------- */
   get totalMonthlyCollected() {
-    return this.payments.reduce((a, b) => a + (b.amountPaid || 0), 0);
+    return this.filteredMonthly.reduce((a, b) => a + (b.amountPaid || 0), 0);
   }
   get totalOtherCollected() {
-    return this.otherPayments.reduce((a, b) => a + (b.amountPaid || 0), 0);
+    return this.filteredOther.reduce((a, b) => a + (b.amountPaid || 0), 0);
   }
   get totalPending() {
-    const monthlyRemaining = this.payments.reduce((a, b) => a + (b.amountRemaining || 0), 0);
-    const otherRemaining = this.otherPayments.reduce((a, b) => a + (b.amountRemaining || 0), 0);
+    const monthlyRemaining = this.filteredMonthly.reduce((a, b) => a + (b.amountRemaining || 0), 0);
+    const otherRemaining = this.filteredOther.reduce((a, b) => a + (b.amountRemaining || 0), 0);
     return monthlyRemaining + otherRemaining;
   }
   get totalTransactions() {
-    return this.payments.length + this.otherPayments.length;
+    return this.filteredMonthly.length + this.filteredOther.length;
   }
 
   /* ---------- DATA FETCHING ---------- */
@@ -94,16 +107,13 @@ export class PaymentDetailComponent implements OnInit {
   }
 
   fetchStudents() {
-    this.isProcessing = true;
+    // This is now called within ngOnInit for initial load
+    // But can still be called manually to refresh
     this.commonService.getAllStudents().subscribe({
       next: r => {
         this.students = r;
         this.filteredStudents = r;
-        this.isProcessing = false;
-      },
-      error: () => {
-        this.isProcessing = false;
-        this.popup.error('Sync Failed', 'Unable to retrieve student directory.');
+        this.applyFilter();
       }
     });
   }
@@ -115,6 +125,7 @@ export class PaymentDetailComponent implements OnInit {
       this.filteredStudents = this.students;
     }
     this.studentId = ''; // Reset student selection
+    this.applyFilter(); // Filter payments by class
   }
 
   onSubmit() {
@@ -126,11 +137,15 @@ export class PaymentDetailComponent implements OnInit {
 
   getPayments() {
     this.isProcessing = true;
-    this.commonService.getAllPaymentsByStudentId(this.studentId).subscribe({
+    const request = this.studentId 
+      ? this.commonService.getAllPaymentsByStudentId(this.studentId)
+      : this.commonService.getAllMonthlyPayments();
+
+    request.subscribe({
       next: r => {
         this.payments = r.map(p => ({
           ...p,
-          student: this.students.find(s => s.studentId === p.studentId)
+          student: this.students.find(s => s.studentId === p.studentId) || p.student
         }));
         this.isProcessing = false;
         this.applyFilter();
@@ -149,11 +164,15 @@ export class PaymentDetailComponent implements OnInit {
 
   getOtherPayments() {
     this.isProcessing = true;
-    this.commonService.getAllOtherPaymentsByStudentId(this.studentId).subscribe({
+    const request = this.studentId 
+      ? this.commonService.getAllOtherPaymentsByStudentId(this.studentId)
+      : this.commonService.getAllOthersPayments();
+
+    request.subscribe({
       next: r => {
         this.otherPayments = r.map(p => ({
           ...p,
-          student: this.students.find(s => s.studentId === p.studentId)
+          student: this.students.find(s => s.studentId === p.studentId) || p.student
         }));
         this.isProcessing = false;
         this.applyFilter();
@@ -186,20 +205,36 @@ export class PaymentDetailComponent implements OnInit {
 
   applyFilter() {
     const term = this.searchTerm.toLowerCase();
+    const classId = this.selectedStandardId ? parseInt(this.selectedStandardId) : null;
+
+    const filterFn = (p: any) => {
+      // Search Term
+      const matchesSearch = !term || 
+        p.student?.studentName?.toLowerCase().includes(term) || 
+        (p.monthlyPaymentId || p.othersPaymentId)?.toString().includes(term);
+      
+      // Class Filter
+      const matchesClass = !classId || p.student?.standardId === classId;
+
+      // Student Filter (if explicitly selected)
+      const matchesStudent = !this.studentId || p.studentId === parseInt(this.studentId);
+
+      // Status Filter
+      let matchesStatus = true;
+      if (this.statusFilter === 'paid') {
+        matchesStatus = p.amountRemaining === 0;
+      } else if (this.statusFilter === 'pending') {
+        matchesStatus = p.amountRemaining > 0;
+      }
+
+      return matchesSearch && matchesClass && matchesStudent && matchesStatus;
+    };
 
     // Filter Monthly
-    this.filteredMonthly = this.payments.filter(p =>
-      !term ||
-      p.student?.studentName?.toLowerCase().includes(term) ||
-      p.monthlyPaymentId?.toString().includes(term)
-    );
+    this.filteredMonthly = this.payments.filter(filterFn);
 
     // Filter Other
-    this.filteredOther = this.otherPayments.filter(p =>
-      !term ||
-      p.student?.studentName?.toLowerCase().includes(term) ||
-      p.othersPaymentId?.toString().includes(term)
-    );
+    this.filteredOther = this.otherPayments.filter(filterFn);
 
     this.updatePagination();
   }
