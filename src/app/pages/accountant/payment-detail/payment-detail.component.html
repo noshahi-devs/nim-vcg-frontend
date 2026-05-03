@@ -62,8 +62,8 @@
 
     <!-- Unified Filter Bar -->
     <div class="fee-card-header premium-header">
-      <div class="header-filters">
-        <!-- Search -->
+      <!-- Top Row: Search and Actions -->
+      <div class="header-row top-row">
         <div class="search-wrapper-premium">
           <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8" />
@@ -73,7 +73,31 @@
             placeholder="Search by ID or student name..." [disabled]="isProcessing" />
         </div>
 
-        <!-- Standard Dropdown -->
+        <div class="header-actions no-print">
+          <button class="btn-secondary-premium" (click)="printPayments()" title="Print List" [disabled]="isProcessing">
+            <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+            <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
+            </svg>
+            Print
+          </button>
+          <button class="btn-secondary-premium" (click)="downloadPayments()" title="Export CSV" [disabled]="isProcessing">
+            <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+            <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Export
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Filters -->
+      <div class="header-row bottom-row">
+        <!-- Standard -->
         <div class="filter-group">
           <label class="filter-label">Standard</label>
           <div class="select-wrapper-premium">
@@ -88,7 +112,7 @@
           </div>
         </div>
 
-        <!-- Student Dropdown -->
+        <!-- Student -->
         <div class="filter-group">
           <label class="filter-label">Student</label>
           <div class="select-wrapper-premium">
@@ -103,7 +127,7 @@
           </div>
         </div>
 
-        <!-- Status Dropdown -->
+        <!-- Status -->
         <div class="filter-group">
           <label class="filter-label">Status</label>
           <div class="select-wrapper-premium">
@@ -118,28 +142,20 @@
             </svg>
           </div>
         </div>
-      </div>
 
-      <!-- Action Buttons -->
-      <div class="header-actions no-print">
-        <button class="btn-secondary-premium" (click)="printPayments()" title="Print List" [disabled]="isProcessing">
-          <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
-          <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="6 9 6 2 18 2 18 9" />
-            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-            <rect x="6" y="14" width="12" height="8" />
-          </svg>
-          Print
-        </button>
-        <button class="btn-secondary-premium" (click)="downloadPayments()" title="Export CSV" [disabled]="isProcessing">
-          <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
-          <svg *ngIf="!isProcessing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>
-          Export
-        </button>
+        <!-- Date From -->
+        <div class="filter-group">
+          <label class="filter-label">From Date</label>
+          <input type="date" class="field-select-premium" [(ngModel)]="dateFrom" (change)="applyFilter()"
+            [disabled]="isProcessing" />
+        </div>
+
+        <!-- Date To -->
+        <div class="filter-group">
+          <label class="filter-label">To Date</label>
+          <input type="date" class="field-select-premium" [(ngModel)]="dateTo" (change)="applyFilter()"
+            [disabled]="isProcessing" />
+        </div>
       </div>
     </div>
 
@@ -176,7 +192,6 @@
               <th>ID</th>
               <th>Student</th>
               <th>Enrollment #</th>
-              <th>Phone</th>
               <th>Total Amount</th>
               <th>Paid</th>
               <th>Remaining</th>
@@ -195,7 +210,6 @@
                 </div>
               </td>
               <td><span class="enrollment-badge">{{ p.student?.enrollmentNo }}</span></td>
-              <td><span class="phone-val">{{ getStudentPhone(p.student) }}</span></td>
               <td><span class="amount-val">Rs. {{ p.totalAmount | number }}</span></td>
               <td><span class="amount-paid">Rs. {{ p.amountPaid | number }}</span></td>
               <td>

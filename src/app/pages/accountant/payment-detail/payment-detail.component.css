@@ -114,23 +114,42 @@
   background: linear-gradient(to bottom, #ffffff, #fcfdfe);
   border-bottom: 1px solid #f1f5f9;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 20px;
 }
 
-.header-filters {
+.header-row {
   display: flex;
   align-items: flex-end;
   gap: 16px;
+  width: 100%;
+}
+
+.top-row {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bottom-row {
   flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid #f8fafc;
+  display: flex;
+  gap: 16px;
+}
+
+.bottom-row .filter-group {
   flex: 1;
+  min-width: 180px;
+}
+
+.header-filters {
+  display: none; /* Removed in HTML */
 }
 
 .search-wrapper-premium {
   position: relative;
-  min-width: 240px;
+  max-width: 400px;
   flex: 1;
 }
 
@@ -181,7 +200,7 @@
 .field-select-premium {
   width: 100%;
   appearance: none;
-  padding: 10px 36px 10px 14px;
+  padding: 10px 14px;
   border: 1.5px solid #e2e8f0;
   border-radius: 12px;
   font-size: 14px;
@@ -192,7 +211,24 @@
   transition: all 0.2s;
 }
 
-.field-select-premium:focus {
+select.field-select-premium {
+  padding-right: 36px;
+}
+
+.field-select-premium:focus,
+.field-select-premium:hover {
+  border-color: #800000;
+  background-color: #f8fafc; /* Light gray hover */
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.05);
+}
+
+/* Fix for Date Input blue focus and accent */
+input[type="date"] {
+  accent-color: #800000; /* Use maroon for the picker highlights if supported */
+}
+
+input[type="date"]:focus {
+  outline: none;
   border-color: #800000;
 }
 
@@ -407,12 +443,6 @@
   background: #fff1f2;
   color: #e11d48;
   border: 1px solid #ffe4e6;
-}
-
-.phone-val {
-  color: #64748b;
-  font-weight: 600;
-  font-size: 13px;
 }
 
 .date-val {
@@ -764,21 +794,20 @@
    RESPONSIVE
 ======================== */
 @media (max-width: 1024px) {
-  .premium-header {
+  .header-row {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .header-filters {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .select-wrapper-premium {
-    min-width: 100%;
+  .top-row {
+    gap: 20px;
   }
 
   .search-wrapper-premium {
+    max-width: 100%;
+  }
+
+  .select-wrapper-premium {
     min-width: 100%;
   }
 }

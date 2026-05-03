@@ -46,6 +46,8 @@ export class PaymentDetailComponent implements OnInit {
   toEntry = 0;
   searchTerm = '';
   statusFilter: 'all' | 'paid' | 'pending' = 'all';
+  dateFrom: string = '';
+  dateTo: string = '';
   isProcessing = false;
 
   selectedPayment: any = null;
@@ -234,7 +236,25 @@ export class PaymentDetailComponent implements OnInit {
         matchesStatus = p.amountRemaining > 0;
       }
 
-      return matchesSearch && matchesClass && matchesStudent && matchesStatus;
+      // Date Range Filter
+      let matchesDate = true;
+      if (p.paymentDate) {
+        const pDate = new Date(p.paymentDate);
+        pDate.setHours(0, 0, 0, 0);
+        
+        if (this.dateFrom) {
+          const from = new Date(this.dateFrom);
+          from.setHours(0, 0, 0, 0);
+          if (pDate < from) matchesDate = false;
+        }
+        if (this.dateTo) {
+          const to = new Date(this.dateTo);
+          to.setHours(0, 0, 0, 0);
+          if (pDate > to) matchesDate = false;
+        }
+      }
+
+      return matchesSearch && matchesClass && matchesStudent && matchesStatus && matchesDate;
     };
 
     // Filter Monthly
