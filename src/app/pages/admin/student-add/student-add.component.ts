@@ -374,151 +374,164 @@ export class StudentAddComponent implements OnInit, AfterViewInit {
   // BULK IMPORT LOGIC (EXCEL)
   // -------------------------------------------------------
   downloadTemplate(): void {
-    // ── Column Headers (26 fields matching the student form) ──
+    // ════════════════════════════════════════════
+    // SHEET 1: Student Data
+    // ════════════════════════════════════════════
     const headers = [
-      'Student Name*',
-      'Date of Birth (DD-MM-YYYY)*',
-      'Gender*',
-      'Class Name*',
-      'Section Name*',
-      'Enrollment Status',
-      'Admission Date (DD-MM-YYYY)',
-      'Student Contact Number',
-      'Student Contact Number 2',
-      'Father Name',
-      'Father NID',
-      'Father Contact Number',
-      'Mother Name',
-      'Mother NID',
-      'Mother Contact Number',
-      'Guardian Phone',
-      'Local Guardian Name',
-      'Local Guardian Contact',
-      'Permanent Address',
-      'Temporary Address',
-      'Religion',
-      'Blood Group',
-      'Nationality',
-      'Student NID Number',
-      'Previous School',
-      'Default Discount (Rs)'
+      'Student Name*', 'Date of Birth (DD-MM-YYYY)*', 'Gender*', 'Class Name*', 'Section Name*',
+      'Enrollment Status', 'Admission Date (DD-MM-YYYY)',
+      'Student Contact Number', 'Student Contact Number 2',
+      'Father Name', 'Father NID', 'Father Contact Number',
+      'Mother Name', 'Mother NID', 'Mother Contact Number',
+      'Guardian Phone', 'Local Guardian Name', 'Local Guardian Contact',
+      'Permanent Address', 'Temporary Address',
+      'Religion', 'Blood Group', 'Nationality', 'Student NID Number',
+      'Previous School', 'Default Discount (Rs)'
     ];
 
-    // ── Example data rows ──
+    const ex1Class = this.classes[0]?.standardName || '9th';
+    const ex1Section = this.sections.find(s => s.className === ex1Class)?.sectionName || '';
+    const ex2Class = this.classes[1]?.standardName || '10th';
+    const ex2Section = this.sections.find(s => s.className === ex2Class)?.sectionName || '';
+
     const dataSheet = [
       headers,
       [
-        'Ali Hassan', '15-05-2010', 'Male',
-        this.classes[0]?.standardName || '9th',
-        this.sections[0]?.sectionName || 'A',
-        'Active', '01-04-2026',
-        '03001234567', '',
+        'Ali Hassan', '15-05-2010', 'Male', ex1Class, ex1Section,
+        'Active', '01-04-2026', '03001234567', '',
         'Ahmad Hassan', '33101-1234567-1', '03001234567',
         'Fatima Bibi', '33101-9876543-8', '03009876543',
-        '03001234567',
-        '', '',
+        '03001234567', '', '',
         'House No 12, Street 4, Gojra', '',
-        'Islam', 'O+', 'Pakistani', '33101-1234567-1',
-        'City Model School', '0'
+        'Islam', 'O+', 'Pakistani', '33101-1234567-1', 'City Model School', '0'
       ],
       [
-        'Ayesha Noor', '20-10-2012', 'Female',
-        this.classes[1]?.standardName || '10th',
-        this.sections[1]?.sectionName || 'B',
-        'Active', '01-04-2026',
-        '03007654321', '',
+        'Ayesha Noor', '20-10-2012', 'Female', ex2Class, ex2Section,
+        'Active', '01-04-2026', '03007654321', '',
         'Noor Ahmad', '33101-7654321-1', '03007654321',
-        'Zainab Bibi', '', '',
-        '03007654321',
-        '', '',
+        'Zainab Bibi', '', '', '03007654321', '', '',
         'House No 5, Model Town, Gojra', '',
-        'Islam', 'A+', 'Pakistani', '',
-        'Vision Public School', '500'
+        'Islam', 'A+', 'Pakistani', '', 'Vision Public School', '500'
       ]
     ];
 
     const wsData = XLSX.utils.aoa_to_sheet(dataSheet);
-
-    // Column widths for Data sheet
     wsData['!cols'] = [
-      { wch: 22 }, { wch: 22 }, { wch: 12 }, { wch: 18 }, { wch: 14 },
-      { wch: 18 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 20 },
-      { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 },
+      { wch: 22 }, { wch: 22 }, { wch: 10 }, { wch: 18 }, { wch: 18 },
+      { wch: 18 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 },
+      { wch: 20 }, { wch: 22 }, { wch: 22 }, { wch: 20 }, { wch: 22 },
       { wch: 20 }, { wch: 22 }, { wch: 22 }, { wch: 35 }, { wch: 30 },
-      { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 22 }, { wch: 25 }, { wch: 20 }
+      { wch: 14 }, { wch: 12 }, { wch: 14 }, { wch: 22 }, { wch: 25 }, { wch: 20 }
     ];
 
-    // ── Instruction Sheet ──
-    const instData: any[][] = [
-      ['=== STUDENT BULK IMPORT INSTRUCTIONS ===', '', '', ''],
-      ['Please read every row carefully before filling your data sheet.', '', '', ''],
+    // ════════════════════════════════════════════
+    // SHEET 2: Reference (valid lookup values)
+    // ════════════════════════════════════════════
+    const refData: any[][] = [
+      ['REFERENCE SHEET — Use this to fill the Student Data sheet correctly', '', '', ''],
+      ['Copy values EXACTLY as shown below. Spelling must match precisely.', '', '', ''],
       [''],
-      ['COLUMN NAME', 'REQUIRED?', 'FORMAT / VALID VALUES', 'EXAMPLE'],
-      ['Student Name', 'YES', 'Full legal name of the student', 'Ali Hassan'],
-      ['Date of Birth', 'YES', 'DD-MM-YYYY — day first, then month, then 4-digit year', '15-05-2010'],
-      ['Gender', 'YES', 'Exact spelling: Male  OR  Female  OR  Other', 'Male'],
-      ['Class Name', 'YES', 'Must match exactly one of the Class Names listed below (Section A)', this.classes[0]?.standardName || '9th'],
-      ['Section Name', 'YES', 'Must match exactly one of the Section Names listed below (Section B)', this.sections[0]?.sectionName || 'A'],
-      ['Enrollment Status', 'NO', 'Active  OR  Inactive   (leave blank = Active)', 'Active'],
-      ['Admission Date', 'NO', 'DD-MM-YYYY format — date the student joined', '01-04-2026'],
-      ['Student Contact Number', 'NO', 'Pakistani mobile format: 03XXXXXXXXX (11 digits, no dashes)', '03001234567'],
-      ['Student Contact Number 2', 'NO', 'Second number if available, same format as above', ''],
-      ['Father Name', 'NO', 'Full name of father or primary male guardian', 'Ahmad Hassan'],
-      ['Father NID', 'NO', 'Pakistani NID format: XXXXX-XXXXXXX-X (15 characters)', '33101-1234567-1'],
-      ['Father Contact Number', 'NO', 'Pakistani mobile format: 03XXXXXXXXX', '03001234567'],
-      ['Mother Name', 'NO', 'Full name of mother or primary female guardian', 'Fatima Bibi'],
-      ['Mother NID', 'NO', 'Pakistani NID format: XXXXX-XXXXXXX-X', '33101-9876543-8'],
-      ['Mother Contact Number', 'NO', 'Pakistani mobile format: 03XXXXXXXXX', '03009876543'],
-      ['Guardian Phone', 'NO', 'Primary contact number to reach guardian', '03001234567'],
-      ['Local Guardian Name', 'NO', 'Name of local guardian if parents are not in city', ''],
-      ['Local Guardian Contact', 'NO', 'Pakistani mobile format: 03XXXXXXXXX', ''],
-      ['Permanent Address', 'NO', 'Full home address including house no, street, city', 'House 12, Street 4, Gojra'],
-      ['Temporary Address', 'NO', 'Current residence if different from permanent address', ''],
-      ['Religion', 'NO', 'e.g. Islam, Christianity, Hinduism', 'Islam'],
-      ['Blood Group', 'NO', 'Valid values: A+  A-  B+  B-  AB+  AB-  O+  O-', 'O+'],
-      ['Nationality', 'NO', 'e.g. Pakistani, British, American', 'Pakistani'],
-      ['Student NID Number', 'NO', 'If student has NID: XXXXX-XXXXXXX-X format', ''],
-      ['Previous School', 'NO', 'Name of school student attended before this institution', 'City Model School'],
-      ['Default Discount (Rs)', 'NO', 'Monthly fee discount in Rupees (number only, no Rs symbol). 0 if none.', '500'],
-      [''],
-      ['IMPORTANT NOTES:', '', '', ''],
-      ['1. Do NOT edit the column headers in the Student Data sheet.', '', '', ''],
-      ['2. Do NOT add extra columns — only fill the provided ones.', '', '', ''],
-      ['3. Leave optional fields BLANK (empty) if not available. Do NOT write "N/A" or "-".', '', '', ''],
-      ['4. Dates MUST be in DD-MM-YYYY format (e.g. 25-12-2010, NOT 2010-12-25).', '', '', ''],
-      ['5. Class Name and Section Name must match EXACTLY as listed below — check spelling carefully.', '', '', ''],
-      ['6. Phone numbers must be 11 digits starting with 03 (e.g. 03001234567). No dashes.', '', '', ''],
-      ['7. The system auto-generates Admission Number, Enrollment Number, and Attendance ID.', '', '', ''],
-      ['8. Default password for student login will be: Noshahi.000', '', '', ''],
-      [''],
-      ['─── SECTION A: VALID CLASS NAMES (copy exactly) ───', '', '', ''],
+
+      ['━━━ VALID CLASS NAMES (Column: Class Name*) ━━━', '', '', ''],
       ['Class Name', 'Class ID', '', ''],
       ...this.classes.map(c => [c.standardName, c.standardId, '', '']),
       [''],
-      ['─── SECTION B: VALID SECTIONS PER CLASS (use ONLY these) ───', '', '', ''],
-      ['Class Name', 'Section Name', 'Section Code', ''],
+
+      ['━━━ VALID SECTIONS PER CLASS (Column: Section Name*) ━━━', '', '', ''],
+      ['Class Name', 'Section Name', 'Section Code', 'Note'],
       ...this.classes.flatMap(c => {
-        const classSections = this.sections.filter(s => s.className === c.standardName);
-        if (classSections.length === 0) return [[c.standardName, '(no sections added yet)', '', '']];
-        return classSections.map(s => [c.standardName, s.sectionName, s.sectionCode || '', '']);
+        const secs = this.sections.filter(s => s.className === c.standardName);
+        if (secs.length === 0) return [[c.standardName, '(no sections created yet — add sections first)', '', '⚠ Cannot import without sections']];
+        return secs.map(s => [c.standardName, s.sectionName, s.sectionCode || '', '']);
       }),
       [''],
-      ['─── SECTION C: GENDER OPTIONS ───', '', '', ''],
-      ['Male', '', '', ''],
-      ['Female', '', '', ''],
-      ['Other', '', '', ''],
+
+      ['━━━ VALID GENDER VALUES (Column: Gender*) ━━━', '', '', ''],
+      ['Gender Value', 'Use exactly this spelling', '', ''],
+      ['Male', '✔ Valid', '', ''],
+      ['Female', '✔ Valid', '', ''],
+      ['Other', '✔ Valid', '', ''],
+      [''],
+
+      ['━━━ VALID ENROLLMENT STATUS (Column: Enrollment Status) ━━━', '', '', ''],
+      ['Status Value', 'Meaning', '', ''],
+      ['Active', 'Student is currently enrolled', '', ''],
+      ['Inactive', 'Student has left or is suspended', '', ''],
+      ['(blank)', 'Defaults to Active automatically', '', ''],
+      [''],
+
+      ['━━━ VALID BLOOD GROUPS (Column: Blood Group) ━━━', '', '', ''],
+      ['A+', 'A-', 'B+', 'B-'],
+      ['AB+', 'AB-', 'O+', 'O-'],
+    ];
+
+    const wsRef = XLSX.utils.aoa_to_sheet(refData);
+    wsRef['!cols'] = [{ wch: 35 }, { wch: 35 }, { wch: 18 }, { wch: 45 }];
+
+    // ════════════════════════════════════════════
+    // SHEET 3: Instructions (field guide + notes)
+    // ════════════════════════════════════════════
+    const instData: any[][] = [
+      ['INSTRUCTIONS — Read before filling the Student Data sheet', '', '', ''],
+      ['Fill data in the "Student Data" tab. Use "Reference" tab for valid class/section names.', '', '', ''],
+      [''],
+      ['COLUMN NAME', 'REQUIRED?', 'FORMAT / RULES', 'EXAMPLE'],
+      ['Student Name', 'YES ★', 'Full legal name. No nicknames.', 'Ali Hassan'],
+      ['Date of Birth', 'YES ★', 'DD-MM-YYYY format. Day-Month-Year.', '15-05-2010'],
+      ['Gender', 'YES ★', 'Must be exactly: Male  OR  Female  OR  Other', 'Male'],
+      ['Class Name', 'YES ★', 'Copy EXACTLY from Reference sheet › Valid Class Names', ex1Class],
+      ['Section Name', 'YES ★', 'Copy from Reference › Sections for that class ONLY', ex1Section],
+      ['Enrollment Status', 'NO', 'Active or Inactive. Leave blank for Active.', 'Active'],
+      ['Admission Date', 'NO', 'DD-MM-YYYY format', '01-04-2026'],
+      ['Student Contact Number', 'NO', '11-digit Pakistani mobile: 03XXXXXXXXX (no dashes)', '03001234567'],
+      ['Student Contact Number 2', 'NO', 'Same format as above', ''],
+      ['Father Name', 'NO', 'Full name of father or guardian', 'Ahmad Hassan'],
+      ['Father NID', 'NO', 'Pakistani NID: XXXXX-XXXXXXX-X (17 chars with dashes)', '33101-1234567-1'],
+      ['Father Contact Number', 'NO', '11-digit: 03XXXXXXXXX', '03001234567'],
+      ['Mother Name', 'NO', 'Full name of mother', 'Fatima Bibi'],
+      ['Mother NID', 'NO', 'Pakistani NID: XXXXX-XXXXXXX-X', '33101-9876543-8'],
+      ['Mother Contact Number', 'NO', '11-digit: 03XXXXXXXXX', '03009876543'],
+      ['Guardian Phone', 'NO', 'Primary phone to reach guardian', '03001234567'],
+      ['Local Guardian Name', 'NO', 'Guardian in city if parents are elsewhere', ''],
+      ['Local Guardian Contact', 'NO', '11-digit: 03XXXXXXXXX', ''],
+      ['Permanent Address', 'NO', 'Full home address: House No, Street, City', 'House 12, Street 4, Gojra'],
+      ['Temporary Address', 'NO', 'Current address if different from permanent', ''],
+      ['Religion', 'NO', 'e.g. Islam, Christianity, Hinduism, Sikhism', 'Islam'],
+      ['Blood Group', 'NO', 'See Reference sheet. Values: A+ A- B+ B- AB+ AB- O+ O-', 'O+'],
+      ['Nationality', 'NO', 'e.g. Pakistani, British, American', 'Pakistani'],
+      ['Student NID Number', 'NO', 'If student has NID: XXXXX-XXXXXXX-X', ''],
+      ['Previous School', 'NO', 'Name of previous institution attended', 'City Model School'],
+      ['Default Discount (Rs)', 'NO', 'Monthly fee discount in Rupees. Numbers only. 0 if none.', '500'],
+      [''],
+      ['─────────────────────────────────────────────────────────────────────', '', '', ''],
+      ['IMPORTANT RULES', '', '', ''],
+      ['─────────────────────────────────────────────────────────────────────', '', '', ''],
+      ['★  Starred (*) columns are required. All others are optional.', '', '', ''],
+      ['1.  Do NOT change or delete the header row in the Student Data sheet.', '', '', ''],
+      ['2.  Do NOT add extra columns outside the provided ones.', '', '', ''],
+      ['3.  Leave optional cells BLANK if data is not available. Never write N/A or -.', '', '', ''],
+      ['4.  Class Name must EXACTLY match the Reference sheet (capital letters matter).', '', '', ''],
+      ['5.  Section must belong to the chosen class — cross-check with Reference sheet.', '', '', ''],
+      ['6.  If a section is not in Reference, it has not been created. Add it first in system.', '', '', ''],
+      ['7.  Dates must be DD-MM-YYYY e.g. 03-05-2026 (NOT 2026-05-03 or 5/3/2026).', '', '', ''],
+      ['8.  Phone numbers: 11 digits, starts with 03, no dashes e.g. 03001234567.', '', '', ''],
+      ['9.  System auto-generates: Admission No, Enrollment No, Attendance ID.', '', '', ''],
+      ['10. Default student login password after import: Noshahi.000', '', '', ''],
     ];
 
     const wsInst = XLSX.utils.aoa_to_sheet(instData);
-    wsInst['!cols'] = [{ wch: 35 }, { wch: 14 }, { wch: 60 }, { wch: 30 }];
+    wsInst['!cols'] = [{ wch: 30 }, { wch: 12 }, { wch: 62 }, { wch: 28 }];
 
+    // ── Build workbook with 3 sheets ──
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, wsData, 'Student Data');
+    XLSX.utils.book_append_sheet(wb, wsRef, 'Reference');
     XLSX.utils.book_append_sheet(wb, wsInst, 'Instructions');
 
     XLSX.writeFile(wb, 'Student_Import_Template.xlsx');
-    this.popup.success('Template downloaded. Read the "Instructions" sheet before filling data.', 'Template Ready');
+    this.popup.success('Template downloaded! Fill "Student Data", check "Reference", read "Instructions".', 'Template Ready');
   }
+
 
 
   triggerImport(): void {
