@@ -266,7 +266,10 @@ export class StudentListComponent implements OnInit, AfterViewInit, OnDestroy {
       const base = environment.apiBaseUrl || '/api';
       return `${base}/${normalizedPath}`;
     }
-    return 'assets/images/user-grid/user-grid-img2.png';
+    // Fallback based on gender (handles both string and int enum formats)
+    const isFemale = student.studentGender === 1 || student.studentGender === 'Female';
+    if (isFemale) return 'assets/images/avatar-girl.png';
+    return 'assets/images/avatar-boy.png'; // Default for boys (0, 'Male') or unknown
   }
 
   getClassName(id: number | null): string {

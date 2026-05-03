@@ -281,9 +281,10 @@
 .es-avatar {
   width: 100%;
   height: 100%;
-  border-radius: 20px;
+  border-radius: 50%; /* Perfect circle */
   object-fit: cover;
   border: 3px solid #ffffff;
+  background-color: #f8fafc; /* light background for transparent avatars */
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
   transition: transform 0.24s ease;
 }
