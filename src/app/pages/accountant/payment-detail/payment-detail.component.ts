@@ -58,6 +58,13 @@ export class PaymentDetailComponent implements OnInit {
     private router: Router,
     private popup: PopupService
   ) { }
+  
+  getStudentPhone(student: any): string {
+    if (!student) return '-';
+    return [student.guardianPhone, student.studentContactNumber1]
+      .filter(num => num && num.trim() !== '')
+      .join(' / ') || '-';
+  }
 
   ngOnInit(): void {
     this.fetchStandards();
@@ -269,6 +276,7 @@ export class PaymentDetailComponent implements OnInit {
     const schoolName = 'Vision College';
     const today = new Date(payment.paymentDate || new Date()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     const className = payment.student?.standard?.standardName || '--';
+    const phone = this.getStudentPhone(payment.student);
 
     const baseTotal = payment.totalFeeAmount || payment.totalAmount || 0;
     const waver = payment.waver || payment.discount || 0;
@@ -327,6 +335,19 @@ export class PaymentDetailComponent implements OnInit {
         </div>
         <div class="v-title-bar">
           <span class="v-copy-tag">${copyName}</span>
+          <span style="display: flex; align-items: center; gap: 4px; font-size: 9px; padding: 2px 8px; border-radius: 4px; background: ${payment.amountRemaining === 0 ? '#dcfce7' : '#fee2e2'}; color: ${payment.amountRemaining === 0 ? '#15803d' : '#991b1b'};">
+            ${payment.amountRemaining === 0 ? `
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              FULLY PAID` : `
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              PENDING`}
+          </span>
           <span class="v-date">Date: ${today}</span>
         </div>
         <div class="v-student-panel">
@@ -334,6 +355,7 @@ export class PaymentDetailComponent implements OnInit {
           <div class="v-row"><strong>Name:</strong> <span>${payment.student?.studentName || '-'}</span></div>
           <div class="v-row"><strong>Class:</strong> <span>${className}</span></div>
           <div class="v-row"><strong>Enrollment:</strong> <span>${payment.student?.enrollmentNo || '-'}</span></div>
+          <div class="v-row"><strong>Phone:</strong> <span>${phone}</span></div>
         </div>
         <table class="v-table">
           <thead><tr><th>Description</th><th class="text-right">Amount (Rs.)</th></tr></thead>
@@ -420,15 +442,32 @@ export class PaymentDetailComponent implements OnInit {
     activeData.forEach((p, i) => {
       const id = this.activeTab === 'monthly' ? p.monthlyPaymentId : (p as any).othersPaymentId;
       const date = new Date(p.paymentDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      const phone = this.getStudentPhone(p.student);
       tableRows += `
         <tr>
           <td style="text-align:center;">${i + 1}</td>
           <td>${id ?? '-'}</td>
           <td>${p.student?.studentName || '-'}</td>
           <td>${p.student?.enrollmentNo || '-'}</td>
+          <td>${phone}</td>
           <td style="text-align:right;">${(p.totalAmount || 0).toLocaleString()}</td>
           <td style="text-align:right;">${(p.amountPaid || 0).toLocaleString()}</td>
           <td style="text-align:right;">${(p.amountRemaining || 0).toLocaleString()}</td>
+          <td style="text-align:center; color: ${p.amountRemaining === 0 ? '#16a34a' : '#e11d48'}; font-weight: bold; white-space: nowrap;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+              ${p.amountRemaining === 0 ? `
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                FULLY PAID` : `
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                PENDING DUES`}
+            </div>
+          </td>
           <td style="text-align:center;">${date}</td>
         </tr>
       `;
@@ -473,9 +512,11 @@ export class PaymentDetailComponent implements OnInit {
         <th>ID</th>
         <th>Student Name</th>
         <th>Enrollment</th>
+        <th>Phone</th>
         <th style="text-align:right;">Total Amount</th>
         <th style="text-align:right;">Paid</th>
         <th style="text-align:right;">Remaining</th>
+        <th style="text-align:center;">Status</th>
         <th style="text-align:center;">Date</th>
       </tr>
     </thead>

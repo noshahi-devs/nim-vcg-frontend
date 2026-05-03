@@ -176,9 +176,11 @@
               <th>ID</th>
               <th>Student</th>
               <th>Enrollment #</th>
+              <th>Phone</th>
               <th>Total Amount</th>
               <th>Paid</th>
               <th>Remaining</th>
+              <th>Status</th>
               <th>Date</th>
               <th class="text-center">Action</th>
             </tr>
@@ -193,12 +195,26 @@
                 </div>
               </td>
               <td><span class="enrollment-badge">{{ p.student?.enrollmentNo }}</span></td>
+              <td><span class="phone-val">{{ getStudentPhone(p.student) }}</span></td>
               <td><span class="amount-val">Rs. {{ p.totalAmount | number }}</span></td>
               <td><span class="amount-paid">Rs. {{ p.amountPaid | number }}</span></td>
               <td>
                 <span class="amount-chip" [class.paid]="p.amountRemaining === 0"
                   [class.pending]="p.amountRemaining > 0">
                   Rs. {{ p.amountRemaining | number }}
+                </span>
+              </td>
+              <td>
+                <span class="status-badge" [class.paid]="p.amountRemaining === 0" [class.pending]="p.amountRemaining > 0">
+                  <svg *ngIf="p.amountRemaining === 0" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <svg *ngIf="p.amountRemaining > 0" class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                  {{ p.amountRemaining === 0 ? 'Fully Paid' : 'Pending Dues' }}
                 </span>
               </td>
               <td><span class="date-val">{{ p.paymentDate | date:'mediumDate' }}</span></td>
