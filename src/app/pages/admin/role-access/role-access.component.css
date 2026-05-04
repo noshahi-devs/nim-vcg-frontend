@@ -180,7 +180,7 @@
   border: 0;
   border-radius: 14px;
   background: linear-gradient(135deg, var(--ra-primary), var(--ra-primary-deep));
-  color: #ffffff;
+  color: var(--primary-contrast) !important;
   font-size: 0.95rem;
   font-weight: 700;
   box-shadow: 0 8px 20px rgba(var(--primary-rgb), 0.2);

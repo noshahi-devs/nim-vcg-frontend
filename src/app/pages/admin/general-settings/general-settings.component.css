@@ -624,3 +624,64 @@ textarea.premium-input {
 
 @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
 @keyframes scaleUpModal { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* Login Design Selector */
+.design-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.design-option {
+    border: 2px solid #e2e8f0;
+    border-radius: var(--gs-radius-lg);
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.design-option:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-4px);
+    box-shadow: var(--gs-shadow-lg);
+}
+
+.design-option.active {
+    border-color: var(--gs-primary);
+    background: var(--gs-primary-light);
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
+}
+
+.design-preview {
+    height: 90px;
+    width: 100%;
+    border-radius: var(--gs-radius-md);
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-preview { background: linear-gradient(135deg, #020617 50%, #f8fafc 50%); }
+.glass-preview { background: radial-gradient(circle at center, #334155, #020617); }
+.glass-preview::after { content: ""; position: absolute; inset: 20%; background: rgba(255,255,255,0.1); backdrop-filter: blur(4px); border-radius: 4px; }
+.geometric-preview { background: #0f172a; }
+.geometric-preview::before { content: ""; position: absolute; width: 40px; height: 40px; background: var(--gs-primary); border-radius: 50%; top: -10px; left: -10px; opacity: 0.5; }
+.minimal-preview { background: #ffffff; border: 1px solid #e2e8f0; }
+.minimal-preview::after { content: ""; position: absolute; top: 30%; left: 10%; right: 10%; height: 2px; background: var(--gs-primary); }
+
+.design-option span {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--gs-ink);
+}
+
+.design-option.active span {
+    color: var(--gs-primary);
+}

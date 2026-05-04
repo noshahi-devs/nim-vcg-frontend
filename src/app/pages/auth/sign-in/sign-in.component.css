@@ -3,8 +3,7 @@
 ======================== */
 .auth-wrapper {
     min-height: 100vh;
-    background: #020617;
-    /* Very dark background */
+    background: #020617; /* Very dark background */
     padding: 16px;
     display: flex;
     align-items: center;
@@ -12,6 +11,81 @@
     overflow: hidden;
     position: relative;
     z-index: 1;
+    transition: all 0.5s ease;
+}
+
+/* Design: Modern (Split Screen Look) */
+.auth-wrapper.design-modern {
+    background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+}
+
+/* Design: Glassmorphism */
+.auth-wrapper.design-glass {
+    background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+}
+.auth-wrapper.design-glass .premium-auth-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: white;
+}
+.auth-wrapper.design-glass .field-label,
+.auth-wrapper.design-glass .auth-header-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+}
+.auth-wrapper.design-glass .field-input {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+.auth-wrapper.design-glass .field-input:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--secondary-color);
+}
+
+/* Design: Geometric */
+.auth-wrapper.design-geometric {
+    background: #0f172a;
+}
+.geometric-shape {
+    position: absolute;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    filter: blur(60px);
+    z-index: -1;
+    animation: morph 15s linear infinite alternate;
+}
+.shape-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--primary-color);
+    top: -100px;
+    left: -100px;
+    opacity: 0.4;
+}
+.shape-2 {
+    width: 350px;
+    height: 350px;
+    background: var(--secondary-color);
+    bottom: -50px;
+    right: -50px;
+    opacity: 0.3;
+}
+@keyframes morph {
+    0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+    100% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%; }
+}
+
+/* Design: Minimal */
+.auth-wrapper.design-minimal {
+    background: #ffffff;
+}
+.auth-wrapper.design-minimal .premium-auth-card {
+    background: #ffffff;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.08);
+    border: 1px solid #f1f5f9;
+}
+.auth-wrapper.design-minimal .windsurf-canvas {
+    display: none;
 }
 
 .windsurf-canvas {

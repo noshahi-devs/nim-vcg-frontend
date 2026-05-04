@@ -101,6 +101,14 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
     this.isProcessing = true;
     this.popup.loading('Saving exam schedule...');
     
+    // Force numeric conversion to avoid any string binding issues
+    this.model.examScheduleId = Number(this.model.examScheduleId);
+    this.model.standardId = Number(this.model.standardId);
+    this.model.examSubjects.forEach(s => {
+      s.subjectId = Number(s.subjectId);
+      s.examTypeId = Number(s.examTypeId);
+    });
+
     console.log('Submitting Payload:', JSON.stringify(this.model));
 
     this.examScheduleStandardsService.SaveExamScheduleStandards(this.model)

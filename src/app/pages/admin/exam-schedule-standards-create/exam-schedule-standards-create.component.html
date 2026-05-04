@@ -43,8 +43,11 @@
                 <option [ngValue]="0" disabled selected hidden>{{ examScheduleList.length > 0 ? 'Select Exam Schedule' : 'No Schedules Found' }}</option>
                 <option *ngFor="let examSchedule of examScheduleList" [ngValue]="examSchedule.examScheduleId">{{
                   examSchedule.examScheduleName }}</option>
-                <option *ngIf="examScheduleList.length === 0" [ngValue]="0" disabled>No exam schedules available. Create one first.</option>
               </select>
+              <div *ngIf="examScheduleList.length === 0" class="mt-2 text-danger small d-flex align-items-center gap-1">
+                <iconify-icon icon="solar:danger-bold"></iconify-icon>
+                <span>No active exam schedules found. <a routerLink="/exam-schedule" class="text-decoration-underline">Create one first.</a></span>
+              </div>
             </div>
           </div>
 

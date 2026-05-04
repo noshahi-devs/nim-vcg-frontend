@@ -394,6 +394,30 @@
                                 <small class="text-muted mt-2 d-block">Accent color for buttons and highlights.</small>
                             </div>
                         </div>
+                        <div class="col-md-12 mt-4">
+                            <div class="premium-input-group">
+                                <label class="premium-label">Login Page Architectural Design</label>
+                                <div class="design-selector-grid">
+                                    <div class="design-option" [class.active]="generalSettings.loginDesign === 'modern'" (click)="generalSettings.loginDesign = 'modern'">
+                                        <div class="design-preview modern-preview"></div>
+                                        <span>Modern Split</span>
+                                    </div>
+                                    <div class="design-option" [class.active]="generalSettings.loginDesign === 'glass'" (click)="generalSettings.loginDesign = 'glass'">
+                                        <div class="design-preview glass-preview"></div>
+                                        <span>Glassmorphism</span>
+                                    </div>
+                                    <div class="design-option" [class.active]="generalSettings.loginDesign === 'geometric'" (click)="generalSettings.loginDesign = 'geometric'">
+                                        <div class="design-preview geometric-preview"></div>
+                                        <span>Geometric Art</span>
+                                    </div>
+                                    <div class="design-option" [class.active]="generalSettings.loginDesign === 'minimal'" (click)="generalSettings.loginDesign = 'minimal'">
+                                        <div class="design-preview minimal-preview"></div>
+                                        <span>Minimalist</span>
+                                    </div>
+                                </div>
+                                <small class="text-muted mt-3 d-block">Choose the landing experience for your users when they sign in.</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

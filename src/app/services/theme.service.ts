@@ -14,6 +14,7 @@ export class ThemeService {
   }
 
   setCustomColor(color: string): void {
+    if (!color) return;
     document.documentElement.style.setProperty('--primary-color', color);
     // Generate lighter and deeper versions for gradients/hovers (using alpha channels)
     document.documentElement.style.setProperty('--primary-light', color + 'cc'); 
@@ -30,7 +31,35 @@ export class ThemeService {
     const chevronSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='${encodedColor}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`;
     document.documentElement.style.setProperty('--select-chevron', chevronSvg);
 
+    // Set contrast color
+    const contrastColor = this.getContrastColor(color);
+    document.documentElement.style.setProperty('--primary-contrast', contrastColor);
+
     localStorage.setItem(this.COLOR_KEY, color);
+  }
+
+  private getContrastColor(hexcolor: string): string {
+    if (!hexcolor) return '#ffffff';
+    // If a lead # is provided, remove it
+    if (hexcolor.startsWith('#')) {
+      hexcolor = hexcolor.slice(1);
+    }
+
+    // If a three-character hexcode, make it six
+    if (hexcolor.length === 3) {
+      hexcolor = hexcolor.split('').map(hex => hex + hex).join('');
+    }
+
+    // Convert to RGB value
+    const r = parseInt(hexcolor.substr(0, 2), 16);
+    const g = parseInt(hexcolor.substr(2, 2), 16);
+    const b = parseInt(hexcolor.substr(4, 2), 16);
+
+    // Get YIQ ratio
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+    // Check contrast
+    return (yiq >= 128) ? '#1e293b' : '#ffffff';
   }
 
   private hexToRgb(hex: string) {
@@ -43,8 +72,13 @@ export class ThemeService {
   }
 
   setSecondaryColor(color: string): void {
+    if (!color) return;
     document.documentElement.style.setProperty('--secondary-color', color);
     document.documentElement.style.setProperty('--accent-color', color);
+
+    const contrastColor = this.getContrastColor(color);
+    document.documentElement.style.setProperty('--secondary-contrast', contrastColor);
+
     localStorage.setItem(this.SECONDARY_COLOR_KEY, color);
   }
 

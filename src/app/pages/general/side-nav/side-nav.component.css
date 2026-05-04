@@ -9,6 +9,7 @@
     --sidebar-hover: rgba(255, 255, 255, 0.25);
     --sidebar-active-bg: #ffffff;
     --sidebar-active-text: var(--primary-color);
+    --sidebar-active-contrast: var(--primary-contrast);
 
     --header-chip-bg: rgba(255, 255, 255, 0.16);
     --header-chip-border: rgba(255, 255, 255, 0.36);
@@ -169,7 +170,7 @@
     border-radius: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.01em;
-    color: var(--sidebar-text);
+    color: var(--primary-contrast);
     padding: 0.62rem 0.78rem;
     transition: all 0.25s ease;
 }
@@ -234,13 +235,14 @@
 :host ::ng-deep .sidebar-menu li.dropdown>a::after {
     color: inherit;
     opacity: 0.8;
+    content: none !important; /* Prevent double icons */
 }
 
 :host ::ng-deep .sidebar-menu li>a.active-page,
 :host ::ng-deep .sidebar-menu li.dropdown:has(.active-page)>a {
-    background: var(--sidebar-active-bg);
-    color: var(--sidebar-active-text);
-    box-shadow: 0 10px 20px rgba(var(--primary-rgb), 0.15);
+    background: var(--secondary-color) !important;
+    color: var(--secondary-contrast) !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
 :host ::ng-deep .sidebar-menu li>a.active-page:hover,

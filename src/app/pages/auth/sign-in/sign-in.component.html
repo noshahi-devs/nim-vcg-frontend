@@ -1,15 +1,19 @@
-<div class="auth-wrapper">
+<div class="auth-wrapper" [ngClass]="'design-' + (config?.loginDesign || 'modern')">
   <!-- Windsurf-style Particle Animation Canvas -->
   <canvas id="windsurf-canvas" class="windsurf-canvas"></canvas>
+  
+  <!-- Geometric Shapes for 'geometric' design -->
+  <div class="geometric-shape shape-1" *ngIf="config?.loginDesign === 'geometric'"></div>
+  <div class="geometric-shape shape-2" *ngIf="config?.loginDesign === 'geometric'"></div>
   
   <div class="premium-auth-card">
     <div class="auth-card-inner">
       <div class="auth-header">
         <div class="auth-logo-wrapper">
-          <img src="assets/images/Vision College emblem design.png" alt="Vision College">
+          <img [src]="config?.instituteLogo || 'assets/images/Vision College emblem design.png'" [alt]="config?.instituteName">
         </div>
         <h1 class="auth-header-title">Welcome Back</h1>
-        <p class="auth-header-subtitle">Enter your details below</p>
+        <p class="auth-header-subtitle">Access your {{ config?.instituteName || 'Portal' }} account</p>
       </div>
 
         <form [formGroup]="signInForm" (ngSubmit)="submit()">

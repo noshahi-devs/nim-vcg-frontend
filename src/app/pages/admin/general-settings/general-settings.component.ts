@@ -32,7 +32,8 @@ export class GeneralSettingsComponent implements OnInit {
         logoUrl: '',
         preferredTheme: 'light', // Default
         primaryColor: '#005bea', // Default modern primary color
-        secondaryColor: '#ff6a00' // Default modern secondary color
+        secondaryColor: '#ff6a00', // Default modern secondary color
+        loginDesign: 'modern' // Default login design
     };
 
     notificationSettings: NotificationSetting[] = [];
@@ -48,7 +49,7 @@ export class GeneralSettingsComponent implements OnInit {
     feedbackTitle = '';
     feedbackMessage = '';
     isSaving = false;
- 
+
     // Academic Session Management
     academicYears: AcademicYear[] = [];
     newSessionName: string = '';
@@ -133,7 +134,7 @@ export class GeneralSettingsComponent implements OnInit {
 
     confirmDeleteSession() {
         if (this.idToDelete === null) return;
-        
+
         this.isSaving = true;
         this.showDeleteConfirmModal = false;
 
@@ -272,7 +273,7 @@ export class GeneralSettingsComponent implements OnInit {
         if (!value.startsWith('#')) {
             value = '#' + value;
         }
-        
+
         // Basic hex regex
         const isHex = /^#([A-Fa-f0-9]{3,4}){1,2}$/.test(value);
         if (isHex) {

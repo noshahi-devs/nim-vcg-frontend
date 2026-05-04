@@ -18,7 +18,8 @@ export class AppConfigService {
         currencySymbol: 'PKR',
         primaryColor: '',
         secondaryColor: '',
-        preferredTheme: 'light'
+        preferredTheme: 'light',
+        loginDesign: 'modern'
     });
 
     public config$ = this.configSubject.asObservable();
@@ -40,6 +41,7 @@ export class AppConfigService {
                         if (s.settingKey === 'primaryColor') newConfig.primaryColor = s.settingValue;
                         if (s.settingKey === 'secondaryColor') newConfig.secondaryColor = s.settingValue;
                         if (s.settingKey === 'preferredTheme') newConfig.preferredTheme = s.settingValue;
+                        if (s.settingKey === 'loginDesign') newConfig.loginDesign = s.settingValue;
                     });
                     this.configSubject.next(newConfig);
 

@@ -64,6 +64,8 @@ import { AuthService } from '../../../SecurityModels/auth.service';
 import { AuthResponse } from '../../../SecurityModels/auth-response';
 import { CommonModule, NgIf } from '@angular/common';
 import Swal, { WavyAlert, WelcomeAccessPopup } from '../../../swal';
+import { AppConfigService } from '../../../services/app-config.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sign-in',
@@ -78,6 +80,8 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
   returnUrl: string = '/dashboard';
   errorMessage: string = '';
   isSubmitting: boolean = false;
+  config: any;
+  private configSub!: Subscription;
 
   // Particle System Variables
   private canvas!: HTMLCanvasElement;
@@ -90,8 +94,12 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private appConfig: AppConfigService
   ) {
+    this.configSub = this.appConfig.config$.subscribe(cfg => {
+      this.config = cfg;
+    });
     this.signInForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
@@ -110,6 +118,9 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
+    }
+    if (this.configSub) {
+      this.configSub.unsubscribe();
     }
   }
 
