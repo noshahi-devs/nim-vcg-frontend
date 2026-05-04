@@ -93,7 +93,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
+    color: var(--primary-contrast);
     flex-shrink: 0;
 }
 
@@ -109,7 +109,7 @@
 }
 
 :host ::ng-deep .sidebar-brand-title {
-    color: #ffffff;
+    color: var(--primary-contrast);
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: 0.01em;
@@ -173,12 +173,16 @@
     color: var(--primary-contrast);
     padding: 0.62rem 0.78rem;
     transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-:host ::ng-deep .sidebar-menu>li>a>span {
+:host ::ng-deep .sidebar-menu>li>a>span:not(.badge) {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    flex: 1;
 }
 
 :host ::ng-deep .sidebar-menu>li.dropdown>a[data-desc] {
@@ -187,43 +191,19 @@
 }
 
 :host ::ng-deep .sidebar-menu>li.dropdown>a[data-desc]::before {
-    content: attr(data-desc);
-    position: absolute;
-    inset-inline-start: calc(100% + 12px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-6px);
-    background: rgba(15, 23, 42, 0.96);
-    color: #ffffff;
-    font-size: 0.71rem;
-    font-weight: 600;
-    line-height: 1;
-    padding: 7px 10px;
-    border-radius: 8px;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.26);
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
-    z-index: 20;
-}
-
-:host ::ng-deep .sidebar-menu>li.dropdown>a[data-desc]:hover::before {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(-50%) translateX(0);
+    display: none; /* Handled by Global Premium Tooltip breakout */
 }
 
 :host ::ng-deep .sidebar-menu li a:hover {
     background: var(--sidebar-hover);
-    color: #ffffff !important; /* Ensure text is white on hover for best contrast */
-    transform: translateX(4px);
+    color: #ffffff !important;
 }
 
+:host ::ng-deep .sidebar-menu li a:hover .menu-icon,
 :host ::ng-deep .sidebar-menu li a:hover i,
 :host ::ng-deep .sidebar-menu li a:hover iconify-icon {
-    color: #ffffff !important; /* Force icons to white on hover */
-    opacity: 1;
+    color: var(--secondary-color) !important;
+    opacity: 1 !important;
 }
 
 :host ::ng-deep .sidebar-menu li a .menu-icon,
@@ -231,23 +211,31 @@
 :host ::ng-deep .sidebar-menu li a i {
     color: inherit;
     opacity: 0.95;
+    transition: all 0.2s ease;
 }
 
-:host ::ng-deep .sidebar-menu li.dropdown>a::after {
-    content: "\ea4e" !important; /* remixicon arrow down */
-    font-family: 'remixicon' !important;
-    position: absolute;
-    inset-inline-end: 0.78rem;
-    top: 50%;
-    transform: translateY(-50%);
+:host ::ng-deep .sidebar-menu li.dropdown .dropdown-chevron {
     font-size: 1.1rem;
     color: inherit;
     opacity: 0.6;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-inline-start: auto;
 }
 
-:host ::ng-deep .sidebar-menu li.dropdown.open>a::after {
-    transform: translateY(-50%) rotate(180deg);
+:host ::ng-deep .sidebar.active .dropdown-chevron {
+    display: none;
+}
+
+:host ::ng-deep .sidebar.active:hover .dropdown-chevron,
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .dropdown-chevron {
+    display: inline-block;
+}
+
+:host ::ng-deep .sidebar-menu li.dropdown.open .dropdown-chevron,
+:host ::ng-deep .sidebar-menu li.dropdown.dropdown-open .dropdown-chevron {
+    transform: rotate(180deg);
+    opacity: 1;
+    color: var(--secondary-color);
 }
 
 :host ::ng-deep .sidebar-menu li>a.active-page,
@@ -257,9 +245,9 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
-:host ::ng-deep .sidebar-menu li>a.active-page:hover,
-:host ::ng-deep .sidebar-menu li.dropdown:has(.active-page)>a:hover {
-    color: var(--sidebar-active-text);
+:host ::ng-deep .sidebar-menu li>a.active-page .dropdown-chevron {
+    color: var(--secondary-contrast) !important;
+    opacity: 1;
 }
 
 :host ::ng-deep .sidebar-menu .sidebar-submenu {
@@ -291,8 +279,16 @@
 }
 
 :host ::ng-deep .sidebar-menu .sidebar-submenu li a i.circle-icon {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 6px;
+    transition: all 0.2s ease;
+}
+
+:host ::ng-deep .sidebar-menu .sidebar-submenu li a:hover i.circle-icon,
+:host ::ng-deep .sidebar-menu .sidebar-submenu li a.active-page i.circle-icon {
     color: var(--secondary-color) !important;
-    font-size: 8px;
+    opacity: 1;
+    transform: scale(1.4);
 }
 
 :host ::ng-deep .sidebar-menu .sidebar-submenu li a:hover {
@@ -305,14 +301,6 @@
     background: rgba(255, 255, 255, 0.24);
     color: var(--secondary-color);
     font-weight: 600;
-}
-
-:host ::ng-deep .sidebar-menu .sidebar-submenu li.active-page a i.circle-icon,
-:host ::ng-deep .sidebar-menu .sidebar-submenu li a.active-page i.circle-icon {
-    display: inline-block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    color: var(--secondary-color) !important;
 }
 
 
@@ -556,7 +544,7 @@
     display: inline-block;
 }
 
-:host ::ng-deep .sidebar.active.sidebar-hover-expand .sidebar-menu li.dropdown a::after {
+:host ::ng-deep .sidebar.active.sidebar-hover-expand .sidebar-menu li.dropdown .dropdown-chevron {
     display: inline-block;
 }
 

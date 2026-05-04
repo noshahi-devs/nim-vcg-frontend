@@ -337,12 +337,12 @@
 .promotion-action-panel {
     margin: 32px 24px;
     border-radius: 24px;
-    background: var(--deep-brand-gradient);
+    background: var(--primary-deep);
     padding: 32px;
-    color: #fff;
+    color: var(--primary-contrast);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 20px 40px rgba(15, 35, 100, 0.25);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -352,7 +352,7 @@
     right: -50px;
     width: 200px;
     height: 200px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
 }
 
 .panel-header-wrap {
@@ -368,18 +368,17 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    color: #ffffff;
-    text-shadow: 0 2px 10px rgba(15, 35, 100, 0.35);
+    color: var(--primary-contrast);
 }
 
 .panel-title iconify-icon {
-    color: #dbeafe;
+    color: var(--secondary-color);
 }
 
 .panel-subtitle {
     font-size: 14px;
-    opacity: 1;
-    color: rgba(255, 255, 255, 0.9);
+    opacity: 0.85;
+    color: var(--primary-contrast);
     margin: 0;
 }
 
@@ -393,22 +392,22 @@
 
 .control-group label {
     display: block;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-bottom: 10px;
-    opacity: 1;
-    color: rgba(255, 255, 255, 0.96);
+    opacity: 0.9;
+    color: var(--primary-contrast);
 }
 
 .action-select {
     width: 100%;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.15);
     border: 1.5px solid rgba(255, 255, 255, 0.2);
     border-radius: 14px;
     padding: 12px 16px;
-    color: #fff;
+    color: var(--primary-contrast);
     font-weight: 600;
     outline: none;
     transition: all 0.2s;
@@ -416,13 +415,6 @@
     height: 48px;
     appearance: none;
     -webkit-appearance: none;
-    -moz-appearance: none;
-    
-    
-    background-position: right 14px center;
-    background-size: 16px;
-    padding-right: 42px;
-    cursor: pointer;
 }
 
 .action-select option {

@@ -80,6 +80,7 @@
         <a href="javascript:void(0)" data-desc="Settings, roles and system controls">
           <iconify-icon icon="mdi:cog" class="menu-icon"></iconify-icon>
           <span>System Admin</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/settings" routerLinkActive="active-page"><i
@@ -96,6 +97,7 @@
         <a href="javascript:void(0)" data-desc="Staff records, profiles and login control">
           <iconify-icon icon="mdi:account-tie" class="menu-icon"></iconify-icon>
           <span>Staff</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/staff-list" routerLinkActive="active-page"><i
@@ -112,6 +114,7 @@
         <a href="javascript:void(0)" data-desc="Class setup and class management">
           <iconify-icon icon="mdi:google-classroom" class="menu-icon"></iconify-icon>
           <span>Classes</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/class-list" routerLinkActive="active-page"><i
@@ -128,6 +131,7 @@
         <a href="javascript:void(0)" data-desc="Section list and section setup">
           <iconify-icon icon="mdi:view-list" class="menu-icon"></iconify-icon>
           <span>Sections</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/section-list" routerLinkActive="active-page"><i
@@ -142,6 +146,7 @@
         <a href="javascript:void(0)" data-desc="Subjects creation and teacher assignment">
           <iconify-icon icon="mdi:book-open-variant" class="menu-icon"></iconify-icon>
           <span>Subjects</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/subject-list" routerLinkActive="active-page"><i
@@ -160,6 +165,7 @@
         <a href="javascript:void(0)" data-desc="Student records, admissions and promotions">
           <iconify-icon icon="mdi:account-school" class="menu-icon"></iconify-icon>
           <span>Students</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/student-list" routerLinkActive="active-page"><i
@@ -177,6 +183,7 @@
         <a href="javascript:void(0)" data-desc="Fees, invoices, payments and defaulters">
           <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
           <span>Finance</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/fee" routerLinkActive="active-page"><i
@@ -201,6 +208,7 @@
         <a href="javascript:void(0)" data-desc="Salary processing and salary slips">
           <iconify-icon icon="mdi:cash-multiple" class="menu-icon"></iconify-icon>
           <span>Payroll</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/salary" routerLinkActive="active-page"><i
@@ -215,6 +223,7 @@
         <a href="javascript:void(0)" data-desc="Student and staff attendance with reports">
           <iconify-icon icon="mdi:calendar-check" class="menu-icon"></iconify-icon>
           <span>Attendance</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal', 'Teacher'])"><a routerLink="/attendance"
@@ -243,6 +252,7 @@
         <a href="javascript:void(0)" data-desc="Apply, review and manage leave requests">
           <iconify-icon icon="mdi:calendar-outline" class="menu-icon"></iconify-icon>
           <span>Leaves</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/leave" routerLinkActive="active-page"><i
@@ -265,6 +275,7 @@
         <a href="javascript:void(0)" data-desc="Exams, schedules, marks and results">
           <iconify-icon icon="mdi:school-outline" class="menu-icon"></iconify-icon>
           <span>Exams</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/exam" routerLinkActive="active-page"><i
@@ -295,6 +306,7 @@
         <a href="javascript:void(0)" data-desc="Income, expenses, ledger and bank cash">
           <iconify-icon icon="mdi:finance" class="menu-icon"></iconify-icon>
           <span>Accounts</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/accounts" routerLinkActive="active-page"><i
@@ -317,6 +329,7 @@
         <a href="javascript:void(0)" data-desc="Reports and data insights">
           <iconify-icon icon="mdi:file-chart" class="menu-icon"></iconify-icon>
           <span>Reports</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
         </a>
         <ul class="sidebar-submenu">
           <li><a routerLink="/report" routerLinkActive="active-page"><i
@@ -330,6 +343,7 @@
           data-desc="Review system-wide alerts and broadcasts">
           <iconify-icon icon="mdi:message-outline" class="menu-icon"></iconify-icon>
           <span>Notifications</span>
+          <iconify-icon icon="heroicons:chevron-down-20-solid" class="dropdown-chevron"></iconify-icon>
           <span *ngIf="unreadMessageCount > 0" class="badge bg-danger ms-auto">{{ unreadMessageCount }}</span>
         </a>
         <ul class="sidebar-submenu">
