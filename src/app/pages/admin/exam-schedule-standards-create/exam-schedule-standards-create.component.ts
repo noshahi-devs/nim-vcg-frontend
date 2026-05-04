@@ -46,6 +46,8 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.model.examScheduleId = 0;
+    this.model.standardId = 0;
     this.loadExamSchedules();
     this.loadStandards();
     this.loadSubjects();
@@ -59,18 +61,9 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
     this.examScheduleService.GetExamScheduleOptions().subscribe({
       next: (data) => {
         this.examScheduleList = data || [];
-        if (this.examScheduleList.length === 0) this.loadMockExamSchedules();
       },
-      error: (err) => { console.error('Error loading exam schedules', err); this.loadMockExamSchedules(); }
+      error: (err) => { console.error('Error loading exam schedules', err); }
     });
-  }
-
-  loadMockExamSchedules() {
-    this.examScheduleList = [
-      { examScheduleId: 1, examScheduleName: 'First Term Exam 2024' },
-      { examScheduleId: 2, examScheduleName: 'Monthly Test April' },
-      { examScheduleId: 3, examScheduleName: 'Mid Term Exam 2024' }
-    ] as GetExamScheduleOptionsResponse[];
   }
 
   loadStandards() { this.standardService.getStandards().subscribe(data => this.standardList = data); }
@@ -78,7 +71,13 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
   loadExamTypes() { this.examTypeService.GetdbsExamType().subscribe(data => this.examTypeList = data); }
 
   addExamSubject() {
-    this.model.examSubjects.push({ subjectId: 0, examTypeId: 0, examDate: new Date(), examStartTime: '', examEndTime: '' });
+    this.model.examSubjects.push({ 
+      subjectId: 0, 
+      examTypeId: 0, 
+      examDate: new Date().toISOString().split('T')[0] as any, 
+      examStartTime: '', 
+      examEndTime: '' 
+    });
   }
 
   deleteExamSubject(index: number) { this.model.examSubjects.splice(index, 1); }
@@ -89,7 +88,21 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
   }
 
   onSubmit() {
+    if (!this.model.examScheduleId || this.model.examScheduleId === 0 || !this.model.standardId || this.model.standardId === 0) {
+      this.popup.error('Selection Required', 'Please select both an Exam Schedule and a Class/Standard.');
+      return;
+    }
+
+    if (this.model.examSubjects.some(s => s.subjectId === 0 || s.examTypeId === 0)) {
+      this.popup.error('Subjects Incomplete', 'Please select a subject and exam type for all entries.');
+      return;
+    }
+
+    this.isProcessing = true;
     this.popup.loading('Saving exam schedule...');
+    
+    console.log('Submitting Payload:', JSON.stringify(this.model));
+
     this.examScheduleStandardsService.SaveExamScheduleStandards(this.model)
       .pipe(finalize(() => this.isProcessing = false))
       .subscribe({
@@ -102,6 +115,8 @@ export class ExamScheduleStandardsCreateComponent implements OnInit {
           let errorMsg = 'Failed to save exam schedule. Please try again.';
           if (err.error && typeof err.error === 'string') {
             errorMsg = err.error;
+          } else if (err.error && err.error.message) {
+            errorMsg = err.error.message;
           } else if (err.message) {
             errorMsg = err.message;
           }

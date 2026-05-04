@@ -31,8 +31,9 @@
         <div class="col-md-4">
           <label class="field-label">Select Exam <span class="text-danger">*</span></label>
           <select class="field-input" [(ngModel)]="selectedGenerateExamId" name="generateExam">
-            <option [ngValue]="0" disabled selected hidden>Select Exam</option>
+            <option [ngValue]="0" disabled selected hidden>{{ exams.length > 0 ? 'Select Exam' : 'No Exams Found' }}</option>
             <option *ngFor="let exam of exams" [ngValue]="exam.examId">{{ exam.examName }}</option>
+            <option *ngIf="exams.length === 0" [ngValue]="0" disabled>No active exams found to calculate grades for.</option>
           </select>
         </div>
         <div class="col-md-3">

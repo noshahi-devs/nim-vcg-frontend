@@ -25,8 +25,9 @@
             Exam <span class="text-danger">*</span>
           </label>
           <select class="field-input premium-select w-100 text-truncate" [(ngModel)]="selectedExamId" name="exam">
-            <option [ngValue]="0" disabled selected hidden>Select...</option>
+            <option [ngValue]="0" disabled selected hidden>{{ exams.length > 0 ? 'Select Exam...' : 'No Exams Found' }}</option>
             <option *ngFor="let exam of exams" [ngValue]="exam.examId">{{ exam.examName }}</option>
+            <option *ngIf="exams.length === 0" [ngValue]="0" disabled>Please create an exam schedule first.</option>
           </select>
         </div>
 

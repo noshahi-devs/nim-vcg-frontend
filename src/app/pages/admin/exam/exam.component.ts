@@ -48,6 +48,7 @@ export class ExamComponent implements OnInit {
   ngOnInit(): void { this.initForm(); this.loadExamTypes(); }
 
   hasRole(role: string): boolean { return this.authService.hasRole(role); }
+  hasAnyRole(roles: string[]): boolean { return this.authService.hasAnyRole(roles); }
 
   // Modals are now handled by PopupService
 

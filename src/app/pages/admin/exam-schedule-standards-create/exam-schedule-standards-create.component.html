@@ -40,9 +40,10 @@
             <div class="form-group-premium">
               <label class="field-label">Exam Schedule <span class="text-danger">*</span></label>
               <select class="field-input" [(ngModel)]="model.examScheduleId" name="examScheduleId">
-                <option [ngValue]="0" disabled selected hidden>Select Exam Schedule</option>
+                <option [ngValue]="0" disabled selected hidden>{{ examScheduleList.length > 0 ? 'Select Exam Schedule' : 'No Schedules Found' }}</option>
                 <option *ngFor="let examSchedule of examScheduleList" [ngValue]="examSchedule.examScheduleId">{{
                   examSchedule.examScheduleName }}</option>
+                <option *ngIf="examScheduleList.length === 0" [ngValue]="0" disabled>No exam schedules available. Create one first.</option>
               </select>
             </div>
           </div>

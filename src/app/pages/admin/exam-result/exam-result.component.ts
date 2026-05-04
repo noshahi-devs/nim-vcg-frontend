@@ -151,52 +151,13 @@ export class ExamResultComponent implements OnInit {
           examId: e.examScheduleId || e.id,
           examName: e.examScheduleName || e.name || e.examName
         }));
-
-        if (this.exams.length === 0) {
-          this.loadMockExams();
-        }
       },
       error: (err) => {
         console.error('Failed to load exams', err);
-        this.loadMockExams();
       }
     });
   }
 
-  loadMockExams() {
-    this.exams = [
-      {
-        examId: 1,
-        examName: 'First Term Exam 2024',
-        examType: 'Term',
-        classId: 1,
-        sectionId: 1,
-        startDate: '2024-03-10',
-        endDate: '2024-03-25',
-        status: 'Active'
-      },
-      {
-        examId: 2,
-        examName: 'Monthly Test April',
-        examType: 'Monthly',
-        classId: 1,
-        sectionId: 1,
-        startDate: '2024-04-15',
-        endDate: '2024-04-18',
-        status: 'Active'
-      },
-      {
-        examId: 3,
-        examName: 'Mid Term Exam 2024',
-        examType: 'Term',
-        classId: 2,
-        sectionId: 2,
-        startDate: '2024-06-10',
-        endDate: '2024-06-25',
-        status: 'Active'
-      }
-    ];
-  }
 
   loadClasses() {
     this.standardService.getStandards().subscribe({

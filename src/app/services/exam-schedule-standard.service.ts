@@ -16,41 +16,35 @@ export class ExamScheduleStandardService {
 
   constructor(private http: HttpClient) { }
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-
-    })
+  // Helper function to add token header
+  private getAuthHeaders() {
+    const token = localStorage.getItem('JWT_TOKEN') || localStorage.getItem('token');
+    return {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      })
+    };
   }
 
-  httpFormOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'multipart/form-data',
-
-    })
-  }
   apiUrl: string = `${environment.apiBaseUrl}/api/ExamScheduleStandards`;
 
-
   public GetExamScheduleStandards(): Observable<ExamScheduleStandardVm[]> {
-    return this.http.get<ExamScheduleStandardVm[]>(this.apiUrl);
+    return this.http.get<ExamScheduleStandardVm[]>(this.apiUrl, this.getAuthHeaders());
   }
   public GetExamScheduleStandardsByID(id: number): Observable<ExamScheduleStandardVm> {
-
-    return this.http.get<ExamScheduleStandardVm>(this.apiUrl + '/' + id);
+    return this.http.get<ExamScheduleStandardVm>(this.apiUrl + '/' + id, this.getAuthHeaders());
   }
   public SaveExamScheduleStandards(examScheduleStandard: CreateExamScheduleStandardVM): Observable<any> {
-
-    return this.http.post(this.apiUrl, examScheduleStandard, this.httpOptions);
+    return this.http.post(this.apiUrl, examScheduleStandard, this.getAuthHeaders());
   }
 
-
   updateExamScheduleStandards(examScheduleStandard: UpdateExamScheduleStandardVM): Observable<any> {
-    return this.http.put<any>(this.apiUrl + '/' + examScheduleStandard.examScheduleStandardId, examScheduleStandard, this.httpOptions);
+    return this.http.put<any>(this.apiUrl + '/' + examScheduleStandard.examScheduleStandardId, examScheduleStandard, this.getAuthHeaders());
   }
 
   public DeleteExamScheduleStandard(id: number): Observable<any> {
-    return this.http.delete(this.apiUrl + '/' + id);
+    return this.http.delete(this.apiUrl + '/' + id, this.getAuthHeaders());
   }
 
 
