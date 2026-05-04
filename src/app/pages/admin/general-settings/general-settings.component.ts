@@ -266,6 +266,19 @@ export class GeneralSettingsComponent implements OnInit {
     setTab(tab: string) {
         this.activeTab = tab;
     }
+
+    validateHex(key: string, event: any) {
+        let value = event.target.value;
+        if (!value.startsWith('#')) {
+            value = '#' + value;
+        }
+        
+        // Basic hex regex
+        const isHex = /^#([A-Fa-f0-9]{3,4}){1,2}$/.test(value);
+        if (isHex) {
+            this.generalSettings[key] = value;
+        }
+    }
 }
 
 

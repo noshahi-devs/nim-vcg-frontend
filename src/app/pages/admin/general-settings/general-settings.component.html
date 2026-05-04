@@ -361,21 +361,37 @@
                         <div class="col-md-4">
                             <div class="premium-input-group">
                                 <label class="premium-label">Primary Brand Color</label>
-                                <div class="input-with-icon">
-                                    <iconify-icon icon="solar:pipette-bold-duotone" class="input-icon"></iconify-icon>
-                                    <input type="color" class="premium-input p-1" style="height: 48px;" [(ngModel)]="generalSettings.primaryColor">
+                                <div class="color-picker-group">
+                                    <div class="color-swatch-wrapper">
+                                        <input type="color" class="color-swatch-input" [(ngModel)]="generalSettings.primaryColor">
+                                    </div>
+                                    <div class="input-with-icon hex-input-wrapper">
+                                        <iconify-icon icon="solar:hashtag-bold-duotone" class="input-icon"></iconify-icon>
+                                        <input type="text" class="premium-input hex-text-input" 
+                                               [ngModel]="generalSettings.primaryColor.replace('#', '')" 
+                                               (input)="validateHex('primaryColor', $event)" 
+                                               placeholder="e.g. F28C1A" maxlength="7">
+                                    </div>
                                 </div>
-                                <small class="text-muted mt-1 d-block">Main color for headers and active states.</small>
+                                <small class="text-muted mt-2 d-block">Main color for headers and active states.</small>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="premium-input-group">
                                 <label class="premium-label">Secondary Accent Color</label>
-                                <div class="input-with-icon">
-                                    <iconify-icon icon="solar:pipette-bold-duotone" class="input-icon"></iconify-icon>
-                                    <input type="color" class="premium-input p-1" style="height: 48px;" [(ngModel)]="generalSettings.secondaryColor">
+                                <div class="color-picker-group">
+                                    <div class="color-swatch-wrapper">
+                                        <input type="color" class="color-swatch-input" [(ngModel)]="generalSettings.secondaryColor">
+                                    </div>
+                                    <div class="input-with-icon hex-input-wrapper">
+                                        <iconify-icon icon="solar:hashtag-bold-duotone" class="input-icon"></iconify-icon>
+                                        <input type="text" class="premium-input hex-text-input" 
+                                               [ngModel]="generalSettings.secondaryColor.replace('#', '')" 
+                                               (input)="validateHex('secondaryColor', $event)" 
+                                               placeholder="e.g. ff6a00" maxlength="7">
+                                    </div>
                                 </div>
-                                <small class="text-muted mt-1 d-block">Accent color for buttons and highlights.</small>
+                                <small class="text-muted mt-2 d-block">Accent color for buttons and highlights.</small>
                             </div>
                         </div>
                     </div>

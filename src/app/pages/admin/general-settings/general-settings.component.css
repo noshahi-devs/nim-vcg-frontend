@@ -286,6 +286,48 @@ textarea.premium-input {
   padding-top: 16px;
 }
 
+/* Color Picker Group */
+.color-picker-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.color-swatch-wrapper {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--gs-radius-md);
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  flex-shrink: 0;
+  box-shadow: var(--gs-shadow-sm);
+}
+
+.color-swatch-input {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  background: none;
+}
+
+.hex-input-wrapper {
+  flex: 1;
+}
+
+.hex-text-input {
+  text-transform: uppercase;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
 /* Action Buttons */
 .premium-actions {
   margin-top: 48px;
