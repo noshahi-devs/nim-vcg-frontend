@@ -211,9 +211,9 @@
                         <a class="page-link d-flex align-items-center justify-content-center rounded"
                             (click)="changePage(page)" href="javascript:void(0)" [ngStyle]="{
                              'width': '32px', 'height': '32px', 'font-weight': '700', 'font-size': '13px',
-                             'background-color': currentPage === page ? '#800000' : '#ffffff',
+                             'background-color': currentPage === page ? 'var(--primary-color)' : '#ffffff',
                              'color': currentPage === page ? '#ffffff' : '#64748b',
-                             'border': currentPage === page ? '1px solid #800000' : '1px solid #e2e8f0'
+                             'border': currentPage === page ? '1px solid var(--primary-color)' : '1px solid #e2e8f0'
                            }">
                             {{ page }}
                         </a>

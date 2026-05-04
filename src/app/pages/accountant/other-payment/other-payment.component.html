@@ -4,7 +4,7 @@
   <!-- ===================== STATS CARDS ===================== -->
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-icon-wrapper maroon" style="background: rgba(128, 0, 0, 0.1); color: #800000;">
+      <div class="stat-icon-wrapper maroon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary-color);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="2" y="3" width="20" height="14" rx="2" />
           <path d="M8 21h8M12 17v4" />
@@ -221,7 +221,7 @@
         <!-- Section: Student -->
         <div class="form-card">
           <div class="form-card-label">
-            <span class="card-dot maroon" style="background: #800000;"></span>
+            <span class="card-dot maroon" style="background: var(--primary-color);"></span>
             Student Selection
           </div>
           <div class="form-row-2">
@@ -413,7 +413,7 @@
 
         <div class="toggles-bar" style="justify-content: flex-end; padding: 10px 4px 0;">
           <label class="toggle-pill">
-            <span class="field-label" style="font-size: 11.5px; margin:0; font-weight:800; color: #800000;">Print Receipt</span>
+            <span class="field-label" style="font-size: 11.5px; margin:0; font-weight:800; color: var(--primary-color);">Print Receipt</span>
             <div class="pill-switch">
               <input type="checkbox" formControlName="printReceipt">
               <div class="pill-track"></div>
@@ -428,7 +428,7 @@
     <div class="modal-footer-premium">
       <button class="btn-ghost" (click)="closeDialog()" [disabled]="isProcessing">Cancel</button>
       <button class="btn-primary-gradient" (click)="savePayment()" [disabled]="form.invalid || isProcessing"
-        style="background: linear-gradient(135deg, #800000, #5a0000); box-shadow: 0 4px 14px rgba(128, 0, 0, 0.4);">
+        style="background: linear-gradient(135deg, var(--primary-color), var(--primary-deep)); box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.4);">
         <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
         {{ isEditMode ? (isProcessing ? 'Updating...' : 'Update Payment') : (isProcessing ? 'Saving...' : 'Save
         Payment') }}
@@ -442,10 +442,10 @@
 <div *ngIf="showViewDialog" class="modal-overlay" (click)="closeDialog()">
   <div class="modal-box" (click)="$event.stopPropagation()">
     <div class="modal-header-premium">
-      <div class="header-gradient" style="background: linear-gradient(135deg, #800000 0%, #5a0000 100%);"></div>
+      <div class="header-gradient" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-deep) 100%);"></div>
       <div class="header-content">
         <div class="modal-icon-premium"
-          style="background: linear-gradient(135deg, #800000, #5a0000); box-shadow: 0 4px 14px rgba(128, 0, 0, 0.4);">
+          style="background: linear-gradient(135deg, var(--primary-color), var(--primary-deep)); box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.4);">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             <circle cx="12" cy="12" r="3" />
@@ -500,7 +500,7 @@
     </div>
     <div class="modal-footer-premium">
       <button class="btn-primary-gradient"
-        style="background: linear-gradient(135deg,#800000,#5a0000); box-shadow: 0 4px 12px rgba(128, 0, 0, 0.25);"
+        style="background: linear-gradient(135deg,var(--primary-color),var(--primary-deep)); box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.25);"
         (click)="closeDialog()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M18 6 6 18M6 6l12 12" />

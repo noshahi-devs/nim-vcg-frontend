@@ -4,7 +4,7 @@
   <!-- ===================== STATS ROWS ===================== -->
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-icon-wrapper maroon" style="background: rgba(128, 0, 0, 0.1); color: #800000;">
+      <div class="stat-icon-wrapper maroon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary-color);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
           <circle cx="8.5" cy="7" r="4" />
@@ -186,7 +186,7 @@
               <td><span class="row-num">#{{ (currentPage - 1) * itemsPerPage + i + 1 }}</span></td>
               <td>
                 <div class="student-info-premium">
-                  <div class="student-avatar" [style.background]="'linear-gradient(135deg, #800000, #5a0000)'">
+                  <div class="student-avatar" [style.background]="'linear-gradient(135deg, var(--primary-color), var(--primary-deep))'">
                     {{ d.studentName.charAt(0) }}
                   </div>
                   <span class="student-name-premium">{{ d.studentName }}</span>

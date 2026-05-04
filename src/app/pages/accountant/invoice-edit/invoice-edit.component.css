@@ -16,7 +16,7 @@
   flex-wrap: wrap;
   gap: 20px;
   padding: 32px 40px;
-  background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-deep) 100%);
   color: #fff;
 }
 
@@ -66,7 +66,7 @@
 .back-btn { background: rgba(255,255,255,0.2); color: #fff; }
 .back-btn:hover { background: rgba(255,255,255,0.3); color: #fff; }
 
-.save-btn { background: #fff; color: #800000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.save-btn { background: #fff; color: var(--primary-color); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 .save-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
 .save-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 
@@ -114,9 +114,9 @@
 }
 
 .form-input:focus {
-  border-color: #800000;
+  border-color: var(--primary-color);
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.08);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.08);
 }
 
 .input-with-unit {
@@ -132,7 +132,7 @@
   transform: translateY(-50%);
   font-size: 13px;
   font-weight: 700;
-  color: #800000;
+  color: var(--primary-color);
   pointer-events: none;
 }
 
@@ -306,7 +306,7 @@
 .loader-ring {
   width: 48px; height: 48px;
   border: 4px solid #f1f5f9;
-  border-top: 4px solid #800000;
+  border-top: 4px solid var(--primary-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   flex-shrink: 0;

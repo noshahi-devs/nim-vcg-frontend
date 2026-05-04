@@ -79,11 +79,11 @@ export class ReportComponent implements OnInit {
   }
 
   initStaticCharts() {
-    this.incomeExpense = this.createChartTwo('#800000', '#F4C430', [], [], []);
+    this.incomeExpense = this.createChartTwo('var(--primary-color)', 'var(--secondary-color)', [], [], []);
 
     this.userOverviewDonutChart = {
       series: [],
-      colors: ['#F4C430', '#800000', '#45B369', '#9935FE', '#FF487F'],
+      colors: ['var(--secondary-color)', 'var(--primary-color)', '#45B369', '#9935FE', '#FF487F'],
       labels: [],
       legend: { show: false },
       chart: { type: 'donut', height: 270, sparkline: { enabled: true } },
@@ -108,7 +108,7 @@ export class ReportComponent implements OnInit {
       ? data.months
       : (Array.isArray(data?.labels) ? data.labels : []);
 
-    this.incomeExpense = this.createChartTwo('#800000', '#F4C430', income, expenses, labels);
+    this.incomeExpense = this.createChartTwo('var(--primary-color)', 'var(--secondary-color)', income, expenses, labels);
     this.purchaseSaleChart = {
       ...this.purchaseSaleChart,
       series: [
@@ -134,7 +134,7 @@ export class ReportComponent implements OnInit {
       ...this.userOverviewDonutChart,
       series: [totalIncome, totalExpenses],
       labels: ['Income', 'Expenses'],
-      colors: ['#800000', '#F4C430']
+      colors: ['var(--primary-color)', 'var(--secondary-color)']
     };
   }
 

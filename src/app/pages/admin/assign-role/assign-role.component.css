@@ -21,7 +21,7 @@
 }
 
 .premium-header {
-    background: linear-gradient(135deg, #800000 0%, #5a0000 50%, #3a0000 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-deep) 50%, #3a0000 100%);
     color: white;
     border-bottom: none;
 }
@@ -35,7 +35,7 @@
     background: rgba(255, 255, 255, 0.18);
     border: 1.5px solid rgba(255, 255, 255, 0.35);
     border-radius: 10px;
-    color: #F4C430;
+    color: var(--secondary-color);
     flex-shrink: 0;
     backdrop-filter: blur(4px);
 }
@@ -55,7 +55,7 @@
 
 .form-card:hover {
     border-color: #c7d2fe;
-    box-shadow: 0 4px 16px rgba(128, 0, 0, 0.06);
+    box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.06);
 }
 
 .form-card-label {
@@ -78,13 +78,13 @@
 }
 
 .card-dot.blue {
-    background: #800000;
-    box-shadow: 0 0 6px rgba(128, 0, 0, 0.5);
+    background: var(--primary-color);
+    box-shadow: 0 0 6px rgba(var(--primary-rgb), 0.5);
 }
 
 .card-dot.indigo {
-    background: #800000;
-    box-shadow: 0 0 6px rgba(128, 0, 0, 0.5);
+    background: var(--primary-color);
+    box-shadow: 0 0 6px rgba(var(--primary-rgb), 0.5);
 }
 
 .card-dot.green {
@@ -121,8 +121,8 @@
 
 .field-input:focus,
 .field-select:focus {
-    border-color: #800000;
-    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
 }
 
 .select-wrapper-premium {
@@ -173,7 +173,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: linear-gradient(135deg, #800000, #5a0000);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-deep));
     color: #ffffff;
     border: none;
     border-radius: 12px;
@@ -182,12 +182,12 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 14px rgba(128, 0, 0, 0.3);
+    box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.3);
 }
 
 .btn-primary-gradient:hover:not([disabled]) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(128, 0, 0, 0.4);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.4);
 }
 
 .btn-primary-gradient[disabled] {
@@ -335,7 +335,7 @@
     border-radius: 24px 24px 0 0;
 }
 
-.pm-confirm::before    { background: linear-gradient(90deg, #800000, #F4C430); }
+.pm-confirm::before    { background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); }
 .pm-success::before    { background: linear-gradient(90deg, #10b981, #34d399); }
 .pm-error::before      { background: linear-gradient(90deg, #ef4444, #f87171); }
 .pm-warning::before    { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
@@ -384,7 +384,7 @@
 }
 
 .pm-highlight {
-    color: #800000;
+    color: var(--primary-color);
     font-weight: 700;
 }
 
@@ -427,13 +427,13 @@
 .pm-btn--cancel:hover { background: #e2e8f0; color: #1e293b; }
 
 .pm-btn--confirm {
-    background: linear-gradient(135deg, #800000, #5a0000);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-deep));
     color: #fff;
-    box-shadow: 0 4px 14px rgba(128,0,0,0.28);
+    box-shadow: 0 4px 14px rgba(var(--primary-rgb),0.28);
 }
 .pm-btn--confirm:hover:not([disabled]) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(128,0,0,0.38);
+    box-shadow: 0 8px 20px rgba(var(--primary-rgb),0.38);
 }
 .pm-btn--confirm[disabled] { opacity: 0.65; cursor: not-allowed; }
 

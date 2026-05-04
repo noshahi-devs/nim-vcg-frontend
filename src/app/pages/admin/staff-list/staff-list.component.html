@@ -4,7 +4,7 @@
   <div class="es-page">
     <div class="stats-row" *ngIf="authService.hasAnyRole(['Admin', 'Principal'])">
       <div class="stat-card">
-        <div class="stat-icon maroon" style="background: rgba(128, 0, 0, 0.1); color: #800000;">
+        <div class="stat-icon maroon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary-color);">
           <iconify-icon icon="solar:user-speak-bold-duotone"></iconify-icon>
         </div>
         <div class="stat-info">

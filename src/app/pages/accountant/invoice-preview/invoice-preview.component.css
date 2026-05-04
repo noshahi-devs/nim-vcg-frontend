@@ -30,12 +30,12 @@
 .inv-btn-ghost:hover { background: #e2e8f0; color: #1e293b; }
 
 .inv-btn-primary {
-  background: linear-gradient(135deg,#800000,#5a0000);
+  background: linear-gradient(135deg,var(--primary-color),var(--primary-deep));
   color: #fff;
-  box-shadow: 0 4px 10px rgba(128,0,0,.25);
+  box-shadow: 0 4px 10px rgba(var(--primary-rgb),.25);
 }
 
-.inv-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(128,0,0,.35); }
+.inv-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(var(--primary-rgb),.35); }
 
 /* ───── RECEIPT SHELL ───── */
 .receipt-shell {
@@ -156,7 +156,7 @@
   color: #1e293b;
 }
 
-.rcpt-inv-num { color: #800000; }
+.rcpt-inv-num { color: var(--primary-color); }
 
 /* ───── DIVIDER ───── */
 .rcpt-divider { height: 1px; background: #e9eef4; margin: 20px 0; }

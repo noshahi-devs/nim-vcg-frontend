@@ -1,5 +1,5 @@
 :host {
-  --theme-primary: #800000;
+  --theme-primary: var(--primary-color);
 }
 
 .theme-page {
@@ -17,8 +17,8 @@
   border-radius: 18px;
   padding: 24px;
   color: #ffffff;
-  background: linear-gradient(130deg, #5a0000 0%, #800000 44%, #a52a2a 100%);
-  box-shadow: 0 18px 38px rgba(128, 0, 0, 0.24);
+  background: linear-gradient(130deg, var(--primary-deep) 0%, var(--primary-color) 44%, var(--primary-light) 100%);
+  box-shadow: 0 18px 38px rgba(var(--primary-rgb), 0.24);
 }
 
 [data-theme="dark"] .theme-hero {

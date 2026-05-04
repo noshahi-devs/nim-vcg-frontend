@@ -544,7 +544,7 @@ export class ExamResultComponent implements OnInit {
         <!-- Results Table -->
         <table style="width:100%; border-collapse:collapse; font-size:13px; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:20px;">
           <thead>
-            <tr style="background:#800000;">
+            <tr style="background:var(--primary-color);">
               <th style="padding:11px 16px; text-align:left; color:#fff; font-size:11px; text-transform:uppercase; letter-spacing:0.05em;">Subject</th>
               <th style="padding:11px 16px; text-align:center; color:#fff; font-size:11px; text-transform:uppercase;">Total Marks</th>
               <th style="padding:11px 16px; text-align:center; color:#fff; font-size:11px; text-transform:uppercase;">Obtained</th>
@@ -555,10 +555,10 @@ export class ExamResultComponent implements OnInit {
           </thead>
           <tbody>${rows}</tbody>
           <tfoot>
-            <tr style="background:#f8fafc; border-top:2px solid #800000;">
+            <tr style="background:#f8fafc; border-top:2px solid var(--primary-color);">
               <td style="padding:11px 16px; font-weight:800; font-size:13px;">Grand Total</td>
               <td style="padding:11px 16px; text-align:center; font-weight:800;">${this.totalMarks}</td>
-              <td style="padding:11px 16px; text-align:center; font-weight:800; color:#800000;">${this.obtainedMarks}</td>
+              <td style="padding:11px 16px; text-align:center; font-weight:800; color:var(--primary-color);">${this.obtainedMarks}</td>
               <td style="padding:11px 16px; text-align:center; font-weight:800;">${this.percentage.toFixed(1)}%</td>
               <td style="padding:11px 16px; text-align:center; font-weight:800; color:#1e40af;">${this.overallGrade}</td>
               <td style="padding:11px 16px; text-align:center;">
@@ -587,7 +587,7 @@ export class ExamResultComponent implements OnInit {
           <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0;">${r.className || ''}</td>
           <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0;">${r.sectionName || ''}</td>
           <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center;">${r.totalMarks}</td>
-          <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center; font-weight:700; color:#800000;">${r.obtainedMarks}</td>
+          <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center; font-weight:700; color:var(--primary-color);">${r.obtainedMarks}</td>
           <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center;">${(r.percentage || 0).toFixed(1)}%</td>
           <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center; font-weight:700; color:#1e40af;">${r.grade || '-'}</td>
           <td style="padding:9px 14px; border-bottom:1px solid #e2e8f0; text-align:center;">
@@ -604,14 +604,14 @@ export class ExamResultComponent implements OnInit {
             <td style="padding:10px 16px; font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase;">Class</td>
             <td style="padding:10px 16px; font-size:13px; color:#1e293b;">${cls?.standardName || 'All Classes'}</td>
             <td style="padding:10px 16px; font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase;">Total Students</td>
-            <td style="padding:10px 16px; font-size:13px; font-weight:700; color:#800000;">${this.filteredBulkResults.length}</td>
+            <td style="padding:10px 16px; font-size:13px; font-weight:700; color:var(--primary-color);">${this.filteredBulkResults.length}</td>
           </tr>
         </table>
 
         <!-- Class Table -->
         <table style="width:100%; border-collapse:collapse; font-size:12.5px; border:1px solid #e2e8f0; overflow:hidden;">
           <thead>
-            <tr style="background:#800000;">
+            <tr style="background:var(--primary-color);">
               <th style="padding:10px 14px; text-align:center; color:#fff; font-size:10px; text-transform:uppercase;">#</th>
               <th style="padding:10px 14px; text-align:left; color:#fff; font-size:10px; text-transform:uppercase;">Student Name</th>
               <th style="padding:10px 14px; text-align:left; color:#fff; font-size:10px; text-transform:uppercase;">Class</th>
@@ -634,15 +634,15 @@ export class ExamResultComponent implements OnInit {
         .page { padding: 28px 32px; max-width: 900px; margin: 0 auto; }
 
         /* Letterhead */
-        .letterhead { display: flex; align-items: center; gap: 20px; padding-bottom: 16px; border-bottom: 3px solid #800000; margin-bottom: 6px; }
+        .letterhead { display: flex; align-items: center; gap: 20px; padding-bottom: 16px; border-bottom: 3px solid var(--primary-color); margin-bottom: 6px; }
         .logo { width: 72px; height: 72px; object-fit: contain; }
         .school-info { flex: 1; }
-        .school-name { font-size: 24px; font-weight: 900; color: #800000; letter-spacing: -0.5px; }
+        .school-name { font-size: 24px; font-weight: 900; color: var(--primary-color); letter-spacing: -0.5px; }
         .school-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
         .print-date { font-size: 11px; color: #94a3b8; text-align: right; }
 
         /* Title bar */
-        .title-bar { background: #800000; color: #fff; text-align: center; padding: 8px 0;
+        .title-bar { background: var(--primary-color); color: #fff; text-align: center; padding: 8px 0;
           font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px; }
 
         /* Signatures */

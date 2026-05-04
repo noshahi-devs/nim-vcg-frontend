@@ -32,7 +32,7 @@
 
 /* Topbar */
 .topbar {
-  background-color: #800000 !important;
+  background-color: var(--primary-color) !important;
   color: #ffffff !important;
   padding: 10px 0;
   font-size: 13px;
@@ -57,7 +57,7 @@
 
 .topbar a:hover {
   opacity: 1;
-  color: #f4c430 !important;
+  color: var(--secondary-color) !important;
 }
 
 .social-mini {
@@ -90,7 +90,7 @@
   padding: 25px 0 12px; /* Increased top padding from 15px to 25px */
   /* Top padding added */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  border-top: 4px solid #800000;
+  border-top: 4px solid var(--primary-color);
 }
 
 .navbar-container {
@@ -125,7 +125,7 @@
 .college-name {
   font-size: 24px;
   font-weight: 800;
-  color: #800000;
+  color: var(--primary-color);
   display: block;
   line-height: 1;
 }
@@ -168,7 +168,7 @@
 }
 
 .nav-link:hover {
-  color: #800000;
+  color: var(--primary-color);
 }
 
 .nav-link::after {
@@ -178,7 +178,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: #f4c430;
+  background: var(--secondary-color);
   transition: 0.3s;
 }
 
@@ -197,21 +197,21 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: linear-gradient(135deg, #800000, #a00000);
+  background: linear-gradient(135deg, var(--primary-color), #a00000);
   color: #ffffff;
   padding: 12px 25px;
   border-radius: 50px;
   text-decoration: none;
   font-weight: 700;
   font-size: 14px;
-  box-shadow: 0 8px 20px rgba(128, 0, 0, 0.25);
+  box-shadow: 0 8px 20px rgba(var(--primary-rgb), 0.25);
   transition: 0.4s;
 }
 
 .portal-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(128, 0, 0, 0.35);
-  background: linear-gradient(135deg, #a00000, #800000);
+  box-shadow: 0 12px 25px rgba(var(--primary-rgb), 0.35);
+  background: linear-gradient(135deg, #a00000, var(--primary-color));
 }
 
 .hamburger-btn {
@@ -227,7 +227,7 @@
 .bar {
   width: 28px;
   height: 3px;
-  background-color: #800000;
+  background-color: var(--primary-color);
   border-radius: 5px;
   transition: 0.4s;
 }
@@ -293,7 +293,7 @@
     left: 20px; /* Aligned left */
     background: none;
     border: none;
-    color: #800000;
+    color: var(--primary-color);
     font-size: 32px;
     cursor: pointer;
     padding: 5px;
@@ -305,7 +305,7 @@
 
   .close-drawer:hover {
     opacity: 1;
-    color: #f4c430;
+    color: var(--secondary-color);
     transform: rotate(90deg);
   }
 
@@ -326,7 +326,7 @@
   .nav-link iconify-icon {
     display: block;
     font-size: 22px;
-    color: #800000;
+    color: var(--primary-color);
   }
 
   .nav-link::after {
@@ -334,7 +334,7 @@
   }
 
   .nav-link:hover {
-    color: #f4c430;
+    color: var(--secondary-color);
     padding-left: 10px;
   }
 }

@@ -5,7 +5,7 @@
 
 .profile-header-premium {
   min-height: 220px;
-  background: linear-gradient(135deg, #800000 0%, #5a0000 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-deep) 100%);
   position: relative;
   overflow: hidden;
   border-radius: 12px 12px 0 0;
@@ -82,11 +82,11 @@
 }
 
 .tab-item:hover {
-  color: #800000;
+  color: var(--primary-color);
 }
 
 .tab-item.active {
-  color: #800000;
+  color: var(--primary-color);
 }
 
 .tab-item.active::after {
@@ -96,7 +96,7 @@
   left: 0;
   width: 100%;
   height: 3px;
-  background: #800000;
+  background: var(--primary-color);
   border-radius: 3px 3px 0 0;
 }
 
@@ -134,7 +134,7 @@
 
 .btn-white {
   background: #fff;
-  color: #800000;
+  color: var(--primary-color);
   border: none;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -291,8 +291,8 @@
 
 .personal-tile:hover {
   transform: translateY(-5px);
-  border-color: #800000 !important;
-  box-shadow: 0 10px 20px rgba(128, 0, 0, 0.1) !important;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 10px 20px rgba(var(--primary-rgb), 0.1) !important;
 }
 
 .tile-icon {
@@ -309,7 +309,7 @@
 
 /* FOCUS COLORS */
 .bg-primary-focus {
-  background-color: rgba(128, 0, 0, 0.1);
+  background-color: rgba(var(--primary-rgb), 0.1);
 }
 
 .bg-info-focus {
@@ -329,7 +329,7 @@
 }
 
 .bg-indigo-focus {
-  background-color: rgba(128, 0, 0, 0.1);
+  background-color: rgba(var(--primary-rgb), 0.1);
 }
 
 .bg-purple-focus {
@@ -350,7 +350,7 @@
 
 /* TEXT COLORS FOR ICONS */
 .text-indigo {
-  color: #800000;
+  color: var(--primary-color);
 }
 
 .text-purple {
@@ -390,8 +390,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(128, 0, 0, 0.14);
-  color: #800000;
+  background: rgba(var(--primary-rgb), 0.14);
+  color: var(--primary-color);
   font-size: 35px;
 }
 

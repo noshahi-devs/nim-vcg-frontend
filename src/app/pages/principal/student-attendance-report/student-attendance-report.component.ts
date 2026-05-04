@@ -154,10 +154,10 @@ export class StudentAttendanceReportComponent implements OnInit {
         <title>Student Attendance Report – ${this.searchTerm}</title>
         <style>
           body { font-family: Arial, sans-serif; padding: 20px; }
-          h2 { color: #800000; margin-bottom: 4px; }
+          h2 { color: var(--primary-color); margin-bottom: 4px; }
           p { color: #555; margin-top: 0; font-size: 13px; }
           table { width:100%; border-collapse:collapse; margin-top:16px; }
-          th { background:#800000; color:#fff; padding:10px 12px; text-align:left; font-size:12px; }
+          th { background:var(--primary-color); color:#fff; padding:10px 12px; text-align:left; font-size:12px; }
           td { padding:9px 12px; border-bottom:1px solid #e2e8f0; font-size:12px; }
           tr:nth-child(even) td { background:#f8fafc; }
         </style>

@@ -5,7 +5,7 @@
     <!-- ── Stats Row ── -->
     <div class="stats-row">
       <div class="stat-card">
-        <div class="stat-icon maroon" style="background: rgba(128, 0, 0, 0.1); color: #800000;">
+        <div class="stat-icon maroon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary-color);">
           <iconify-icon icon="solar:book-bookmark-bold-duotone"></iconify-icon>
         </div>
         <div class="stat-info">
@@ -142,7 +142,7 @@
     <div class="premium-modal" style="max-width:520px; width: 100%; text-align:left; padding:0; overflow:hidden; margin: auto; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); background: #fff;">
 
       <!-- Modal Header -->
-      <div style="background: linear-gradient(135deg, #800000, #5a0000); padding: 24px 28px;">
+      <div style="background: linear-gradient(135deg, var(--primary-color), var(--primary-deep)); padding: 24px 28px;">
         <div class="d-flex align-items-center justify-content-between" style="gap: 16px; display: flex; align-items: center;">
           <div style="display: flex; align-items: center; gap: 16px;">
             <div style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center;">
@@ -154,7 +154,7 @@
             </div>
           </div>
           <button (click)="showViewModal = false"
-            style="width:34px; height:34px; border-radius:50%; background:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; font-weight:700; color:#800000; line-height:1; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.25);">
+            style="width:34px; height:34px; border-radius:50%; background:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; font-weight:700; color:var(--primary-color); line-height:1; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.25);">
             &times;
           </button>
         </div>
@@ -196,7 +196,7 @@
 
       <!-- Footer -->
       <div style="padding:16px 28px; background:#f8fafc; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end; gap: 12px;">
-        <button (click)="showViewModal = false" style="background: linear-gradient(135deg, #800000, #5a0000); color:#fff; border:none; border-radius:10px; padding:10px 24px; font-weight:600; font-size:14px; cursor:pointer; transition: all 0.2s; display:flex; align-items:center; gap:8px;">
+        <button (click)="showViewModal = false" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-deep)); color:#fff; border:none; border-radius:10px; padding:10px 24px; font-weight:600; font-size:14px; cursor:pointer; transition: all 0.2s; display:flex; align-items:center; gap:8px;">
           <iconify-icon icon="solar:close-circle-bold" style="font-size:18px;"></iconify-icon>
           Close View
         </button>
@@ -256,7 +256,7 @@
       <div class="modal-footer-premium">
         <button class="btn-ghost" (click)="showEditModal = false" [disabled]="isProcessing">Cancel</button>
         <button class="btn-primary-gradient" (click)="updateSubject()" [disabled]="isProcessing"
-          style="background: linear-gradient(135deg, #F4C430, #d4a71c); color: #800000; box-shadow: 0 4px 14px rgba(244, 196, 48, 0.3);">
+          style="background: linear-gradient(135deg, var(--secondary-color), var(--secondary-color)); color: var(--primary-color); box-shadow: 0 4px 14px rgba(244, 196, 48, 0.3);">
           <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop"
             class="me-2 text-maroon-premium"></iconify-icon>
           Save

@@ -1,6 +1,6 @@
 :host {
-  --campus-primary: #800000;
-  --campus-primary-deep: #5a0000;
+  --campus-primary: var(--primary-color);
+  --campus-primary-deep: var(--primary-deep);
 }
 
 .campus-page {
@@ -17,7 +17,7 @@
   flex-wrap: wrap;
   border-radius: 18px;
   padding: 20px 22px;
-  background: linear-gradient(130deg, #1a0000 0%, #3a0000 42%, #800000 100%);
+  background: linear-gradient(130deg, var(--primary-deep) 0%, #3a0000 42%, var(--primary-color) 100%);
   color: #ffffff;
   box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
 }
@@ -65,7 +65,7 @@
   min-height: 42px;
   border-radius: 11px;
   background: #ffffff;
-  color: #800000;
+  color: var(--primary-color);
   padding: 0 16px;
   display: inline-flex;
   align-items: center;
@@ -170,7 +170,7 @@
 }
 
 .edit-btn {
-  background: rgba(128, 0, 0, 0.1);
+  background: rgba(var(--primary-rgb), 0.1);
   color: var(--campus-primary);
 }
 

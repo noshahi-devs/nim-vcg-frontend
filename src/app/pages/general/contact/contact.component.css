@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   padding: 120px 0 80px;
-  background-color: #800000;
+  background-color: var(--primary-color);
   color: white;
   text-align: center;
   overflow: hidden;
@@ -25,7 +25,7 @@
 .hero-bg {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(128, 0, 0, 0.72), rgba(100, 0, 0, 0.82)), url('/assets/img/serene-campus.png');
+  background-image: linear-gradient(rgba(var(--primary-rgb), 0.72), rgba(100, 0, 0, 0.82)), url('/assets/img/serene-campus.png');
   background-size: cover;
   background-position: center;
   z-index: 1;
@@ -41,7 +41,7 @@
 
 .eyebrow {
   display: block;
-  color: #f4c430;
+  color: var(--secondary-color);
   text-transform: uppercase;
   letter-spacing: 3px;
   font-weight: 700;
@@ -103,24 +103,24 @@
 }
 
 .info-card.gold-border {
-  border: 2px solid #f4c430;
+  border: 2px solid var(--secondary-color);
 }
 
 .info-card.maroon-card {
-  background: #800000;
+  background: var(--primary-color);
   color: white;
 }
 
 .info-card.maroon-card .icon-box {
   background: rgba(255, 255, 255, 0.1);
-  color: #f4c430;
+  color: var(--secondary-color);
 }
 
 .icon-box {
   width: 50px;
   height: 50px;
   background: #fff8e6;
-  color: #800000;
+  color: var(--primary-color);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -144,7 +144,7 @@
 }
 
 .map-link {
-  color: #800000;
+  color: var(--primary-color);
   font-weight: 700;
   text-decoration: none;
   font-size: 14px;
@@ -154,7 +154,7 @@
 }
 
 .maroon-card .map-link {
-  color: #f4c430;
+  color: var(--secondary-color);
 }
 
 /* Form Container */
@@ -219,7 +219,7 @@
 .form-group input:focus, 
 .form-group select:focus, 
 .form-group textarea:focus {
-  border-color: #800000;
+  border-color: var(--primary-color);
   background: white;
   outline: none;
 }
@@ -227,7 +227,7 @@
 .submit-btn {
   width: 100%;
   padding: 18px;
-  background: #800000;
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: 15px;
@@ -244,7 +244,7 @@
 .submit-btn:hover:not(:disabled) {
   background: #a00000;
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(128, 0, 0, 0.2);
+  box-shadow: 0 10px 20px rgba(var(--primary-rgb), 0.2);
 }
 
 .submit-btn:disabled {

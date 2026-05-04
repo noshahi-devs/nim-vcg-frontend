@@ -21,7 +21,7 @@
 }
 
 .premium-header {
-    background: #800000;
+    background: var(--primary-color);
     color: white;
     border-bottom: none;
 }
@@ -40,8 +40,8 @@
 }
 
 .form-card:hover {
-    border-color: rgba(128, 0, 0, 0.3);
-    box-shadow: 0 4px 16px rgba(128, 0, 0, 0.06);
+    border-color: rgba(var(--primary-rgb), 0.3);
+    box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.06);
 }
 
 .form-card-label {
@@ -64,13 +64,13 @@
 }
 
 .card-dot.blue {
-    background: #800000;
-    box-shadow: 0 0 6px rgba(128, 0, 0, 0.5);
+    background: var(--primary-color);
+    box-shadow: 0 0 6px rgba(var(--primary-rgb), 0.5);
 }
 
 .card-dot.indigo {
-    background: #5a0000;
-    box-shadow: 0 0 6px rgba(90, 0, 0, 0.5);
+    background: var(--primary-deep);
+    box-shadow: 0 0 6px rgba(var(--primary-rgb), 0.5);
 }
 
 .card-dot.green {
@@ -107,8 +107,8 @@
 
 .field-input:focus,
 .field-select:focus {
-    border-color: #800000;
-    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
 }
 
 .select-wrapper-premium {
@@ -159,7 +159,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: #800000;
+    background: var(--primary-color);
     color: #ffffff;
     border: none;
     border-radius: 12px;
@@ -168,12 +168,12 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 14px rgba(128, 0, 0, 0.3);
+    box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.3);
 }
 
 .btn-primary-gradient:hover:not([disabled]) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(128, 0, 0, 0.4);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.4);
 }
 
 .btn-primary-gradient[disabled] {
@@ -312,7 +312,7 @@
 
 .pm-sparkle {
     position: absolute;
-    background: #800000;
+    background: var(--primary-color);
     border-radius: 50%;
     opacity: 0.3;
     filter: blur(1px);
@@ -403,7 +403,7 @@
 }
 
 .pm-save {
-    background: #800000;
+    background: var(--primary-color);
     color: #ffffff;
 }
 
@@ -445,7 +445,7 @@
     width: 48px;
     height: 48px;
     border: 4px solid #f1f5f9;
-    border-top-color: #800000;
+    border-top-color: var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }

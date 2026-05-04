@@ -1,8 +1,8 @@
 /* Why VC Page Styles */
 :host {
-  --maroon: #800000;
-  --maroon-dark: #600000;
-  --gold: #f4c430;
+  --maroon: var(--primary-color);
+  --maroon-dark: var(--primary-deep);
+  --gold: var(--secondary-color);
   --gold-dark: #d4a017;
   --white: #ffffff;
   --text-dark: #2d2d2d;
@@ -36,7 +36,7 @@
 .hero-bg {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(128, 0, 0, 0.72), rgba(100, 0, 0, 0.82)), url('/assets/img/serene-campus.png');
+  background-image: linear-gradient(rgba(var(--primary-rgb), 0.72), rgba(100, 0, 0, 0.82)), url('/assets/img/serene-campus.png');
   background-size: cover;
   background-position: center;
   z-index: 1;
@@ -116,7 +116,7 @@
   position: relative;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
-  border: 1px solid rgba(128, 0, 0, 0.05);
+  border: 1px solid rgba(var(--primary-rgb), 0.05);
 }
 
 .value-card:hover {
@@ -127,7 +127,7 @@
 .card-icon {
   width: 64px;
   height: 64px;
-  background: rgba(128, 0, 0, 0.08);
+  background: rgba(var(--primary-rgb), 0.08);
   border-radius: 16px;
   display: flex;
   align-items: center;

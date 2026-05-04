@@ -145,8 +145,8 @@
 }
 
 .calendar-day.today {
-    border: 2px solid #800000;
-    box-shadow: 0 0 10px rgba(128, 0, 0, 0.2);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.2);
 }
 
 .calendar-day.present {
@@ -222,7 +222,7 @@
 }
 
 .dot.today {
-    border: 2px solid #800000;
+    border: 2px solid var(--primary-color);
 }
 
 /* Table Styling */

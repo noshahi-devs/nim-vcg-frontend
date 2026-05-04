@@ -47,47 +47,47 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
 
   // Quick stats for teacher
   teacherStats = [
-    { label: 'Assigned Subjects', value: 0, icon: 'solar:book-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)', pulse: false },
-    { label: 'My Classes', value: 0, icon: 'solar:buildings-bold-duotone', color: '#F4C430', bg: 'rgba(244,196,48,0.12)', pulse: false },
-    { label: 'My Sections', value: 0, icon: 'solar:diploma-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)', pulse: false },
-    { label: "Today's Date", value: '', icon: 'solar:calendar-bold-duotone', color: '#F4C430', bg: 'rgba(244,196,48,0.12)', pulse: true }
+    { label: 'Assigned Subjects', value: 0, icon: 'solar:book-bold-duotone', color: 'var(--primary-color)', bg: 'rgba(var(--primary-rgb),0.12)', pulse: false },
+    { label: 'My Classes', value: 0, icon: 'solar:buildings-bold-duotone', color: 'var(--secondary-color)', bg: 'rgba(244,196,48,0.12)', pulse: false },
+    { label: 'My Sections', value: 0, icon: 'solar:diploma-bold-duotone', color: 'var(--primary-color)', bg: 'rgba(var(--primary-rgb),0.12)', pulse: false },
+    { label: "Today's Date", value: '', icon: 'solar:calendar-bold-duotone', color: 'var(--secondary-color)', bg: 'rgba(244,196,48,0.12)', pulse: true }
   ];
 
   // Quick action tiles for teachers
   quickActions = [
-    { label: 'Mark Attendance', icon: 'solar:user-check-bold-duotone', route: '/attendance', color: '#800000', description: 'Record today\'s attendance' },
-    { label: 'My Students', icon: 'solar:users-group-rounded-bold-duotone', route: '/students', color: '#F4C430', description: 'View class students' },
-    { label: 'Exam Schedule', icon: 'solar:calendar-mark-bold-duotone', route: '/exam-schedule', color: '#800000', description: 'Check upcoming exams' },
-    { label: 'Exam Results', icon: 'solar:chart-bold-duotone', route: '/exam-result', color: '#F4C430', description: 'View student results' },
-    { label: 'My Leaves', icon: 'solar:document-text-bold-duotone', route: '/my-leaves', color: '#800000', description: 'Manage leave requests' },
-    { label: 'Apply Leave', icon: 'solar:pen-new-round-bold-duotone', route: '/apply-leave', color: '#F4C430', description: 'Submit new leave request' },
+    { label: 'Mark Attendance', icon: 'solar:user-check-bold-duotone', route: '/attendance', color: 'var(--primary-color)', description: 'Record today\'s attendance' },
+    { label: 'My Students', icon: 'solar:users-group-rounded-bold-duotone', route: '/students', color: 'var(--secondary-color)', description: 'View class students' },
+    { label: 'Exam Schedule', icon: 'solar:calendar-mark-bold-duotone', route: '/exam-schedule', color: 'var(--primary-color)', description: 'Check upcoming exams' },
+    { label: 'Exam Results', icon: 'solar:chart-bold-duotone', route: '/exam-result', color: 'var(--secondary-color)', description: 'View student results' },
+    { label: 'My Leaves', icon: 'solar:document-text-bold-duotone', route: '/my-leaves', color: 'var(--primary-color)', description: 'Manage leave requests' },
+    { label: 'Apply Leave', icon: 'solar:pen-new-round-bold-duotone', route: '/apply-leave', color: 'var(--secondary-color)', description: 'Submit new leave request' },
   ];
 
   adminQuickActions = [
-    { label: '1. New Admission', icon: 'solar:user-plus-bold', route: '/student-add', color: '#800000', description: 'Enroll new students into classes' },
-    { label: '2. Add Classes', icon: 'solar:buildings-bold-duotone', route: '/class-list', color: '#F4C430', description: 'Set up class structure' },
-    { label: '3. Add Sections', icon: 'solar:diploma-bold-duotone', route: '/section-add', color: '#800000', description: 'Create sections within classes' },
-    { label: '4. Add Subjects', icon: 'solar:book-2-bold-duotone', route: '/subject-add', color: '#F4C430', description: 'Define subjects to be taught' },
-    { label: '5. Add Staff', icon: 'solar:user-speak-bold-duotone', route: '/staff-add', color: '#800000', description: 'Register teachers & employees' },
-    { label: '6. Assign Subjects', icon: 'solar:link-bold-duotone', route: '/subject-assignment', color: '#F4C430', description: 'Map subjects to staff & sections' },
+    { label: '1. New Admission', icon: 'solar:user-plus-bold', route: '/student-add', color: 'var(--primary-color)', description: 'Enroll new students into classes' },
+    { label: '2. Add Classes', icon: 'solar:buildings-bold-duotone', route: '/class-list', color: 'var(--secondary-color)', description: 'Set up class structure' },
+    { label: '3. Add Sections', icon: 'solar:diploma-bold-duotone', route: '/section-add', color: 'var(--primary-color)', description: 'Create sections within classes' },
+    { label: '4. Add Subjects', icon: 'solar:book-2-bold-duotone', route: '/subject-add', color: 'var(--secondary-color)', description: 'Define subjects to be taught' },
+    { label: '5. Add Staff', icon: 'solar:user-speak-bold-duotone', route: '/staff-add', color: 'var(--primary-color)', description: 'Register teachers & employees' },
+    { label: '6. Assign Subjects', icon: 'solar:link-bold-duotone', route: '/subject-assignment', color: 'var(--secondary-color)', description: 'Map subjects to staff & sections' },
   ];
 
   principalQuickActions = [
-    { label: '1. Student List', icon: 'solar:users-group-rounded-bold-duotone', route: '/student-list', color: '#800000', description: 'Browse all student records' },
-    { label: '2. Staff List', icon: 'solar:user-speak-bold-duotone', route: '/staff-list', color: '#F4C430', description: 'Browse team directory' },
-    { label: '3. Student Attendance', icon: 'solar:user-check-bold-duotone', route: '/attendance', color: '#800000', description: 'Check student presence' },
-    { label: '4. Staff Attendance', icon: 'solar:calendar-mark-bold-duotone', route: '/staff-attendance', color: '#F4C430', description: 'Daily staff presence list' },
-    { label: '5. Manage Leaves', icon: 'solar:calendar-date-bold-duotone', route: '/manage-leaves', color: '#800000', description: 'Review & approve absences' },
-    { label: '6. Exam Analytics', icon: 'solar:chart-bold-duotone', route: '/exam-analytics', color: '#F4C430', description: 'Deep dive into results' },
+    { label: '1. Student List', icon: 'solar:users-group-rounded-bold-duotone', route: '/student-list', color: 'var(--primary-color)', description: 'Browse all student records' },
+    { label: '2. Staff List', icon: 'solar:user-speak-bold-duotone', route: '/staff-list', color: 'var(--secondary-color)', description: 'Browse team directory' },
+    { label: '3. Student Attendance', icon: 'solar:user-check-bold-duotone', route: '/attendance', color: 'var(--primary-color)', description: 'Check student presence' },
+    { label: '4. Staff Attendance', icon: 'solar:calendar-mark-bold-duotone', route: '/staff-attendance', color: 'var(--secondary-color)', description: 'Daily staff presence list' },
+    { label: '5. Manage Leaves', icon: 'solar:calendar-date-bold-duotone', route: '/manage-leaves', color: 'var(--primary-color)', description: 'Review & approve absences' },
+    { label: '6. Exam Analytics', icon: 'solar:chart-bold-duotone', route: '/exam-analytics', color: 'var(--secondary-color)', description: 'Deep dive into results' },
   ];
 
   accountantQuickActions = [
-    { label: '1. Create Fee Type', icon: 'solar:bill-list-bold-duotone', route: '/fee', color: '#800000', description: 'Define fee categories first' },
-    { label: '2. Generate Fee Invoice', icon: 'solar:document-text-bold-duotone', route: '/generate-fee-invoice', color: '#F4C430', description: 'Issue invoices to students' },
-    { label: '3. Collect Fee', icon: 'solar:wallet-money-bold-duotone', route: '/collect-fee', color: '#800000', description: 'Record student payments' },
-    { label: '4. Pay Salary', icon: 'solar:plain-2-bold-duotone', route: '/salary', color: '#F4C430', description: 'Process staff salaries' },
-    { label: '5. Salary Slip', icon: 'solar:card-send-bold-duotone', route: '/salary-slip', color: '#800000', description: 'View staff payroll slips' },
-    { label: '6. Account Ledger', icon: 'solar:wallet-bold-duotone', route: '/accounts-ledger', color: '#F4C430', description: 'View full financial ledger' },
+    { label: '1. Create Fee Type', icon: 'solar:bill-list-bold-duotone', route: '/fee', color: 'var(--primary-color)', description: 'Define fee categories first' },
+    { label: '2. Generate Fee Invoice', icon: 'solar:document-text-bold-duotone', route: '/generate-fee-invoice', color: 'var(--secondary-color)', description: 'Issue invoices to students' },
+    { label: '3. Collect Fee', icon: 'solar:wallet-money-bold-duotone', route: '/collect-fee', color: 'var(--primary-color)', description: 'Record student payments' },
+    { label: '4. Pay Salary', icon: 'solar:plain-2-bold-duotone', route: '/salary', color: 'var(--secondary-color)', description: 'Process staff salaries' },
+    { label: '5. Salary Slip', icon: 'solar:card-send-bold-duotone', route: '/salary-slip', color: 'var(--primary-color)', description: 'View staff payroll slips' },
+    { label: '6. Account Ledger', icon: 'solar:wallet-bold-duotone', route: '/accounts-ledger', color: 'var(--secondary-color)', description: 'View full financial ledger' },
   ];
 
   overviewStats: any[] = [];
@@ -180,14 +180,14 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
     this.dashboardService.getStats().subscribe(data => {
       this.stats = data;
       this.overviewStats = [
-        { label: 'Total Students', value: data.totalStudents, icon: 'solar:users-group-rounded-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)' },
-        { label: 'Total Teachers', value: data.totalTeachers, icon: 'solar:user-speak-bold-duotone', color: '#F4C430', bg: 'rgba(244,196,48,0.12)' },
+        { label: 'Total Students', value: data.totalStudents, icon: 'solar:users-group-rounded-bold-duotone', color: 'var(--primary-color)', bg: 'rgba(var(--primary-rgb),0.12)' },
+        { label: 'Total Teachers', value: data.totalTeachers, icon: 'solar:user-speak-bold-duotone', color: 'var(--secondary-color)', bg: 'rgba(244,196,48,0.12)' },
         { label: 'Total Staff', value: data.totalStaff, icon: 'solar:user-id-bold-duotone', color: '#0ea5e9', bg: 'rgba(14,165,233,0.12)' },
         { label: 'Income (Month)', value: data.incomeThisMonth, icon: 'solar:wallet-money-bold-duotone', color: '#10b981', bg: 'rgba(16,185,129,0.12)', isCurrency: true },
         { label: 'Expenses (Month)', value: data.expenseThisMonth, icon: 'solar:card-send-bold-duotone', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)', isCurrency: true },
-        { label: 'Total Classes', value: data.totalClasses, icon: 'solar:buildings-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)' },
-        { label: 'Total Sections', value: data.totalSections, icon: 'solar:diploma-bold-duotone', color: '#F4C430', bg: 'rgba(244,196,48,0.12)' },
-        { label: 'Total Subjects', value: data.totalSubjects, icon: 'solar:book-2-bold-duotone', color: '#800000', bg: 'rgba(128,0,0,0.12)' }
+        { label: 'Total Classes', value: data.totalClasses, icon: 'solar:buildings-bold-duotone', color: 'var(--primary-color)', bg: 'rgba(var(--primary-rgb),0.12)' },
+        { label: 'Total Sections', value: data.totalSections, icon: 'solar:diploma-bold-duotone', color: 'var(--secondary-color)', bg: 'rgba(244,196,48,0.12)' },
+        { label: 'Total Subjects', value: data.totalSubjects, icon: 'solar:book-2-bold-duotone', color: 'var(--primary-color)', bg: 'rgba(var(--primary-rgb),0.12)' }
       ];
     });
     this.dashboardService.getChartData().subscribe(data => { this.updateHistoricalCharts(data); });
@@ -209,7 +209,7 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   updateTeacherChart() {
-    const subjectColors = ['#800000', '#F4C430', '#a10000', '#dbb02b', '#6d0000', '#c29c26'];
+    const subjectColors = ['var(--primary-color)', 'var(--secondary-color)', 'var(--primary-color)', 'var(--secondary-color)', 'var(--primary-deep)', 'var(--secondary-color)'];
     const pills = this.teacherSubjectPills;
     this.donutChartOptions = {
       series: pills.map((_, i) => Math.floor(Math.random() * 30 + 10)),
@@ -227,25 +227,25 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
     this.chartOptions = {
       series: [{ name: 'Fee Collection', data: [] }],
       chart: { height: 264, type: 'line', toolbar: { show: false } },
-      stroke: { curve: 'smooth', colors: ['#800000'], width: 3 },
+      stroke: { curve: 'smooth', colors: ['var(--primary-color)'], width: 3 },
       xaxis: { categories: [] }
     };
     this.barChartOptions = {
       series: [{ name: 'New Admissions', data: [] }],
       chart: { type: 'bar', height: 235, toolbar: { show: false } },
       xaxis: { categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] },
-      colors: ['#F4C430']
+      colors: ['var(--secondary-color)']
     };
     this.donutChartOptions = {
       series: [],
-      colors: ['#800000', '#F4C430', '#a10000', '#dbb02b', '#6d0000'],
+      colors: ['var(--primary-color)', 'var(--secondary-color)', 'var(--primary-color)', 'var(--secondary-color)', 'var(--primary-deep)'],
       labels: [],
       chart: { type: 'donut', height: 270, sparkline: { enabled: true } },
       legend: { show: false }
     };
     this.paymentStatusChartOptions = {
       series: [{ name: 'Income', data: [] }, { name: 'Expense', data: [] }],
-      colors: ['#800000', '#F4C430'],
+      colors: ['var(--primary-color)', 'var(--secondary-color)'],
       chart: { type: 'bar', height: 250, toolbar: { show: false } },
       xaxis: { categories: [] }
     };
@@ -276,8 +276,8 @@ export class DashboardComponent implements AfterViewInit, OnInit, OnDestroy {
           map: 'world_mill_en', backgroundColor: 'transparent', borderColor: '#fff', borderOpacity: 0.25,
           borderWidth: 0, color: '#000000',
           regionStyle: { initial: { fill: '#E2E8F0' } },
-          series: { regions: [{ values: { US: '#800000', SA: '#800000', AU: '#800000', CN: '#800000', GB: '#800000', PK: '#800000', IN: '#800000' }, attribute: 'fill' }] },
-          zoomOnScroll: false, enableZoom: false, hoverColor: '#a10000',
+          series: { regions: [{ values: { US: 'var(--primary-color)', SA: 'var(--primary-color)', AU: 'var(--primary-color)', CN: 'var(--primary-color)', GB: 'var(--primary-color)', PK: 'var(--primary-color)', IN: 'var(--primary-color)' }, attribute: 'fill' }] },
+          zoomOnScroll: false, enableZoom: false, hoverColor: 'var(--primary-color)',
         });
       } catch (e) { }
     }

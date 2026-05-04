@@ -145,8 +145,8 @@
 }
 
 .bg-info-focus {
-    background: rgba(128, 0, 0, 0.1) !important;
-    color: #800000 !important;
+    background: rgba(var(--primary-rgb), 0.1) !important;
+    color: var(--primary-color) !important;
 }
 
 .bg-warning-focus {

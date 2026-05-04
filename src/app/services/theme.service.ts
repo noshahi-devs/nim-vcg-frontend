@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class ThemeService {
   private readonly THEME_KEY = 'nim_theme_preference';
   private readonly COLOR_KEY = 'nim_custom_color';
+  private readonly SECONDARY_COLOR_KEY = 'nim_custom_secondary_color';
 
   setTheme(theme: string): void {
     document.documentElement.setAttribute('data-theme', theme);
@@ -14,9 +15,37 @@ export class ThemeService {
 
   setCustomColor(color: string): void {
     document.documentElement.style.setProperty('--primary-color', color);
-    // Generate a lighter version for gradients/hovers (simplified for now)
+    // Generate lighter and deeper versions for gradients/hovers (using alpha channels)
     document.documentElement.style.setProperty('--primary-light', color + 'cc'); 
+    document.documentElement.style.setProperty('--primary-deep', color + 'e6'); 
+    
+    // Extract RGB for rgba() usage
+    const rgb = this.hexToRgb(color);
+    if (rgb) {
+      document.documentElement.style.setProperty('--primary-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+    }
+
+    // Update select chevron color dynamically
+    const encodedColor = encodeURIComponent(color);
+    const chevronSvg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='${encodedColor}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`;
+    document.documentElement.style.setProperty('--select-chevron', chevronSvg);
+
     localStorage.setItem(this.COLOR_KEY, color);
+  }
+
+  private hexToRgb(hex: string) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
+
+  setSecondaryColor(color: string): void {
+    document.documentElement.style.setProperty('--secondary-color', color);
+    document.documentElement.style.setProperty('--accent-color', color);
+    localStorage.setItem(this.SECONDARY_COLOR_KEY, color);
   }
 
   getSavedTheme(): string {
@@ -27,9 +56,14 @@ export class ThemeService {
     return localStorage.getItem(this.COLOR_KEY);
   }
 
+  getSavedSecondaryColor(): string | null {
+    return localStorage.getItem(this.SECONDARY_COLOR_KEY);
+  }
+
   applySavedTheme(): void {
     const theme = this.getSavedTheme();
     const color = this.getSavedCustomColor();
+    const secondaryColor = this.getSavedSecondaryColor();
 
     if (theme !== 'light') {
       this.setTheme(theme);
@@ -37,6 +71,10 @@ export class ThemeService {
 
     if (color) {
       this.setCustomColor(color);
+    }
+
+    if (secondaryColor) {
+      this.setSecondaryColor(secondaryColor);
     }
   }
 

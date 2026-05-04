@@ -3,7 +3,7 @@
    ========================================================================== */
 
 :host {
-  --primary-deep: #800000;
+  --primary-deep: var(--primary-color);
   --secondary-deep: #cca300;
   --accent-emerald: #2ecc71;
   --accent-rose: #e74c3c;
@@ -112,7 +112,7 @@
 }
 
 .total .stat-icon {
-  background: rgba(128, 0, 0, 0.05);
+  background: rgba(var(--primary-rgb), 0.05);
   color: var(--primary-deep);
 }
 
@@ -155,7 +155,7 @@ iconify-icon {
 
 .search-container-premium:focus-within {
   border-color: var(--primary-deep);
-  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
 }
 
 .search-lead-icon {
@@ -188,7 +188,7 @@ iconify-icon {
   font-size: 12px;
   font-weight: 700;
   color: var(--primary-deep);
-  background: rgba(128, 0, 0, 0.05);
+  background: rgba(var(--primary-rgb), 0.05);
   padding: 4px 12px;
   border-radius: 20px;
   white-space: nowrap;
@@ -304,7 +304,7 @@ iconify-icon {
 }
 
 .month-banner {
-  background: rgba(128, 0, 0, 0.05);
+  background: rgba(var(--primary-rgb), 0.05);
   color: var(--primary-deep);
   padding: 10px 16px;
   border-radius: 12px;
@@ -378,7 +378,7 @@ iconify-icon {
   justify-content: space-between;
   align-items: center;
   color: white;
-  box-shadow: 0 10px 20px -5px rgba(128, 0, 0, 0.4);
+  box-shadow: 0 10px 20px -5px rgba(var(--primary-rgb), 0.4);
 }
 
 .net-labels {
@@ -478,8 +478,8 @@ iconify-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(128, 0, 0, 0.14);
-  color: #800000;
+  background: rgba(var(--primary-rgb), 0.14);
+  color: var(--primary-color);
   font-size: 35px;
 }
 
@@ -630,7 +630,7 @@ iconify-icon {
 
 .pm-sparkle {
   position: absolute;
-  background: #800000;
+  background: var(--primary-color);
   border-radius: 50%;
   opacity: 0.3;
   filter: blur(1px);
@@ -731,7 +731,7 @@ iconify-icon {
 }
 
 .pm-save {
-  background: #800000;
+  background: var(--primary-color);
   color: #ffffff;
   animation: pmButtonPulse 2s infinite;
 }
@@ -775,7 +775,7 @@ iconify-icon {
   width: 48px;
   height: 48px;
   border: 4px solid #f1f5f9;
-  border-top-color: #800000;
+  border-top-color: var(--primary-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -852,11 +852,11 @@ iconify-icon {
 
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(128, 0, 0, 0.4);
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4);
   }
 
   50% {
-    box-shadow: 0 0 0 12px rgba(128, 0, 0, 0);
+    box-shadow: 0 0 0 12px rgba(var(--primary-rgb), 0);
   }
 }
 

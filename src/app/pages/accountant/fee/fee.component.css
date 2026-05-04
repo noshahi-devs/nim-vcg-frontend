@@ -48,7 +48,7 @@
 }
 
 .entries-select:focus {
-  border-color: #800000;
+  border-color: var(--primary-color);
 }
 
 .search-wrapper {
@@ -78,8 +78,8 @@
 }
 
 .search-input:focus {
-  border-color: #800000;
-  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
 }
 
 .search-input::placeholder {
@@ -91,8 +91,8 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: linear-gradient(135deg, #F4C430, #d4a71c);
-  color: #800000;
+  background: linear-gradient(135deg, var(--secondary-color), var(--secondary-color));
+  color: var(--primary-color);
   border: none;
   border-radius: 10px;
   padding: 9px 18px;
@@ -110,7 +110,7 @@
 
 .btn-add:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(128, 0, 0, 0.45);
+  box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.45);
 }
 
 .btn-add:active {
@@ -274,8 +274,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(128, 0, 0, 0.14);
-  color: #800000;
+  background: rgba(var(--primary-rgb), 0.14);
+  color: var(--primary-color);
   font-size: 35px;
 }
 
@@ -335,7 +335,7 @@
 
 .stat-icon-wrapper.blue {
   background: rgba(244, 196, 48, 0.15);
-  color: #800000;
+  color: var(--primary-color);
 }
 
 .stat-icon-wrapper.green {
@@ -414,16 +414,16 @@
 }
 
 .page-btn:hover:not([disabled]):not(.active) {
-  border-color: #800000;
-  color: #800000;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
   background: #eef2ff;
 }
 
 .page-btn.active {
-  background: linear-gradient(135deg, #800000, #5a0000);
-  border-color: #800000;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-deep));
+  border-color: var(--primary-color);
   color: #ffffff;
-  box-shadow: 0 4px 10px rgba(128, 0, 0, 0.3);
+  box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.3);
 }
 
 .page-btn:disabled {
@@ -501,8 +501,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #F4C430, #d4a71c);
-  color: #800000;
+  background: linear-gradient(135deg, var(--secondary-color), var(--secondary-color));
+  color: var(--primary-color);
 }
 
 .modal-icon svg {
@@ -590,9 +590,9 @@
 }
 
 .form-input:focus {
-  border-color: #800000;
+  border-color: var(--primary-color);
   background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
 }
 
 .form-input.input-error {
@@ -673,8 +673,8 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: linear-gradient(135deg, #F4C430, #d4a71c);
-  color: #800000;
+  background: linear-gradient(135deg, var(--secondary-color), var(--secondary-color));
+  color: var(--primary-color);
   border: none;
   border-radius: 10px;
   padding: 9px 20px;
@@ -692,7 +692,7 @@
 
 .btn-save:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(128, 0, 0, 0.4);
+  box-shadow: 0 6px 18px rgba(var(--primary-rgb), 0.4);
 }
 
 .btn-save:disabled {
@@ -782,11 +782,11 @@
 }
 
 .toast-info {
-  border-color: #800000;
+  border-color: var(--primary-color);
 }
 
 .toast-info .toast-icon {
-  color: #800000;
+  color: var(--primary-color);
   background: #ede9fe;
 }
 
@@ -905,7 +905,7 @@
 
 .pm-sparkle {
   position: absolute;
-  background: #800000;
+  background: var(--primary-color);
   border-radius: 50%;
   opacity: 0.3;
   filter: blur(1px);
@@ -1006,7 +1006,7 @@
 }
 
 .pm-save {
-  background: #800000;
+  background: var(--primary-color);
   color: #ffffff;
   animation: pmButtonPulse 2s infinite;
 }
@@ -1050,7 +1050,7 @@
   width: 48px;
   height: 48px;
   border: 4px solid #f1f5f9;
-  border-top-color: #800000;
+  border-top-color: var(--primary-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -1127,10 +1127,10 @@
 
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(128, 0, 0, 0.4);
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4);
   }
 
   50% {
-    box-shadow: 0 0 0 12px rgba(128, 0, 0, 0);
+    box-shadow: 0 0 0 12px rgba(var(--primary-rgb), 0);
   }
 }

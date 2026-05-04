@@ -371,7 +371,7 @@ export class PaymentDetailComponent implements OnInit {
           <span class="v-date">Date: ${today}</span>
         </div>
         <div class="v-student-panel">
-          <div class="v-row"><strong>Receipt #:</strong> <span style="color:#800000; font-weight:bold;">${displayId}</span></div>
+          <div class="v-row"><strong>Receipt #:</strong> <span style="color:var(--primary-color); font-weight:bold;">${displayId}</span></div>
           <div class="v-row"><strong>Name:</strong> <span>${payment.student?.studentName || '-'}</span></div>
           <div class="v-row"><strong>Class:</strong> <span>${className}</span></div>
           <div class="v-row"><strong>Enrollment:</strong> <span>${payment.student?.enrollmentNo || '-'}</span></div>
@@ -409,18 +409,18 @@ export class PaymentDetailComponent implements OnInit {
     font-size: 11px; border-radius: 4px;
   }
   .v-header {
-    display: flex; align-items: center; border-bottom: 2.5px solid #800000;
+    display: flex; align-items: center; border-bottom: 2.5px solid var(--primary-color);
     padding-bottom: 8px; margin-bottom: 10px; gap: 10px;
   }
   .v-logo { height: 38px; width: auto; }
-  .v-school-info h2 { color: #800000; font-size: 15px; font-weight: 800; margin: 0; }
-  .v-campus { font-size: 10px; font-weight: 700; color: #800000; letter-spacing: 1px; margin: 1px 0 0 !important; }
+  .v-school-info h2 { color: var(--primary-color); font-size: 15px; font-weight: 800; margin: 0; }
+  .v-campus { font-size: 10px; font-weight: 700; color: var(--primary-color); letter-spacing: 1px; margin: 1px 0 0 !important; }
   .v-title-bar {
     display: flex; justify-content: space-between; align-items: center;
     background: #f1f5f9; padding: 5px 10px; font-weight: bold;
     margin-bottom: 10px; border-radius: 4px; font-size: 11px;
   }
-  .v-copy-tag { text-transform: uppercase; letter-spacing: 0.5px; color: #800000; }
+  .v-copy-tag { text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary-color); }
   .v-date { font-weight: 600; color: #475569; }
   .v-student-panel { margin-bottom: 12px; }
   .v-row { padding: 3px 0; font-size: 12px; }
@@ -429,7 +429,7 @@ export class PaymentDetailComponent implements OnInit {
   .v-table th, .v-table td { border: 1px solid #cbd5e1; padding: 6px 8px; font-size: 11px; }
   .v-table th { background: #f8fafc; text-align: left; font-weight: 700; color: #1e293b; }
   .text-right { text-align: right !important; }
-  .v-table tfoot td { background: #fef2f2; font-size: 12px; border-top: 2px solid #800000; }
+  .v-table tfoot td { background: #fef2f2; font-size: 12px; border-top: 2px solid var(--primary-color); }
   .v-bank-footer { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px; border-radius: 4px; margin-bottom: 20px; }
   .v-bank-details p { margin: 2px 0; font-size: 10px; color: #1e293b; }
   .v-signatures { display: flex; justify-content: space-between; margin-top: 30px; padding: 0 10px; }
@@ -498,10 +498,10 @@ export class PaymentDetailComponent implements OnInit {
 <style>
   * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
   body { background: white; color: #000; padding: 20px; margin: 0; }
-  .header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #800000; padding-bottom: 15px; margin-bottom: 20px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--primary-color); padding-bottom: 15px; margin-bottom: 20px; }
   .header-left { display: flex; align-items: center; gap: 15px; }
   .h-logo { height: 50px; width: auto; object-fit: contain; }
-  .header-text h1 { margin: 0; color: #800000; font-size: 24px; line-height: 1.2; }
+  .header-text h1 { margin: 0; color: var(--primary-color); font-size: 24px; line-height: 1.2; }
   .header-text p { margin: 4px 0 0 0; color: #475569; font-size: 14px; }
   .header-right { text-align: right; font-size: 14px; font-weight: bold; color: #1e293b; padding-bottom: 4px; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; }

@@ -33,9 +33,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #800000, #5a0000);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-deep));
     color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(128, 0, 0, 0.35);
+    box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.35);
     flex-shrink: 0;
 }
 
@@ -108,13 +108,13 @@
 }
 
 .card-dot.primary {
-    background: #800000;
-    box-shadow: 0 0 6px rgba(128, 0, 0, 0.5);
+    background: var(--primary-color);
+    box-shadow: 0 0 6px rgba(var(--primary-rgb), 0.5);
 }
 
 .card-dot.deep {
-    background: #5a0000;
-    box-shadow: 0 0 6px rgba(90, 0, 0, 0.5);
+    background: var(--primary-deep);
+    box-shadow: 0 0 6px rgba(var(--primary-rgb), 0.5);
 }
 
 .card-dot.green {
@@ -158,17 +158,17 @@ select.field-input {
     -webkit-appearance: none !important;
     -moz-appearance: none !important;
     padding-right: 38px !important;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23800000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
-    background-repeat: no-repeat !important;
+    
+    
     background-position: right 14px center !important;
     background-size: 16px !important;
     cursor: pointer;
 }
 
 .field-input:focus {
-    border-color: #800000;
+    border-color: var(--primary-color);
     background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
 }
 
 .field-input option {
@@ -183,7 +183,7 @@ select.field-input {
 }
 
 .btn-primary-gradient {
-    background: linear-gradient(135deg, #800000, #5a0000);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-deep));
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -194,12 +194,12 @@ select.field-input {
     align-items: center;
     gap: 8px;
     transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(128, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
 }
 
 .btn-primary-gradient:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(128, 0, 0, 0.4);
+    box-shadow: 0 6px 18px rgba(var(--primary-rgb), 0.4);
 }
 
 .btn-primary-gradient:disabled {
@@ -330,14 +330,14 @@ select.field-input {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #800000, #5a0000);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-deep));
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     font-size: 14px;
-    box-shadow: 0 4px 10px rgba(128, 0, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.2);
 }
 
 .avatar-sm {
@@ -411,8 +411,8 @@ select.field-input {
 }
 
 .search-input:focus {
-    border-color: #800000;
-    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
 }
 
 /* ── Subject Checkbox Grid ── */
@@ -437,15 +437,15 @@ select.field-input {
 }
 
 .subject-checkbox-card:hover {
-    border-color: #800000;
-    background: rgba(128, 0, 0, 0.04);
+    border-color: var(--primary-color);
+    background: rgba(var(--primary-rgb), 0.04);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(128, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.08);
 }
 
 .subject-checkbox-card.selected {
-    border-color: #800000;
-    background: rgba(128, 0, 0, 0.06);
+    border-color: var(--primary-color);
+    background: rgba(var(--primary-rgb), 0.06);
 }
 
 .checkbox-indicator {
@@ -456,7 +456,7 @@ select.field-input {
 }
 
 .checkbox-indicator i.ri-checkbox-circle-fill {
-    color: #800000;
+    color: var(--primary-color);
 }
 
 .checkbox-indicator i.ri-checkbox-blank-circle-line {
@@ -483,10 +483,10 @@ select.field-input {
 
 /* ── Premium Alert for Notifications ── */
 .alert-premium {
-    background: rgba(128, 0, 0, 0.08);
-    border: 1px solid rgba(128, 0, 0, 0.2);
+    background: rgba(var(--primary-rgb), 0.08);
+    border: 1px solid rgba(var(--primary-rgb), 0.2);
     border-radius: 10px;
-    color: #800000;
+    color: var(--primary-color);
 }
 
 .alert-premium i {
@@ -495,11 +495,11 @@ select.field-input {
 
 /* ── Utility ── */
 .text-primary {
-    color: #800000 !important;
+    color: var(--primary-color) !important;
 }
 
 .text-deep {
-    color: #5a0000 !important;
+    color: var(--primary-deep) !important;
 }
 
 .text-green {
@@ -553,9 +553,9 @@ select.field-input {
 }
 
 .page-link-premium.active {
-    background: #800000;
+    background: var(--primary-color);
     color: #fff;
-    box-shadow: 0 4px 10px rgba(128, 0, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.3);
 }
 
 .page-link-premium.disabled {
@@ -618,7 +618,7 @@ select.field-input {
 
 .pm-sparkle {
     position: absolute;
-    background: #800000;
+    background: var(--primary-color);
     border-radius: 50%;
     opacity: 0.3;
     filter: blur(1px);
@@ -709,7 +709,7 @@ select.field-input {
 }
 
 .pm-save {
-    background: #800000;
+    background: var(--primary-color);
     color: #ffffff;
 }
 
@@ -751,7 +751,7 @@ select.field-input {
     width: 48px;
     height: 48px;
     border: 4px solid #f1f5f9;
-    border-top-color: #800000;
+    border-top-color: var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }

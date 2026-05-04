@@ -323,9 +323,9 @@
                                    (click)="changePage(pIdx + 1)" href="javascript:void(0)"
                                    [ngStyle]="{
                                      'width': '32px', 'height': '32px', 'font-weight': '700', 'font-size': '13px',
-                                     'background-color': currentPage === pIdx + 1 ? '#800000' : '#ffffff',
+                                     'background-color': currentPage === pIdx + 1 ? 'var(--primary-color)' : '#ffffff',
                                      'color': currentPage === pIdx + 1 ? '#ffffff' : '#64748b',
-                                     'border': currentPage === pIdx + 1 ? '1px solid #800000' : '1px solid #e2e8f0'
+                                     'border': currentPage === pIdx + 1 ? '1px solid var(--primary-color)' : '1px solid #e2e8f0'
                                    }">
                                    {{ pIdx + 1 }}
                                 </a>

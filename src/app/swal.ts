@@ -44,9 +44,9 @@ export const WavyAlert = (
       ? 'solar:check-circle-bold'
       : 'solar:notification-lines-bold';
   const color =
-    type === 'error' ? '#800000' : type === 'success' ? '#10b981' : '#f59e0b';
+    type === 'error' ? 'var(--primary-color)' : type === 'success' ? '#10b981' : '#f59e0b';
   const lightColor =
-    type === 'error' ? '#a52a2a' : type === 'success' ? '#34d399' : '#fbbf24';
+    type === 'error' ? 'var(--primary-light)' : type === 'success' ? '#34d399' : '#fbbf24';
 
   return new Promise((resolve) => {
     let settled = false;
@@ -140,7 +140,7 @@ export const WelcomeAccessPopup = (userName: string, role: string) => {
         <div class="nim-welcome-card">
           <p style="color:#6b7280;font-size:13px;margin:0;line-height:1.5;">
             Authenticated to the
-            <strong style="color:#800000;">Vision College System</strong>.
+            <strong style="color:var(--primary-color);">Vision College System</strong>.
             Your portal is ready.
           </p>
         </div>

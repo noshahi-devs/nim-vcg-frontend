@@ -142,7 +142,7 @@ export class PopupService {
             <div class="nim-loader-ring r2"></div>
             <div class="nim-loader-ring r3"></div>
             <div class="nim-loader-core">
-              <iconify-icon icon="solar:settings-bold-duotone" style="font-size:1.8rem;color:#800000;" class="nim-spin-icon"></iconify-icon>
+              <iconify-icon icon="solar:settings-bold-duotone" style="font-size:1.8rem;color:var(--primary-color);" class="nim-spin-icon"></iconify-icon>
             </div>
           </div>
           <h3 class="pm-title" style="margin-top: 10px; font-size:1.25rem !important; margin-bottom: 0 !important;">${message}</h3>

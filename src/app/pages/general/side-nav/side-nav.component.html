@@ -7,12 +7,12 @@
   <div class="sidebar-logo-container">
     <a routerLink="/dashboard" class="sidebar-logo sidebar-branding" aria-label="Go to dashboard">
       <span class="sidebar-brand-icon" aria-hidden="true">
-        <img src="assets/images/Vision College emblem design.png" alt="Vision College"
-          style="height: 40px; border-radius: 8px;">
+        <img [src]="config?.instituteLogo || 'assets/images/Vision College emblem design.png'" alt="Institute Logo"
+          style="height: 40px; border-radius: 8px; object-fit: contain; max-width: 100%;">
       </span>
       <span class="sidebar-brand-text">
-        <span class="sidebar-brand-title">Vision College</span>
-        <span class="sidebar-brand-subtitle">Gojra Campus</span>
+        <span class="sidebar-brand-title">{{ config?.instituteName || 'Vision College' }}</span>
+        <span class="sidebar-brand-subtitle">{{ config?.instituteAddress || 'Gojra Campus' }}</span>
       </span>
     </a>
   </div>
@@ -76,7 +76,7 @@
       </li>
 
       <!-- 1. System Admin -->
-      <!-- <li class="dropdown" *ngIf="hasAnyRole(['Admin'])">
+      <li class="dropdown" *ngIf="hasAnyRole(['Admin'])">
         <a href="javascript:void(0)" data-desc="Settings, roles and system controls">
           <iconify-icon icon="mdi:cog" class="menu-icon"></iconify-icon>
           <span>System Admin</span>
@@ -89,7 +89,7 @@
           <li><a routerLink="/assign-role" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-danger-main"></i> Assign Role</a></li>
         </ul>
-      </li> -->
+      </li>
 
       <!-- 5. Employees -->
       <li class="dropdown" *ngIf="hasAnyRole(['Admin', 'Principal'])">
@@ -673,7 +673,7 @@
   <footer class="d-footer">
     <div class="row align-items-center justify-content-between">
       <div class="col-auto">
-        <p class="mb-0">© 2026 <span class="fw-bold">Vision college Gojra</span> Enterprise
+        <p class="mb-0">© {{ currentYear }} <span class="fw-bold">{{ config?.instituteName || 'Vision College' }} {{ config?.instituteAddress || 'Gojra' }}</span> Enterprise
           - All Rights Reserved.</p>
       </div>
       <div class="col-auto">

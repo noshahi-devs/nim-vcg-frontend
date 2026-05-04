@@ -92,7 +92,7 @@
     top: 50%;
     left: 14px;
     transform: translateY(-50%);
-    color: #F4C430;
+    color: var(--secondary-color);
     /* Golden Yellow icons as requested */
     font-size: 20px;
     z-index: 2;
@@ -118,10 +118,10 @@
 }
 
 .field-input:focus {
-    border-color: #800000;
+    border-color: var(--primary-color);
     /* Institutional Maroon on focus */
     background: #ffffff;
-    box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
 }
 
 .field-input:focus+.icon {
@@ -137,7 +137,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: linear-gradient(135deg, #800000, #5a0000);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-deep));
     color: #ffffff;
     border: none;
     border-radius: 12px;
@@ -146,7 +146,7 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 14px rgba(128, 0, 0, 0.3);
+    box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.3);
     width: 100%;
     position: relative;
     overflow: hidden;
@@ -160,7 +160,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, #F4C430, #FDE68A);
+    background: linear-gradient(135deg, var(--secondary-color), #FDE68A);
     z-index: -1;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -173,7 +173,7 @@
 .btn-primary-gradient:hover:not([disabled]) {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(244, 196, 48, 0.4);
-    color: #800000;
+    color: var(--primary-color);
 }
 
 .btn-primary-gradient[disabled] {
@@ -185,7 +185,7 @@
 .auth-header-title {
     font-size: 22px !important;
     font-weight: 900;
-    color: #F4C430;
+    color: var(--secondary-color);
     margin-bottom: 2px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -216,7 +216,7 @@
 }
 
 .toggle-password:hover {
-    color: #F4C430;
+    color: var(--secondary-color);
 }
 
 .icon-spin {

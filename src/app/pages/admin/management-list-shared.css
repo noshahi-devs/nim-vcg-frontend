@@ -37,8 +37,8 @@
 }
 
 .stat-icon-wrapper.primary {
-  background: rgba(128, 0, 0, 0.1);
-  color: #800000;
+  background: rgba(var(--primary-rgb), 0.1);
+  color: var(--primary-color);
 }
 
 .stat-icon-wrapper.green {
@@ -123,8 +123,8 @@
 }
 
 .entries-select:focus {
-    border-color: #800000;
-    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
 }
 
 .search-wrapper {
@@ -153,8 +153,8 @@
 }
 
 .search-input:focus {
-    border-color: #800000;
-    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
 }
 
 .search-input::placeholder {
@@ -174,13 +174,13 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 14px rgba(128, 0, 0, 0.3);
+    box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.3);
     text-decoration: none;
 }
 
 .btn-add:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(128, 0, 0, 0.4);
+    box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.4);
 }
 
 .student-card {
@@ -195,7 +195,7 @@
 
 .student-card:hover {
     transform: translateY(-8px);
-    border-color: rgba(128, 0, 0, 0.2);
+    border-color: rgba(var(--primary-rgb), 0.2);
     box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
 }
 
@@ -268,7 +268,7 @@
 }
 
 .btn-view-details:hover {
-    background: #800000;
+    background: var(--primary-color);
     color: #fff;
 }
 
@@ -289,8 +289,8 @@
 
 .icon-btn-small:hover {
     background: #fff;
-    color: #800000;
-    border-color: #800000;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
     transform: scale(1.1);
 }
 

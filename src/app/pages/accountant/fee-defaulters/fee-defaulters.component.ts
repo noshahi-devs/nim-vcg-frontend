@@ -295,14 +295,14 @@ export class FeeDefaultersComponent implements OnInit {
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Segoe UI', Arial, sans-serif; background: white; color: #000; padding: 20px; }
   @page { margin: 10mm; size: A4 portrait; }
-  .report-header { display: flex; align-items: center; gap: 14px; border-bottom: 3px solid #800000; padding-bottom: 12px; margin-bottom: 20px; }
+  .report-header { display: flex; align-items: center; gap: 14px; border-bottom: 3px solid var(--primary-color); padding-bottom: 12px; margin-bottom: 20px; }
   .report-header img { height: 50px; }
-  .report-header h1 { color: #800000; font-size: 20px; margin: 0; }
-  .report-header .campus { font-size: 11px; font-weight: 700; color: #800000; letter-spacing: 1px; }
+  .report-header h1 { color: var(--primary-color); font-size: 20px; margin: 0; }
+  .report-header .campus { font-size: 11px; font-weight: 700; color: var(--primary-color); letter-spacing: 1px; }
   .report-meta { display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 12px; color: #475569; }
   .report-meta strong { color: #1e293b; }
   table { width: 100%; border-collapse: collapse; font-size: 11px; }
-  th { background: #800000; color: white; padding: 8px 10px; text-align: left; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  th { background: var(--primary-color); color: white; padding: 8px 10px; text-align: left; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
   td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; }
   tr:nth-child(even) { background: #f8fafc; }
   .text-right { text-align: right; }
@@ -310,7 +310,7 @@ export class FeeDefaultersComponent implements OnInit {
   .status.critical { background: #fee2e2; color: #b91c1c; }
   .status.warning { background: #fffbeb; color: #b45309; }
   .status.overdue { background: #eff6ff; color: #1d4ed8; }
-  tfoot td { font-weight: 800; border-top: 2px solid #800000; background: #fef2f2; font-size: 12px; }
+  tfoot td { font-weight: 800; border-top: 2px solid var(--primary-color); background: #fef2f2; font-size: 12px; }
   @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
 </style></head>
 <body>
@@ -426,19 +426,19 @@ export class FeeDefaultersComponent implements OnInit {
     font-size: 11px; border-radius: 4px;
   }
   .v-header {
-    display: flex; align-items: center; border-bottom: 2.5px solid #800000;
+    display: flex; align-items: center; border-bottom: 2.5px solid var(--primary-color);
     padding-bottom: 8px; margin-bottom: 10px; gap: 10px;
   }
   .v-logo { height: 38px; width: auto; }
-  .v-school-info h2 { color: #800000; font-size: 15px; font-weight: 800; margin: 0; }
-  .v-campus { font-size: 10px; font-weight: 700; color: #800000; letter-spacing: 1px; margin: 1px 0 0 !important; }
+  .v-school-info h2 { color: var(--primary-color); font-size: 15px; font-weight: 800; margin: 0; }
+  .v-campus { font-size: 10px; font-weight: 700; color: var(--primary-color); letter-spacing: 1px; margin: 1px 0 0 !important; }
   .v-school-info p { font-size: 9px; margin: 2px 0 0; color: #64748b; }
   .v-title-bar {
     display: flex; justify-content: space-between; align-items: center;
     background: #f1f5f9; padding: 5px 10px; font-weight: bold;
     margin-bottom: 10px; border-radius: 4px; font-size: 11px;
   }
-  .v-copy-tag { text-transform: uppercase; letter-spacing: 0.5px; color: #800000; }
+  .v-copy-tag { text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary-color); }
   .v-date { font-weight: 600; color: #475569; }
   .v-student-panel { margin-bottom: 12px; }
   .v-row { padding: 3px 0; font-size: 12px; }

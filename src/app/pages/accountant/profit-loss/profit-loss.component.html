@@ -46,7 +46,7 @@
     <!-- ===================== STATS CARDS ===================== -->
     <div class="stats-row mb-24">
       <div class="stat-card">
-        <div class="stat-icon-wrapper primary" style="background: rgba(128, 0, 0, 0.1); color: #800000;">
+        <div class="stat-icon-wrapper primary" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary-color);">
           <iconify-icon icon="solar:round-alt-arrow-up-bold-duotone" style="font-size: 1.5rem;"></iconify-icon>
         </div>
         <div class="stat-content">
@@ -87,7 +87,7 @@
           </div>
           <div class="fee-card-body d-flex align-items-center justify-content-center p-24">
             <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [labels]="chartOptions.labels"
-              [colors]="['#800000', '#fbbf24']" [legend]="chartOptions.legend" [dataLabels]="chartOptions.dataLabels"
+              [colors]="['var(--primary-color)', '#fbbf24']" [legend]="chartOptions.legend" [dataLabels]="chartOptions.dataLabels"
               [responsive]="chartOptions.responsive" style="width: 100%; min-height: 350px;"></apx-chart>
           </div>
         </div>
@@ -109,23 +109,23 @@
               <!-- Income Table -->
               <div class="col-12">
                 <h6 class="text-md fw-semibold mb-12"
-                  style="color: #800000; border-bottom: 2px solid #fee2e2; padding-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                  <span style="width: 8px; height: 8px; border-radius: 50%; background: #800000;"></span>
+                  style="color: var(--primary-color); border-bottom: 2px solid #fee2e2; padding-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                  <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary-color);"></span>
                   Income Categories
                 </h6>
                 <div class="table-wrapper" style="box-shadow: none; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
                   <table class="fee-table">
                     <thead style="background: #f8fafc;">
                       <tr>
-                        <th style="color: #800000;">Category</th>
-                        <th class="text-end" style="color: #800000;">Amount</th>
-                        <th class="text-end" style="color: #800000;">% Of Total</th>
+                        <th style="color: var(--primary-color);">Category</th>
+                        <th class="text-end" style="color: var(--primary-color);">Amount</th>
+                        <th class="text-end" style="color: var(--primary-color);">% Of Total</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr class="table-row" *ngFor="let item of report.incomeByCategory">
-                        <td><span class="amount-chip" style="background: rgba(128, 0, 0, 0.08); color: #800000;">{{ item.category }}</span></td>
-                        <td class="text-end fw-bold" style="color: #800000;">{{ formatCurrency(item.amount) }}</td>
+                        <td><span class="amount-chip" style="background: rgba(var(--primary-rgb), 0.08); color: var(--primary-color);">{{ item.category }}</span></td>
+                        <td class="text-end fw-bold" style="color: var(--primary-color);">{{ formatCurrency(item.amount) }}</td>
                         <td class="text-end text-secondary-light">{{ ((item.amount / report.totalIncome) *
                           100).toFixed(1) }}%</td>
                       </tr>
@@ -247,7 +247,7 @@
   <div *ngIf="!report" class="fee-card p-0">
     <div class="fee-card-body py-48 d-flex flex-column align-items-center justify-content-center text-center">
       <div class="mb-16 rounded-circle d-flex align-items-center justify-content-center"
-        style="width: 80px; height: 80px; background: rgba(128, 0, 0, 0.1); color: #800000;">
+        style="width: 80px; height: 80px; background: rgba(var(--primary-rgb), 0.1); color: var(--primary-color);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
           <line x1="16" y1="2" x2="16" y2="6" />

@@ -24,7 +24,7 @@
               Teacher Dashboard
             </div>
             <div class="greeting-chip">
-              <iconify-icon icon="solar:sun-bold-duotone" class="greeting-icon" style="color:#800000;"></iconify-icon>
+              <iconify-icon icon="solar:sun-bold-duotone" class="greeting-icon" style="color:var(--primary-color);"></iconify-icon>
               {{ greeting }}
             </div>
             <h2 class="hero-name">{{ currentStaff?.staffName || 'Teacher' }}</h2>
@@ -66,17 +66,17 @@
       <div class="t-card subjects-card">
         <div class="t-card-header">
           <div class="t-card-title">
-            <iconify-icon icon="solar:book-bold-duotone" class="title-icon" style="color:#800000;"></iconify-icon>
+            <iconify-icon icon="solar:book-bold-duotone" class="title-icon" style="color:var(--primary-color);"></iconify-icon>
             My Subjects
           </div>
-          <span class="t-badge" style="background:rgba(128,0,0,0.1);color:#800000;">{{ teacherSubjectPills.length }}
+          <span class="t-badge" style="background:rgba(var(--primary-rgb),0.1);color:var(--primary-color);">{{ teacherSubjectPills.length }}
             assigned</span>
         </div>
         <div class="subjects-list" *ngIf="teacherSubjectPills.length > 0; else noSubjects">
           <div class="subject-pill" *ngFor="let sub of teacherSubjectPills; let i = index"
             [style.animation-delay]="(i * 0.07) + 's'">
             <span class="subject-dot"
-              [ngStyle]="{'background': ['#800000','#F4C430','#a10000','#dbb02b','#6d0000','#c29c26'][i % 6]}" ></span>
+              [ngStyle]="{'background': ['var(--primary-color)','var(--secondary-color)','var(--primary-color)','var(--secondary-color)','var(--primary-deep)','var(--secondary-color)'][i % 6]}" ></span>
             <span class="pill-subject">{{ sub.label }}</span>
             <span class="pill-class" *ngIf="sub.className">{{ sub.className }}<span *ngIf="sub.sectionName"> · {{
                 sub.sectionName }}</span></span>
@@ -164,7 +164,7 @@
     <!-- ─── Teacher Profile Card ─── -->
     <div class="teacher-profile-strip" *ngIf="currentStaff">
       <div class="profile-item">
-        <iconify-icon icon="solar:letter-bold-duotone" style="color:#800000;"></iconify-icon>
+        <iconify-icon icon="solar:letter-bold-duotone" style="color:var(--primary-color);"></iconify-icon>
         <div>
           <small>Email</small>
           <span>{{ currentStaff.email }}</span>
@@ -236,7 +236,7 @@
               Accountant Dashboard
             </div>
             <div class="greeting-chip">
-              <iconify-icon icon="solar:crown-bold-duotone" class="greeting-icon" style="color:#800000;"></iconify-icon>
+              <iconify-icon icon="solar:crown-bold-duotone" class="greeting-icon" style="color:var(--primary-color);"></iconify-icon>
               {{ greeting }}
             </div>
             <h2 class="hero-name">{{ adminFullName }}</h2>
@@ -281,10 +281,10 @@
           <div class="t-card-header">
             <div class="t-card-title">
               <iconify-icon icon="solar:wallet-money-bold-duotone" class="title-icon"
-                style="color:#800000;"></iconify-icon>
+                style="color:var(--primary-color);"></iconify-icon>
               Fee Collection Statistics
             </div>
-            <span class="t-badge" style="background:rgba(128,0,0,0.1);color:#800000;">Yearly Trends</span>
+            <span class="t-badge" style="background:rgba(var(--primary-rgb),0.1);color:var(--primary-color);">Yearly Trends</span>
           </div>
           <div id="chart" class="apexcharts-tooltip-style-1">
             <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"

@@ -1,109 +1,177 @@
 <app-breadcrumb [title]="title" [icon]="'solar:settings-bold-duotone'"></app-breadcrumb>
 
 <div class="settings-container">
-    <div class="glass-card main-settings-card">
+    <div class="main-settings-card">
+        <!-- Sidebar -->
         <div class="settings-sidebar">
             <button [class.active]="activeTab === 'general'" (click)="setTab('general')">
                 <iconify-icon icon="solar:user-settings-bold"></iconify-icon>
-                General Settings
+                <span>General Settings</span>
             </button>
             <button [class.active]="activeTab === 'notifications'" (click)="setTab('notifications')">
                 <iconify-icon icon="solar:bell-bing-bold"></iconify-icon>
-                Notifications
+                <span>Notifications</span>
             </button>
             <button [class.active]="activeTab === 'payment'" (click)="setTab('payment')">
                 <iconify-icon icon="solar:card-2-bold"></iconify-icon>
-                Payment Methods
+                <span>Payment Methods</span>
             </button>
             <button [class.active]="activeTab === 'academic'" (click)="setTab('academic')">
                 <iconify-icon icon="solar:calendar-bold"></iconify-icon>
-                Academic Sessions
+                <span>Academic Sessions</span>
             </button>
             <button [class.active]="activeTab === 'appearance'" (click)="setTab('appearance')">
                 <iconify-icon icon="solar:pallete-bold"></iconify-icon>
-                Appearance
+                <span>Appearance</span>
             </button>
         </div>
 
+        <!-- Content -->
         <div class="settings-content">
-            <!-- General Settings Tab -->
+            <!-- 1. General Settings Tab -->
             <div *ngIf="activeTab === 'general'" class="tab-pane fade-in">
                 <div class="section-header">
-                    <h3>General Administration</h3>
-                    <p>Manage your institute details and basic settings.</p>
+                    <h3 class="premium-title">General Administration</h3>
+                    <p>Manage your institute details, contact information, and logo.</p>
                 </div>
 
-                <div class="row g-4 mt-2">
-                    <div class="col-md-6">
-                        <label class="form-label">Institute Name</label>
-                        <input type="text" class="form-control" [(ngModel)]="generalSettings.instituteName"
-                            placeholder="e.g. Vision College">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Phone Number</label>
-                        <input type="text" class="form-control" [(ngModel)]="generalSettings.institutePhone"
-                            placeholder="+92 312 4567890">
-                    </div>
-                    <div class="col-12">
-                        <label class="form-label">Address</label>
-                        <textarea class="form-control" rows="2"
-                            [(ngModel)]="generalSettings.instituteAddress"></textarea>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Official Email</label>
-                        <input type="email" class="form-control" [(ngModel)]="generalSettings.instituteEmail">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Active Academic Year</label>
-                        <select class="form-select" [(ngModel)]="generalSettings.academicYear">
-                            <option value="">Select Year</option>
-                            <option *ngFor="let year of academicYears" [value]="year.name">{{ year.name }}</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mt-4 pt-3 border-top d-flex justify-content-end">
-                    <button class="btn btn-primary" (click)="saveGeneralSettings()">
-                        <iconify-icon icon="solar:diskette-bold" class="me-2"></iconify-icon> Save Changes
-                    </button>
-                </div>
-            </div>
-
-            <!-- Notifications Tab -->
-            <div *ngIf="activeTab === 'notifications'" class="tab-pane fade-in">
-                <div class="section-header">
-                    <h3>Notification Preferences</h3>
-                    <p>Set which automated alerts should be active.</p>
-                </div>
-
-                <div class="notification-list mt-4">
-                    <div *ngFor="let item of notificationSettings" class="notification-item glass-item">
-                        <div class="item-info">
-                            <h5>{{ item.settingKey }}</h5>
-                            <p>{{ item.description }}</p>
+                <div class="premium-form-container">
+                    <!-- Logo Upload Section -->
+                    <div class="logo-upload-section mb-5">
+                        <h5 class="section-subtitle">
+                            <iconify-icon icon="solar:gallery-bold-duotone" class="text-primary fs-4"></iconify-icon>
+                            Institute Logo
+                        </h5>
+                        <div class="logo-upload-wrapper">
+                            <input type="file" id="logoFileInput" (change)="onLogoSelected($event)" accept="image/png, image/jpeg" class="d-none">
+                            
+                            <div class="logo-preview-box" *ngIf="generalSettings.logoUrl; else noLogo">
+                                <img [src]="generalSettings.logoUrl" alt="Institute Logo" class="preview-img">
+                                <div class="logo-actions">
+                                    <button class="btn premium-btn-secondary w-100" (click)="triggerFileInput()" type="button">
+                                        <iconify-icon icon="solar:camera-bold"></iconify-icon> Change
+                                    </button>
+                                    <button class="btn premium-btn-secondary w-100 text-danger" (click)="removeLogo()" type="button">
+                                        <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon> Remove
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <ng-template #noLogo>
+                                <div class="logo-upload-placeholder" (click)="triggerFileInput()">
+                                    <div class="upload-icon-circle">
+                                        <iconify-icon icon="solar:cloud-upload-bold-duotone"></iconify-icon>
+                                    </div>
+                                    <p class="upload-title">Click to upload institute logo</p>
+                                    <p class="upload-hint">Supported formats: SVG, PNG, JPG (max. 2MB)</p>
+                                </div>
+                            </ng-template>
                         </div>
-                        <div class="item-action">
-                            <div class="form-check form-switch style-check d-flex align-items-center">
-                                <input class="form-check-input" type="checkbox" role="switch"
-                                    [(ngModel)]="item.isEnabled">
+                    </div>
+
+                    <!-- Institute Details -->
+                    <h5 class="section-subtitle">
+                        <iconify-icon icon="solar:buildings-bold-duotone" class="text-primary fs-4"></iconify-icon>
+                        Institute Details
+                    </h5>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="premium-input-group">
+                                <label class="premium-label">Institute Name</label>
+                                <div class="input-with-icon">
+                                    <iconify-icon icon="solar:buildings-bold-duotone" class="input-icon"></iconify-icon>
+                                    <input type="text" class="premium-input" [(ngModel)]="generalSettings.instituteName" placeholder="e.g. Vision College">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="premium-input-group">
+                                <label class="premium-label">Active Academic Year</label>
+                                <div class="input-with-icon">
+                                    <iconify-icon icon="solar:calendar-bold-duotone" class="input-icon"></iconify-icon>
+                                    <select class="premium-input" [(ngModel)]="generalSettings.academicYear">
+                                        <option value="">Select Year</option>
+                                        <option *ngFor="let year of academicYears" [value]="year.name">{{ year.name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="premium-input-group">
+                                <label class="premium-label">Phone Number</label>
+                                <div class="input-with-icon">
+                                    <iconify-icon icon="solar:phone-bold-duotone" class="input-icon"></iconify-icon>
+                                    <input type="text" class="premium-input" [(ngModel)]="generalSettings.institutePhone" placeholder="+92 312 4567890">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="premium-input-group">
+                                <label class="premium-label">Official Email</label>
+                                <div class="input-with-icon">
+                                    <iconify-icon icon="solar:letter-bold-duotone" class="input-icon"></iconify-icon>
+                                    <input type="email" class="premium-input" [(ngModel)]="generalSettings.instituteEmail" placeholder="info@visioncollege.edu">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="premium-input-group">
+                                <label class="premium-label">Complete Address</label>
+                                <div class="input-with-icon align-items-start">
+                                    <iconify-icon icon="solar:map-point-bold-duotone" class="input-icon" style="top: 16px;"></iconify-icon>
+                                    <textarea class="premium-input" rows="3" [(ngModel)]="generalSettings.instituteAddress" placeholder="Enter full address..."></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-4 pt-3 border-top d-flex justify-content-end">
-                    <button class="btn btn-warning" (click)="saveNotifications()">
-                        <iconify-icon icon="solar:check-read-linear" class="me-2"></iconify-icon> Update Preferences
+                <div class="premium-actions d-flex justify-content-end gap-3 border-top mt-5 pt-4">
+                    <button class="premium-btn-secondary" (click)="loadAllSettings()">
+                        Discard Changes
+                    </button>
+                    <button class="premium-btn-primary" (click)="saveGeneralSettings()">
+                        <iconify-icon icon="solar:diskette-bold" class="me-2 fs-5"></iconify-icon> Save Configuration
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Notifications Tab -->
+            <div *ngIf="activeTab === 'notifications'" class="tab-pane fade-in">
+                <div class="section-header">
+                    <h3 class="premium-title">Notification Preferences</h3>
+                    <p>Configure which automated alerts are sent to students and staff.</p>
+                </div>
+
+                <div class="premium-card p-0 overflow-hidden border-0 bg-transparent shadow-none">
+                    <div class="notification-list">
+                        <div *ngFor="let item of notificationSettings" class="notification-item">
+                            <div class="item-info">
+                                <h5>{{ item.settingKey }}</h5>
+                                <p>{{ item.description }}</p>
+                            </div>
+                            <div class="item-action">
+                                <div class="form-check form-switch style-check m-0">
+                                    <input class="form-check-input" type="checkbox" role="switch" [(ngModel)]="item.isEnabled">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="premium-actions d-flex justify-content-end border-top mt-4 pt-4">
+                    <button class="premium-btn-primary" (click)="saveNotifications()">
+                        <iconify-icon icon="solar:check-read-bold" class="me-2 fs-5"></iconify-icon> Save Preferences
                     </button>
                 </div>
 
                 <div class="section-header mt-5">
-                    <h3>Recent Notification Logs</h3>
-                    <p>History of automated alerts sent to students and staff.</p>
+                    <h3 class="premium-title">Recent Delivery Logs</h3>
+                    <p>History of system-generated notifications.</p>
                 </div>
 
-                <div class="table-responsive mt-3">
-                    <table class="table table-sm glass-table">
+                <div class="premium-table-container mt-4">
+                    <table class="glass-table">
                         <thead>
                             <tr>
                                 <th>Recipient</th>
@@ -117,103 +185,150 @@
                                 <td>
                                     <div class="d-flex flex-column">
                                         <span class="fw-bold">{{ log.recipientName || 'All Users' }}</span>
-                                        <small class="text-muted">{{ log.recipientEmail || 'Broadcast' }}</small>
+                                        <span class="text-muted small">{{ log.recipientEmail || 'Broadcast' }}</span>
                                     </div>
                                 </td>
-                                <td>{{ log.notificationType }}</td>
                                 <td>
-                                    <span class="badge" [class.bg-success]="(log.status || 'Sent') === 'Sent'"
-                                        [class.bg-danger]="log.status === 'Failed'">
+                                    <span class="badge bg-light text-dark border">{{ log.notificationType }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge" [class.bg-success]="(log.status || 'Sent') === 'Sent'" [class.bg-danger]="log.status === 'Failed'">
                                         {{ log.status || 'Sent' }}
                                     </span>
                                 </td>
-                                <td><small>{{ log.createdAt | date:'short' }}</small></td>
+                                <td><span class="text-muted small">{{ log.createdAt | date:'short' }}</span></td>
                             </tr>
                             <tr *ngIf="notificationLogs.length === 0">
-                                <td colspan="4" class="text-center py-4">No notification logs found.</td>
+                                <td colspan="4" class="text-center py-5 text-muted">No notification logs found.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Payment Methods Tab -->
+            <!-- 3. Payment Methods Tab -->
             <div *ngIf="activeTab === 'payment'" class="tab-pane fade-in">
-                <div class="section-header">
-                    <h3>Payment Gateways</h3>
-                    <p>Set up online payment integrations for fee collection.</p>
+                <div class="section-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="premium-title">Payment Gateways</h3>
+                        <p>Configure external services for online fee collection.</p>
+                    </div>
+                    <button class="premium-btn-primary" (click)="addNewPaymentGateway()">
+                        <iconify-icon icon="solar:add-circle-bold" class="me-2 fs-5"></iconify-icon> Add Gateway
+                    </button>
                 </div>
 
-                <div class="gateway-list mt-4">
-                    <div *ngFor="let gateway of paymentSettings" class="gateway-card glass-item p-4 mb-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="mb-0">{{ gateway.gatewayName }}</h4>
-                            <div class="form-check form-switch style-check d-flex align-items-center">
-                                <input class="form-check-input" type="checkbox" [(ngModel)]="gateway.isActive">
+                <div class="gateway-list row g-4 mt-2">
+                    <div class="col-12" *ngFor="let gateway of paymentSettings">
+                        <div class="premium-card m-0">
+                            <div class="w-100 d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                                <div class="d-flex align-items-center gap-3" style="flex: 1;">
+                                    <div class="upload-icon-circle m-0" style="width: 48px; height: 48px; font-size: 24px;">
+                                        <iconify-icon icon="solar:card-bold-duotone"></iconify-icon>
+                                    </div>
+                                    <h4 class="mb-0 fs-5 fw-bold" *ngIf="gateway.id !== 0">{{ gateway.gatewayName }}</h4>
+                                    <input type="text" class="premium-input py-2" style="max-width: 250px; min-height: 40px; padding-left: 16px;" *ngIf="gateway.id === 0" [(ngModel)]="gateway.gatewayName" placeholder="Enter Gateway Name">
+                                </div>
+                                <div class="form-check form-switch style-check m-0">
+                                    <input class="form-check-input" type="checkbox" [(ngModel)]="gateway.isActive">
+                                </div>
+                            </div>
+
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="premium-input-group">
+                                        <label class="premium-label">Merchant ID / Public Key</label>
+                                        <div class="input-with-icon">
+                                            <iconify-icon icon="solar:user-id-bold-duotone" class="input-icon"></iconify-icon>
+                                            <input type="text" class="premium-input" [(ngModel)]="gateway.merchantId">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="premium-input-group">
+                                        <label class="premium-label">Secret API Key</label>
+                                        <div class="input-with-icon">
+                                            <iconify-icon icon="solar:key-minimalistic-bold-duotone" class="input-icon"></iconify-icon>
+                                            <input type="password" class="premium-input" [(ngModel)]="gateway.apiKey">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="w-100 mt-4 pt-3 border-top d-flex justify-content-end">
+                                <button class="premium-btn-secondary" (click)="savePaymentGateway(gateway)">
+                                    <iconify-icon icon="solar:upload-bold" class="me-2"></iconify-icon> {{ gateway.id === 0 ? 'Create' : 'Update' }} {{ gateway.gatewayName }}
+                                </button>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">API Key</label>
-                                <input type="password" class="form-control" [(ngModel)]="gateway.apiKey">
+                    <!-- Empty State for Payment Gateways -->
+                    <div class="col-12" *ngIf="paymentSettings.length === 0">
+                        <div class="premium-card text-center d-flex flex-column align-items-center justify-content-center p-5 m-0">
+                            <div class="upload-icon-circle mb-3" style="width: 80px; height: 80px; font-size: 40px; margin: 0 auto; background: #f8fafc; color: #cbd5e1;">
+                                <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Merchant ID</label>
-                                <input type="text" class="form-control" [(ngModel)]="gateway.merchantId">
-                            </div>
-                        </div>
-
-                        <div class="mt-3 d-flex justify-content-end">
-                            <button class="btn btn-sm btn-outline-primary" (click)="savePaymentGateway(gateway)">Update
-                                {{ gateway.gatewayName }}</button>
+                            <h5 class="premium-title mb-2 fs-5">No Payment Gateways Configured</h5>
+                            <p class="text-muted" style="max-width: 400px; margin: 0 auto; margin-bottom: 24px;">
+                                There are currently no active payment gateways set up in the system. They need to be configured by a super admin before they appear here.
+                            </p>
+                            <button class="premium-btn-primary" (click)="addNewPaymentGateway()">
+                                <iconify-icon icon="solar:add-circle-bold" class="me-2 fs-5"></iconify-icon> Add Your First Gateway
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Academic Sessions Tab -->
+            <!-- 4. Academic Sessions Tab -->
             <div *ngIf="activeTab === 'academic'" class="tab-pane fade-in">
                 <div class="section-header">
-                    <h3>Academic Sessions</h3>
-                    <p>Register and manage academic years/sessions for the institute.</p>
+                    <h3 class="premium-title">Academic Sessions</h3>
+                    <p>Manage the academic calendar periods for your institute.</p>
                 </div>
 
-                <div class="row mt-4">
-                    <div class="col-md-5">
-                        <div class="glass-item p-4">
-                            <h5 class="mb-3">Add New Session</h5>
-                            <div class="mb-3">
-                                <label class="form-label">Session Name</label>
-                                <input type="text" class="form-control" [(ngModel)]="newSessionName"
-                                    placeholder="e.g. 2024-25">
+                <div class="row mt-4 g-4">
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="premium-card" style="display: flex; flex-direction: column; align-items: stretch; height: 100%;">
+                            <h5 class="section-subtitle mb-4">
+                                <iconify-icon icon="solar:calendar-add-bold-duotone" class="text-primary fs-4"></iconify-icon>
+                                Add New Session
+                            </h5>
+                            <div class="premium-input-group mb-4">
+                                <label class="premium-label">Session Name</label>
+                                <div class="input-with-icon">
+                                    <iconify-icon icon="solar:calendar-bold-duotone" class="input-icon"></iconify-icon>
+                                    <input type="text" class="premium-input" [(ngModel)]="newSessionName" placeholder="e.g. 2024-2025">
+                                </div>
                             </div>
-                            <button class="btn btn-primary w-100" (click)="addSession()">
-                                <iconify-icon icon="solar:add-circle-bold" class="me-2"></iconify-icon> Add Session
-                            </button>
+                            <div class="mt-auto">
+                                <button class="premium-btn-primary w-100" (click)="addSession()">
+                                    <iconify-icon icon="solar:add-circle-bold" class="me-2 fs-5"></iconify-icon> Create Session
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-7">
-                        <div class="table-responsive">
-                            <table class="table glass-table">
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="premium-table-container h-100">
+                            <table class="glass-table">
                                 <thead>
                                     <tr>
-                                        <th>Session Name</th>
+                                        <th>Session Period Name</th>
                                         <th class="text-end">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let session of academicYears">
-                                        <td>{{ session.name }}</td>
+                                        <td class="fw-semibold">{{ session.name }}</td>
                                         <td class="text-end">
-                                            <button class="btn btn-sm btn-outline-danger"
-                                                (click)="deleteSession(session.academicYearId)">
-                                                <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
+                                            <button class="premium-btn-danger px-3 py-2" style="font-size: 0.85rem;" (click)="deleteSession(session.academicYearId)">
+                                                <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon> Delete
                                             </button>
                                         </td>
                                     </tr>
                                     <tr *ngIf="academicYears.length === 0">
-                                        <td colspan="2" class="text-center py-4">No sessions found.</td>
+                                        <td colspan="2" class="text-center py-5 text-muted">No sessions configured.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -222,34 +337,63 @@
                 </div>
             </div>
 
-            <!-- Appearance Tab -->
+            <!-- 5. Appearance Tab -->
             <div *ngIf="activeTab === 'appearance'" class="tab-pane fade-in">
                 <div class="section-header">
-                    <h3>Theme & Appearance</h3>
-                    <p>Customize the look and feel of the management system.</p>
+                    <h3 class="premium-title">Theme & Appearance</h3>
+                    <p>Customize the visual style of the application globally.</p>
                 </div>
 
-                <div class="row g-4 mt-4">
-                    <div class="col-md-6">
-                        <label class="form-label">System Theme</label>
-                        <select class="form-select" [(ngModel)]="generalSettings.preferredTheme">
-                            <option value="light">Premium Light (Default)</option>
-                            <option value="dark">Immersive Dark</option>
-                            <option value="glass">Glassmorphism Special</option>
-                        </select>
+                <div class="premium-card mt-2">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="premium-input-group">
+                                <label class="premium-label">System Theme Preset</label>
+                                <div class="input-with-icon">
+                                    <iconify-icon icon="solar:pallete-bold-duotone" class="input-icon"></iconify-icon>
+                                    <select class="premium-input" [(ngModel)]="generalSettings.preferredTheme">
+                                        <option value="light">Premium Light (Default)</option>
+                                        <option value="dark">Immersive Dark</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="premium-input-group">
+                                <label class="premium-label">Primary Brand Color</label>
+                                <div class="input-with-icon">
+                                    <iconify-icon icon="solar:pipette-bold-duotone" class="input-icon"></iconify-icon>
+                                    <input type="color" class="premium-input p-1" style="height: 48px;" [(ngModel)]="generalSettings.primaryColor">
+                                </div>
+                                <small class="text-muted mt-1 d-block">Main color for headers and active states.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="premium-input-group">
+                                <label class="premium-label">Secondary Accent Color</label>
+                                <div class="input-with-icon">
+                                    <iconify-icon icon="solar:pipette-bold-duotone" class="input-icon"></iconify-icon>
+                                    <input type="color" class="premium-input p-1" style="height: 48px;" [(ngModel)]="generalSettings.secondaryColor">
+                                </div>
+                                <small class="text-muted mt-1 d-block">Accent color for buttons and highlights.</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="mt-5 p-24 glass-item text-center">
-                    <iconify-icon icon="solar:palette-bold" class="text-6xl text-primary-200"></iconify-icon>
-                    <h5 class="mt-3">Advanced Customization</h5>
-                    <p class="text-secondary-light">Theme settings are saved globally and applied to all users'
-                        dashboards.</p>
+                <div class="premium-card text-center d-flex flex-column align-items-center mt-4 p-5">
+                    <div class="upload-icon-circle mb-3" style="width: 80px; height: 80px; font-size: 40px; margin: 0 auto;">
+                        <iconify-icon icon="solar:magic-stick-3-bold-duotone"></iconify-icon>
+                    </div>
+                    <h5 class="premium-title mb-2">High-End UI Active</h5>
+                    <p class="text-muted" style="max-width: 400px; margin: 0 auto;">
+                        The current theme provides a sleek, modern, glassmorphic aesthetic automatically applied to all users' dashboards.
+                    </p>
                 </div>
 
-                <div class="mt-4 pt-3 border-top d-flex justify-content-end">
-                    <button class="btn btn-primary" (click)="saveGeneralSettings()">
-                        <iconify-icon icon="solar:diskette-bold" class="me-2"></iconify-icon> Save Appearance
+                <div class="premium-actions d-flex justify-content-end border-top mt-4 pt-4">
+                    <button class="premium-btn-primary" (click)="saveGeneralSettings()">
+                        <iconify-icon icon="solar:diskette-bold" class="me-2 fs-5"></iconify-icon> Save Appearance
                     </button>
                 </div>
             </div>
@@ -262,27 +406,17 @@
 <!-- 1. CONFIRMATION MODAL -->
 <div class="premium-overlay" *ngIf="showConfirmModal">
     <div class="premium-modal">
-        <div class="pm-sparkles">
-            <div class="pm-sparkle sp1"></div>
-            <div class="pm-sparkle sp2"></div>
-            <div class="pm-sparkle sp3"></div>
-        </div>
-
         <div class="pm-icon-ring warning-ring">
             <iconify-icon icon="solar:question-square-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
         </div>
-
         <h3 class="pm-title">Confirm Save</h3>
         <p class="pm-subtitle">
-            Are you sure you want to update the <strong>General Institute Settings</strong>? This will affect the system
-            globally.
+            Are you sure you want to update the <strong>General Institute Settings</strong>? This will affect the system globally.
         </p>
-
         <div class="pm-actions">
             <button class="pm-btn pm-cancel" (click)="cancelUpdate()">Discard</button>
             <button class="pm-btn pm-save" (click)="confirmUpdateGeneral()" [disabled]="isSaving">
-                <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop"
-                    style="font-size: 20px;"></iconify-icon>
+                <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
                 {{ isSaving ? 'Saving...' : 'Yes, Update' }}
             </button>
         </div>
@@ -292,41 +426,26 @@
 <!-- 2. DELETION CONFIRMATION MODAL -->
 <div class="premium-overlay" *ngIf="showDeleteConfirmModal">
     <div class="premium-modal">
-        <div class="pm-sparkles">
-            <div class="pm-sparkle sp1"></div>
-            <div class="pm-sparkle sp2"></div>
-            <div class="pm-sparkle sp3"></div>
-        </div>
-
         <div class="pm-icon-ring danger-ring">
             <iconify-icon icon="solar:trash-bin-trash-bold" style="font-size: 38px; color: #fff;"></iconify-icon>
         </div>
-
         <h3 class="pm-title">Confirm Deletion</h3>
         <p class="pm-subtitle">
             Are you sure you want to delete this <strong>Academic Session</strong>? This action cannot be undone.
         </p>
-
         <div class="pm-actions">
             <button class="pm-btn pm-cancel" (click)="cancelDelete()">Cancel</button>
-            <button class="pm-btn pm-error-btn" (click)="confirmDeleteSession()" [disabled]="isSaving">
-                <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop"
-                    style="font-size: 20px;"></iconify-icon>
+            <button class="pm-btn pm-error-btn" (click)="confirmDeleteSession()" [disabled]="isSaving" style="color:white; border:none;">
+                <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
                 {{ isSaving ? 'Deleting...' : 'Yes, Delete' }}
             </button>
         </div>
     </div>
 </div>
 
-<!-- 3. UNIFIED FEEDBACK MODAL (Success/Error/Warning) -->
+<!-- 3. UNIFIED FEEDBACK MODAL -->
 <div class="premium-overlay" *ngIf="showFeedbackModal">
-    <div class="premium-modal feedback-modal">
-        <div class="pm-sparkles">
-            <div class="pm-sparkle sp1"></div>
-            <div class="pm-sparkle sp2"></div>
-            <div class="pm-sparkle sp3"></div>
-        </div>
-
+    <div class="premium-modal">
         <div class="pm-icon-ring" [ngClass]="{
            'success-ring': feedbackType === 'success',
            'danger-ring': feedbackType === 'error',
@@ -336,17 +455,15 @@
                         feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
                 style="font-size: 38px; color: #fff;"></iconify-icon>
         </div>
-
         <h3 class="pm-title">{{ feedbackTitle }}</h3>
         <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
-
-        <div class="pm-actions">
+        <div class="pm-actions mt-4">
             <button class="pm-btn pm-Ok" [ngClass]="{
                 'pm-success-btn': feedbackType === 'success',
                 'pm-error-btn': feedbackType === 'error',
                 'pm-warning-btn': feedbackType === 'warning'
-              }" (click)="closeFeedback()">
-                Ok
+              }" (click)="closeFeedback()" style="border:none;">
+                Got it
             </button>
         </div>
     </div>

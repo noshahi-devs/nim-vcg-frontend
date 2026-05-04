@@ -256,7 +256,7 @@ export class ExamScheduleComponent implements OnInit {
 
       standardsHtml += `
         <div style="margin-bottom: 40px; break-inside: avoid;">
-          <h3 style="border-left: 5px solid #800000; padding-left: 10px; text-transform: uppercase;">Class: ${std.standardName}</h3>
+          <h3 style="border-left: 5px solid var(--primary-color); padding-left: 10px; text-transform: uppercase;">Class: ${std.standardName}</h3>
           <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
             <thead>
               <tr style="background: #f8fafc;">
@@ -281,7 +281,7 @@ export class ExamScheduleComponent implements OnInit {
           <title>Datesheet - ${sch.examScheduleName}</title>
           <style>
             body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #000; padding: 20px; }
-            h1 { color: #800000; margin: 0; font-size: 28px; }
+            h1 { color: var(--primary-color); margin: 0; font-size: 28px; }
             .header { text-align: center; border-bottom: 3px double #000; padding-bottom: 20px; margin-bottom: 30px; }
             .title-strap { background: #f1f5f9; padding: 15px; text-align: center; border-radius: 8px; margin-bottom: 40px; }
             table td, table th { border: 1px solid #e2e8f0; padding: 10px; font-size: 13px; }

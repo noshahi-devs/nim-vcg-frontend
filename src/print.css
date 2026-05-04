@@ -102,7 +102,7 @@
   .fee-card-header,
   .table-glass-header {
     background: #f8fafc !important;
-    border-bottom: 2px solid #800000 !important;
+    border-bottom: 2px solid var(--primary-color) !important;
     padding: 10px 16px !important;
   }
 
@@ -117,7 +117,7 @@
 
   .fee-table th,
   .premium-table th {
-    background: #800000 !important;
+    background: var(--primary-color) !important;
     color: white !important;
     padding: 8px 10px !important;
     font-weight: bold !important;

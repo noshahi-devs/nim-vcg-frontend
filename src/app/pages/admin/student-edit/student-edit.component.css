@@ -63,8 +63,8 @@
 }
 
 .nav-link-premium.active {
-  color: #800000;
-  border-bottom-color: #800000;
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
 }
 
 /* ── Avatar Section ── */
@@ -104,14 +104,14 @@
   right: -6px;
   width: 32px;
   height: 32px;
-  background: #800000;
+  background: var(--primary-color);
   color: #ffffff;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(128, 0, 0, 0.4);
+  box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.4);
   transition: transform 0.2s;
 }
 
@@ -140,8 +140,8 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #800000;
-  box-shadow: 0 0 8px rgba(128, 0, 0, 0.4);
+  background: var(--primary-color);
+  box-shadow: 0 0 8px rgba(var(--primary-rgb), 0.4);
 }
 
 .form-group-premium {
@@ -173,8 +173,8 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23800000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
+  
+  
   background-position: right 14px center;
   background-size: 16px;
   padding-right: 42px;
@@ -184,8 +184,8 @@
 .field-input:focus,
 .field-select:focus {
   background: #ffffff;
-  border-color: #800000;
-  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
 }
 
 .field-input::placeholder {
@@ -223,17 +223,17 @@
   padding: 12px 48px;
   border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg, #800000, #5a0000);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-deep));
   color: #ffffff;
   font-weight: 700;
   font-size: 14px;
-  box-shadow: 0 8px 20px rgba(128, 0, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(var(--primary-rgb), 0.3);
   transition: all 0.2s;
 }
 
 .btn-save-premium:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(128, 0, 0, 0.4);
+  box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.4);
 }
 
 /* ── Animation ── */
@@ -297,7 +297,7 @@
 
 .pm-sparkle {
   position: absolute;
-  background: #800000;
+  background: var(--primary-color);
   border-radius: 50%;
   opacity: 0.3;
   filter: blur(1px);
@@ -409,14 +409,14 @@
 }
 
 .pm-save {
-  background: #800000;
+  background: var(--primary-color);
   color: #ffffff;
-  box-shadow: 0 10px 20px rgba(128, 0, 0, 0.2);
+  box-shadow: 0 10px 20px rgba(var(--primary-rgb), 0.2);
 }
 
 .pm-save:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(128, 0, 0, 0.3);
+  box-shadow: 0 15px 30px rgba(var(--primary-rgb), 0.3);
 }
 
 .pm-save:disabled {

@@ -5,6 +5,7 @@ import { SettingsService, SystemSetting, NotificationSetting, PaymentGatewaySett
 import { NotificationService, NotificationLog } from '../../../services/notification.service';
 import { AcademicYearService } from '../../../services/academic-year.service';
 import { SessionService } from '../../../services/session.service';
+import { AppConfigService } from '../../../services/app-config.service';
 import { AcademicYear } from '../../../Models/academic-year';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import Swal from '../../../swal';
@@ -29,7 +30,9 @@ export class GeneralSettingsComponent implements OnInit {
         academicYear: '',
         currencySymbol: 'PKR',
         logoUrl: '',
-        preferredTheme: 'light' // Default
+        preferredTheme: 'light', // Default
+        primaryColor: '#005bea', // Default modern primary color
+        secondaryColor: '#ff6a00' // Default modern secondary color
     };
 
     notificationSettings: NotificationSetting[] = [];
@@ -54,7 +57,8 @@ export class GeneralSettingsComponent implements OnInit {
         private settingsService: SettingsService,
         private notificationService: NotificationService,
         private academicYearService: AcademicYearService,
-        private sessionService: SessionService
+        private sessionService: SessionService,
+        private appConfig: AppConfigService
     ) { }
 
     ngOnInit(): void {
@@ -171,6 +175,7 @@ export class GeneralSettingsComponent implements OnInit {
                 this.isSaving = false;
                 this.showFeedback('success', 'Settings Saved', 'General institute settings have been updated successfully.');
                 this.sessionService.refreshSession(true);
+                this.appConfig.loadConfig().subscribe();
             },
             error: () => {
                 this.isSaving = false;
@@ -216,6 +221,46 @@ export class GeneralSettingsComponent implements OnInit {
                 this.showFeedback('error', 'Update Failed', `Failed to update <b>${setting.gatewayName}</b>.`);
             }
         });
+    }
+
+    addNewPaymentGateway() {
+        this.paymentSettings.push({
+            id: 0,
+            gatewayName: 'New Payment Gateway',
+            apiKey: '',
+            apiSecret: '',
+            merchantId: '',
+            isActive: false
+        });
+    }
+
+    onLogoSelected(event: any) {
+        const file = event.target.files[0];
+        if (file) {
+            // Check file type and size if needed
+            if (!file.type.match(/image\/*/)) {
+                this.showFeedback('error', 'Invalid File', 'Please select an image file (PNG, JPG).');
+                return;
+            }
+            if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                this.showFeedback('warning', 'File Too Large', 'Logo image should not exceed 2MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+                this.generalSettings.logoUrl = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    triggerFileInput() {
+        document.getElementById('logoFileInput')?.click();
+    }
+
+    removeLogo() {
+        this.generalSettings.logoUrl = '';
     }
 
     setTab(tab: string) {

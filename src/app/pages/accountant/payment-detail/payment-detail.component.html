@@ -4,7 +4,7 @@
   <!-- ===================== STATS ROWS ===================== -->
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-icon-wrapper maroon" style="background: rgba(128, 0, 0, 0.1); color: #800000;">
+      <div class="stat-icon-wrapper maroon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary-color);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
           <circle cx="8.5" cy="7" r="4" />
@@ -31,7 +31,7 @@
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon-wrapper maroon" style="background: rgba(128, 0, 0, 0.1); color: #800000;">
+      <div class="stat-icon-wrapper maroon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary-color);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
         </svg>
@@ -300,7 +300,7 @@
   <div class="premium-modal" style="max-width:520px; text-align:left; padding:0; overflow:hidden; margin: auto;">
 
     <!-- Modal Header -->
-    <div style="background: linear-gradient(135deg, #800000, #5a0000); padding: 24px 28px;">
+    <div style="background: linear-gradient(135deg, var(--primary-color), var(--primary-deep)); padding: 24px 28px;">
       <div class="d-flex align-items-center gap-16" style="gap: 16px; display: flex; align-items: center;">
         <div
           style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center;">
@@ -311,7 +311,7 @@
           <span style="color:rgba(255,255,255,0.7); font-size:13px;">Viewing {{ activeTab }} payment record</span>
         </div>
         <button (click)="closeDialog()"
-          style="margin-left:auto; width:34px; height:34px; border-radius:50%; background:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; font-weight:700; color:#800000; line-height:1; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.25);">
+          style="margin-left:auto; width:34px; height:34px; border-radius:50%; background:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; font-weight:700; color:var(--primary-color); line-height:1; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.25);">
           &times;
         </button>
       </div>
@@ -386,7 +386,7 @@
         <iconify-icon icon="basil:printer-outline" style="font-size:18px;"></iconify-icon>
         {{ selectedPayment.amountRemaining <= 0 ? 'Print Receipt' : 'Print Voucher' }}
       </button>
-      <button (click)="closeDialog()" style="background: linear-gradient(135deg, #800000, #5a0000); color:#fff; border:none; border-radius:10px; padding:10px 24px; font-weight:600; font-size:14px; cursor:pointer; transition: all 0.2s; display:flex; align-items:center; gap:8px;">
+      <button (click)="closeDialog()" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-deep)); color:#fff; border:none; border-radius:10px; padding:10px 24px; font-weight:600; font-size:14px; cursor:pointer; transition: all 0.2s; display:flex; align-items:center; gap:8px;">
         <iconify-icon icon="solar:close-circle-bold" style="font-size:18px;"></iconify-icon>
         Close
       </button>

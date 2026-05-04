@@ -141,7 +141,7 @@
             <td>
               <div class="d-flex align-items-center gap-2" style="font-size: 13px;">
                 <iconify-icon icon="solar:calendar-bold-duotone"
-                  style="color: #800000; font-size: 18px; opacity: 0.6;"></iconify-icon>
+                  style="color: var(--primary-color); font-size: 18px; opacity: 0.6;"></iconify-icon>
                 <span style="font-weight: 700; color: #1e293b;">
                   {{ leave.startDate | date:'dd MMM' }}
                 </span>
@@ -152,7 +152,7 @@
               </div>
             </td>
             <td class="text-center">
-              <div style="font-weight: 900; color: #800000; font-size: 16px; line-height: 1;">{{
+              <div style="font-weight: 900; color: var(--primary-color); font-size: 16px; line-height: 1;">{{
                 getDurationDays(leave.startDate, leave.endDate) }}</div>
               <div
                 style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 800; margin-top: 2px;">
@@ -237,7 +237,7 @@
   <div class="premium-modal" style="max-width:500px; text-align:left; padding:0; overflow:hidden;">
 
     <!-- Header -->
-    <div style="background: linear-gradient(135deg, #800000, #5a0000); padding: 18px 20px;">
+    <div style="background: linear-gradient(135deg, var(--primary-color), var(--primary-deep)); padding: 18px 20px;">
       <div style="display:flex; align-items:center; gap:12px; flex-wrap:nowrap;">
         <div
           style="width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
@@ -250,7 +250,7 @@
           <span style="color:rgba(255,255,255,0.7); font-size:12px;">Full request info</span>
         </div>
         <button (click)="closeDetailModal()"
-          style="flex-shrink:0; width:34px; height:34px; border-radius:50%; background:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; font-weight:700; color:#800000; line-height:1;">
+          style="flex-shrink:0; width:34px; height:34px; border-radius:50%; background:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; font-weight:700; color:var(--primary-color); line-height:1;">
           &times;
         </button>
       </div>
@@ -335,7 +335,7 @@
     <div
       style="padding:14px 20px; background:#f8fafc; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end;">
       <button (click)="closeDetailModal()"
-        style="background: linear-gradient(135deg, #800000, #5a0000); color:#fff; border:none; border-radius:8px; padding:9px 20px; font-weight:600; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:6px;">
+        style="background: linear-gradient(135deg, var(--primary-color), var(--primary-deep)); color:#fff; border:none; border-radius:8px; padding:9px 20px; font-weight:600; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:6px;">
         <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
         Close
       </button>

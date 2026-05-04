@@ -451,7 +451,7 @@ export class SalarySlipComponent implements OnInit {
               * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
               table { width: 100%; border-collapse: collapse; margin-top: 10px; }
               th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-              th { background-color: #800000 !important; color: white !important; font-weight: bold !important; text-transform: uppercase; font-size: 10pt; }
+              th { background-color: var(--primary-color) !important; color: white !important; font-weight: bold !important; text-transform: uppercase; font-size: 10pt; }
               .text-success { color: #28a745 !important; }
               .text-danger { color: #dc3545 !important; }
             </style>

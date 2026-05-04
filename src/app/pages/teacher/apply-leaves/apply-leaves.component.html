@@ -12,11 +12,11 @@
         <div class="card-header border-bottom bg-base px-32 py-24 d-flex align-items-center gap-16">
           <div
             class="w-48-px h-48-px rounded-circle text-white d-flex justify-content-center align-items-center flex-shrink-0"
-            style="background: linear-gradient(135deg, #800000, #5a0000);">
+            style="background: linear-gradient(135deg, var(--primary-color), var(--primary-deep));">
             <iconify-icon icon="solar:document-add-bold-duotone" class="text-xxl"></iconify-icon>
           </div>
           <div>
-            <h5 class="fw-bold mb-4" style="color: #800000;">New Leave Application</h5>
+            <h5 class="fw-bold mb-4" style="color: var(--primary-color);">New Leave Application</h5>
             <p class="text-secondary-light mb-0 text-sm">Fill out the details below to submit a time-off request.</p>
           </div>
           <div *ngIf="loadingProfile" class="ms-auto">
@@ -37,7 +37,7 @@
                   <div class="d-flex align-items-center gap-12 bg-base px-16 py-12 radius-8 border border-neutral-200">
                     <div
                       class="w-32-px h-32-px rounded-circle d-flex justify-content-center align-items-center text-white fw-bold"
-                      style="background: linear-gradient(135deg, #800000, #F4C430);">
+                      style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">
                       {{ employeeName ? employeeName.charAt(0) : '?' }}
                     </div>
                     <div>
@@ -125,7 +125,7 @@
                   style="cursor: pointer;" (click)="isHalfDay = !isHalfDay; onHalfDayToggle()">
                   <!-- Custom styled toggle -->
                   <div class="position-relative" style="width: 44px; height: 24px; flex-shrink: 0;">
-                    <div [style.background]="isHalfDay ? '#800000' : '#e2e8f0'"
+                    <div [style.background]="isHalfDay ? 'var(--primary-color)' : '#e2e8f0'"
                       style="width:44px; height:24px; border-radius:12px; transition:background 0.3s;"
                       class="d-flex align-items-center px-1">
                       <div [style.transform]="isHalfDay ? 'translateX(20px)' : 'translateX(0)'"
@@ -140,7 +140,7 @@
                   </div>
                   <div class="ms-auto">
                     <span class="badge px-12 py-6 radius-8 fw-bold"
-                      [style.background]="isHalfDay ? '#800000' : '#f1f5f9'"
+                      [style.background]="isHalfDay ? 'var(--primary-color)' : '#f1f5f9'"
                       [style.color]="isHalfDay ? '#fff' : '#64748b'" style="font-size:11px;">
                       {{ isHalfDay ? 'ENABLED' : 'DISABLED' }}
                     </span>
@@ -204,7 +204,7 @@
                 <button type="submit"
                   class="btn d-flex align-items-center gap-2 radius-8 px-32 py-10 fw-semibold text-white premium-maroon-btn"
                   [disabled]="submitting || !staffId"
-                  style="border-radius: 8px !important; background: linear-gradient(135deg, #800000, #5a0000); border: none; box-shadow: 0 4px 14px rgba(128,0,0,0.35); transition: all 0.25s;">
+                  style="border-radius: 8px !important; background: linear-gradient(135deg, var(--primary-color), var(--primary-deep)); border: none; box-shadow: 0 4px 14px rgba(var(--primary-rgb),0.35); transition: all 0.25s;">
                   <span *ngIf="submitting" class="spinner-border spinner-border-sm" role="status"></span>
                   <iconify-icon *ngIf="!submitting" icon="solar:check-circle-bold" class="text-lg"></iconify-icon>
                   <span>{{ staffId ? 'Confirm Submit' : 'Wait for Profile...' }}</span>
