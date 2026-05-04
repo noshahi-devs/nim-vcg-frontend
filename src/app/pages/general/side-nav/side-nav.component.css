@@ -216,13 +216,14 @@
 
 :host ::ng-deep .sidebar-menu li a:hover {
     background: var(--sidebar-hover);
-    color: var(--secondary-color) !important;
-    transform: translateX(2px);
+    color: #ffffff !important; /* Ensure text is white on hover for best contrast */
+    transform: translateX(4px);
 }
 
 :host ::ng-deep .sidebar-menu li a:hover i,
 :host ::ng-deep .sidebar-menu li a:hover iconify-icon {
-    color: var(--secondary-color) !important;
+    color: #ffffff !important; /* Force icons to white on hover */
+    opacity: 1;
 }
 
 :host ::ng-deep .sidebar-menu li a .menu-icon,
@@ -233,9 +234,20 @@
 }
 
 :host ::ng-deep .sidebar-menu li.dropdown>a::after {
+    content: "\ea4e" !important; /* remixicon arrow down */
+    font-family: 'remixicon' !important;
+    position: absolute;
+    inset-inline-end: 0.78rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
     color: inherit;
-    opacity: 0.8;
-    content: none !important; /* Prevent double icons */
+    opacity: 0.6;
+    transition: transform 0.3s ease;
+}
+
+:host ::ng-deep .sidebar-menu li.dropdown.open>a::after {
+    transform: translateY(-50%) rotate(180deg);
 }
 
 :host ::ng-deep .sidebar-menu li>a.active-page,
