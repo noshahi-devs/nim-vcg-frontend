@@ -41,8 +41,8 @@ export const WavyAlert = (
     type === 'error'
       ? 'solar:danger-bold'
       : type === 'success'
-      ? 'solar:check-circle-bold'
-      : 'solar:notification-lines-bold';
+        ? 'solar:check-circle-bold'
+        : 'solar:notification-lines-bold';
   const color =
     type === 'error' ? 'var(--primary-color)' : type === 'success' ? '#10b981' : '#f59e0b';
   const lightColor =

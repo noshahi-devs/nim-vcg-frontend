@@ -8,6 +8,7 @@ import { SessionService } from '../../../services/session.service';
 import { AppConfigService } from '../../../services/app-config.service';
 import { AcademicYear } from '../../../Models/academic-year';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
+import { PopupService } from '../../../services/popup.service';
 import Swal from '../../../swal';
 
 @Component({
@@ -44,11 +45,7 @@ export class GeneralSettingsComponent implements OnInit {
     showConfirmModal = false;
     showDeleteConfirmModal = false;
     idToDelete: number | null = null;
-    showFeedbackModal = false;
-    feedbackType: 'success' | 'error' | 'warning' = 'success';
-    feedbackTitle = '';
-    feedbackMessage = '';
-    isSaving = false;
+    isProcessing = false;
 
     // Academic Session Management
     academicYears: AcademicYear[] = [];
@@ -59,7 +56,8 @@ export class GeneralSettingsComponent implements OnInit {
         private notificationService: NotificationService,
         private academicYearService: AcademicYearService,
         private sessionService: SessionService,
-        private appConfig: AppConfigService
+        private appConfig: AppConfigService,
+        private popup: PopupService
     ) { }
 
     ngOnInit(): void {
@@ -98,7 +96,7 @@ export class GeneralSettingsComponent implements OnInit {
 
     addSession() {
         if (!this.newSessionName) {
-            this.showFeedback('warning', 'Session Name Required', 'Please enter a name for the new academic session (e.g. 2024-25).');
+            this.popup.warning('Please enter a name for the new academic session (e.g. 2024-25).', 'Session Name Required');
             return;
         }
 
@@ -107,17 +105,20 @@ export class GeneralSettingsComponent implements OnInit {
             name: this.newSessionName
         };
 
-        this.isSaving = true;
+        this.isProcessing = true;
+        this.popup.loading('Adding academic session...');
         this.academicYearService.createAcademicYear(newSession).subscribe({
             next: () => {
-                this.isSaving = false;
-                this.showFeedback('success', 'Session Added', `Academic session <b>${this.newSessionName}</b> has been created.`);
+                this.isProcessing = false;
+                this.popup.closeLoading();
+                this.popup.success('Session Added', `Academic session <b>${this.newSessionName}</b> has been created.`);
                 this.newSessionName = '';
                 this.loadAcademicYears();
             },
             error: () => {
-                this.isSaving = false;
-                this.showFeedback('error', 'Update Failed', 'Failed to add new academic session.');
+                this.isProcessing = false;
+                this.popup.closeLoading();
+                this.popup.error('Update Failed', 'Failed to add new academic session.');
             }
         });
     }
@@ -135,20 +136,23 @@ export class GeneralSettingsComponent implements OnInit {
     confirmDeleteSession() {
         if (this.idToDelete === null) return;
 
-        this.isSaving = true;
+        this.isProcessing = true;
         this.showDeleteConfirmModal = false;
+        this.popup.loading('Deleting academic session...');
 
         this.academicYearService.deleteAcademicYear(this.idToDelete).subscribe({
             next: () => {
-                this.isSaving = false;
+                this.isProcessing = false;
+                this.popup.closeLoading();
                 this.idToDelete = null;
-                this.showFeedback('success', 'Session Deleted', 'The academic session has been removed.');
+                this.popup.deleted('Academic Session');
                 this.loadAcademicYears();
             },
             error: () => {
-                this.isSaving = false;
+                this.isProcessing = false;
+                this.popup.closeLoading();
                 this.idToDelete = null;
-                this.showFeedback('error', 'Deletion Failed', 'Failed to delete the academic session.');
+                this.popup.error('Deletion Failed', 'Failed to delete the academic session.');
             }
         });
     }
@@ -162,8 +166,9 @@ export class GeneralSettingsComponent implements OnInit {
     }
 
     confirmUpdateGeneral() {
-        this.isSaving = true;
+        this.isProcessing = true;
         this.showConfirmModal = false;
+        this.popup.loading('Saving institute settings...');
 
         const settingsToSend: SystemSetting[] = Object.keys(this.generalSettings).map(key => ({
             settingKey: key,
@@ -173,53 +178,50 @@ export class GeneralSettingsComponent implements OnInit {
 
         this.settingsService.updateGeneralSettings(settingsToSend).subscribe({
             next: () => {
-                this.isSaving = false;
-                this.showFeedback('success', 'Settings Saved', 'General institute settings have been updated successfully.');
+                this.isProcessing = false;
+                this.popup.closeLoading();
+                this.popup.saved('General Settings');
                 this.sessionService.refreshSession(true);
                 this.appConfig.loadConfig().subscribe();
             },
             error: () => {
-                this.isSaving = false;
-                this.showFeedback('error', 'Save Failed', 'An unexpected error occurred while saving general settings.');
+                this.isProcessing = false;
+                this.popup.closeLoading();
+                this.popup.error('Save Failed', 'An unexpected error occurred while saving general settings.');
             }
         });
     }
 
-    showFeedback(type: 'success' | 'error' | 'warning', title: string, message: string) {
-        this.feedbackType = type;
-        this.feedbackTitle = title;
-        this.feedbackMessage = message;
-        this.showFeedbackModal = true;
-    }
-
-    closeFeedback() {
-        this.showFeedbackModal = false;
-    }
-
     saveNotifications() {
-        this.isSaving = true;
+        this.isProcessing = true;
+        this.popup.loading('Updating notification preferences...');
         this.settingsService.updateNotificationSettings(this.notificationSettings).subscribe({
             next: () => {
-                this.isSaving = false;
-                this.showFeedback('success', 'Notifications Updated', 'Your notification preferences have been saved.');
+                this.isProcessing = false;
+                this.popup.closeLoading();
+                this.popup.success('Notifications Updated', 'Your notification preferences have been saved.');
             },
             error: () => {
-                this.isSaving = false;
-                this.showFeedback('error', 'Update Failed', 'Failed to update notification settings.');
+                this.isProcessing = false;
+                this.popup.closeLoading();
+                this.popup.error('Update Failed', 'Failed to update notification settings.');
             }
         });
     }
 
     savePaymentGateway(setting: PaymentGatewaySetting) {
-        this.isSaving = true;
+        this.isProcessing = true;
+        this.popup.loading(`Updating ${setting.gatewayName}...`);
         this.settingsService.updatePaymentGatewaySetting(setting).subscribe({
             next: () => {
-                this.isSaving = false;
-                this.showFeedback('success', 'Gateway Updated', `<b>${setting.gatewayName}</b> settings have been updated.`);
+                this.isProcessing = false;
+                this.popup.closeLoading();
+                this.popup.success('Gateway Updated', `<b>${setting.gatewayName}</b> settings have been updated.`);
             },
             error: () => {
-                this.isSaving = false;
-                this.showFeedback('error', 'Update Failed', `Failed to update <b>${setting.gatewayName}</b>.`);
+                this.isProcessing = false;
+                this.popup.closeLoading();
+                this.popup.error('Update Failed', `Failed to update <b>${setting.gatewayName}</b>.`);
             }
         });
     }
@@ -240,11 +242,11 @@ export class GeneralSettingsComponent implements OnInit {
         if (file) {
             // Check file type and size if needed
             if (!file.type.match(/image\/*/)) {
-                this.showFeedback('error', 'Invalid File', 'Please select an image file (PNG, JPG).');
+                this.popup.error('Invalid File', 'Please select an image file (PNG, JPG).');
                 return;
             }
             if (file.size > 2 * 1024 * 1024) { // 2MB limit
-                this.showFeedback('warning', 'File Too Large', 'Logo image should not exceed 2MB.');
+                this.popup.warning('File Too Large', 'Logo image should not exceed 2MB.');
                 return;
             }
 
@@ -281,6 +283,3 @@ export class GeneralSettingsComponent implements OnInit {
         }
     }
 }
-
-
-

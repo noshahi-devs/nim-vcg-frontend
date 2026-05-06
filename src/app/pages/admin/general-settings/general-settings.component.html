@@ -463,9 +463,9 @@
         </p>
         <div class="pm-actions">
             <button class="pm-btn pm-cancel" (click)="cancelUpdate()">Discard</button>
-            <button class="pm-btn pm-save" (click)="confirmUpdateGeneral()" [disabled]="isSaving">
-                <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
-                {{ isSaving ? 'Saving...' : 'Yes, Update' }}
+            <button class="pm-btn pm-save" (click)="confirmUpdateGeneral()" [disabled]="isProcessing">
+                <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
+                {{ isProcessing ? 'Saving...' : 'Yes, Update' }}
             </button>
         </div>
     </div>
@@ -483,36 +483,12 @@
         </p>
         <div class="pm-actions">
             <button class="pm-btn pm-cancel" (click)="cancelDelete()">Cancel</button>
-            <button class="pm-btn pm-error-btn" (click)="confirmDeleteSession()" [disabled]="isSaving" style="color:white; border:none;">
-                <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
-                {{ isSaving ? 'Deleting...' : 'Yes, Delete' }}
+            <button class="pm-btn pm-error-btn" (click)="confirmDeleteSession()" [disabled]="isProcessing" style="color:white; border:none;">
+                <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" style="font-size: 20px;"></iconify-icon>
+                {{ isProcessing ? 'Deleting...' : 'Yes, Delete' }}
             </button>
         </div>
     </div>
 </div>
 
-<!-- 3. UNIFIED FEEDBACK MODAL -->
-<div class="premium-overlay" *ngIf="showFeedbackModal">
-    <div class="premium-modal">
-        <div class="pm-icon-ring" [ngClass]="{
-           'success-ring': feedbackType === 'success',
-           'danger-ring': feedbackType === 'error',
-           'warning-ring': feedbackType === 'warning'
-         }">
-            <iconify-icon [icon]="feedbackType === 'success' ? 'solar:check-circle-bold' : 
-                        feedbackType === 'error' ? 'solar:danger-bold' : 'solar:notification-lines-remove-bold'"
-                style="font-size: 38px; color: #fff;"></iconify-icon>
-        </div>
-        <h3 class="pm-title">{{ feedbackTitle }}</h3>
-        <p class="pm-subtitle" [innerHTML]="feedbackMessage"></p>
-        <div class="pm-actions mt-4">
-            <button class="pm-btn pm-Ok" [ngClass]="{
-                'pm-success-btn': feedbackType === 'success',
-                'pm-error-btn': feedbackType === 'error',
-                'pm-warning-btn': feedbackType === 'warning'
-              }" (click)="closeFeedback()" style="border:none;">
-                Got it
-            </button>
-        </div>
-    </div>
-</div>
+<!-- MODAL SYSTEM: Handled by PopupService -->
