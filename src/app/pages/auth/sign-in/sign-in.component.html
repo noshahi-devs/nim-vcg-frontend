@@ -12,101 +12,116 @@
 <div class="auth-wrapper" *ngIf="config" [ngClass]="'design-' + (config?.loginDesign || 'modern')">
   <!-- Dynamic Background Layers -->
   <div class="design-background-elements">
-    <!-- Modern: Split shapes -->
-    <div class="split-side-panel" *ngIf="config?.loginDesign === 'modern'">
+    <!-- Modern: Futuristic Rotating Circle (Moved to Modern as requested) -->
+    <ng-container *ngIf="config?.loginDesign === 'modern' || !config?.loginDesign">
+      <div class="futuristic-rotating-container">
+        <div class="rotating-ring"></div>
+        <div class="rotating-dots"></div>
+      </div>
+    </ng-container>
+
+    <!-- Glass: Liquid Waves -->
+    <ng-container *ngIf="config?.loginDesign === 'glass'">
+      <div class="liquid-wave lw-1"></div>
+      <div class="liquid-wave lw-2"></div>
+      <div class="liquid-wave lw-3"></div>
+    </ng-container>
+
+    <!-- Geometric: Hexagon Modern -->
+    <ng-container *ngIf="config?.loginDesign === 'geometric'">
+      <div class="hexagon-bg"></div>
+      <div class="floating-hex hex-1"></div>
+      <div class="floating-hex hex-2"></div>
+    </ng-container>
+
+    <!-- Futuristic: Green Wave Split (Moved here) -->
+    <div class="split-side-panel" *ngIf="config?.loginDesign === 'futuristic'">
+      <div class="panel-image-bg"></div>
       <div class="panel-content">
-        <div class="floating-institute-badge">
-          <iconify-icon icon="solar:star-shine-bold-duotone"></iconify-icon>
-          <span>Premium Portal</span>
+        <div class="welcome-section">
+          <div class="welcome-logo">
+            <img [src]="config?.instituteLogo || 'assets/images/Vision College emblem design.png'" alt="Logo">
+          </div>
+          <h2 class="welcome-title">Welcome Back!</h2>
+          <p class="welcome-text">To stay connected with us please login with your personal info</p>
         </div>
       </div>
+      <div class="modern-curve-divider"></div>
     </div>
 
-    <!-- Glass: Floating orbs -->
-    <ng-container *ngIf="config?.loginDesign === 'glass'">
-      <div class="glass-orb orb-1"></div>
-      <div class="glass-orb orb-2"></div>
-      <div class="glass-orb orb-3"></div>
+    <!-- Minimalist: Clean Accents -->
+    <ng-container *ngIf="config?.loginDesign === 'minimal'">
+      <div class="minimal-accent top-right"></div>
+      <div class="minimal-accent bottom-left"></div>
     </ng-container>
-
-    <!-- Geometric: Abstract shapes -->
-    <ng-container *ngIf="config?.loginDesign === 'geometric'">
-      <div class="geo-blob"></div>
-      <div class="geo-shape triangle"></div>
-      <div class="geo-shape circle"></div>
-      <div class="geo-shape square"></div>
-      <div class="geo-grid-dots"></div>
-    </ng-container>
-
-    <!-- Futuristic: Mesh particles -->
-    <canvas id="windsurf-canvas" class="windsurf-canvas" *ngIf="config?.loginDesign === 'futuristic' || !config?.loginDesign"></canvas>
-    <div class="futuristic-glow" *ngIf="config?.loginDesign === 'futuristic'"></div>
-
-    <!-- Minimalist: Just clean -->
-    <div class="minimal-grain" *ngIf="config?.loginDesign === 'minimal'"></div>
   </div>
 
   <div class="premium-auth-card">
+    <div class="auth-card-avatar" *ngIf="config?.loginDesign === 'geometric' || config?.loginDesign === 'modern'">
+      <img [src]="config?.instituteLogo || 'assets/images/Vision College emblem design.png'" alt="Logo"
+        class="avatar-logo">
+    </div>
     <div class="auth-card-inner">
-      <div class="auth-header">
-        <div class="auth-logo-wrapper">
-          <img [src]="config?.instituteLogo || 'assets/images/Vision College emblem design.png'" [alt]="config?.instituteName">
+      <div class="auth-header" [class.hidden]="config?.loginDesign === 'futuristic'">
+        <div class="auth-logo-wrapper" *ngIf="config?.loginDesign !== 'modern'">
+          <img [src]="config?.instituteLogo || 'assets/images/Vision College emblem design.png'"
+            [alt]="config?.instituteName">
         </div>
         <h1 class="auth-header-title">Welcome Back</h1>
         <p class="auth-header-subtitle">Access your {{ config?.instituteName || 'Portal' }} account</p>
       </div>
 
-        <form [formGroup]="signInForm" (ngSubmit)="submit()">
-          <!-- Email -->
-          <div class="form-group-premium">
-            <label class="field-label">Email Address</label>
-            <div class="icon-field">
-              <span class="icon">
-                <iconify-icon icon="mage:email"></iconify-icon>
-              </span>
-              <input type="email" formControlName="email" class="field-input" placeholder="admin@nimvcg.com"
-                autocomplete="username">
-            </div>
+      <form [formGroup]="signInForm" (ngSubmit)="submit()">
+        <!-- Email -->
+        <div class="form-group-premium">
+          <label class="field-label">Email Address</label>
+          <div class="icon-field">
+            <span class="icon">
+              <iconify-icon icon="mage:email"></iconify-icon>
+            </span>
+            <input type="email" formControlName="email" class="field-input" placeholder="admin@nimvcg.com"
+              autocomplete="username">
           </div>
+        </div>
 
-          <!-- Password -->
-          <div class="form-group-premium">
-            <label class="field-label">Password</label>
-            <div class="icon-field">
-              <span class="icon">
-                <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
-              </span>
-              <input type="password" formControlName="password" class="field-input" placeholder="••••••••"
-                autocomplete="current-password" id="password-field">
-              <iconify-icon icon="solar:eye-outline" class="toggle-password" onclick="
+        <!-- Password -->
+        <div class="form-group-premium">
+          <label class="field-label">Password</label>
+          <div class="icon-field">
+            <span class="icon">
+              <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
+            </span>
+            <input type="password" formControlName="password" class="field-input" placeholder="••••••••"
+              autocomplete="current-password" id="password-field">
+            <iconify-icon icon="solar:eye-outline" class="toggle-password" onclick="
                 const input = document.getElementById('password-field');
                 input.type = input.type === 'password' ? 'text' : 'password';
                 this.setAttribute('icon', input.type === 'password' ? 'solar:eye-outline' : 'solar:eye-closed-outline');
               "></iconify-icon>
-            </div>
           </div>
+        </div>
 
-          <!-- Remember me -->
-          <div class="d-flex justify-content-between align-items-center mb-16 mt-8">
-            <div class="form-check style-check d-flex align-items-center m-0">
-              <input type="checkbox" class="form-check-input border border-neutral-300" formControlName="remember"
-                id="remember" style="width: 16px; height: 16px; border-radius: 4px; cursor: pointer;">
-              <label class="form-check-label text-sm fw-medium ms-2 cursor-pointer text-slate-700"
-                for="remember">Remember me</label>
-            </div>
-            <a href="javascript:void(0)" class="text-maroon fw-bold text-sm text-decoration-none hover-yellow">Forgot
-              Password?</a>
+        <!-- Remember me -->
+        <div class="d-flex justify-content-between align-items-center mb-16 mt-8">
+          <div class="form-check style-check d-flex align-items-center m-0">
+            <input type="checkbox" class="form-check-input border border-neutral-300" formControlName="remember"
+              id="remember" style="width: 16px; height: 16px; border-radius: 4px; cursor: pointer;">
+            <label class="form-check-label text-sm fw-medium ms-2 cursor-pointer text-slate-700" for="remember">Remember
+              me</label>
           </div>
+          <a href="javascript:void(0)" class="text-maroon fw-bold text-sm text-decoration-none hover-yellow">Forgot
+            Password?</a>
+        </div>
 
-          <!-- Submit button -->
-          <button type="submit" class="btn-primary-gradient" [disabled]="isSubmitting">
-            <iconify-icon icon="solar:login-3-outline" class="text-xl" *ngIf="!isSubmitting"></iconify-icon>
-            <iconify-icon icon="tabler:loader-2" class="text-xl icon-spin" *ngIf="isSubmitting"></iconify-icon>
-            {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
-          </button>
+        <!-- Submit button -->
+        <button type="submit" class="btn-primary-gradient" [disabled]="isSubmitting">
+          <iconify-icon icon="solar:login-3-outline" class="text-xl" *ngIf="!isSubmitting"></iconify-icon>
+          <iconify-icon icon="tabler:loader-2" class="text-xl icon-spin" *ngIf="isSubmitting"></iconify-icon>
+          {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
+        </button>
 
-          <!-- Error is handled by SweetAlert now -->
-        </form>
+        <!-- Error is handled by SweetAlert now -->
+      </form>
     </div>
   </div>
 </div>

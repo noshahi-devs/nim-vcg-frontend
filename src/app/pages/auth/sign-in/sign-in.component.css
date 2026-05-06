@@ -41,8 +41,13 @@
 }
 
 @keyframes spin-reverse {
-    from { transform: rotate(360deg); }
-    to { transform: rotate(0deg); }
+    from {
+        transform: rotate(360deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
 }
 
 .loader-logo img {
@@ -53,8 +58,17 @@
 }
 
 @keyframes pulseLogo {
-    0%, 100% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.1); opacity: 1; }
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
 }
 
 .auth-wrapper {
@@ -71,8 +85,13 @@
 }
 
 @keyframes fadeInWrapper {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .design-background-elements {
@@ -82,162 +101,281 @@
     pointer-events: none;
 }
 
-/* ─── 1. MODERN SPLIT DESIGN ─── */
+/* ─── 1. MODERN: FUTURISTIC ROTATING CIRCLE (Moved as requested) ─── */
 .auth-wrapper.design-modern {
-    background: #f8fafc;
-    justify-content: flex-end;
-    padding-right: 10%;
-}
-
-.split-side-panel {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-deep));
-    clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: slideInLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.floating-institute-badge {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 20px 32px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    transform: rotate(-5deg);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-}
-
-.floating-institute-badge iconify-icon {
-    font-size: 48px;
-    color: var(--secondary-color);
-}
-
-/* ─── 2. GLASSMORPHISM DESIGN ─── */
-.auth-wrapper.design-glass {
-    background: radial-gradient(circle at top right, #1e1b4b, #020617);
-}
-
-.glass-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    z-index: -1;
-    opacity: 0.8; /* Increased opacity for better visibility */
-    animation: floatOrb 20s infinite alternate ease-in-out;
-}
-
-.orb-1 { width: 400px; height: 400px; background: var(--primary-color); top: -100px; left: -100px; }
-.orb-2 { width: 300px; height: 300px; background: #3b82f6; bottom: -50px; right: 10%; animation-delay: -5s; }
-.orb-3 { width: 250px; height: 250px; background: var(--secondary-color); top: 30%; right: -50px; animation-delay: -10s; }
-
-.design-glass .premium-auth-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.15); /* Slightly clearer border */
-    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
-}
-
-.design-glass .field-label, .design-glass .auth-header-subtitle, .design-glass .form-check-label {
-    color: rgba(255, 255, 255, 0.8); /* Higher contrast */
-}
-
-/* ─── 3. GEOMETRIC ART DESIGN ─── */
-.auth-wrapper.design-geometric {
-    background: #060b18; /* Even deeper dark for better contrast */
-}
-
-.geo-blob {
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    background: var(--primary-color);
-    border-radius: 40% 60% 70% 30% / 40% 40% 60% 60%;
-    top: -200px;
-    right: -200px;
-    opacity: 0.4; /* High visibility */
-    animation: morphBlob 15s linear infinite;
-    filter: blur(40px);
-}
-
-.geo-shape {
-    position: absolute;
-    background: rgba(255,255,255,0.12); /* High visibility */
-    border: 1.5px solid rgba(255,255,255,0.15);
-    animation: rotateShape 25s linear infinite;
-    backdrop-filter: blur(2px);
-}
-
-.triangle { width: 0; height: 0; border-left: 50px solid transparent; border-right: 50px solid transparent; border-bottom: 80px solid rgba(255,255,255,0.15); top: 15%; left: 10%; border-radius: 0; }
-.circle { width: 120px; height: 120px; border-radius: 50%; bottom: 20%; left: 5%; }
-.square { width: 80px; height: 80px; top: 20%; right: 5%; transform: rotate(45deg); }
-
-.geo-grid-dots {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(255,255,255,0.2) 1.5px, transparent 1.5px); /* Stronger dots */
-    background-size: 40px 40px;
-    z-index: -1;
-    opacity: 0.5;
-}
-
-/* ─── 4. MINIMALIST PREMIUM DESIGN ─── */
-.auth-wrapper.design-minimal {
-    background: #ffffff;
-}
-
-.minimal-grain {
-    position: absolute;
-    inset: 0;
-    background: url('https://grainy-gradients.vercel.app/noise.svg');
-    opacity: 0.05;
-    pointer-events: none;
-}
-
-.design-minimal .premium-auth-card {
-    background: #ffffff;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-    border: 1px solid #f1f5f9;
-    border-radius: 20px;
-    padding: 60px 48px;
-}
-
-/* ─── 5. FUTURISTIC MESH DESIGN ─── */
-.auth-wrapper.design-futuristic {
     background: #020617;
 }
 
-.windsurf-canvas {
+.futuristic-rotating-container {
     position: absolute;
     inset: 0;
-    opacity: 0.8; /* Increased opacity for particles */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: -1;
 }
 
-.futuristic-glow {
+.rotating-ring {
     position: absolute;
+    width: 600px;
+    height: 600px;
+    border: 4px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: spin 30s linear infinite;
+}
+
+.rotating-dots {
+    position: absolute;
+    width: 650px;
+    height: 650px;
+    border: 2px dotted rgba(255, 165, 0, 0.3);
+    /* High-end Orange accents */
+    border-radius: 50%;
+    animation: spin-reverse 45s linear infinite;
+}
+
+.design-modern .premium-auth-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: white;
+    padding-top: 20px;
+    /* Override the margin added by core card rule */
+    margin-top: 0;
+}
+
+.design-modern .auth-card-avatar {
+    top: -55px;
+    background: white;
+    padding: 12px;
+}
+
+.avatar-logo {
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 50% 50%, rgba(var(--primary-rgb), 0.25) 0%, transparent 70%); /* Stronger glow */
+    object-fit: contain;
 }
 
-.design-futuristic .premium-auth-card {
-    background: rgba(15, 23, 42, 0.9); /* Slightly more opaque for content focus */
-    border: 1.5px solid rgba(var(--primary-rgb), 0.4);
-    box-shadow: 0 0 60px rgba(var(--primary-rgb), 0.25);
+/* Mobile-only logo - hidden by default, shown only on small screens inside card */
+.mobile-only-logo {
+    display: none;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.mobile-only-logo img {
+    width: 80px;
+    height: 80px;
+    background: white;
+    padding: 10px;
+    border-radius: 50%;
+    object-fit: contain;
+    box-shadow: 0 5px 20px rgba(255,255,255,0.2);
+}
+
+.design-modern .field-label,
+.design-modern .auth-header-subtitle,
+.design-modern .form-check-label {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.design-modern .field-input {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
     color: white;
 }
 
-/* ─── CORE CARD STYLES ─── */
+.design-modern .field-input:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-color);
+}
+
+/* ─── 2. GLASS: LIQUID WAVES (Inspired by Image 4) ─── */
+.auth-wrapper.design-glass {
+    background: #e0e7ff;
+}
+
+.liquid-wave {
+    position: absolute;
+    width: 150%;
+    height: 60%;
+    background: linear-gradient(135deg, #4f46e5, #818cf8);
+    opacity: 0.2;
+    z-index: -1;
+}
+
+.lw-1 {
+    top: -20%;
+    left: -20%;
+    border-radius: 40% 60% 70% 30% / 40% 40% 60% 60%;
+    animation: morphWave 15s linear infinite;
+}
+
+.lw-2 {
+    bottom: -20%;
+    right: -20%;
+    background: #c026d3;
+    border-radius: 60% 40% 30% 70% / 60% 60% 40% 40%;
+    animation: morphWave 20s linear infinite reverse;
+}
+
+@keyframes morphWave {
+
+    0%,
+    100% {
+        border-radius: 40% 60% 70% 30% / 40% 40% 60% 60%;
+    }
+
+    50% {
+        border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+    }
+}
+
+/* ─── 3. GEOMETRIC: HEXAGON MODERN (Inspired by Image 5) ─── */
+.auth-wrapper.design-geometric {
+    background: #0f172a;
+}
+
+.hexagon-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+    z-index: -1;
+}
+
+.floating-hex {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: rgba(30, 64, 175, 0.2);
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    animation: floatOrb 10s infinite alternate;
+}
+
+.hex-1 {
+    top: 10%;
+    left: 10%;
+}
+
+.hex-2 {
+    bottom: 10%;
+    right: 10%;
+    animation-delay: -5s;
+}
+
+.design-geometric .premium-auth-card {
+    background: #1e3a8a;
+    border: none;
+    clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+    padding: 80px 60px;
+    color: white;
+}
+
+.auth-card-avatar {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    color: #1e3a8a;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+}
+
+/* ─── 4. FUTURISTIC: GREEN WAVE SPLIT (Moved here) ─── */
+.auth-wrapper.design-futuristic {
+    background: #ffffff;
+    justify-content: flex-end;
+}
+
+.auth-wrapper.design-futuristic .split-side-panel {
+    width: 45%;
+    background: linear-gradient(135deg, #10b981, #059669);
+    /* High-end Emerald Green */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: none;
+    overflow: visible;
+}
+
+.modern-curve-divider {
+    position: absolute;
+    top: 0;
+    right: -150px;
+    height: 100%;
+    width: 300px;
+    background: #10b981;
+    border-radius: 50% 0 0 50%;
+    transform: scaleX(1.5);
+    z-index: 1;
+}
+
+.welcome-section {
+    text-align: center;
+    color: white;
+    padding: 40px;
+    z-index: 10;
+}
+
+.welcome-logo img {
+    width: 100px;
+    height: 100px;
+    background: white;
+    padding: 15px;
+    border-radius: 50%;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.welcome-text {
+    font-size: 16px;
+    opacity: 0.9;
+    max-width: 300px;
+}
+
+.auth-header.hidden {
+    display: none;
+}
+
+/* ─── 5. MINIMALIST: CLEAN ACCENTS (Inspired by Image 2) ─── */
+.auth-wrapper.design-minimal {
+    background: #f8fafc;
+}
+
+.minimal-accent {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    opacity: 0.1;
+}
+
+.top-right {
+    top: -100px;
+    right: -100px;
+}
+
+.bottom-left {
+    bottom: -100px;
+    left: -100px;
+}
+
+/* ─── CORE PREMIUM CARD ─── */
 .premium-auth-card {
     max-width: 480px;
     width: 95%;
@@ -248,6 +386,16 @@
     position: relative;
     z-index: 10;
     animation: cardEntrance 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* For designs with floating avatar above card, add top margin */
+.auth-card-avatar ~ .auth-card-inner {
+    margin-top: 0;
+}
+
+/* design-modern: the card has transparent bg, no need for extra spacing */
+.design-modern .premium-auth-card {
+    margin-top: 80px;
 }
 
 .auth-header {
@@ -265,7 +413,7 @@
     height: 100px;
     width: auto;
     object-fit: contain;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
 }
 
 .auth-header-title {
@@ -331,7 +479,7 @@
     outline: none;
 }
 
-.field-input:focus ~ .icon {
+.field-input:focus~.icon {
     color: var(--primary-color);
 }
 
@@ -399,58 +547,152 @@
 
 /* ─── ANIMATIONS ─── */
 @keyframes cardEntrance {
-    from { opacity: 0; transform: translateY(30px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 @keyframes slideInLeft {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(0); }
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
 }
 
 @keyframes floatOrb {
-    from { transform: translate(0, 0); }
-    to { transform: translate(30px, 50px); }
+    from {
+        transform: translate(0, 0);
+    }
+
+    to {
+        transform: translate(30px, 50px);
+    }
 }
 
 @keyframes morphBlob {
-    0%, 100% { border-radius: 40% 60% 70% 30% / 40% 40% 60% 60%; }
-    33% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
-    66% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
+
+    0%,
+    100% {
+        border-radius: 40% 60% 70% 30% / 40% 40% 60% 60%;
+    }
+
+    33% {
+        border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+    }
+
+    66% {
+        border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
+    }
 }
 
 @keyframes rotateShape {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes logoPop {
-    from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    from {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-/* Responsive Overrides */
+/* ─── RESPONSIVE OVERRIDES ─── */
 @media (max-width: 992px) {
-    .design-modern {
-        justify-content: center;
-        padding-right: 16px;
+    .auth-wrapper {
+        padding: 20px;
     }
+
     .split-side-panel {
         display: none;
+    }
+
+    .rotating-ring {
+        width: 80vw !important;
+        height: 80vw !important;
+    }
+
+    .rotating-dots {
+        width: 88vw !important;
+        height: 88vw !important;
     }
 }
 
 @media (max-width: 576px) {
-    .premium-auth-card {
-        padding: 40px 24px;
-        border-radius: 24px;
+    /* Hide the absolute-positioned floating avatar on mobile (it clips) */
+    .design-modern .auth-card-avatar {
+        display: none !important;
     }
+
+    /* Show the inline logo inside the card instead */
+    .mobile-only-logo {
+        display: block !important;
+    }
+
+    /* Remove top margin added for desktop floating logo */
+    .design-modern .premium-auth-card {
+        margin-top: 0 !important;
+        padding: 30px 16px !important;
+        max-width: calc(100vw - 32px);
+    }
+
+    .rotating-ring {
+        width: 90vw !important;
+        height: 90vw !important;
+        border-width: 3px !important;
+    }
+
+    .rotating-dots {
+        width: 96vw !important;
+        height: 96vw !important;
+        border-width: 2px !important;
+    }
+
+    /* Stack Remember me & Forgot password on separate lines */
+    .d-flex.justify-content-between.align-items-center {
+        flex-wrap: wrap !important;
+        gap: 10px;
+    }
+
     .auth-header-title {
-        font-size: 20px !important;
+        font-size: 22px !important;
     }
-}
+}
+
+/* Fix for utility color overrides in design-modern */
+.design-modern .form-check-label {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.design-modern a.text-maroon {
+    color: var(--secondary-color) !important;
+}
