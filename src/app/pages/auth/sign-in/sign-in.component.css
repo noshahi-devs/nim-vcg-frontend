@@ -170,7 +170,7 @@
     padding: 10px;
     border-radius: 50%;
     object-fit: contain;
-    box-shadow: 0 5px 20px rgba(255,255,255,0.2);
+    box-shadow: 0 5px 20px rgba(255, 255, 255, 0.2);
 }
 
 .design-modern .field-label,
@@ -190,189 +190,1137 @@
     border-color: var(--primary-color);
 }
 
-/* ─── 2. GLASS: LIQUID WAVES (Inspired by Image 4) ─── */
+/* ═══════════════════════════════════════════════════════════
+   2. GLASS: AURORA GLASSMORPHISM — Dark + Frosted Glass Card
+   ═══════════════════════════════════════════════════════════ */
 .auth-wrapper.design-glass {
-    background: #e0e7ff;
+    background: #060d1f;
+    /* Deep dark navy */
+    justify-content: center;
+    align-items: center;
 }
 
-.liquid-wave {
+/* Blurred color orbs for aurora effect */
+.glass-orb {
     position: absolute;
-    width: 150%;
-    height: 60%;
-    background: linear-gradient(135deg, #4f46e5, #818cf8);
-    opacity: 0.2;
-    z-index: -1;
-}
-
-.lw-1 {
-    top: -20%;
-    left: -20%;
-    border-radius: 40% 60% 70% 30% / 40% 40% 60% 60%;
-    animation: morphWave 15s linear infinite;
-}
-
-.lw-2 {
-    bottom: -20%;
-    right: -20%;
-    background: #c026d3;
-    border-radius: 60% 40% 30% 70% / 60% 60% 40% 40%;
-    animation: morphWave 20s linear infinite reverse;
-}
-
-@keyframes morphWave {
-
-    0%,
-    100% {
-        border-radius: 40% 60% 70% 30% / 40% 40% 60% 60%;
-    }
-
-    50% {
-        border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
-    }
-}
-
-/* ─── 3. GEOMETRIC: HEXAGON MODERN (Inspired by Image 5) ─── */
-.auth-wrapper.design-geometric {
-    background: #0f172a;
-}
-
-.hexagon-bg {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
-    z-index: -1;
-}
-
-.floating-hex {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    background: rgba(30, 64, 175, 0.2);
-    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-    animation: floatOrb 10s infinite alternate;
-}
-
-.hex-1 {
-    top: 10%;
-    left: 10%;
-}
-
-.hex-2 {
-    bottom: 10%;
-    right: 10%;
-    animation-delay: -5s;
-}
-
-.design-geometric .premium-auth-card {
-    background: #1e3a8a;
-    border: none;
-    clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
-    padding: 80px 60px;
-    color: white;
-}
-
-.auth-card-avatar {
-    position: absolute;
-    top: -40px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 80px;
-    background: white;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 60px;
-    color: #1e3a8a;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    z-index: 20;
+    pointer-events: none;
+    animation: floatOrb 18s ease-in-out infinite alternate;
+    filter: blur(80px);
 }
 
-/* ─── 4. FUTURISTIC: GREEN WAVE SPLIT (Moved here) ─── */
-.auth-wrapper.design-futuristic {
-    background: #ffffff;
-    justify-content: flex-end;
+.glass-orb-1 {
+    width: 600px;
+    height: 600px;
+    background: var(--primary-color);
+    top: -200px;
+    right: -100px;
+    opacity: 0.45;
+    animation-duration: 20s;
 }
 
-.auth-wrapper.design-futuristic .split-side-panel {
-    width: 45%;
-    background: linear-gradient(135deg, #10b981, #059669);
-    /* High-end Emerald Green */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    clip-path: none;
-    overflow: visible;
+.glass-orb-2 {
+    width: 500px;
+    height: 500px;
+    background: var(--secondary-color);
+    bottom: -150px;
+    left: -120px;
+    opacity: 0.4;
+    animation-duration: 25s;
+    animation-delay: -8s;
 }
 
-.modern-curve-divider {
+.glass-orb-3 {
+    width: 350px;
+    height: 350px;
+    background: color-mix(in srgb, var(--primary-color) 60%, var(--secondary-color));
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    opacity: 0.2;
+    animation-duration: 15s;
+    animation-delay: -4s;
+}
+
+/* ─── Network Particles Canvas ─── */
+.network-canvas {
     position: absolute;
     top: 0;
-    right: -150px;
+    left: 0;
+    width: 100%;
     height: 100%;
-    width: 300px;
-    background: #10b981;
-    border-radius: 50% 0 0 50%;
-    transform: scaleX(1.5);
+    z-index: 1;
+    /* Above the dark background, but behind the card */
+    pointer-events: none;
+    /* Let clicks pass through */
+}
+
+
+
+/* ─── Frosted Glass Card ─── */
+.design-glass .premium-auth-card {
+    background: rgba(255, 255, 255, 0.06) !important;
+    backdrop-filter: blur(32px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(150%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 24px !important;
+    box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    padding: 44px 40px 48px !important;
+    max-width: 440px;
+    z-index: 10;
+    position: relative;
+}
+
+/* ─── Logo: centered with glow ─── */
+.design-glass .auth-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.design-glass .auth-logo-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.design-glass .auth-logo-wrapper img {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    padding: 12px;
+    object-fit: contain;
+    filter: none;
+    box-shadow:
+        0 0 30px color-mix(in srgb, var(--primary-color) 50%, transparent),
+        0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Typography ─── */
+.design-glass .auth-header-title {
+    color: #ffffff !important;
+    font-size: 26px !important;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.design-glass .auth-header-subtitle {
+    color: rgba(255, 255, 255, 0.55) !important;
+    text-align: center;
+    font-size: 13px;
+    opacity: 1 !important;
+}
+
+/* ─── GLASS FORM ─── */
+.design-glass .field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45) !important;
+    margin-bottom: 8px;
+    padding-left: 4px;
+}
+
+/* Glass input block */
+.design-glass .icon-field {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 12px !important;
+    padding: 0 16px !important;
+    gap: 10px !important;
+    position: relative !important;
+    transition: all 0.25s ease !important;
+    overflow: hidden !important;
+}
+
+.design-glass .icon-field:focus-within {
+    background: rgba(255, 255, 255, 0.11) !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 20%, transparent) !important;
+}
+
+/* Icon */
+.design-glass .icon-field .icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    color: rgba(255, 255, 255, 0.35) !important;
+    font-size: 20px !important;
+    min-width: 22px !important;
+    flex-shrink: 0 !important;
+    transition: color 0.25s !important;
+}
+
+.design-glass .icon-field:focus-within .icon {
+    color: var(--primary-color) !important;
+}
+
+/* Input */
+.design-glass .field-input {
+    flex: 1 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    height: 52px !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #ffffff !important;
+}
+
+/* Override browser autofill background/text color */
+.design-glass .field-input:-webkit-autofill,
+.design-glass .field-input:-webkit-autofill:hover,
+.design-glass .field-input:-webkit-autofill:focus,
+.design-glass .field-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+.design-glass .field-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.design-glass .field-input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Eye toggle */
+.design-glass .toggle-password {
+    position: static !important;
+    transform: none !important;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+
+.design-glass .icon-field:focus-within .toggle-password {
+    color: var(--primary-color);
+}
+
+/* Form group spacing */
+.design-glass .form-group-premium {
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+/* Remember me & Forgot Password */
+.design-glass .form-check-label {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+
+.design-glass a.text-maroon,
+.design-glass a.hover-yellow {
+    color: var(--secondary-color) !important;
+}
+
+/* Gradient button */
+.design-glass .btn-primary-gradient {
+    background: linear-gradient(135deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 70%, var(--secondary-color))) !important;
+    border-radius: 12px !important;
+    height: 52px !important;
+    width: 100% !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.4px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    margin-top: 20px !important;
+    border: none !important;
+    box-shadow:
+        0 8px 25px color-mix(in srgb, var(--primary-color) 40%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    transition: all 0.25s ease !important;
+}
+
+.design-glass .btn-primary-gradient:hover:not(:disabled) {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 14px 35px color-mix(in srgb, var(--primary-color) 50%, transparent) !important;
+}
+
+
+
+/* ═══════════════════════════════════════════════════════════
+   3. GEOMETRIC: HEXAGON MODERN — Premium Tech & Glowing Edges
+   ═══════════════════════════════════════════════════════════ */
+.auth-wrapper.design-geometric {
+    background: #090c15;
+    /* Ultra dark tech background */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Base dark mesh / glow */
+.hexagon-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: 0;
+}
+
+.hex-glow-core {
+    position: absolute;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, color-mix(in srgb, var(--primary-color) 25%, transparent) 0%, transparent 60%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Floating wireframe hexagons using background and box-shadow */
+.floating-hex {
+    position: absolute;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    animation: floatHex 12s ease-in-out infinite alternate;
     z-index: 1;
 }
 
-.welcome-section {
-    text-align: center;
+.hex-1 {
+    width: 300px;
+    height: 340px;
+    background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+    box-shadow: inset 0 0 40px color-mix(in srgb, var(--primary-color) 40%, transparent);
+    top: 5%;
+    left: 8%;
+    animation-duration: 15s;
+}
+
+.hex-2 {
+    width: 200px;
+    height: 230px;
+    background: color-mix(in srgb, var(--secondary-color) 8%, transparent);
+    box-shadow: inset 0 0 25px color-mix(in srgb, var(--secondary-color) 40%, transparent);
+    bottom: 8%;
+    right: 10%;
+    animation-delay: -3s;
+    animation-duration: 18s;
+}
+
+.hex-3 {
+    width: 120px;
+    height: 140px;
+    background: color-mix(in srgb, var(--primary-color) 10%, transparent);
+    bottom: 25%;
+    left: 15%;
+    animation-delay: -7s;
+}
+
+.hex-4 {
+    width: 80px;
+    height: 92px;
+    background: color-mix(in srgb, var(--secondary-color) 10%, transparent);
+    top: 20%;
+    right: 20%;
+    animation-delay: -2s;
+}
+
+.hex-5 {
+    width: 160px;
+    height: 185px;
+    background: rgba(255, 255, 255, 0.03);
+    top: 40%;
+    left: -50px;
+    animation-delay: -5s;
+}
+
+@keyframes floatHex {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(-40px) rotate(15deg);
+    }
+}
+
+/* ─── Geometric Card ─── */
+.design-geometric .premium-auth-card {
+    background: #111827;
+    border: 1px solid color-mix(in srgb, var(--primary-color) 30%, #374151);
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.7),
+        0 0 30px color-mix(in srgb, var(--primary-color) 15%, transparent);
+    border-radius: 12px;
+    padding: 50px 44px;
     color: white;
-    padding: 40px;
+    max-width: 440px;
+    position: relative;
     z-index: 10;
 }
 
-.welcome-logo img {
-    width: 100px;
-    height: 100px;
-    background: white;
-    padding: 15px;
+/* Card Avatar - glowing geometric center */
+.design-geometric .auth-card-avatar {
+    position: absolute;
+    top: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 90px;
+    background: #111827;
+    border: 2px solid var(--primary-color);
     border-radius: 50%;
-    margin-bottom: 24px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px color-mix(in srgb, var(--primary-color) 40%, transparent);
+    z-index: 20;
+    padding: 12px;
 }
 
-.welcome-title {
-    font-size: 32px;
+.design-geometric .auth-card-avatar img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Adjust title to accommodate avatar */
+.design-geometric .auth-header {
+    text-align: center;
+    margin-top: 25px;
+    /* space for avatar */
+    margin-bottom: 30px;
+}
+
+.design-geometric .auth-header-title {
+    color: #ffffff !important;
+    font-size: 26px !important;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.design-geometric .auth-header-subtitle {
+    color: color-mix(in srgb, var(--primary-color) 80%, white) !important;
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+/* ─── Geometric Inputs ─── */
+.design-geometric .field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-bottom: 8px;
+}
+
+.design-geometric .icon-field {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: #1f2937 !important;
+    border: 1px solid #374151 !important;
+    border-radius: 4px !important;
+    /* sharp corners */
+    padding: 0 16px !important;
+    gap: 10px !important;
+    position: relative !important;
+    transition: all 0.25s ease !important;
+}
+
+.design-geometric .icon-field:focus-within {
+    background: #111827 !important;
+    border-color: var(--primary-color) !important;
+    box-shadow:
+        inset 4px 0 0 var(--primary-color),
+        0 0 15px color-mix(in srgb, var(--primary-color) 25%, transparent) !important;
+}
+
+.design-geometric .icon-field .icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    color: #6b7280 !important;
+    font-size: 20px !important;
+    min-width: 22px !important;
+    flex-shrink: 0 !important;
+    transition: color 0.25s !important;
+}
+
+.design-geometric .icon-field:focus-within .icon {
+    color: var(--primary-color) !important;
+}
+
+.design-geometric .field-input {
+    flex: 1 !important;
+    width: 0 !important;
+    height: 52px !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    outline: none !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.design-geometric .field-input:-webkit-autofill,
+.design-geometric .field-input:-webkit-autofill:hover,
+.design-geometric .field-input:-webkit-autofill:focus,
+.design-geometric .field-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+.design-geometric .toggle-password {
+    position: static !important;
+    transform: none !important;
+    color: #6b7280;
+    font-size: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+
+.design-geometric .icon-field:focus-within .toggle-password {
+    color: var(--primary-color);
+}
+
+.design-geometric .form-group-premium {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.design-geometric .form-check-label {
+    color: #d1d5db !important;
+}
+
+.design-geometric a.text-maroon,
+.design-geometric a.hover-yellow {
+    color: var(--secondary-color) !important;
+}
+
+/* Button */
+.design-geometric .btn-primary-gradient {
+    background: var(--primary-color) !important;
+    border-radius: 4px !important;
+    /* Sharp corners */
+    height: 52px !important;
+    width: 100% !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    margin-top: 24px !important;
+    border: 1px solid color-mix(in srgb, var(--primary-color) 50%, white) !important;
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--primary-color) 40%, transparent) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.design-geometric .btn-primary-gradient::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.5s;
+}
+
+.design-geometric .btn-primary-gradient:hover:not(:disabled)::after {
+    left: 150%;
+}
+
+.design-geometric .btn-primary-gradient:hover:not(:disabled) {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px color-mix(in srgb, var(--primary-color) 60%, transparent) !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   4. SPLIT PANEL: MODERN DUAL LAYOUT (Side-by-side design)
+   ═══════════════════════════════════════════════════════════ */
+.auth-wrapper.design-minimal {
+    background: #f4f7f6;
+    /* Soft elegant off-white */
+    padding-left: 50%;
+    /* Pushes the form to the right 50% */
+    justify-content: center;
+}
+
+/* Ensure the card looks premium in light mode */
+.design-minimal .premium-auth-card {
+    background: #ffffff;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+}
+
+.design-minimal .auth-header-title {
+    color: #1f2937 !important;
+}
+
+.design-minimal .auth-header-subtitle {
+    color: #6b7280 !important;
+}
+
+.design-minimal .field-label {
+    color: #4b5563;
+}
+
+.design-minimal .icon-field {
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 50px !important;
+    overflow: hidden !important;
+    /* to clip autofill backgrounds */
+}
+
+/* Make primary button match pill shape */
+.design-minimal .btn-primary-gradient {
+    border-radius: 50px !important;
+}
+
+.design-minimal .icon-field:focus-within {
+    background: #ffffff !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary-color) 15%, transparent) !important;
+}
+
+.design-minimal .field-input {
+    color: #111827 !important;
+    background: transparent !important;
+}
+
+/* Fix chrome autofill to match the light grey background */
+.design-minimal .field-input:-webkit-autofill,
+.design-minimal .field-input:-webkit-autofill:hover,
+.design-minimal .field-input:-webkit-autofill:focus,
+.design-minimal .field-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset !important;
+    -webkit-text-fill-color: #111827 !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+}
+
+/* Split Side Panel (Left Side) */
+.auth-wrapper.design-minimal .split-side-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 0;
+}
+
+/* Glassmorphism subtle overlay pattern */
+.design-minimal .panel-image-bg {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+    z-index: 1;
+}
+
+.design-minimal .panel-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 40px;
+    padding-right: 120px;
+    /* add padding so it stays away from the curve */
+    color: white;
+}
+
+/* Beautiful curved divider separating left and right */
+.design-minimal .modern-curve-divider {
+    position: absolute;
+    top: -10%;
+    right: -100px;
+    height: 120%;
+    width: 200px;
+    background: #f4f7f6;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.design-minimal .welcome-logo img {
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 50%;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    transition: transform 0.5s ease;
+}
+
+.design-minimal .welcome-logo img:hover {
+    transform: scale(1.05) rotate(5deg);
+}
+
+.design-minimal .welcome-title {
+    font-size: 42px;
     font-weight: 800;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    color: #ffffff !important;
 }
 
-.welcome-text {
-    font-size: 16px;
+.design-minimal .welcome-text {
+    font-size: 18px;
+    line-height: 1.6;
     opacity: 0.9;
-    max-width: 300px;
+    max-width: 380px;
+    margin: 0 auto;
+    font-weight: 300;
+    color: #ffffff !important;
 }
 
-.auth-header.hidden {
+/* Floating Features */
+.floating-features {
+    display: flex;
+    flex-direction: row;
+    /* row-wise instead of column */
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 50px;
+}
+
+.floating-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    color: white;
+    font-weight: 500;
+    font-size: 13px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(20px);
+    opacity: 0;
+    animation: slideInFloatRow 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.floating-card:hover {
+    transform: translateY(-2px) !important;
+}
+
+/* Different Colors for floating cards */
+.feat-1 {
+    animation-delay: 0.2s;
+    background: rgba(16, 185, 129, 0.2);
+    /* Emerald */
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.feat-2 {
+    animation-delay: 0.4s;
+    background: rgba(59, 130, 246, 0.2);
+    /* Blue */
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.feat-3 {
+    animation-delay: 0.6s;
+    background: rgba(245, 158, 11, 0.2);
+    /* Amber */
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+@keyframes slideInFloatRow {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.floating-card .feat-icon {
+    font-size: 22px;
+    color: #ffffff;
+}
+
+/* Hide card avatar for this design */
+.design-minimal .auth-card-avatar {
+    display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   5. SPLIT-SCREEN LEFT FORM (formerly Futuristic)
+   ═══════════════════════════════════════════════════════════ */
+.auth-wrapper.design-futuristic {
+    background: #fcfcfc;
+    /* Premium light grey */
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 10%;
+    position: relative;
+    overflow: hidden;
+}
+
+.split-side-panel-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3)), url('../../../../assets/images/maroon_abstract_bg.png') center center / cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.side-panel-content {
+    color: white;
+    text-align: center;
+    padding: 60px;
+    z-index: 2;
+    max-width: 600px;
+}
+
+.side-welcome-text h2 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 24px;
+    text-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    line-height: 1.1;
+    background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.side-welcome-text p {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    font-weight: 300;
+    line-height: 1.6;
+}
+
+.design-futuristic .premium-auth-card {
+    width: 480px;
+    max-width: 90%;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    z-index: 10;
+    position: relative;
+    padding: 20px 0 !important;
+    transform: none !important;
+}
+
+/* Light theme colors for futuristic */
+.design-futuristic .auth-header-title {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+}
+
+.design-futuristic .auth-header-subtitle {
+    color: #64748b !important;
+}
+
+.design-futuristic .field-label {
+    color: #475569 !important;
+    font-weight: 600 !important;
+}
+
+.design-futuristic .icon-field {
+    background: #f1f5f9 !important;
+    border: 2px solid #f1f5f9 !important;
+    border-radius: 16px !important;
+    color: #1e293b !important;
+    transition: all 0.3s ease;
+}
+
+.design-futuristic .icon-field:focus-within {
+    background: #ffffff !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary-color) 15%, transparent) !important;
+}
+
+.design-futuristic .btn-primary-gradient {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    border-radius: 16px !important;
+    height: 56px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: 0 12px 24px color-mix(in srgb, var(--primary-color) 30%, transparent) !important;
+}
+
+.side-floating-shapes .f-shape {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.f-shape.s1 {
+    width: 350px;
+    height: 350px;
+    top: -120px;
+    right: -100px;
+    animation: floatOrb 10s infinite alternate;
+}
+
+.f-shape.s2 {
+    width: 200px;
+    height: 200px;
+    bottom: -50px;
+    left: -50px;
+    animation: floatOrb 8s infinite alternate-reverse;
+}
+
+/* Logo shape for futuristic design - Enhanced Visibility */
+.design-futuristic .auth-logo-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    margin-bottom: 20px;
+    z-index: 1;
+}
+
+.design-futuristic .auth-logo-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, color-mix(in srgb, var(--primary-color) 20%, transparent) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+    animation: pulseGlow 3s infinite alternate;
+}
+
+.design-futuristic .auth-logo-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 0 15px color-mix(in srgb, var(--primary-color) 10%, transparent);
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+    z-index: -1;
+    animation: morphBlob 8s infinite alternate;
+    border: 1px solid #f1f5f9;
+}
+
+@keyframes morphBlob {
+    0% { border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; }
+    100% { border-radius: 70% 30% 46% 54% / 30% 29% 71% 70%; }
+}
+
+@keyframes pulseGlow {
+    from { transform: scale(0.85); opacity: 0.4; }
+    to { transform: scale(1.15); opacity: 0.8; }
+}
+
+@media (max-width: 1100px) {
+    .auth-wrapper.design-futuristic {
+        justify-content: center !important;
+        padding-left: 0 !important;
+        background: #ffffff;
+    }
+
+    .split-side-panel-right {
+        display: none !important;
+    }
+    
+    .design-futuristic .premium-auth-card {
+        width: 100% !important;
+        max-width: 450px !important;
+        padding: 40px 20px !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   6. NEUMORPHISM: SOFT 3D CLAYMORPHISM
+   ═══════════════════════════════════════════════════════════ */
+.auth-wrapper.design-neumorphism {
+    position: relative;
+    background: linear-gradient(-45deg,
+            color-mix(in srgb, var(--primary-color) 70%, black),
+            var(--primary-color),
+            var(--secondary-color),
+            color-mix(in srgb, var(--secondary-color) 70%, black));
+    background-size: 400% 400%;
+    animation: gradientFlow 15s ease infinite;
+    z-index: 1;
+}
+
+.auth-wrapper.design-neumorphism::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('../../../../assets/images/maroon_abstract_bg.png') no-repeat center center / cover;
+    opacity: 0.6;
+    /* Semi-transparent so the theme gradient shows through */
+    mix-blend-mode: overlay;
+    /* Blends the image texture with the flowing theme colors */
+    z-index: -1;
+    pointer-events: none;
+}
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.design-neumorphism .neu-bg {
     display: none;
 }
 
-/* ─── 5. MINIMALIST: CLEAN ACCENTS (Inspired by Image 2) ─── */
-.auth-wrapper.design-minimal {
-    background: #f8fafc;
+.design-neumorphism .premium-auth-card {
+    max-width: 400px !important;
+    padding: 40px 32px !important;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+        15px 15px 35px rgba(0, 0, 0, 0.2),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.6);
+    border-radius: 28px;
 }
 
-.minimal-accent {
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    opacity: 0.1;
+.design-neumorphism .icon-field {
+    background: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 177, 198, 0.3),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.6) !important;
+    border-radius: 16px !important;
+    backdrop-filter: blur(4px);
 }
 
-.top-right {
-    top: -100px;
-    right: -100px;
+.design-neumorphism .icon-field:focus-within {
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 177, 198, 0.4),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.7),
+        0 0 0 2px color-mix(in srgb, var(--primary-color) 40%, transparent) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
 }
 
-.bottom-left {
-    bottom: -100px;
-    left: -100px;
+.design-neumorphism .btn-primary-gradient {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    border: none !important;
+    box-shadow:
+        6px 6px 12px rgba(163, 177, 198, 0.6),
+        -6px -6px 12px rgba(255, 255, 255, 0.6) !important;
+    border-radius: 12px !important;
+}
+
+.design-neumorphism .btn-primary-gradient::after {
+    display: none !important;
+}
+
+.design-neumorphism .btn-primary-gradient:hover:not(:disabled) {
+    box-shadow:
+        4px 4px 8px rgba(163, 177, 198, 0.5),
+        -4px -4px 8px rgba(255, 255, 255, 0.8) !important;
+    transform: translateY(-2px) !important;
+}
+
+.design-neumorphism .auth-header-title {
+    color: #4a5568 !important;
+}
+
+.design-neumorphism .auth-header-subtitle {
+    color: #718096 !important;
+}
+
+.design-neumorphism .field-label {
+    color: #4a5568 !important;
+}
+
+.design-neumorphism .field-input {
+    color: #4a5568 !important;
+    background: transparent !important;
+}
+
+.design-neumorphism .auth-card-avatar {
+    display: none !important;
+}
+
+.design-neumorphism .auth-logo-wrapper {
+    box-shadow: none !important;
+    background: transparent !important;
+    border: none !important;
+    margin-bottom: 20px;
+}
+
+/* Fix chrome autofill for neumorphism */
+.design-neumorphism .field-input:-webkit-autofill,
+.design-neumorphism .field-input:-webkit-autofill:hover,
+.design-neumorphism .field-input:-webkit-autofill:focus,
+.design-neumorphism .field-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+    -webkit-text-fill-color: #4a5568 !important;
+    transition: background-color 5000s ease-in-out 0s !important;
 }
 
 /* ─── CORE PREMIUM CARD ─── */
@@ -389,7 +1337,7 @@
 }
 
 /* For designs with floating avatar above card, add top margin */
-.auth-card-avatar ~ .auth-card-inner {
+.auth-card-avatar~.auth-card-inner {
     margin-top: 0;
 }
 
@@ -633,7 +1581,16 @@
     }
 
     .split-side-panel {
-        display: none;
+        display: none !important;
+    }
+
+    /* Minimal Split Layout Responsive Overrides */
+    .auth-wrapper.design-minimal {
+        padding: 20px !important;
+    }
+
+    .design-minimal .auth-header {
+        display: block !important;
     }
 
     .rotating-ring {
@@ -648,6 +1605,7 @@
 }
 
 @media (max-width: 576px) {
+
     /* Hide the absolute-positioned floating avatar on mobile (it clips) */
     .design-modern .auth-card-avatar {
         display: none !important;
@@ -659,7 +1617,8 @@
     }
 
     /* Remove top margin added for desktop floating logo */
-    .design-modern .premium-auth-card {
+    .design-modern .premium-auth-card,
+    .design-minimal .premium-auth-card {
         margin-top: 0 !important;
         padding: 30px 16px !important;
         max-width: calc(100vw - 32px);
@@ -695,4 +1654,91 @@
 
 .design-modern a.text-maroon {
     color: var(--secondary-color) !important;
+}
+
+
+/* ─── 7. GRADIENT SPLIT ─── */
+.auth-wrapper.design-gradient-split {
+    background: linear-gradient(120deg, #667eea 50%, #ffffff 50%);
+}
+
+.design-gradient-split .premium-auth-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+
+/* ─── 8. DARK PRO ─── */
+.auth-wrapper.design-dark-pro {
+    background: #0f172a;
+}
+
+.dark-grid {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(#1e293b 1px, transparent 1px),
+        linear-gradient(90deg, #1e293b 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+}
+
+.design-dark-pro .premium-auth-card {
+    background: #111827;
+    color: white;
+}
+
+.design-dark-pro .field-input {
+    background: #1f2937;
+    border-color: #374151;
+    color: white;
+}
+
+
+/* ─── 9. MATERIAL CLEAN ─── */
+.auth-wrapper.design-material-clean {
+    background: #f1f5f9;
+}
+
+.material-bg {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    top: -100px;
+    right: -100px;
+    opacity: 0.15;
+}
+
+.design-material-clean .premium-auth-card {
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+
+/* ─── 10. CYBERPUNK ─── */
+.auth-wrapper.design-cyberpunk {
+    background: #020617;
+}
+
+.cyber-grid {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg,
+            rgba(0, 255, 255, 0.05) 0px,
+            rgba(0, 255, 255, 0.05) 1px,
+            transparent 1px,
+            transparent 40px);
+}
+
+.design-cyberpunk .premium-auth-card {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid cyan;
+    color: cyan;
+}
+
+.design-cyberpunk .btn-primary-gradient {
+    background: cyan;
+    color: black;
 }

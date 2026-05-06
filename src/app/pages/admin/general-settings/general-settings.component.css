@@ -679,6 +679,8 @@ textarea.premium-input {
 .minimal-preview::after { content: ""; position: absolute; top: 30%; left: 10%; right: 10%; height: 2px; background: var(--gs-primary); }
 .futuristic-preview { background: #ffffff; }
 .futuristic-preview::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 50%; background: #10b981; border-radius: 0 50% 50% 0; }
+.neumorphism-preview { background: #e0e5ec; }
+.neumorphism-preview::after { content: ""; position: absolute; inset: 20%; background: #e0e5ec; border-radius: 8px; box-shadow: 4px 4px 8px rgba(163, 177, 198, 0.6), -4px -4px 8px rgba(255, 255, 255, 0.6); }
 
 .design-option span {
     font-size: 0.85rem;

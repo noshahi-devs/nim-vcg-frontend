@@ -20,39 +20,80 @@
       </div>
     </ng-container>
 
-    <!-- Glass: Liquid Waves -->
+    <!-- Glass: Aurora Glassmorphism Orbs + 3D Floating Cubes -->
     <ng-container *ngIf="config?.loginDesign === 'glass'">
-      <div class="liquid-wave lw-1"></div>
-      <div class="liquid-wave lw-2"></div>
-      <div class="liquid-wave lw-3"></div>
+      <div class="glass-orb glass-orb-1"></div>
+      <div class="glass-orb glass-orb-2"></div>
+      <div class="glass-orb glass-orb-3"></div>
+      <!-- Network Particle Canvas -->
+      <canvas id="network-canvas" class="network-canvas"></canvas>
     </ng-container>
 
     <!-- Geometric: Hexagon Modern -->
     <ng-container *ngIf="config?.loginDesign === 'geometric'">
-      <div class="hexagon-bg"></div>
+      <div class="hexagon-bg-grid"></div>
       <div class="floating-hex hex-1"></div>
       <div class="floating-hex hex-2"></div>
+      <div class="floating-hex hex-3"></div>
+      <div class="floating-hex hex-4"></div>
+      <div class="floating-hex hex-5"></div>
+      <div class="hex-glow-core"></div>
     </ng-container>
 
-    <!-- Futuristic: Green Wave Split (Moved here) -->
-    <div class="split-side-panel" *ngIf="config?.loginDesign === 'futuristic'">
+    <!-- Minimalist: Split Panel (Now the 4th design) -->
+    <div class="split-side-panel" *ngIf="config?.loginDesign === 'minimal'">
       <div class="panel-image-bg"></div>
       <div class="panel-content">
         <div class="welcome-section">
-          <div class="welcome-logo">
-            <img [src]="config?.instituteLogo || 'assets/images/Vision College emblem design.png'" alt="Logo">
+          <!-- Logo removed from left side to prevent duplication with form side -->
+          <!-- Left Panel Text -->
+          <h2 class="welcome-title text-white">Empowering Your Future</h2>
+          <p class="welcome-text text-white">Access your centralized dashboard to manage your academic journey
+            seamlessly.</p>
+
+          <!-- Small Floating Cards -->
+          <div class="floating-features mt-5">
+            <div class="floating-card feat-1">
+              <iconify-icon icon="solar:shield-check-bold-duotone" class="feat-icon"></iconify-icon>
+              <span>Secure Access</span>
+            </div>
+            <div class="floating-card feat-2">
+              <iconify-icon icon="solar:chart-square-bold-duotone" class="feat-icon"></iconify-icon>
+              <span>Real-time Analytics</span>
+            </div>
+            <div class="floating-card feat-3">
+              <iconify-icon icon="solar:bolt-bold-duotone" class="feat-icon"></iconify-icon>
+              <span>Fast & Reliable</span>
+            </div>
           </div>
-          <h2 class="welcome-title">Welcome Back!</h2>
-          <p class="welcome-text">To stay connected with us please login with your personal info</p>
         </div>
       </div>
       <div class="modern-curve-divider"></div>
     </div>
 
-    <!-- Minimalist: Clean Accents -->
-    <ng-container *ngIf="config?.loginDesign === 'minimal'">
-      <div class="minimal-accent top-right"></div>
-      <div class="minimal-accent bottom-left"></div>
+    <!-- 5th Design: Right-Split Premium (futuristic) -->
+    <ng-container *ngIf="config?.loginDesign === 'futuristic'">
+      <div class="split-side-panel-right">
+        <div class="side-panel-content">
+          <div class="side-welcome-text">
+            <h2>Shaping Tomorrow's Leaders</h2>
+            <p>Welcome to <strong>{{config?.instituteName || 'Vision College'}}</strong> Portal. Experience education with a futuristic perspective.</p>
+          </div>
+          <div class="side-floating-shapes">
+            <div class="f-shape s1"></div>
+            <div class="f-shape s2"></div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Neumorphism -->
+    <ng-container *ngIf="config?.loginDesign === 'neumorphism'">
+      <div class="neu-bg">
+        <div class="neu-blob neu-blob-1"></div>
+        <div class="neu-blob neu-blob-2"></div>
+        <div class="neu-blob neu-blob-3"></div>
+      </div>
     </ng-container>
   </div>
 
@@ -62,8 +103,8 @@
         class="avatar-logo">
     </div>
     <div class="auth-card-inner">
-      <div class="auth-header" [class.hidden]="config?.loginDesign === 'futuristic'">
-        <div class="auth-logo-wrapper" *ngIf="config?.loginDesign !== 'modern'">
+      <div class="auth-header" [class.hidden]="config?.loginDesign === 'minimal'">
+        <div class="auth-logo-wrapper" *ngIf="config?.loginDesign !== 'modern' && config?.loginDesign !== 'geometric'">
           <img [src]="config?.instituteLogo || 'assets/images/Vision College emblem design.png'"
             [alt]="config?.instituteName">
         </div>
@@ -121,7 +162,32 @@
         </button>
 
         <!-- Error is handled by SweetAlert now -->
+        <!-- Neumorphism -->
+        <ng-container *ngIf="config?.loginDesign === 'neumorphism'">
+          <div class="neu-bg"></div>
+        </ng-container>
+
+        <!-- Gradient Split -->
+        <ng-container *ngIf="config?.loginDesign === 'gradient-split'">
+          <div class="gradient-split-bg"></div>
+        </ng-container>
+
+        <!-- Dark Pro -->
+        <ng-container *ngIf="config?.loginDesign === 'dark-pro'">
+          <div class="dark-grid"></div>
+        </ng-container>
+
+        <!-- Material Clean -->
+        <ng-container *ngIf="config?.loginDesign === 'material-clean'">
+          <div class="material-bg"></div>
+        </ng-container>
+
+        <!-- Cyberpunk -->
+        <ng-container *ngIf="config?.loginDesign === 'cyberpunk'">
+          <div class="cyber-grid"></div>
+        </ng-container>
       </form>
+
     </div>
   </div>
 </div>

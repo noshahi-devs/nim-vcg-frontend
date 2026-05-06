@@ -101,6 +101,10 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
       // Only set config once it has been loaded from the API (indicated by non-empty primary color)
       if (cfg.primaryColor) {
         this.config = cfg;
+        // Re-init particle system if config loads or changes to a design with canvas
+        if (typeof window !== 'undefined') {
+            this.initParticleSystem();
+        }
       }
     });
     this.signInForm = this.fb.group({
@@ -138,15 +142,23 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
   }
 
   private initParticleSystem(): void {
-    this.canvas = document.getElementById('windsurf-canvas') as HTMLCanvasElement;
-    if (!this.canvas) return;
+    // Wait for the DOM to render the *ngIf canvas
+    setTimeout(() => {
+      this.canvas = (document.getElementById('windsurf-canvas') || document.getElementById('network-canvas')) as HTMLCanvasElement;
+      if (!this.canvas) return;
 
-    this.ctx = this.canvas.getContext('2d')!;
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+      this.ctx = this.canvas.getContext('2d')!;
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
 
-    this.initParticles();
-    this.animate();
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+      }
+
+      this.particles = [];
+      this.initParticles();
+      this.animate();
+    }, 100);
   }
 
   private initParticles(): void {
@@ -159,14 +171,9 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     
     // Background Glow Layer (Ambient)
-    const gradient = this.ctx.createRadialGradient(
-        this.canvas.width / 2, this.canvas.height / 2, 0,
-        this.canvas.width / 2, this.canvas.height / 2, this.canvas.width
-    );
-    gradient.addColorStop(0, '#0f172a');
-    gradient.addColorStop(1, '#020617');
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // Removed the dark gradient fill so the CSS background and orbs show through
+    // this.ctx.fillStyle = gradient;
+    // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Draw Particles & Connections
     for (let i = 0; i < this.particles.length; i++) {
