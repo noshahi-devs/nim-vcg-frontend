@@ -98,7 +98,10 @@ export class SignInComponent implements AfterViewInit, OnDestroy {
     private appConfig: AppConfigService
   ) {
     this.configSub = this.appConfig.config$.subscribe(cfg => {
-      this.config = cfg;
+      // Only set config once it has been loaded from the API (indicated by non-empty primary color)
+      if (cfg.primaryColor) {
+        this.config = cfg;
+      }
     });
     this.signInForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -279,17 +282,15 @@ class Particle {
         this.x = Math.random() * this.width;
         this.y = Math.random() * this.height;
         this.size = Math.random() * 2.5 + 1;
-        this.speedX = (Math.random() - 0.5) * 1.5; // Increased speed for "feel like they move"
-        this.speedY = (Math.random() - 0.5) * 1.5; // Increased speed for "feel like they move"
-        this.opacity = Math.random() * 0.6 + 0.3;
+        this.speedX = (Math.random() - 0.5) * 1.2;
+        this.speedY = (Math.random() - 0.5) * 1.2;
+        this.opacity = Math.random() * 0.4 + 0.2;
         
-        // Vibrant mesh palette: Golden Yellow, Cyan, Blue, Purple
-        const colors = [
-          'rgba(244, 196, 48', // Golden Yellow
-          'rgba(6, 182, 212',  // Cyan
-          'rgba(59, 130, 246', // Blue
-          'rgba(168, 85, 247'  // Purple
-        ];
+        // Dynamic Palette: Primary, Secondary, and complementary tints
+        const primary = getComputedStyle(document.body).getPropertyValue('--primary-color').trim() || '#800000';
+        const secondary = getComputedStyle(document.body).getPropertyValue('--secondary-color').trim() || '#F28C1A';
+        
+        const colors = [primary, secondary, '#3b82f6', '#06b6d4'];
         this.color = colors[Math.floor(Math.random() * colors.length)];
     }
 
@@ -311,12 +312,14 @@ class Particle {
     draw(ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `${this.color}, ${this.opacity})`;
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
         ctx.fill();
         
         // Add subtle glow
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = `${this.color}, 0.6)`;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = this.color;
+        ctx.globalAlpha = 1;
     }
 }
 

@@ -1,11 +1,51 @@
-<div class="auth-wrapper" [ngClass]="'design-' + (config?.loginDesign || 'modern')">
-  <!-- Windsurf-style Particle Animation Canvas -->
-  <canvas id="windsurf-canvas" class="windsurf-canvas"></canvas>
-  
-  <!-- Geometric Shapes for 'geometric' design -->
-  <div class="geometric-shape shape-1" *ngIf="config?.loginDesign === 'geometric'"></div>
-  <div class="geometric-shape shape-2" *ngIf="config?.loginDesign === 'geometric'"></div>
-  
+<!-- High-end Initial Loader -->
+<div class="initial-auth-loader" *ngIf="!config">
+  <div class="loader-content">
+    <div class="loader-ring"></div>
+    <div class="loader-ring-inner"></div>
+    <div class="loader-logo">
+      <img src="assets/images/Vision College emblem design.png" alt="Loading...">
+    </div>
+  </div>
+</div>
+
+<div class="auth-wrapper" *ngIf="config" [ngClass]="'design-' + (config?.loginDesign || 'modern')">
+  <!-- Dynamic Background Layers -->
+  <div class="design-background-elements">
+    <!-- Modern: Split shapes -->
+    <div class="split-side-panel" *ngIf="config?.loginDesign === 'modern'">
+      <div class="panel-content">
+        <div class="floating-institute-badge">
+          <iconify-icon icon="solar:star-shine-bold-duotone"></iconify-icon>
+          <span>Premium Portal</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Glass: Floating orbs -->
+    <ng-container *ngIf="config?.loginDesign === 'glass'">
+      <div class="glass-orb orb-1"></div>
+      <div class="glass-orb orb-2"></div>
+      <div class="glass-orb orb-3"></div>
+    </ng-container>
+
+    <!-- Geometric: Abstract shapes -->
+    <ng-container *ngIf="config?.loginDesign === 'geometric'">
+      <div class="geo-blob"></div>
+      <div class="geo-shape triangle"></div>
+      <div class="geo-shape circle"></div>
+      <div class="geo-shape square"></div>
+      <div class="geo-grid-dots"></div>
+    </ng-container>
+
+    <!-- Futuristic: Mesh particles -->
+    <canvas id="windsurf-canvas" class="windsurf-canvas" *ngIf="config?.loginDesign === 'futuristic' || !config?.loginDesign"></canvas>
+    <div class="futuristic-glow" *ngIf="config?.loginDesign === 'futuristic'"></div>
+
+    <!-- Minimalist: Just clean -->
+    <div class="minimal-grain" *ngIf="config?.loginDesign === 'minimal'"></div>
+  </div>
+
   <div class="premium-auth-card">
     <div class="auth-card-inner">
       <div class="auth-header">

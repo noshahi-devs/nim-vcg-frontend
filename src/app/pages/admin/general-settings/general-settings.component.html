@@ -414,6 +414,10 @@
                                         <div class="design-preview minimal-preview"></div>
                                         <span>Minimalist</span>
                                     </div>
+                                    <div class="design-option" [class.active]="generalSettings.loginDesign === 'futuristic'" (click)="generalSettings.loginDesign = 'futuristic'">
+                                        <div class="design-preview futuristic-preview"></div>
+                                        <span>Futuristic Mesh</span>
+                                    </div>
                                 </div>
                                 <small class="text-muted mt-3 d-block">Choose the landing experience for your users when they sign in.</small>
                             </div>
