@@ -1,15 +1,4 @@
-<!-- High-end Initial Loader -->
-<div class="initial-auth-loader" *ngIf="!config">
-  <div class="loader-content">
-    <div class="loader-ring"></div>
-    <div class="loader-ring-inner"></div>
-    <div class="loader-logo">
-      <img src="assets/images/Vision College emblem design.png" alt="Loading...">
-    </div>
-  </div>
-</div>
-
-<div class="auth-wrapper" *ngIf="config" [ngClass]="'design-' + (config?.loginDesign || 'modern')">
+<div class="auth-wrapper" [ngClass]="'design-' + (config?.loginDesign || 'modern')">
   <!-- Dynamic Background Layers -->
   <div class="design-background-elements">
     <!-- Modern: Futuristic Rotating Circle (Moved to Modern as requested) -->
