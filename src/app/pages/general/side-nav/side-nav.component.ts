@@ -155,7 +155,7 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('themeButton') themeButton!: ElementRef<HTMLElement>;
 
   constructor(
-    private router: Router,
+    public router: Router,
     private themeService: ThemeService,
     public authService: AuthService,
     private appConfig: AppConfigService,
@@ -541,4 +541,3 @@ export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     $("body").removeClass("overlay-active");
   }
 }
-

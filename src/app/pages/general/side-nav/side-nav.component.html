@@ -706,8 +706,8 @@
     </div>
   </footer>
 </main>
-<!-- Global AI Chatbot -->
-<div class="ai-chat-widget" [class.open]="showChat">
+<!-- Global AI Chatbot (Visible only on Support Page) -->
+<div class="ai-chat-widget" [class.open]="showChat" *ngIf="router.url.includes('/support')">
     <div class="chat-toggle" (click)="toggleChat()" *ngIf="!showChat">
         <iconify-icon icon="solar:chat-round-dots-bold-duotone"></iconify-icon>
         <span>AI Assistant</span>

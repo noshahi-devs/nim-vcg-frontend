@@ -2,6 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { PopupService } from '../../../services/popup.service';
 
 @Component({
   selector: 'app-support',
@@ -39,12 +40,7 @@ export class SupportComponent {
     description: ''
   };
 
-  // AI Chatbot
-  showChat = false;
-  chatInput = '';
-  chatMessages: { text: string, type: 'user' | 'ai' }[] = [
-    { text: 'Hello! I am your AI Assistant. How can I help you today?', type: 'ai' }
-  ];
+  constructor(private popupService: PopupService) {}
 
   openFeatureForm() {
     this.showFeatureForm = true;
@@ -55,14 +51,38 @@ export class SupportComponent {
   }
 
   submitFeature() {
-    console.log('Feature Request Submitted:', this.featureData);
-    alert('Thank you! Your feature request has been submitted to our engineering team.');
-    this.showFeatureForm = false;
-    this.featureData = { title: '', category: 'Dashboard', description: '' };
+    if (!this.featureData.title || !this.featureData.description) {
+      alert('Please fill in all fields before submitting.');
+      return;
+    }
+
+    // Show premium processing popup
+    this.popupService.loading('Submitting Your Request...');
+
+    setTimeout(() => {
+      // Create mailto link
+      const email = 'noshahidevelopersinc@gmail.com';
+      const subject = `Feature Request: ${this.featureData.title} (${this.featureData.category})`;
+      const body = `Category: ${this.featureData.category}\n\nDescription: ${this.featureData.description}\n\nRequested by: Institute Manager User`;
+      
+      const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      
+      // Close the processing popup
+      this.popupService.closeLoading();
+      
+      // Open email client
+      window.location.href = mailtoLink;
+
+      // Close form
+      this.showFeatureForm = false;
+      this.featureData = { title: '', category: 'Dashboard', description: '' };
+    }, 2000);
   }
 
   openLiveChat() {
-    // This can be wired to the global chatbot if needed
+    // This will now interact with the global chatbot in SideNav if needed, 
+    // but since the chatbot is already visible on the support page via SideNav, 
+    // we can just let it be or trigger a message.
   }
 
   requestFeature() {
