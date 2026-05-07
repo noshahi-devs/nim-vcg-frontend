@@ -30,15 +30,15 @@
 }
 
 :root {
-  --primary-color: var(--primary-color);
+  --primary-color: #800000;
   /* Maroon */
-  --primary-light: var(--primary-light);
+  --primary-light: #a52a2a;
   /* Brown-ish Maroon */
-  --primary-deep: var(--primary-deep);
+  --primary-deep: #4a0000;
   /* Deep Maroon */
-  --secondary-color: var(--secondary-color);
+  --secondary-color: #F4C430;
   /* Golden Yellow */
-  --accent-color: var(--secondary-color);
+  --accent-color: #F4C430;
   /* Same as secondary for consistency */
   --bg-color: #F9FAFB;
   --bg-gradient: linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%);
