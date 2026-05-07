@@ -353,6 +353,15 @@
                 class="ri-circle-fill circle-icon text-warning-main"></i> Broadcast</a></li>
         </ul>
       </li>
+
+      <!-- Help & Support -->
+      <li>
+        <a routerLink="/support" routerLinkActive="active-page"
+          data-desc="Access technical support and contact our developers">
+          <iconify-icon icon="solar:help-bold-duotone" class="menu-icon"></iconify-icon>
+          <span>Support Center</span>
+        </a>
+      </li>
     </ul>
   </div>
 
@@ -687,7 +696,8 @@
   <footer class="d-footer">
     <div class="row align-items-center justify-content-between">
       <div class="col-auto">
-        <p class="mb-0">© {{ currentYear }} <span class="fw-bold">{{ config?.instituteName || 'Vision College' }} {{ config?.instituteAddress || 'Gojra' }}</span> Enterprise
+        <p class="mb-0">© {{ currentYear }} <span class="fw-bold">{{ config?.instituteName || 'Vision College' }} {{
+            config?.instituteAddress || 'Gojra' }}</span> Enterprise
           - All Rights Reserved.</p>
       </div>
       <div class="col-auto">

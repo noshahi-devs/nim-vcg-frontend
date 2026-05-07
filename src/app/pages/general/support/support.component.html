@@ -1,0 +1,133 @@
+<div class="support-wrapper">
+    <!-- Hero Section -->
+    <header class="support-hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title text-white">Support Center</h1>
+            <p class="hero-subtitle">Expert assistance for your institute management.</p>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <iconify-icon icon="solar:magnifer-bold-duotone" class="search-icon-hero"></iconify-icon>
+                    <input type="text" placeholder="Search for documentation or help..." class="search-input">
+                    <button class="btn-search">Search</button>
+                </div>
+                <!-- Suggestions -->
+                <div class="search-suggestions">
+                    <span>Popular:</span>
+                    <a href="javascript:void(0)">Fee Collection</a>
+                    <a href="javascript:void(0)">Exam Results</a>
+                    <a href="javascript:void(0)">Staff Payroll</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="support-body">
+        <!-- Contact Section -->
+        <div class="section-container">
+            <h2 class="section-heading">How can we help?</h2>
+            
+            <div class="professional-grid">
+                <!-- WhatsApp Card -->
+                <div class="prof-card">
+                    <div class="prof-card-top">
+                        <div class="prof-icon-box whatsapp-bg">
+                            <iconify-icon icon="logos:whatsapp-icon"></iconify-icon>
+                        </div>
+                        <div class="prof-title-box">
+                            <h3>WhatsApp</h3>
+                            <p>Instant messaging support</p>
+                        </div>
+                    </div>
+                    <div class="prof-card-body">
+                        <div class="prof-detail-tag">
+                            <span class="detail-label">DIRECT LINE</span>
+                            <span class="detail-value">{{ supportDetails.whatsapp.number }}</span>
+                        </div>
+                        <a [href]="supportDetails.whatsapp.link" target="_blank" class="prof-btn maroon">
+                            <span>Chat Now</span>
+                            <iconify-icon icon="solar:chat-round-dots-bold-duotone"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Phone Card -->
+                <div class="prof-card">
+                    <div class="prof-card-top">
+                        <div class="prof-icon-box gold-bg-light">
+                            <iconify-icon icon="solar:phone-bold-duotone" class="gold-text-icon"></iconify-icon>
+                        </div>
+                        <div class="prof-title-box">
+                            <h3>Voice Support</h3>
+                            <p>Talk to our technical team</p>
+                        </div>
+                    </div>
+                    <div class="prof-card-body">
+                        <div class="prof-detail-tag">
+                            <span class="detail-label">HOTLINE</span>
+                            <span class="detail-value">{{ supportDetails.call.number }}</span>
+                        </div>
+                        <a [href]="supportDetails.call.link" class="prof-btn gold">
+                            <span>Place Call</span>
+                            <iconify-icon icon="solar:phone-calling-bold-duotone"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Email Card -->
+                <div class="prof-card">
+                    <div class="prof-card-top">
+                        <div class="prof-icon-box maroon-bg-light">
+                            <iconify-icon icon="solar:letter-bold-duotone" class="maroon-text-icon"></iconify-icon>
+                        </div>
+                        <div class="prof-title-box">
+                            <h3>Email Inquiry</h3>
+                            <p>Formal requests & documents</p>
+                        </div>
+                    </div>
+                    <div class="prof-card-body">
+                        <div class="prof-detail-tag">
+                            <span class="detail-label">SUPPORT EMAIL</span>
+                            <span class="detail-value">{{ supportDetails.email.address }}</span>
+                        </div>
+                        <a [href]="supportDetails.email.link" class="prof-btn maroon">
+                            <span>Send Message</span>
+                            <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Support Items -->
+        <div class="action-strip-container">
+            <div class="action-strip">
+                <div class="action-icon">
+                    <iconify-icon icon="solar:chat-square-call-bold-duotone"></iconify-icon>
+                </div>
+                <div class="action-text">
+                    <h4>Concierge Support</h4>
+                    <p>Schedule a screen-share session with an implementation expert.</p>
+                </div>
+                <button (click)="openLiveChat()" class="btn-action-primary">Launch Chat</button>
+            </div>
+
+            <div class="action-strip">
+                <div class="action-icon gold-circle">
+                    <iconify-icon icon="solar:lightbulb-bolt-bold-duotone"></iconify-icon>
+                </div>
+                <div class="action-text">
+                    <h4>Feature Request</h4>
+                    <p>Collaborate with us to build the tools you need for your institute.</p>
+                </div>
+                <button (click)="requestFeature()" class="btn-action-outline">Submit Idea</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="corporate-footer">
+        <p>© {{ currentYear }} Noshahi Developers Inc. • Advanced Systems Support</p>
+    </footer>
+</div>

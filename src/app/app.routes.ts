@@ -122,6 +122,7 @@ export const routes: Routes = [
       { path: 'settings', loadComponent: () => import('./pages/admin/general-settings/general-settings.component').then(m => m.GeneralSettingsComponent), data: { roles: ['Admin'] } },
       { path: 'campus-management', loadComponent: () => import('./pages/admin/campus-management/campus-management.component').then(m => m.CampusManagementComponent), data: { roles: ['Admin'] } },
       { path: 'view-profile', loadComponent: () => import('./pages/admin/staff-view-profile/staff-view-profile.component').then(m => m.StaffViewProfileComponent), data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant'] } },
+      { path: 'support', loadComponent: () => import('./pages/general/support/support.component').then(m => m.SupportComponent), data: { roles: ['Admin', 'Principal', 'Teacher', 'Accountant', 'Student'] } },
 
       { path: 'unauthorized', loadComponent: () => import('./pages/ui-elements/error/error.component').then(m => m.ErrorComponent) },
       { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
