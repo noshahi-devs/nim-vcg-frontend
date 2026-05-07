@@ -23,17 +23,112 @@ import { StudentService } from '../../../services/student.service';
 import { AcademicYear } from '../../../Models/academic-year';
 declare const $: any;
 import { CommonModule, NgIf } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import { environment } from "../../../../environments/environment";
 
 @Component({
   selector: 'app-side-nav',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, NgIf, CommonModule],
+  imports: [RouterOutlet, RouterLink, NgIf, CommonModule, FormsModule],
   templateUrl: './side-nav.component.html',
   styleUrl: './side-nav.component.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SideNavComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  // AI Chatbot State
+  showChat = false;
+  chatInput = '';
+  chatMessages: { text: string, type: 'user' | 'ai' }[] = [
+    { text: 'Hello! I am your AI Assistant. How can I help you today?', type: 'ai' }
+  ];
+
+  private knowledgeBase: { keywords: string[], answer: string }[] = [
+    {
+      keywords: ['hi', 'hello', 'hey', 'greetings', 'salam', 'aoa'],
+      answer: "Hello! I am the Noshahi Systems AI Assistant. How can I help you with your institute management today?"
+    },
+    {
+      keywords: ['fee', 'invoice', 'payment', 'collect', 'due', 'challan', 'slip', 'defaulter', 'bill'],
+      answer: "Financial management is handled in the 'Finance' module. You can generate invoices, collect payments, manage fee types, and track defaulters there."
+    },
+    {
+      keywords: ['exam', 'result', 'mark', 'grade', 'schedule', 'date sheet', 'report card', 'standard', 'calculate', 'analytics'],
+      answer: "The 'Exams' section handles everything from exam scheduling and marks entry to automated grade calculation and detailed result analytics."
+    },
+    {
+      keywords: ['attendance', 'absent', 'present', 'leave', 'holiday', 'track', 'presence', 'daily', 'report'],
+      answer: "Daily tracking for students and staff is in the 'Attendance' and 'Leaves' modules. You can mark attendance, apply for leaves, and generate detailed reports."
+    },
+    {
+      keywords: ['staff', 'employee', 'teacher', 'faculty', 'salary', 'payroll', 'pay', 'slip', 'ledger', 'login'],
+      answer: "Staff management and login controls are in the 'Staff' menu. For processing salaries and generating slips, please use the 'Payroll' module."
+    },
+    {
+      keywords: ['student', 'admission', 'list', 'promote', 'profile', 'data', 'registration', 'new'],
+      answer: "To manage students: 1. Go to the 'Students' menu in the sidebar. 2. Select 'Add Student' for new admissions. 3. Use 'Student List' to search or edit existing records. 4. 'Promote Student' handles year-end transitions."
+    },
+    {
+      keywords: ['account', 'ledger', 'income', 'expense', 'profit', 'loss', 'transaction', 'bank', 'cash', 'money', 'finance'],
+      answer: "Accounts Management: This module acts as your central ledger. Track all 'Net Income' and 'Net Expenses' to automatically generate 'Profit & Loss' statements and manage 'Bank & Cash' balances."
+    },
+    {
+      keywords: ['class', 'section', 'subject', 'assign', 'standard', 'course', 'curriculum'],
+      answer: "Structural Setup: 1. Create your grades in 'Class List'. 2. Divide them into groups in 'Section List'. 3. Define courses in 'Subject List' and 'Assign Subject' to teachers."
+    },
+    {
+      keywords: ['notification', 'message', 'broadcast', 'email', 'inbox', 'alert', 'news', 'update'],
+      answer: "Communications: 1. Check your 'Inbox' for internal messages. 2. Use 'Broadcast' to send mass alerts (SMS/System) to the entire institute or specific classes."
+    },
+    {
+      keywords: ['setting', 'role', 'access', 'permission', 'admin', 'configure', 'setup', 'general'],
+      answer: "System Controls: 1. 'General Settings' handles school info and logos. 2. 'Role & Access' defines what users can see. 3. 'Assign Role' links staff to specific system permissions."
+    },
+    {
+      keywords: ['report', 'insight', 'data', 'analytics', 'summary', 'overview'],
+      answer: "Insights: The 'Reports' module provides a birds-eye view of your institute's health, including financial trends, academic growth, and attendance stats."
+    },
+    {
+      keywords: ['help', 'support', 'contact', 'whatsapp', 'phone', 'email', 'developer', 'noshahi'],
+      answer: "Technical Support: You can chat with our engineering team via WhatsApp (+92 307 5071297) or email us at noshahidevelopersinc@gmail.com. We are here to help!"
+    },
+    {
+      keywords: ['how', 'step', 'process', 'guide', 'work', 'function'],
+      answer: "I can guide you through any system process! Please mention a module like 'Student', 'Fee', or 'Exam' so I can give you specific step-by-step instructions."
+    }
+  ];
+
+  toggleChat() {
+    this.showChat = !this.showChat;
+  }
+
+  sendMessage() {
+    if (!this.chatInput.trim()) return;
+    
+    const rawInput = this.chatInput;
+    this.chatMessages.push({ text: rawInput, type: 'user' });
+    const userMsg = rawInput.toLowerCase();
+    this.chatInput = '';
+
+    setTimeout(() => {
+      let response = "I'm sorry, I couldn't find a specific answer for that. Please try using keywords like 'Fees', 'Exams', 'Salary', or 'Attendance'.";
+      
+      for (const item of this.knowledgeBase) {
+        if (item.keywords.some(k => userMsg.includes(k))) {
+          response = item.answer;
+          break;
+        }
+      }
+      
+      this.chatMessages.push({ text: response, type: 'ai' });
+
+      setTimeout(() => {
+        const chatBody = document.querySelector('.chat-body');
+        if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
+      }, 100);
+
+    }, 600);
+  }
 
   currentYear = new Date().getFullYear();
   currentThemeSetting: string = 'light';

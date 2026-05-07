@@ -127,7 +127,42 @@
         </div>
     </div>
 
-    <footer class="corporate-footer">
-        <p>© {{ currentYear }} Noshahi Developers Inc. • Advanced Systems Support</p>
-    </footer>
+    <!-- Premium Feature Request Modal -->
+    <div class="modal-overlay" *ngIf="showFeatureForm">
+        <div class="modal-card">
+            <div class="modal-header premium-header">
+                <div class="header-content">
+                    <iconify-icon icon="solar:star-fall-2-bold-duotone" class="header-icon"></iconify-icon>
+                    <h2>Request a Feature</h2>
+                </div>
+                <button (click)="closeFeatureForm()" class="btn-close-white">
+                    <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Feature Title</label>
+                    <input type="text" [(ngModel)]="featureData.title" placeholder="What should we build?">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select [(ngModel)]="featureData.category">
+                        <option value="Dashboard">Dashboard</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Academic">Academic</option>
+                        <option value="Staff">Staff</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea [(ngModel)]="featureData.description" placeholder="Describe the feature in detail..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" (click)="closeFeatureForm()">Cancel</button>
+                <button class="btn-submit" (click)="submitFeature()">Submit Request</button>
+            </div>
+        </div>
+    </div>
 </div>

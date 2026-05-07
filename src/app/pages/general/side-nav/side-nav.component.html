@@ -706,6 +706,36 @@
     </div>
   </footer>
 </main>
+<!-- Global AI Chatbot -->
+<div class="ai-chat-widget" [class.open]="showChat">
+    <div class="chat-toggle" (click)="toggleChat()" *ngIf="!showChat">
+        <iconify-icon icon="solar:chat-round-dots-bold-duotone"></iconify-icon>
+        <span>AI Assistant</span>
+    </div>
+    
+    <div class="chat-window" *ngIf="showChat">
+        <div class="chat-header">
+            <div class="ai-status">
+                <span class="pulse-dot"></span>
+                <span>AI Assistant Online</span>
+            </div>
+            <button class="chat-close-btn" (click)="toggleChat()">
+                <iconify-icon icon="solar:close-circle-bold-duotone"></iconify-icon>
+            </button>
+        </div>
+        <div class="chat-body">
+            <div *ngFor="let msg of chatMessages" class="chat-msg" [class.user]="msg.type === 'user'">
+                <div class="msg-bubble">{{ msg.text }}</div>
+            </div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" [(ngModel)]="chatInput" (keyup.enter)="sendMessage()" placeholder="Type your question..." class="no-outline">
+            <button (click)="sendMessage()" class="chat-send-btn">
+                <iconify-icon icon="solar:plain-bold-duotone"></iconify-icon>
+            </button>
+        </div>
+    </div>
+</div>
 <!-- Global Premium Tooltip -->
 <div id="sideNavTooltip" class="side-nav-premium-tooltip"
   style="display: none; position: fixed; z-index: 9999999; pointer-events: none;">
