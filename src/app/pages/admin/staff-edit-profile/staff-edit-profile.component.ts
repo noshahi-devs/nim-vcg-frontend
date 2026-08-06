@@ -94,7 +94,8 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
       profile: this.getStaffImage(staff.imagePath),
       status: staff.status || 'Active',
       role: this.getDesignationName(staff.designation),
-      experience: staff.experience || staff.Experience || ''
+      experience: staff.experience || staff.Experience || '',
+      basicSalary: staff.basicSalary ?? null
     };
   }
 
@@ -150,6 +151,7 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
         gender: this.getGenderEnum(this.staffData.gender),
         dob: this.staffData.dob,
         experience: this.staffData.experience,
+        basicSalary: this.staffData.basicSalary,
         imageUpload: this.selectedImageBase64 ? {
           imageData: this.selectedImageBase64,
           imageName: this.selectedImageName || `${this.staffData.name}_profile.png`

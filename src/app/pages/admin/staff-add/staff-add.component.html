@@ -97,6 +97,19 @@
               </div>
             </div>
 
+            <!-- Basic Salary -->
+            <div class="col-md-4">
+              <div class="form-group-premium">
+                <label class="form-label-premium">
+                  <i class="ri-money-dollar-circle-line me-2 text-primary-500"></i>Basic Salary
+                </label>
+                <div class="input-wrapper-premium">
+                  <input type="number" class="form-control-premium" name="basicSalary" min="0" step="0.01"
+                    placeholder="e.g. 25000" [(ngModel)]="newStaff.basicSalary" #basicSalary="ngModel" />
+                </div>
+              </div>
+            </div>
+
             <!-- CNIC -->
             <div class="col-md-4">
               <div class="form-group-premium">

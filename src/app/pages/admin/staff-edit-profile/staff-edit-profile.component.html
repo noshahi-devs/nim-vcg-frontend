@@ -179,6 +179,13 @@
                 <option value="Inactive">Inactive</option>
               </select>
             </div>
+
+            <!-- Basic Salary -->
+            <div class="col-md-6 form-group-premium">
+              <label class="field-label">Basic Salary</label>
+              <input type="number" class="field-input" min="0" step="0.01"
+                [(ngModel)]="staffData.basicSalary" placeholder="e.g. 25000">
+            </div>
           </div>
         </div>
       </div>

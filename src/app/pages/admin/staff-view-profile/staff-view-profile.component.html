@@ -80,6 +80,9 @@
       <button class="tab-item" [class.active]="activeTab === 'performance'" (click)="activeTab = 'performance'">
         <iconify-icon icon="solar:chart-square-bold-duotone"></iconify-icon> Performance
       </button>
+      <button class="tab-item" [class.active]="activeTab === 'salary'" (click)="activeTab = 'salary'">
+        <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon> Salary
+      </button>
     </div>
 
     <div class="card-body p-24">
@@ -332,6 +335,61 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- SALARY TAB -->
+      <div *ngIf="activeTab === 'salary'" class="animate-fade-in">
+        <div class="d-flex justify-content-between align-items-center mb-24">
+          <h6 class="mb-0 text-neutral-800 fw-bold d-flex align-items-center gap-8">
+            <iconify-icon icon="solar:wallet-money-bold-duotone" class="text-maroon"
+              style="color: var(--primary-color);"></iconify-icon>
+            Salary History
+          </h6>
+          <button class="btn btn-primary btn-sm px-16 radius-8" (click)="paySalary()"
+            *ngIf="authService.hasAnyRole(['Admin', 'Accountant'])">
+            <iconify-icon icon="solar:card-send-bold-duotone" class="me-4"></iconify-icon> Pay Salary
+          </button>
+        </div>
+
+        <div class="row gy-4 mb-24" *ngIf="staffData.basicSalary != null">
+          <div class="col-lg-4">
+            <div class="card-premium text-center py-20">
+              <span class="text-xs text-secondary-light fw-bold uppercase d-block mb-8">Current Basic Salary</span>
+              <div class="fs-4 fw-bold" style="color: var(--primary-color);">PKR {{ staffData.basicSalary | number }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive" *ngIf="salaryHistory.length > 0; else noSalary">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Payment Date</th>
+                <th>Basic</th>
+                <th>Additions</th>
+                <th>Deductions</th>
+                <th>Net Salary</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of salaryHistory">
+                <td>{{ s.paymentMonth || '-' }}</td>
+                <td>{{ s.paymentDate ? (s.paymentDate | date:'mediumDate') : '-' }}</td>
+                <td>PKR {{ s.basicSalary | number }}</td>
+                <td class="text-success">+{{ s.totalAdditions || 0 | number }}</td>
+                <td class="text-danger">-{{ s.totalDeductions || 0 | number }}</td>
+                <td class="fw-bold">PKR {{ s.netSalary | number }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noSalary>
+          <div class="text-center py-32 bg-neutral-50 radius-12">
+            <iconify-icon icon="solar:wallet-money-line-duotone" class="text-4xl text-neutral-200 mb-8"></iconify-icon>
+            <p class="text-secondary-light small mb-0">No salary payments recorded yet.</p>
+          </div>
+        </ng-template>
       </div>
     </div>
   </div>

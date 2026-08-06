@@ -75,49 +75,63 @@
             [disabled]="isProcessing">
         </div>
 
-        <div class="col-md-3">
-          <label class="form-label-premium">Festival Bonus</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.festivalBonus" placeholder="0"
-            [disabled]="isProcessing">
+        <!-- ADDITIONS -->
+        <div class="col-md-12">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="form-label-premium mb-0 text-success">
+              <iconify-icon icon="mdi:plus-circle" class="me-1"></iconify-icon>Additions
+            </label>
+            <button type="button" class="btn-premium-reset btn-sm" (click)="addAddition()" [disabled]="isProcessing">
+              <iconify-icon icon="mdi:plus"></iconify-icon> Add Line
+            </button>
+          </div>
+          <div class="row g-2 mb-2" *ngFor="let entry of salary.additions; let i = index">
+            <div class="col-md-6">
+              <input type="text" class="form-control-premium" [(ngModel)]="entry.description"
+                [name]="'addDesc' + i" placeholder="e.g. Festival Bonus" [disabled]="isProcessing">
+            </div>
+            <div class="col-md-4">
+              <input type="number" class="form-control-premium" [(ngModel)]="entry.amount"
+                [name]="'addAmt' + i" placeholder="Amount" [disabled]="isProcessing">
+            </div>
+            <div class="col-md-2">
+              <button type="button" class="action-btn delete" (click)="removeAddition(i)" [disabled]="isProcessing">
+                <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+              </button>
+            </div>
+          </div>
+          <div *ngIf="salary.additions.length === 0" class="text-muted small">No additions added.</div>
         </div>
 
-        <div class="col-md-3">
-          <label class="form-label-premium">Allowance</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.allowance" placeholder="0"
-            [disabled]="isProcessing">
+        <!-- DEDUCTIONS -->
+        <div class="col-md-12 mt-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="form-label-premium mb-0 text-danger">
+              <iconify-icon icon="mdi:minus-circle" class="me-1"></iconify-icon>Deductions
+            </label>
+            <button type="button" class="btn-premium-reset btn-sm" (click)="addDeduction()" [disabled]="isProcessing">
+              <iconify-icon icon="mdi:plus"></iconify-icon> Add Line
+            </button>
+          </div>
+          <div class="row g-2 mb-2" *ngFor="let entry of salary.deductions; let i = index">
+            <div class="col-md-6">
+              <input type="text" class="form-control-premium" [(ngModel)]="entry.description"
+                [name]="'dedDesc' + i" placeholder="e.g. Loan Deduction" [disabled]="isProcessing">
+            </div>
+            <div class="col-md-4">
+              <input type="number" class="form-control-premium" [(ngModel)]="entry.amount"
+                [name]="'dedAmt' + i" placeholder="Amount" [disabled]="isProcessing">
+            </div>
+            <div class="col-md-2">
+              <button type="button" class="action-btn delete" (click)="removeDeduction(i)" [disabled]="isProcessing">
+                <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+              </button>
+            </div>
+          </div>
+          <div *ngIf="salary.deductions.length === 0" class="text-muted small">No deductions added.</div>
         </div>
 
-        <div class="col-md-3">
-          <label class="form-label-premium">Medical</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.medicalAllowance" placeholder="0"
-            [disabled]="isProcessing">
-        </div>
-
-        <div class="col-md-3">
-          <label class="form-label-premium">Housing</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.housingAllowance" placeholder="0"
-            [disabled]="isProcessing">
-        </div>
-
-        <div class="col-md-3">
-          <label class="form-label-premium">Transport</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.transportationAllowance" placeholder="0"
-            [disabled]="isProcessing">
-        </div>
-
-        <div class="col-md-3">
-          <label class="form-label-premium">Saving Fund</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.savingFund" placeholder="0"
-            [disabled]="isProcessing">
-        </div>
-
-        <div class="col-md-3">
-          <label class="form-label-premium">Taxes</label>
-          <input type="number" class="form-control-premium" [(ngModel)]="salary.taxes" placeholder="0"
-            [disabled]="isProcessing">
-        </div>
-
-        <div class="col-md-6">
+        <div class="col-md-6 mt-3">
           <div class="net-salary-group">
             <span>Calculated Net Salary</span>
             <div class="net-val">PKR {{ calculatedNetSalary | number }}</div>
@@ -169,7 +183,7 @@
             <th>Staff Member</th>
             <th>Month</th>
             <th>Basic Salary</th>
-            <th>Bonus</th>
+            <th>Adjustments</th>
             <th>Net Salary</th>
             <th style="width: 100px; text-align: center;">Action</th>
           </tr>
@@ -195,8 +209,9 @@
               <span class="badge-amount basic">PKR {{ s.basicSalary | number }}</span>
             </td>
             <td>
-              <span class="text-success fw-semibold" *ngIf="s.festivalBonus > 0">+{{ s.festivalBonus | number }}</span>
-              <span class="text-muted" *ngIf="!s.festivalBonus">0</span>
+              <span class="text-success fw-semibold" *ngIf="s.totalAdditions">+{{ s.totalAdditions | number }}</span>
+              <span class="text-danger fw-semibold ms-2" *ngIf="s.totalDeductions">-{{ s.totalDeductions | number }}</span>
+              <span class="text-muted" *ngIf="!s.totalAdditions && !s.totalDeductions">0</span>
             </td>
             <td>
               <span class="badge-amount net">PKR {{ getRowNetSalary(s) | number }}</span>

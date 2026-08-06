@@ -1,14 +1,14 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import Swal from '../../../swal';
+import { ActivatedRoute } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
-import { StaffSalaryService } from '../../../services/staff-salary.service';
+import { SalaryPaymentService } from '../../../services/salary-payment.service';
 import { StaffService } from '../../../services/staff.service';
 
-import { StaffSalary } from '../../../Models/staff-salary';
+import { SalaryEntry, SalaryPayment } from '../../../Models/salary-payment';
 import { Staff } from '../../../Models/staff';
 import { PopupService } from '../../../services/popup.service';
 
@@ -25,10 +25,10 @@ export class SalaryComponent implements OnInit {
   title = 'Salary Management';
 
   /** FORM MODEL */
-  salary: StaffSalary = new StaffSalary();
+  salary: SalaryPayment = new SalaryPayment();
 
   /** TABLE DATA */
-  salaries: StaffSalary[] = [];
+  salaries: SalaryPayment[] = [];
 
   /** STAFF DROPDOWN DATA */
   staffList: Staff[] = [];
@@ -42,14 +42,23 @@ export class SalaryComponent implements OnInit {
   Math = Math; // For template access
 
   constructor(
-    private staffSalaryService: StaffSalaryService,
+    private salaryPaymentService: SalaryPaymentService,
     private staffService: StaffService,
-    private popup: PopupService
+    private popup: PopupService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
     this.loadData();
     this.resetForm(); // Set defaults
+
+    this.route.queryParams.subscribe(params => {
+      const staffId = params['staffId'] ? Number(params['staffId']) : null;
+      if (staffId) {
+        this.salary.staffId = staffId;
+        this.onStaffSelect();
+      }
+    });
   }
 
   /* ================= GETTERS FOR STATS ================= */
@@ -58,7 +67,7 @@ export class SalaryComponent implements OnInit {
   }
 
   get totalSalaryPaid(): number {
-    return this.salaries.reduce((acc, s) => acc + (this.getRowNetSalary(s) || 0), 0);
+    return this.salaries.reduce((acc, s) => acc + (s.netSalary || 0), 0);
   }
 
   get averageSalary(): number {
@@ -76,7 +85,7 @@ export class SalaryComponent implements OnInit {
     this.loading = true;
     forkJoin({
       staff: this.staffService.getAllStaffs(),
-      salaries: this.staffSalaryService.getStaffSalaries()
+      salaries: this.salaryPaymentService.getAll()
     }).pipe(finalize(() => this.loading = false)).subscribe({
       next: (res) => {
         this.staffList = res.staff || [];
@@ -86,82 +95,66 @@ export class SalaryComponent implements OnInit {
     });
   }
 
-  loadStaff(): void {
-    this.staffService.getAllStaffs().subscribe({
-      next: (res) => {
-        this.staffList = res;
-      },
-      error: (err) => {
-        console.error(err);
-        this.popup.error('Error', 'Failed to load staff list');
-      }
-    });
-  }
-
-
-  /* ================= LOAD SALARIES ================= */
   loadSalaries(): void {
     this.loading = true;
-    this.staffSalaryService.getStaffSalaries().pipe(finalize(() => this.loading = false)).subscribe({
+    this.salaryPaymentService.getAll().pipe(finalize(() => this.loading = false)).subscribe({
       next: (res) => this.salaries = res,
       error: () => this.popup.error('Error', 'Failed to load salaries')
     });
   }
 
+  /* ================= ADDITIONS / DEDUCTIONS ================= */
+  addAddition(): void {
+    this.salary.additions.push(new SalaryEntry());
+  }
+
+  removeAddition(index: number): void {
+    this.salary.additions.splice(index, 1);
+  }
+
+  addDeduction(): void {
+    this.salary.deductions.push(new SalaryEntry());
+  }
+
+  removeDeduction(index: number): void {
+    this.salary.deductions.splice(index, 1);
+  }
+
+  private sumEntries(entries: SalaryEntry[]): number {
+    return (entries || []).reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+  }
+
+  get totalAdditions(): number {
+    return this.sumEntries(this.salary.additions);
+  }
+
+  get totalDeductions(): number {
+    return this.sumEntries(this.salary.deductions);
+  }
+
   /* ================= NET SALARY ================= */
   get calculatedNetSalary(): number {
-    const basic = this.salary.basicSalary || 0;
-    const bonus = this.salary.festivalBonus || 0;
-    const allowance = this.salary.allowance || 0;
-    const medical = this.salary.medicalAllowance || 0;
-    const house = this.salary.housingAllowance || 0;
-    const transport = this.salary.transportationAllowance || 0;
-    const saving = this.salary.savingFund || 0;
-    const tax = this.salary.taxes || 0;
-
-    return (
-      basic +
-      bonus +
-      allowance +
-      medical +
-      house +
-      transport -
-      saving -
-      tax
-    );
+    const basic = Number(this.salary.basicSalary) || 0;
+    return basic + this.totalAdditions - this.totalDeductions;
   }
 
   /**
-   * Calculates net salary for any specific record manually.
-   * This fixes the "PKR 0" or empty display issue if netSalary isn't saved/returned.
+   * Net salary for a saved record from the list (already-computed totals).
    */
-  getRowNetSalary(s: StaffSalary): number {
+  getRowNetSalary(s: SalaryPayment): number {
     if (!s) return 0;
+    if (s.netSalary != null) return s.netSalary;
     const basic = s.basicSalary || 0;
-    const bonus = s.festivalBonus || 0;
-    const allowance = s.allowance || 0;
-    const medical = s.medicalAllowance || 0;
-    const house = s.housingAllowance || 0;
-    const transport = s.transportationAllowance || 0;
-    const saving = s.savingFund || 0;
-    const tax = s.taxes || 0;
-
-    return (
-      basic +
-      bonus +
-      allowance +
-      medical +
-      house +
-      transport -
-      saving -
-      tax
-    );
+    return basic + (s.totalAdditions || 0) - (s.totalDeductions || 0);
   }
 
   onStaffSelect(): void {
     const selectedStaff = this.staffList.find(s => s.staffId === Number(this.salary.staffId));
     if (selectedStaff) {
       this.salary.staffName = selectedStaff.staffName;
+      if (selectedStaff.basicSalary != null) {
+        this.salary.basicSalary = selectedStaff.basicSalary;
+      }
     }
   }
 
@@ -172,13 +165,22 @@ export class SalaryComponent implements OnInit {
       return;
     }
 
+    const cleanAdditions = this.salary.additions.filter(a => a.description && a.amount);
+    const cleanDeductions = this.salary.deductions.filter(d => d.description && d.amount);
+
+    const payload = {
+      staffId: this.salary.staffId,
+      paymentDate: this.salary.paymentDate,
+      paymentMonth: this.salary.paymentMonth,
+      basicSalary: this.salary.basicSalary,
+      additions: cleanAdditions,
+      deductions: cleanDeductions
+    };
+
     this.isProcessing = true;
-
-    this.salary.netSalary = this.calculatedNetSalary;
-
     this.popup.loading('Saving salary record...');
 
-    this.staffSalaryService.addStaffSalary(this.salary).subscribe({
+    this.salaryPaymentService.create(payload).subscribe({
       next: () => {
         this.isProcessing = false;
         this.popup.success('Salary Saved!', 'The salary record has been saved successfully.');
@@ -197,7 +199,7 @@ export class SalaryComponent implements OnInit {
     this.popup.confirm('Delete Salary Record?', 'This action cannot be undone.').then(confirmed => {
       if (confirmed) {
         this.popup.loading('Deleting salary record...');
-        this.staffSalaryService.deleteStaffSalary(id).subscribe({
+        this.salaryPaymentService.delete(id).subscribe({
           next: () => {
             this.popup.deleted('Salary record');
             this.loadSalaries();
@@ -214,20 +216,20 @@ export class SalaryComponent implements OnInit {
   /* ================= RESET ================= */
   resetForm(): void {
     const today = new Date();
-    this.salary = new StaffSalary();
+    this.salary = new SalaryPayment();
     this.salary.paymentDate = today.toISOString().split('T')[0];
     this.salary.paymentMonth = today.toLocaleString('default', { month: 'long' });
   }
 
   /* ================= FILTER + PAGINATION ================= */
-  get filteredSalaries(): StaffSalary[] {
+  get filteredSalaries(): SalaryPayment[] {
     if (!this.searchQuery) return this.salaries;
     return this.salaries.filter(s =>
       s.staffName?.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }
 
-  get paginatedSalaries(): StaffSalary[] {
+  get paginatedSalaries(): SalaryPayment[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredSalaries.slice(start, start + this.itemsPerPage);
   }
@@ -242,5 +244,3 @@ export class SalaryComponent implements OnInit {
     }
   }
 }
-
-

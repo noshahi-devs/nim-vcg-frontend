@@ -28,6 +28,7 @@ export class Staff {
   status?: string;
   departmentId?: number;
   department?: Department;
+  basicSalary?: number;
   staffSalaryId?: number;
   staffSalary?: StaffSalary;
   staffExperiences: StaffExperience[] = [];

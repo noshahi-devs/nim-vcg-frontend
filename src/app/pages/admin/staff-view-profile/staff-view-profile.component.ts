@@ -7,6 +7,8 @@ import { StaffService } from '../../../services/staff.service';
 import { Designation } from '../../../Models/staff';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { AttendanceService } from '../../../services/attendance.service';
+import { SalaryPaymentService } from '../../../services/salary-payment.service';
+import { SalaryPayment } from '../../../Models/salary-payment';
 import { environment } from '../../../../environments/environment';
 
 declare var $: any;
@@ -32,8 +34,9 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
   staffId: number = 0;
   staffData: any = null;
   loading: boolean = false;
-  activeTab: 'overview' | 'attendance' | 'performance' = 'overview';
+  activeTab: 'overview' | 'attendance' | 'performance' | 'salary' = 'overview';
   defaultAvatar = 'assets/images/user-grid/user-grid-img2.png';
+  salaryHistory: SalaryPayment[] = [];
 
   attendanceStats = {
     percentage: 0,
@@ -49,7 +52,8 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
     private router: Router,
     public authService: AuthService,
     private staffService: StaffService,
-    private attendanceService: AttendanceService
+    private attendanceService: AttendanceService,
+    private salaryPaymentService: SalaryPaymentService
   ) { }
 
   get currentUserEmail(): string {
@@ -97,6 +101,7 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
       next: (staff: any) => {
         this.staffData = this.mapStaffToUi(staff);
         this.loadAttendanceData();
+        this.loadSalaryHistory();
         this.loading = false;
         this.checkAuthorization();
       },
@@ -137,6 +142,17 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
     });
   }
 
+  loadSalaryHistory() {
+    this.salaryPaymentService.getForStaff(this.staffId).subscribe({
+      next: (payments) => this.salaryHistory = payments || [],
+      error: (err) => console.error('Error loading salary history:', err)
+    });
+  }
+
+  paySalary() {
+    this.router.navigate(['/salary'], { queryParams: { staffId: this.staffId } });
+  }
+
   private mapStaffToUi(staff: any) {
     if (!staff) return null;
 
@@ -155,6 +171,7 @@ export class StaffViewProfileComponent implements OnInit, AfterViewInit {
       status: staff.status || 'Active',
       role: this.getDesignationName(staff.designation),
       experience: staff.experience || staff.Experience || (staff.staffExperiences?.length ? `${staff.staffExperiences.length} History Entries` : 'N/A'),
+      basicSalary: staff.basicSalary ?? null,
       attendance: this.attendanceStats,
       performance: {
         rating: null,
