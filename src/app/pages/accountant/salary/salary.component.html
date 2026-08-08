@@ -59,14 +59,16 @@
 
         <div class="col-md-3">
           <label class="form-label-premium">Payment Month *</label>
-          <select class="form-select-premium" [(ngModel)]="salary.paymentMonth" [disabled]="isProcessing">
+          <select class="form-select-premium" [(ngModel)]="salary.paymentMonth" (change)="applyAutoDeduction()"
+            [disabled]="isProcessing">
             <option *ngFor="let m of ['January','February','March','April','May','June','July','August','September','October','November','December']" [value]="m">{{m}}</option>
           </select>
         </div>
 
         <div class="col-md-3">
           <label class="form-label-premium">Payment Date *</label>
-          <input type="date" class="form-control-premium" [(ngModel)]="salary.paymentDate" [disabled]="isProcessing">
+          <input type="date" class="form-control-premium" [(ngModel)]="salary.paymentDate"
+            (change)="applyAutoDeduction()" [disabled]="isProcessing">
         </div>
 
         <div class="col-md-3">
@@ -133,16 +135,98 @@
 
         <div class="col-md-6 mt-3">
           <div class="net-salary-group">
-            <span>Calculated Net Salary</span>
+            <span>
+              Calculated Net Salary
+              <button type="button" class="formula-info-btn" (click)="toggleBreakdown()"
+                [disabled]="!lastSuggestion" title="How is this calculated?">
+                <iconify-icon icon="solar:info-circle-bold-duotone"></iconify-icon>
+              </button>
+            </span>
             <div class="net-val">PKR {{ calculatedNetSalary | number }}</div>
           </div>
         </div>
 
+        <div class="col-md-12 mt-3" *ngIf="showBreakdown && lastSuggestion as sug">
+          <div class="formula-breakdown-panel">
+            <div class="formula-breakdown-header">
+              <iconify-icon icon="solar:calculator-minimalistic-bold-duotone"></iconify-icon>
+              <span>How this deduction was calculated</span>
+              <button type="button" class="formula-close-btn" (click)="toggleBreakdown()">
+                <iconify-icon icon="mdi:close"></iconify-icon>
+              </button>
+            </div>
+
+            <div class="formula-row">
+              <span class="formula-label">Per-Day Rate</span>
+              <span class="formula-value">
+                Basic Salary &divide; Basis Days = {{ sug.basicSalary | number }} &divide; {{ sug.basisDays }}
+                = <strong>PKR {{ sug.perDayRate | number:'1.2-2' }}</strong>
+                <span class="formula-note">({{ sug.deductionDayBasis === 'ActualDaysInMonth' ? 'Actual working days in month' : 'Fixed 30' }})</span>
+              </span>
+            </div>
+
+            <div class="formula-row">
+              <span class="formula-label">Working Days</span>
+              <span class="formula-value">{{ sug.workingDays }} (excludes Sundays &amp; recorded holidays)</span>
+            </div>
+            <div class="formula-row">
+              <span class="formula-label">Present Days</span>
+              <span class="formula-value">{{ sug.presentDays }}</span>
+            </div>
+            <div class="formula-row">
+              <span class="formula-label">Approved Leave Days</span>
+              <span class="formula-value">{{ sug.approvedLeaveDays }}</span>
+            </div>
+            <div class="formula-row">
+              <span class="formula-label">Absent Days</span>
+              <span class="formula-value">
+                Working &minus; Present &minus; Leave = {{ sug.workingDays }} &minus; {{ sug.presentDays }} &minus; {{ sug.approvedLeaveDays }}
+                = <strong>{{ sug.absentDays }}</strong>
+              </span>
+            </div>
+            <div class="formula-row">
+              <span class="formula-label">Deduction Days</span>
+              <span class="formula-value">
+                {{ sug.deductionDays }}
+                <span class="formula-note">(Leaves Allowed: {{ sug.leavesAllowed }}, Is Absent=Leave: {{ sug.isAbsentEqualToLeave ? 'Yes' : 'No' }})</span>
+              </span>
+            </div>
+
+            <div class="formula-divider"></div>
+
+            <div class="formula-row">
+              <span class="formula-label">Deduction</span>
+              <span class="formula-value">
+                {{ sug.deductionDays }} &times; PKR {{ sug.perDayRate | number:'1.2-2' }}
+                = <strong>PKR {{ sug.suggestedDeductionAmount | number:'1.2-2' }}</strong>
+              </span>
+            </div>
+            <div class="formula-row">
+              <span class="formula-label">Net Salary</span>
+              <span class="formula-value">
+                Basic + Additions &minus; Deductions = {{ salary.basicSalary | number }} + {{ totalAdditions | number }} &minus; {{ totalDeductions | number }}
+                = <strong>PKR {{ calculatedNetSalary | number }}</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 mt-3" *ngIf="existingRecordForSelection as existing">
+          <div class="duplicate-warning-banner">
+            <iconify-icon icon="solar:danger-triangle-bold-duotone"></iconify-icon>
+            <span>
+              A salary record for <strong>{{ salary.staffName }}</strong> for
+              <strong>{{ salary.paymentMonth }} {{ (salary.paymentDate | date:'yyyy') }}</strong> already exists
+              (net PKR {{ existing.netSalary | number }}). Delete or edit that record below instead of saving a duplicate.
+            </span>
+          </div>
+        </div>
+
         <div class="col-md-12 d-flex gap-3 mt-4">
-          <button class="btn-premium-save" (click)="saveSalary()" [disabled]="isProcessing">
+          <button class="btn-premium-save" (click)="saveSalary()" [disabled]="isProcessing || !!existingRecordForSelection">
             <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
             <iconify-icon *ngIf="!isProcessing" icon="mdi:check-circle" class="me-2"></iconify-icon>
-            {{ isProcessing ? 'Saving...' : 'Save Salary Record' }}
+            {{ isProcessing ? 'Saving...' : (existingRecordForSelection ? 'Already Exists' : 'Save Salary Record') }}
           </button>
           <button class="btn-premium-reset" (click)="resetForm()" [disabled]="isProcessing">
             Reset

@@ -5,6 +5,7 @@ export class Attendance {
   attendanceIdentificationNumber!: number;
   description?: string;
   isPresent!: boolean;
+  checkInTime?: Date;
   checkOutTime?: Date;
 }
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, OnDestroy } from '@angular/core';
+﻿import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, OnDestroy } from '@angular/core';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -9,6 +9,8 @@ import { finalize } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { PopupService } from '../../../services/popup.service';
 import { UserManagementService } from '../../../services/user-management.service';
+import { ShiftService } from '../../../services/shift.service';
+import { Shift } from '../../../Models/shift';
 
 declare var $: any;
 declare var bootstrap: any;
@@ -47,12 +49,15 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
   showNewPass = false;
   showConfPass = false;
 
+  shiftList: Shift[] = [];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private staffService: StaffService,
     private userService: UserManagementService,
-    private popup: PopupService
+    private popup: PopupService,
+    private shiftService: ShiftService
   ) { }
 
   ngOnInit() {
@@ -60,6 +65,7 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
       this.staffId = +params['id'];
       this.loadStaffData();
     });
+    this.shiftService.getAll().subscribe({ next: (shifts) => this.shiftList = shifts || [], error: () => {} });
   }
 
 
@@ -95,7 +101,8 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
       status: staff.status || 'Active',
       role: this.getDesignationName(staff.designation),
       experience: staff.experience || staff.Experience || '',
-      basicSalary: staff.basicSalary ?? null
+      basicSalary: staff.basicSalary ?? null,
+      shiftId: staff.shiftId ?? null
     };
   }
 
@@ -152,13 +159,14 @@ export class StaffEditProfileComponent implements OnInit, AfterViewInit, OnDestr
         dob: this.staffData.dob,
         experience: this.staffData.experience,
         basicSalary: this.staffData.basicSalary,
+        shiftId: this.staffData.shiftId || null,
         imageUpload: this.selectedImageBase64 ? {
           imageData: this.selectedImageBase64,
           imageName: this.selectedImageName || `${this.staffData.name}_profile.png`
         } : null
       };
 
-      console.log('🚀 Sending updatedStaff to API:', updatedStaff);
+      console.log('ðŸš€ Sending updatedStaff to API:', updatedStaff);
 
       this.popup.loading('Updating Staff...');
 

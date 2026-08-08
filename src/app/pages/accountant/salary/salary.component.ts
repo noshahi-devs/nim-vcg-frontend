@@ -7,10 +7,16 @@ import { finalize, forkJoin } from 'rxjs';
 import { BreadcrumbComponent } from '../../ui-elements/breadcrumb/breadcrumb.component';
 import { SalaryPaymentService } from '../../../services/salary-payment.service';
 import { StaffService } from '../../../services/staff.service';
+import { PayrollDeductionRuleService } from '../../../services/payroll-deduction-rule.service';
 
 import { SalaryEntry, SalaryPayment } from '../../../Models/salary-payment';
 import { Staff } from '../../../Models/staff';
 import { PopupService } from '../../../services/popup.service';
+import { DeductionSuggestion } from '../../../Models/payroll-deduction-rule';
+
+const AUTO_DEDUCTION_PREFIX = 'Attendance/Leave Deduction (Auto';
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'];
 
 @Component({
   selector: 'app-salary',
@@ -41,9 +47,14 @@ export class SalaryComponent implements OnInit {
   isProcessing = false;
   Math = Math; // For template access
 
+  /** Last attendance/leave suggestion fetched for the current staff+month, for the formula breakdown. */
+  lastSuggestion: DeductionSuggestion | null = null;
+  showBreakdown = false;
+
   constructor(
     private salaryPaymentService: SalaryPaymentService,
     private staffService: StaffService,
+    private payrollRuleService: PayrollDeductionRuleService,
     private popup: PopupService,
     private route: ActivatedRoute
   ) { }
@@ -132,6 +143,22 @@ export class SalaryComponent implements OnInit {
     return this.sumEntries(this.salary.deductions);
   }
 
+  /* ================= DUPLICATE DETECTION ================= */
+  // Finds an already-saved record for the currently selected staff + payment month + year, so the
+  // form can warn before the accountant tries to save a second salary for the same period.
+  get existingRecordForSelection(): SalaryPayment | undefined {
+    if (!this.salary.staffId || !this.salary.paymentMonth || !this.salary.paymentDate) return undefined;
+
+    const year = new Date(this.salary.paymentDate).getFullYear();
+    if (isNaN(year)) return undefined;
+
+    return this.salaries.find(s =>
+      s.staffId === Number(this.salary.staffId) &&
+      s.paymentMonth === this.salary.paymentMonth &&
+      s.paymentDate && new Date(s.paymentDate).getFullYear() === year
+    );
+  }
+
   /* ================= NET SALARY ================= */
   get calculatedNetSalary(): number {
     const basic = Number(this.salary.basicSalary) || 0;
@@ -156,12 +183,70 @@ export class SalaryComponent implements OnInit {
         this.salary.basicSalary = selectedStaff.basicSalary;
       }
     }
+    this.applyAutoDeduction();
+  }
+
+  /* ================= AUTO-SUGGESTED DEDUCTION ================= */
+  // Suggests (but never forces) a deduction based on the configured Payroll Deduction Rule and the
+  // staff member's attendance/leave for the pay period named by "Payment Month" (year taken from
+  // Payment Date — Payment Date itself is just the disbursement date and may fall in a different
+  // month, e.g. paying September's salary in early October). The suggestion is added as a normal,
+  // editable deduction row — the accountant can change or remove it before saving.
+  applyAutoDeduction(): void {
+    if (!this.salary.staffId || !this.salary.paymentDate || !this.salary.paymentMonth) return;
+
+    const paymentDate = new Date(this.salary.paymentDate);
+    if (isNaN(paymentDate.getTime())) return;
+
+    const monthIndex = MONTH_NAMES.indexOf(this.salary.paymentMonth);
+    if (monthIndex === -1) return;
+    const year = paymentDate.getFullYear();
+
+    const startDate = new Date(year, monthIndex, 1).toISOString().split('T')[0];
+    const endDate = new Date(year, monthIndex + 1, 0).toISOString().split('T')[0];
+
+    this.payrollRuleService.calculateSuggestion(Number(this.salary.staffId), startDate, endDate).subscribe({
+      next: (suggestion) => {
+        this.lastSuggestion = suggestion;
+
+        // Drop any previously auto-added row so re-triggering (staff/date change) doesn't stack duplicates.
+        this.salary.deductions = this.salary.deductions.filter(d => !d.description?.startsWith(AUTO_DEDUCTION_PREFIX));
+
+        if (suggestion.ruleActive && suggestion.suggestedDeductionAmount > 0) {
+          const entry = new SalaryEntry();
+          entry.description = `${AUTO_DEDUCTION_PREFIX}: ${suggestion.deductionDays} day(s))`;
+          entry.amount = suggestion.suggestedDeductionAmount;
+          this.salary.deductions.push(entry);
+          this.popup.success(
+            'Deduction Suggested',
+            `Auto-suggested deduction of PKR ${suggestion.suggestedDeductionAmount} for ${suggestion.deductionDays} day(s). You can edit or remove it below before saving.`
+          );
+        }
+      },
+      error: () => {
+        this.lastSuggestion = null; /* Non-blocking: salary entry still works if the rule check fails */
+      }
+    });
+  }
+
+  toggleBreakdown(): void {
+    this.showBreakdown = !this.showBreakdown;
   }
 
   /* ================= SAVE SALARY ================= */
   saveSalary(): void {
     if (!this.salary.staffId || !this.salary.basicSalary || !this.salary.paymentMonth || !this.salary.paymentDate) {
       this.popup.warning('Incomplete form', 'Please fill all required fields (Staff, Month, Date, and Basic Salary).');
+      return;
+    }
+
+    const existing = this.existingRecordForSelection;
+    if (existing) {
+      this.popup.warning(
+        'Already Exists',
+        `A salary record for ${this.salary.staffName} for ${this.salary.paymentMonth} ${new Date(this.salary.paymentDate).getFullYear()} ` +
+        `already exists (net PKR ${(existing.netSalary || 0).toLocaleString()}). Delete or edit that record instead of saving a duplicate.`
+      );
       return;
     }
 
@@ -187,9 +272,14 @@ export class SalaryComponent implements OnInit {
         this.resetForm();
         this.loadSalaries();
       },
-      error: () => {
+      error: (err) => {
         this.isProcessing = false;
-        this.popup.error('Processing Failed', 'An error occurred while saving the salary record.');
+        if (err?.status === 409) {
+          this.popup.warning('Already Exists', err?.error?.message || 'A salary record for this staff/month already exists.');
+          this.loadSalaries();
+        } else {
+          this.popup.error('Processing Failed', 'An error occurred while saving the salary record.');
+        }
       }
     });
   }
@@ -219,6 +309,8 @@ export class SalaryComponent implements OnInit {
     this.salary = new SalaryPayment();
     this.salary.paymentDate = today.toISOString().split('T')[0];
     this.salary.paymentMonth = today.toLocaleString('default', { month: 'long' });
+    this.lastSuggestion = null;
+    this.showBreakdown = false;
   }
 
   /* ================= FILTER + PAGINATION ================= */

@@ -1,4 +1,4 @@
-<div class="dashboard-main-body">
+﻿<div class="dashboard-main-body">
   <app-breadcrumb [title]="'Staff Edit'" [main-title]="'Management'"></app-breadcrumb>
 
   <!-- Premium Skeleton Loading -->
@@ -185,6 +185,17 @@
               <label class="field-label">Basic Salary</label>
               <input type="number" class="field-input" min="0" step="0.01"
                 [(ngModel)]="staffData.basicSalary" placeholder="e.g. 25000">
+            </div>
+
+            <!-- Assigned Shift -->
+            <div class="col-md-6 form-group-premium">
+              <label class="field-label">Assigned Shift</label>
+              <select class="field-select" [(ngModel)]="staffData.shiftId">
+                <option [ngValue]="null">-- No Shift --</option>
+                <option *ngFor="let shift of shiftList" [ngValue]="shift.shiftId">
+                  {{ shift.shiftName }} ({{ shift.startTime }}{{ shift.endTime ? ' - ' + shift.endTime : '' }})
+                </option>
+              </select>
             </div>
           </div>
         </div>

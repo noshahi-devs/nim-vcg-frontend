@@ -1,0 +1,203 @@
+﻿<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title" [icon]="'solar:clock-circle-bold-duotone'"></app-breadcrumb>
+
+  <!-- STATS ROW -->
+  <div class="stats-row">
+    <div class="stat-card glass-card">
+      <div class="stat-icon-wrapper maroon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary-color);">
+        <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Shifts</span>
+        <span class="stat-value">{{ totalShifts }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card">
+      <div class="stat-icon-wrapper green">
+        <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Active Shifts</span>
+        <span class="stat-value">{{ activeShifts }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card glass-card">
+      <div class="stat-icon-wrapper orange">
+        <iconify-icon icon="mdi:account-group"></iconify-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Staff Assigned</span>
+        <span class="stat-value">{{ totalStaffAssigned }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT SHIFT -->
+  <div class="glass-card mb-4" style="padding: 24px;">
+    <div class="card-header-premium">
+      <div class="header-icon">
+        <iconify-icon [icon]="isEditing ? 'mdi:pencil' : 'mdi:clock-plus-outline'"></iconify-icon>
+      </div>
+      <h6>{{ isEditing ? 'Edit Shift' : 'Add Shift' }}</h6>
+    </div>
+
+    <div class="premium-card-body">
+      <div class="row g-4">
+        <!-- SHIFT NAME -->
+        <div class="col-md-4">
+          <label class="form-label-premium">Shift Name *</label>
+          <input type="text" class="form-control-premium" [(ngModel)]="shift.shiftName"
+            placeholder="e.g. Morning Shift" [disabled]="isProcessing">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label-premium">Start Time *</label>
+          <input type="time" class="form-control-premium" [(ngModel)]="shift.startTime" [disabled]="isProcessing">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label-premium">End Time</label>
+          <input type="time" class="form-control-premium" [(ngModel)]="shift.endTime" [disabled]="isProcessing">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label-premium">Grace Minutes</label>
+          <input type="number" class="form-control-premium" min="0" [(ngModel)]="shift.graceMinutes"
+            placeholder="0" [disabled]="isProcessing">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label-premium d-block">Active</label>
+          <div class="form-check form-switch mt-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="shiftActiveToggle"
+              [(ngModel)]="shift.isActive" [disabled]="isProcessing" style="width: 42px; height: 22px;">
+            <label class="form-check-label ms-2" for="shiftActiveToggle">{{ shift.isActive ? 'Active' : 'Inactive' }}</label>
+          </div>
+        </div>
+
+        <div class="col-md-12 d-flex gap-3 mt-2">
+          <button class="btn-premium-save" (click)="saveShift()" [disabled]="isProcessing">
+            <iconify-icon *ngIf="isProcessing" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+            <iconify-icon *ngIf="!isProcessing" icon="mdi:check-circle" class="me-2"></iconify-icon>
+            {{ isProcessing ? 'Saving...' : (isEditing ? 'Update Shift' : 'Save Shift') }}
+          </button>
+          <button class="btn-premium-reset" (click)="resetForm()" [disabled]="isProcessing">
+            {{ isEditing ? 'Cancel' : 'Reset' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHIFT LIST -->
+  <div class="table-card glass-card" style="padding: 0; overflow: hidden;">
+    <div class="card-header-premium d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2">
+        <div class="header-icon" style="background: #1e293b;">
+          <iconify-icon icon="mdi:format-list-bulleted"></iconify-icon>
+        </div>
+        <h6>Shift List</h6>
+      </div>
+
+      <div class="search-wrapper-premium w-25">
+        <iconify-icon icon="mdi:magnify" class="search-icon-premium"></iconify-icon>
+        <input class="form-control-premium search-input-premium" placeholder="Search shifts..."
+          [(ngModel)]="searchQuery">
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <!-- Premium Skeleton Loading -->
+      <div *ngIf="loading && !isProcessing" class="sk-table-container animate-fade-in border-0 p-24 mb-0">
+        <div class="sk-table-header sk-shimmer mb-16"></div>
+        <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3,4,5]"></div>
+      </div>
+
+      <table class="table glass-table mb-0" *ngIf="!loading">
+        <thead>
+          <tr>
+            <th style="width: 80px;">#</th>
+            <th>Shift Name</th>
+            <th>Time</th>
+            <th>Grace Minutes</th>
+            <th>Status</th>
+            <th>Staff Count</th>
+            <th style="width: 120px; text-align: center;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of paginatedShifts; let i = index">
+            <td>
+              <span class="row-num"
+                style="background: #f1f5f9; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 12px; color: #64748b;">
+                {{ (currentPage - 1) * itemsPerPage + i + 1 }}
+              </span>
+            </td>
+            <td>
+              <span class="fw-bold">{{ s.shiftName }}</span>
+            </td>
+            <td>
+              <span class="badge bg-light text-dark border">{{ formatTimeRange(s) }}</span>
+            </td>
+            <td>
+              {{ s.graceMinutes }} min
+            </td>
+            <td>
+              <span class="badge" [ngClass]="s.isActive ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                {{ s.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td>
+              <span class="badge-amount basic">{{ s.staffCount || 0 }}</span>
+            </td>
+            <td class="text-center">
+              <button class="action-btn edit me-2" (click)="editShift(s)" title="Edit Shift">
+                <iconify-icon icon="solar:pen-bold-duotone"></iconify-icon>
+              </button>
+              <button class="action-btn delete" (click)="deleteShift(s.shiftId)" title="Delete Shift">
+                <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredShifts.length === 0">
+            <td colspan="7" class="p-0 border-0">
+              <div class="empty-state">
+                <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
+                <h5>No Shifts Found</h5>
+                <p>No shifts found matching your current search criteria</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="filteredShifts.length > 0 && !loading">
+      <p class="pagination-info mb-0">
+        Showing <b>{{ (currentPage - 1) * itemsPerPage + 1 }}</b> to
+        <b>{{ Math.min(currentPage * itemsPerPage, filteredShifts.length) }}</b> of <b>{{ filteredShifts.length }}</b> shifts
+      </p>
+      <nav>
+        <ul class="pagination-pills">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="changePage(currentPage - 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-left-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+            [class.active]="currentPage === i + 1">
+            <a class="page-link" (click)="changePage(i + 1)" href="javascript:void(0)">{{ i + 1 }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="changePage(currentPage + 1)" href="javascript:void(0)">
+              <iconify-icon icon="solar:alt-arrow-right-bold-duotone"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

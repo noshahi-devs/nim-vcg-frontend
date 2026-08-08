@@ -1,0 +1,99 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title" [icon]="'solar:shield-check-bold-duotone'"></app-breadcrumb>
+
+  <div class="glass-card mb-4" style="padding: 24px; max-width: 720px;">
+    <div class="card-header-premium">
+      <div class="header-icon">
+        <iconify-icon icon="mdi:calculator-variant"></iconify-icon>
+      </div>
+      <h6>Automatic Salary Deduction Rule</h6>
+    </div>
+
+    <p class="text-secondary-light mb-24">
+      When active, this rule is used to suggest a salary deduction on the Pay Salary form based on a
+      staff member's absences and approved leaves for the pay period. Sundays and dates in the
+      <a routerLink="/holidays">Holidays</a> calendar are never counted as absences. The suggestion is
+      always editable — nothing is deducted automatically without review.
+    </p>
+
+    <div class="premium-card-body" *ngIf="!loading">
+      <div class="row g-4">
+        <div class="col-md-12 d-flex align-items-center justify-content-between p-16 radius-8"
+          style="background: rgba(var(--primary-rgb), 0.06);">
+          <div>
+            <div class="fw-bold">Rule Active</div>
+            <div class="text-secondary-light small">Turn off to stop suggesting deductions entirely.</div>
+          </div>
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" style="width: 3em; height: 1.5em;"
+              [(ngModel)]="rule.isActive" [disabled]="isSaving">
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label-premium">Leaves Allowed (per pay period)</label>
+          <input type="number" min="0" class="form-control-premium" [(ngModel)]="rule.leavesAllowed"
+            [disabled]="isSaving">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label-premium">No of Days for Deduction</label>
+          <select class="form-select-premium" [(ngModel)]="rule.deductionDayBasis" [disabled]="isSaving">
+            <option [ngValue]="DeductionDayBasis.FixedThirty">30 (Fixed)</option>
+            <option [ngValue]="DeductionDayBasis.ActualDaysInMonth">Actual days in that month</option>
+          </select>
+          <div class="text-secondary-light small mt-4">
+            Per-day rate is always each staff member's own Basic Salary &divide; this number &mdash;
+            there's no separate flat amount to configure.
+          </div>
+        </div>
+
+        <div class="col-md-12 d-flex align-items-center justify-content-between p-16 radius-8"
+          style="background: rgba(var(--primary-rgb), 0.06);">
+          <div>
+            <div class="fw-bold">Is Absent = Leave</div>
+            <div class="text-secondary-light small">
+              ON: unapproved absences share the same "Leaves Allowed" pool as approved leaves &mdash; only
+              days beyond the pool deduct.<br>
+              OFF: absences always deduct in full; the pool only protects approved leave.
+            </div>
+          </div>
+          <div class="form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" style="width: 3em; height: 1.5em;"
+              [(ngModel)]="rule.isAbsentEqualToLeave" [disabled]="isSaving">
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="net-salary-group">
+            <span>
+              Worked Example &mdash; Basic Salary PKR {{ exampleBasicSalary | number }},
+              {{ exampleBasisDays }} basis day(s), Leaves Allowed = {{ rule.leavesAllowed || 0 }},
+              3 unapproved absences (weekends/holidays excluded automatically)
+            </span>
+            <div class="net-val" *ngIf="!rule.isAbsentEqualToLeave">
+              {{ exampleDeductionDaysIfNotEqual }} day(s) &times; PKR {{ examplePerDayRate | number:'1.0-2' }}/day
+              = PKR {{ exampleDeductionDaysIfNotEqual * examplePerDayRate | number:'1.0-2' }} deducted
+            </div>
+            <div class="net-val" *ngIf="rule.isAbsentEqualToLeave">
+              {{ exampleDeductionDaysIfEqual }} day(s) &times; PKR {{ examplePerDayRate | number:'1.0-2' }}/day
+              = PKR {{ exampleDeductionDaysIfEqual * examplePerDayRate | number:'1.0-2' }} deducted
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 mt-4">
+          <button class="btn-premium-save" (click)="save()" [disabled]="isSaving">
+            <iconify-icon *ngIf="isSaving" icon="line-md:loading-twotone-loop" class="me-2"></iconify-icon>
+            <iconify-icon *ngIf="!isSaving" icon="mdi:check-circle" class="me-2"></iconify-icon>
+            {{ isSaving ? 'Saving...' : 'Save Rule' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="sk-table-container animate-fade-in border-0 p-24 mb-0">
+      <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3]"></div>
+    </div>
+  </div>
+</div>

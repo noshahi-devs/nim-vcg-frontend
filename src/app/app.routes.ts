@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+﻿import { Routes } from '@angular/router';
 import { AuthGuard } from './SecurityModels/auth.guard';
 
 export const routes: Routes = [
@@ -37,6 +37,7 @@ export const routes: Routes = [
       { path: 'staff-edit-profile/:id', loadComponent: () => import('./pages/admin/staff-edit-profile/staff-edit-profile.component').then(m => m.StaffEditProfileComponent), data: { roles: ['Admin', 'Principal'] } },
       { path: 'staff-job-letter', loadComponent: () => import('./pages/admin/staff-job-letter/staff-job-letter.component').then(m => m.StaffJobLetterComponent), data: { roles: ['Admin', 'Principal'] } },
       { path: 'staff-manage-login', loadComponent: () => import('./pages/admin/staff-manage-login/staff-manage-login.component').then(m => m.StaffManageLoginComponent), data: { roles: ['Admin', 'Principal'] } },
+      { path: 'shift-manage', loadComponent: () => import('./pages/admin/shift-manage/shift-manage.component').then(m => m.ShiftManageComponent), data: { roles: ['Admin', 'Principal'] } },
 
       // Attendance
       { path: 'attendance', loadComponent: () => import('./pages/admin/attendance/attendance.component').then(m => m.AttendanceComponent), data: { roles: ['Admin', 'Principal', 'Teacher'] } },
@@ -72,6 +73,8 @@ export const routes: Routes = [
       { path: 'other-payment', loadComponent: () => import('./pages/accountant/other-payment/other-payment.component').then(m => m.OtherPaymentComponent), data: { roles: ['Admin', 'Accountant'] } },
       { path: 'salary', loadComponent: () => import('./pages/accountant/salary/salary.component').then(m => m.SalaryComponent), data: { roles: ['Admin', 'Accountant'] } },
       { path: 'salary-slip', loadComponent: () => import('./pages/accountant/salary-slip/salary-slip.component').then(m => m.SalarySlipComponent), data: { roles: ['Admin', 'Accountant'] } },
+      { path: 'payroll-rules', loadComponent: () => import('./pages/accountant/payroll-rules/payroll-rules.component').then(m => m.PayrollRulesComponent), data: { roles: ['Admin', 'Accountant'] } },
+      { path: 'holidays', loadComponent: () => import('./pages/accountant/holidays/holidays.component').then(m => m.HolidaysComponent), data: { roles: ['Admin', 'Accountant'] } },
       { path: 'wallet', loadComponent: () => import('./pages/accountant/wallet/wallet.component').then(m => m.WalletComponent), data: { roles: ['Admin', 'Accountant'] } },
       { path: 'invoice-list', loadComponent: () => import('./pages/accountant/invoice-list/invoice-list.component').then(m => m.InvoiceListComponent), data: { roles: ['Admin', 'Accountant'] } },
       { path: 'invoice-add', loadComponent: () => import('./pages/accountant/invoice-add/invoice-add.component').then(m => m.InvoiceAddComponent), data: { roles: ['Admin', 'Accountant'] } },

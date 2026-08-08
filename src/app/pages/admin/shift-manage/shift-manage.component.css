@@ -168,115 +168,6 @@
     margin-bottom: 4px;
 }
 
-.duplicate-warning-banner {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background: #fff7ed;
-    border: 1.5px solid #f59e0b;
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: #92400e;
-    line-height: 1.5;
-}
-
-.duplicate-warning-banner iconify-icon {
-    font-size: 20px;
-    color: #f59e0b;
-    flex-shrink: 0;
-    margin-top: 1px;
-}
-
-.formula-info-btn {
-    display: inline-flex;
-    align-items: center;
-    background: none;
-    border: none;
-    padding: 0;
-    margin-left: 6px;
-    cursor: pointer;
-    color: var(--primary-color);
-    font-size: 14px;
-    vertical-align: middle;
-    opacity: 0.75;
-}
-
-.formula-info-btn:hover:not(:disabled) {
-    opacity: 1;
-}
-
-.formula-info-btn:disabled {
-    opacity: 0.3;
-    cursor: default;
-}
-
-.formula-breakdown-panel {
-    background: #f8fafc;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 16px 18px;
-    font-size: 13px;
-    color: #334155;
-}
-
-.formula-breakdown-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 12px;
-    font-size: 13px;
-}
-
-.formula-breakdown-header iconify-icon:first-child {
-    font-size: 18px;
-    color: var(--primary-color);
-}
-
-.formula-close-btn {
-    margin-left: auto;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #64748b;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-}
-
-.formula-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 5px 0;
-    line-height: 1.5;
-}
-
-.formula-label {
-    color: #64748b;
-    font-weight: 600;
-    flex-shrink: 0;
-    min-width: 140px;
-}
-
-.formula-value {
-    text-align: right;
-    color: #334155;
-}
-
-.formula-note {
-    display: block;
-    color: #94a3b8;
-    font-size: 11px;
-}
-
-.formula-divider {
-    border-top: 1px dashed #cbd5e1;
-    margin: 8px 0;
-}
-
 .net-val {
     font-size: 20px;
     font-weight: 800;
@@ -762,4 +653,15 @@
   margin: 0;
   font-size: 14px;
   color: #64748b;
+}
+
+.action-btn.edit {
+    background: rgba(var(--primary-rgb), 0.12);
+    color: var(--primary-color);
+}
+
+.action-btn.edit:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
 }

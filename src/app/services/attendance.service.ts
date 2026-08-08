@@ -62,4 +62,8 @@ export class AttendanceService {
   fetchStaffAttendanceFromMachine(payload: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/FetchFromMachine`, payload, this.getAuthHeaders());
   }
+
+  bulkMarkAttendance(entries: any[]): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/BulkMark`, entries, this.getAuthHeaders());
+  }
 }

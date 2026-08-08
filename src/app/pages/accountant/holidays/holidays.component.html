@@ -1,0 +1,81 @@
+<div class="dashboard-main-body">
+  <app-breadcrumb [title]="title" [icon]="'solar:calendar-mark-bold-duotone'"></app-breadcrumb>
+
+  <div class="glass-card mb-4" style="padding: 24px; max-width: 720px;">
+    <div class="card-header-premium">
+      <div class="header-icon">
+        <iconify-icon icon="mdi:calendar-star"></iconify-icon>
+      </div>
+      <h6>Add Official Holiday</h6>
+    </div>
+
+    <p class="text-secondary-light mb-24">
+      Dates listed here, along with every Sunday, are treated as non-working days and are never
+      counted as an absence when calculating salary deductions.
+    </p>
+
+    <div class="row g-4">
+      <div class="col-md-5">
+        <label class="form-label-premium">Date</label>
+        <input type="date" class="form-control-premium" [(ngModel)]="newHoliday.date" [disabled]="isSaving">
+      </div>
+      <div class="col-md-5">
+        <label class="form-label-premium">Holiday Name</label>
+        <input type="text" class="form-control-premium" placeholder="e.g. Independence Day"
+          [(ngModel)]="newHoliday.name" [disabled]="isSaving">
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button class="btn-premium-save w-100" (click)="save()" [disabled]="isSaving">
+          <iconify-icon icon="mdi:plus-circle" class="me-2"></iconify-icon>Add
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card glass-card" style="padding: 0; overflow: hidden; max-width: 720px;">
+    <div class="card-header-premium">
+      <div class="d-flex align-items-center gap-2">
+        <div class="header-icon" style="background: #1e293b;">
+          <iconify-icon icon="mdi:format-list-bulleted"></iconify-icon>
+        </div>
+        <h6>Holiday Calendar</h6>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <div *ngIf="loading" class="sk-table-container animate-fade-in border-0 p-24 mb-0">
+        <div class="sk-table-row sk-shimmer mb-12" *ngFor="let i of [1,2,3]"></div>
+      </div>
+
+      <table class="table glass-table mb-0" *ngIf="!loading">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th style="width: 100px; text-align: center;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let h of holidays">
+            <td>{{ h.date | date:'mediumDate' }}</td>
+            <td>{{ h.name }}</td>
+            <td class="text-center">
+              <button class="action-btn delete" (click)="remove(h.holidayId)" title="Delete">
+                <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="holidays.length === 0">
+            <td colspan="3" class="p-0 border-0">
+              <div class="empty-state">
+                <iconify-icon icon="solar:folder-error-bold-duotone"></iconify-icon>
+                <h5>No Holidays Recorded</h5>
+                <p>Add official holidays above so they're excluded from absence calculations.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

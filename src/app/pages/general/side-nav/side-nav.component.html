@@ -1,4 +1,4 @@
-<!-- meta tags and other links -->
+﻿<!-- meta tags and other links -->
 
 <aside class="sidebar">
   <button type="button" class="sidebar-close-btn">
@@ -27,7 +27,7 @@
         </a>
       </li>
 
-      <!-- ★ Academic Session — Admin must set this first ★ -->
+      <!-- â˜… Academic Session â€” Admin must set this first â˜… -->
       <li *ngIf="hasAnyRole(['Admin'])" class="sidebar-menu-group-title"></li>
       <li *ngIf="hasAnyRole(['Admin'])">
         <a routerLink="/academic-session" routerLinkActive="active-page"
@@ -107,6 +107,8 @@
           <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/staff-manage-login"
               routerLinkActive="active-page"><i class="ri-circle-fill circle-icon text-danger-main"></i> Staff
               Logins</a></li>
+          <li *ngIf="hasAnyRole(['Admin', 'Principal'])"><a routerLink="/shift-manage" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-success-main"></i> Manage Shifts</a></li>
         </ul>
       </li>
       <!-- 2. Manage Classes -->
@@ -215,6 +217,10 @@
                 class="ri-circle-fill circle-icon text-primary-600"></i> Pay Salary</a></li>
           <li><a routerLink="/salary-slip" routerLinkActive="active-page"><i
                 class="ri-circle-fill circle-icon text-warning-main"></i> Salary Slips</a></li>
+          <li><a routerLink="/payroll-rules" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-info-main"></i> Deduction Rule</a></li>
+          <li><a routerLink="/holidays" routerLinkActive="active-page"><i
+                class="ri-circle-fill circle-icon text-success-main"></i> Holidays</a></li>
         </ul>
       </li>
 

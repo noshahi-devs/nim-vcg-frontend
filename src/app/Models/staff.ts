@@ -1,7 +1,8 @@
-import { ImageUpload } from "./StaticImageModel/imageUpload";
+﻿import { ImageUpload } from "./StaticImageModel/imageUpload";
 import { Department } from "./department";
 import { StaffExperience } from "./staff-experience";
 import { StaffSalary } from "./staff-salary";
+import { Shift } from "./shift";
 
 export class Staff {
   staffId!: number;
@@ -31,6 +32,8 @@ export class Staff {
   basicSalary?: number;
   staffSalaryId?: number;
   staffSalary?: StaffSalary;
+  shiftId?: number | null;
+  shift?: Shift;
   staffExperiences: StaffExperience[] = [];
 }
 

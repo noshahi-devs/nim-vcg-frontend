@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+﻿import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,6 +9,8 @@ import { Designation, Gender, Staff } from '../../../Models/staff';
 import { ImageUpload } from '../../../Models/StaticImageModel/imageUpload';
 import { AuthService } from '../../../SecurityModels/auth.service';
 import { PopupService } from '../../../services/popup.service';
+import { ShiftService } from '../../../services/shift.service';
+import { Shift } from '../../../Models/shift';
 
 declare var bootstrap: any;
 
@@ -70,6 +72,7 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
     qualifications: '',
     status: '',
     basicSalary: null as number | null,
+    shiftId: null as number | null,
     permanentAddress: '',
     section: '',
     uniqueStaffAttendanceNumber: 0,
@@ -77,11 +80,14 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
     imageUpload: new ImageUpload()
   };
 
+  shiftList: Shift[] = [];
+
   constructor(
-    private staffService: StaffService, 
-    private router: Router, 
+    private staffService: StaffService,
+    private router: Router,
     private authService: AuthService,
-    private popup: PopupService
+    private popup: PopupService,
+    private shiftService: ShiftService
   ) {
     this.setDefaultValues();
   }
@@ -91,6 +97,10 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
     const today = new Date().toISOString().split('T')[0];
     this.dobStr = today;
     this.joiningDateStr = today;
+    this.shiftService.getAll().subscribe({
+      next: (shifts) => this.shiftList = shifts || [],
+      error: () => {}
+    });
   }
 
   setDefaultValues(): void {
@@ -129,7 +139,7 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // ── Premium Feedback & Processing ──
+  // â”€â”€ Premium Feedback & Processing â”€â”€
   isProcessing = false;
 
   async onSubmit(form: NgForm) {
@@ -193,6 +203,7 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
       joiningDate: this.joiningDateStr ? new Date(this.joiningDateStr) : null,
       designation: designationMap[this.newStaff.designation] ?? Designation.Teacher,
       basicSalary: this.newStaff.basicSalary ?? null,
+      shiftId: this.newStaff.shiftId || null,
       permanentAddress: this.newStaff.permanentAddress || null,
       status: this.newStaff.status || "Active",
       imagePath: this.newStaff.profile || "assets/images/user-grid/user-grid-img2.png",
@@ -203,7 +214,7 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
       staffExperiences: []
     };
 
-    console.log('🚀 Sending staffData to API:', staffData);
+    console.log('ðŸš€ Sending staffData to API:', staffData);
 
     this.isProcessing = true;
     this.popup.loading('Creating staff profile...');
@@ -253,7 +264,7 @@ export class StaffAddComponent implements OnInit, AfterViewInit {
       error: (err) => {
         this.isProcessing = false;
         this.popup.closeLoading();
-        console.error('❌ Profile creation error:', err);
+        console.error('âŒ Profile creation error:', err);
         this.popup.error('Error', 'Could not save staff profile.');
       }
     });
